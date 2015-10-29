@@ -100,6 +100,97 @@ def generate_tian_ji_model2(number_of_horses):
     return tian_ji_model
 
 
+def generate_tian_ji_model_with_decision_divide(number_of_horses):
+    global states
+    global states_dictionary
+    global visited_states
+    tian_ji_model = ATLModel(2, number_of_horses ** 6)
+    states = [{'king_score': 0, 'tian_ji_score': 0, 'king_horses': list(range(0, number_of_horses)),
+               'tian_ji_horses': list(range(0, number_of_horses)),
+               'results': create_array_of_size2(number_of_horses, 0), 'king_decided': -1}]
+    states_dictionary = {' '.join(str(states[0][e]) for e in states[0]): 0}
+    tian_ji_model.set_state_name(0, ' '.join(str(states[0][e]) for e in states[0]))
+    states_to_process = []
+    state_number = 1
+    states_to_process.append(states[0])
+    while len(states_to_process) != 0:
+        state = states_to_process.pop(0)
+        state_string = ' '.join(str(state[e]) for e in state)
+        current_state_number = states_dictionary[state_string]
+
+        if state['king_decided']==-1:
+            king_horses = state['king_horses']
+            for i in range(0, len(king_horses)):
+                king_horse = king_horses[i]
+                new_king_horses = king_horses[:]
+                new_king_horses.pop(i)
+                new_state = {'king_score': state['king_score'], 'tian_ji_score': state['tian_ji_score'],
+                             'king_horses': new_king_horses, 'tian_ji_horses': state['tian_ji_horses'],
+                             'results': state['results'], 'king_decided': king_horse}
+
+                new_state_string = ' '.join(str(new_state[e]) for e in new_state)
+                new_state_number = -1
+                if new_state_string in states_dictionary:
+                    new_state_number = states_dictionary[new_state_string]
+                else:
+                    new_state_number = state_number
+                    state_number += 1
+                    states_dictionary[new_state_string] = new_state_number
+                    states_to_process.append(new_state)
+                    states.append(new_state)
+                    tian_ji_model.set_state_name(new_state_number, new_state_string)
+
+                tian_ji_model.add_transition(current_state_number, new_state_number, {0: king_horse, 1: -1})
+        else:
+            tian_ji_horses = state['tian_ji_horses']
+            for j in range(0, len(tian_ji_horses)):
+                king_horse = state['king_decided']
+                tian_ji_horse = tian_ji_horses[j]
+                new_tian_ji_horses = tian_ji_horses[:]
+                new_tian_ji_horses.pop(j)
+                king_new_score = state['king_score']
+                tian_ji_new_score = state['tian_ji_score']
+                new_results = state['results'][:]
+                if king_horse >= tian_ji_horse:
+                    king_new_score += 1
+                    new_results[tian_ji_horse] = -1
+                else:
+                    tian_ji_new_score += 1
+                    new_results[tian_ji_horse] = 1
+
+                new_state = {'king_score': king_new_score, 'tian_ji_score': tian_ji_new_score,
+                             'king_horses': state['king_horses'], 'tian_ji_horses': new_tian_ji_horses,
+                             'results': new_results, 'king_decided': -1}
+
+                new_state_string = ' '.join(str(new_state[e]) for e in new_state)
+
+                new_state_number = -1
+                if new_state_string in states_dictionary:
+                    new_state_number = states_dictionary[new_state_string]
+                else:
+                    new_state_number = state_number
+                    state_number += 1
+                    states_dictionary[new_state_string] = new_state_number
+                    states_to_process.append(new_state)
+                    states.append(new_state)
+                    tian_ji_model.set_state_name(new_state_number, new_state_string)
+
+                tian_ji_model.add_transition(current_state_number, new_state_number, {0: king_horse, 1: tian_ji_horse})
+
+    for i in range(0, len(states)):
+        state_a_number = states_dictionary[' '.join(str(states[i][e]) for e in states[i])]
+        for j in range(i + 1, len(states)):
+            state_b_number = states_dictionary[' '.join(str(states[j][e]) for e in states[j])]
+            state_a = states[i]
+            state_b = states[j]
+            if state_a['king_score'] == state_b['king_score'] and state_a['tian_ji_score'] == state_b[
+                'tian_ji_score'] and state_a['tian_ji_horses'] == state_b['tian_ji_horses'] and state_a['results'] == \
+                    state_b['results'] and state_a['king_decided'] == state_b['king_decided']:
+                tian_ji_model.set_same_state(1, state_a_number, state_b_number)
+
+    return tian_ji_model
+
+
 def generate_tian_ji_model(number_of_horses):
     global states
     global states_dictionary
@@ -226,10 +317,10 @@ def generate_tian_ji_model(number_of_horses):
     return tian_ji_model
 
 
-number_of_horses = 2
+number_of_horses = 4
 
 start = time.clock()
-tian_ji_model = generate_tian_ji_model2(number_of_horses)
+tian_ji_model = generate_tian_ji_model_with_decision_divide(number_of_horses)
 end = time.clock()
 
 print('Generate Tian Ji model in', end - start, 's')
