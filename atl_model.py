@@ -94,9 +94,9 @@ class ATLModel:
         return state_b in self.imperfectInformation[agent_number][state_a]
 
     def set_same_state(self, agent_number, state_a, state_b):
-        if state_b not in self.imperfectInformation[agent_number][state_a]:
-            self.imperfectInformation[agent_number][state_a].append(state_b)
-            self.imperfectInformation[agent_number][state_b].append(state_a)
+        # if state_b not in self.imperfectInformation[agent_number][state_a]:
+        self.imperfectInformation[agent_number][state_a].append(state_b)
+        self.imperfectInformation[agent_number][state_b].append(state_a)
 
     def basic_formula(self, agent_number, winning_state):
         result_states = []
@@ -149,8 +149,10 @@ class ATLModel:
         for action in actions:
             actionOk = False
             for transition in self.transitions[fromState]:
+
                 if self.is_possible_transition(agents, action, transition):
                     actionOk = True
+
                     # print(self.stateDescriptions[transition['nextState']])
                     if transition['nextState'] not in toStates:
                         actionOk = False
@@ -167,6 +169,7 @@ class ATLModel:
             winning_states_reverse += self.reverseStates[winningState]
 
         unique(winning_states_reverse)
+        # print('Reverse', winning_states_reverse)
         # for state in winning_states_reverse:
         #     print('Reverse', self.stateNames[state])
         #
@@ -178,6 +181,7 @@ class ATLModel:
             ok = True
             # start = time.clock()
             sameStates = self.get_same_states_for_agents(agents, state)
+            # print('Same States', sameStates)
             # end = time.clock()
             # print('Basic Formula Multiple Agents And States, same states computed in', round(end - start, 3))
             # start = time.clock()
@@ -243,6 +247,9 @@ class ATLModel:
 
 
     def is_possible_transition(self, agents, action, transition):
+        # print('Agents', agents)
+        # print('Action', action)
+        # print('Transition', transition)
         # print(action, transition['actions'])
         # good_transition_actions = [transition['actions'][i] for i in agents]
         # print(action, good_transition_actions, list(action) == good_transition_actions)
