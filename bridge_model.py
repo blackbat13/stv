@@ -2,6 +2,7 @@ from atl_model import *
 import time
 import pickle
 import gc
+import resource
 
 __author__ = 'blackbat'
 
@@ -298,9 +299,10 @@ def write_bridge_model(a, b):
 #     bridge_model = pickle.load(input)
 # print("Ilość stanów ", len(bridge_model.states))
 
-bridge_model = generate_bridge_model(2, 1)
+bridge_model = generate_bridge_model(2, 2)
 # bridge_model = read_bridge_model(3)
 print("Ilość stanów ", len(bridge_model.states))
+print("Maksymalne zużycie pamięci ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
 winning_states = []
 i = -1
