@@ -60,7 +60,7 @@ def generate_bridge_model(no_cards_available, no_end_cards):
     #     bridge_model = pickle.load(input)
     # 1294936 dla (3,2)
     # bridge_model = ATLModel(3, 3445920)
-    bridge_model = ATLModel(4, 100000)
+    bridge_model = ATLModel(4, 1000000)
     print(bridge_model.numberOfAgents)
     print(bridge_model.numberOfStates)
     cards_available = []
@@ -102,6 +102,7 @@ def generate_bridge_model(no_cards_available, no_end_cards):
                     hands = [list(player1), list(player2), list(player3), list(player4)]
                     state = {'hands': hands, 'lefts': [0, 0, 0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
                              'beginning': 0, 'history': history}
+                    print(state)
                     states.append(state)
                     state_str = ' '.join(str(state[e]) for e in state)
                     states_dictionary[state_str] = state_number
@@ -153,7 +154,217 @@ def generate_bridge_model(no_cards_available, no_end_cards):
         elif state['next'] == -1:
             new_history = state['history'][:]
             for i in state['board']:
-                new_history.remove(i)
+                new_history.append(i)
+            beginning = state['beginning']
+            board = state['board']
+            card1 = board[beginning]
+            card2 = board[(beginning + 1) % 4]
+            card3 = board[(beginning + 2) % 4]
+            card4 = board[(beginning + 3) % 4]
+            winner = beginning
+            winning_card = card1
+            color = card1 % 10
+            if card2 % 10 == color and card2 > winning_card:
+                winning_card = card2
+                winner = (beginning + 1) % 4
+            if card3 % 10 == color and card3 > winning_card:
+                winning_card = card3
+                winner = (beginning + 2) % 4
+            if card4 % 10 == color and card4 > winning_card:
+                winning_card = card4
+                winner = (beginning + 3) % 4
+
+            new_lefts = state['lefts'][:]
+            new_lefts[winner] += 1
+            new_next = winner
+            new_beginning = winner
+            action = {0: -1, 1: -1, 2: -1, 3: -1}
+            new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
+                         'beginning': new_beginning, 'history': new_history}
+            new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+            new_state_number = 0
+            if new_state_str not in states_dictionary:
+                states_dictionary[new_state_str] = state_number
+                new_state_number = state_number
+                states.append(new_state)
+                state_number += 1
+            else:
+                new_state_number = states_dictionary[new_state_str]
+            bridge_model.add_transition(current_state_number, new_state_number, action)
+
+        else:
+            color = state['board'][state['beginning']] % 10
+            have_color = False
+            for card in state['hands'][state['next']]:
+                if (card % 10) == color:
+                    have_color = True
+                    break
+            for card in state['hands'][state['next']]:
+                if not ((not have_color) or (card % 10) == color):
+                    continue
+                new_board = state['board'][:]
+                new_board[state['next']] = card
+                new_next = (state['next'] + 1) % 4
+                new_hands = [[], [], [], []]
+                new_hands[0] = state['hands'][0][:]
+                new_hands[1] = state['hands'][1][:]
+                new_hands[2] = state['hands'][2][:]
+                new_hands[3] = state['hands'][3][:]
+                new_hands[state['next']].remove(card)
+                if new_next == state['beginning']:
+                    new_next = -1
+
+                new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                             'beginning': state['beginning'], 'history': state['history']}
+                agent_number = state['next']
+                if agent_number == 2:
+                    agent_number = 0
+                action = {0: -1, 1: -1, 2: -1, 3: -1}
+                action[agent_number] = card
+                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                new_state_number = 0
+                if new_state_str not in states_dictionary:
+                    states_dictionary[new_state_str] = state_number
+                    new_state_number = state_number
+                    states.append(new_state)
+                    state_number += 1
+                else:
+                    new_state_number = states_dictionary[new_state_str]
+                bridge_model.add_transition(current_state_number, new_state_number, action)
+
+    end = time.clock()
+    # gc.enable()
+    print("Created rest of model in", end - start, "s")
+
+    print("Created model have", len(states), "states")
+    # print("Created model have", trans, "transitions")
+
+    # with open('state_array_3_2.pkl', 'wb') as output:
+    #     pickle.dump(states, output, pickle.HIGHEST_PROTOCOL)
+    #
+    # with open('state_dictionary_3_2.pkl', 'wb') as output:
+    #     pickle.dump(states_dictionary, output, pickle.HIGHEST_PROTOCOL)
+
+    # with open('transitions_array_3_2.pkl', 'wb') as output:
+    #     pickle.dump(transitions, output, pickle.HIGHEST_PROTOCOL)
+
+    print("Begin defining indistuiginshable relation")
+    gc.disable()
+    start = time.clock()
+    bridge_model.states = states
+    # same_relation = [[] for i in itertools.repeat(None, len(states))]
+    for i in range(0, len(states)):
+        for j in range(i + 1, len(states)):
+            state_a = states[i]
+            state_b = states[j]
+            if len(state_a['hands'][0]) != len(state_b['hands'][0]):
+                break
+            if state_a['hands'][0] == state_b['hands'][0] and state_a['hands'][2] == state_b['hands'][2] and state_a[
+                'lefts'] == state_b['lefts'] and state_a['board'] == state_b['board'] and state_a['beginning'] == \
+                    state_b['beginning'] and state_a['next'] == state_b['next'] and state_a['history'] == state_b['history']:
+                bridge_model.set_same_state(0, i, j)
+                # same_relation[i].append(j)
+                # same_relation[j].append(i)
+    end = time.clock()
+    gc.enable()
+    print("Created indistuiginshable relation in", end - start, "s")
+    # with open('same_array_3_2.pkl', 'wb') as output:
+    #     pickle.dump(same_relation, output, pickle.HIGHEST_PROTOCOL)
+
+    return bridge_model
+
+
+def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_state):
+    # with open('atl_3_1294940.pkl', 'rb') as input:
+    #     bridge_model = pickle.load(input)
+    # 1294936 dla (3,2)
+    # bridge_model = ATLModel(3, 3445920)
+    bridge_model = ATLModel(4, 100000)
+    print(bridge_model.numberOfAgents)
+    print(bridge_model.numberOfStates)
+    cards_available = []
+    card_number = 14
+    for i in range(0, no_cards_available):
+        for c in range(1, 5):
+            cards_available.append(card_number * 10 + (5 - c))
+            bridge_model.add_action(1, card_number * 10 + (5 - c))
+            bridge_model.add_action(2, card_number * 10 + (5 - c))
+        card_number -= 1
+    pr = []
+    pr.append(cards_available[:])
+    pr.append(cards_available[:])
+    for card in cards_available:
+        bridge_model.add_action(0, card)
+    bridge_model.add_action(0, -1)
+    states = []
+    states_dictionary = {}
+    state_number = 0
+    print("Start creating beginning epistemic class states of model")
+    # gc.disable()
+    enemy_hands = first_state['hands'][1][:] + first_state['hands'][3][:]
+    start = time.clock()
+    for player2 in itertools.combinations(enemy_hands, no_end_cards):
+        player4 = enemy_hands[:]
+        for i in player2:
+            player4.remove(i)
+        new_hands = first_state['hands'][:]
+        new_hands[1] = list(player2)
+        new_hands[3] = list(player4)
+        state = {'hands': new_hands, 'lefts': [0, 0, 0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
+                             'beginning': 0, 'history': first_state['history']}
+        states.append(state)
+        state_str = ' '.join(str(state[e]) for e in state)
+        states_dictionary[state_str] = state_number
+        state_number += 1
+
+    end = time.clock()
+    # gc.enable()
+    # gc.collect()
+    print("Created beginning states of model in", end - start, "s")
+    print("Number of beginning states of model:", len(states))
+
+    print("Start creating rest of model")
+    # gc.disable()
+    # transitions = []
+    trans = 0
+    start = time.clock()
+    current_state_number = -1
+    for state in states:
+        current_state_number += 1
+        if state['next'] == state['beginning']:
+            if len(state['hands'][state['next']]) == 0:
+                break
+            for card in state['hands'][state['next']]:
+                new_board = state['board'][:]
+                new_board[state['next']] = card
+                new_next = (state['next'] + 1) % 4
+                new_hands = [[], [], [], []]
+                new_hands[0] = state['hands'][0][:]
+                new_hands[1] = state['hands'][1][:]
+                new_hands[2] = state['hands'][2][:]
+                new_hands[3] = state['hands'][3][:]
+                new_hands[state['next']].remove(card)
+                new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                             'beginning': state['beginning'], 'history': state['history']}
+                agent_number = state['next']
+                if agent_number == 2:
+                    agent_number = 0
+                action = {0: -1, 1: -1, 2: -1, 3: -1}
+                action[agent_number] = card
+                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                new_state_number = 0
+                if new_state_str not in states_dictionary:
+                    states_dictionary[new_state_str] = state_number
+                    new_state_number = state_number
+                    states.append(new_state)
+                    state_number += 1
+                else:
+                    new_state_number = states_dictionary[new_state_str]
+                bridge_model.add_transition(current_state_number, new_state_number, action)
+        elif state['next'] == -1:
+            new_history = state['history'][:]
+            for i in state['board']:
+                new_history.append(i)
             beginning = state['beginning']
             board = state['board']
             card1 = board[beginning]
@@ -305,7 +516,8 @@ def write_bridge_model(a, b):
 #     bridge_model = pickle.load(input)
 # print("Ilość stanów ", len(bridge_model.states))
 
-bridge_model = generate_bridge_model(2, 2)
+# bridge_model = generate_bridge_model(2, 2)
+bridge_model = generate_bridge_model_for_epistemic(2, 2, {'board': [-1, -1, -1, -1], 'lefts': [0, 0, 0, 0], 'hands': [[144, 132], [133, 142], [134, 131], [143, 141]], 'next': 0, 'history': [], 'beginning': 0})
 # bridge_model = read_bridge_model(3)
 print("Ilość stanów ", len(bridge_model.states))
 print("Maksymalne zużycie pamięci ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
@@ -314,7 +526,7 @@ winning_states = []
 i = -1
 for state in bridge_model.states:
     i += 1
-    if len(state['hands'][0]) == 0 and state['lefts'][0] >= 1:
+    if len(state['hands'][0]) == 0 and state['lefts'][0] == 2:
         winning_states.append(i)
 
 start = time.clock()
@@ -323,4 +535,5 @@ end = time.clock()
 print("Time:", end - start, "s")
 print("Ilość spełniających stanów ", len(wynik))
 for state_nr in wynik:
-    print(bridge_model.states[state_nr])
+    if len(bridge_model.states[state_nr]['history']) == 0:
+        print(bridge_model.states[state_nr])
