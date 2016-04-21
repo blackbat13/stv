@@ -84,6 +84,9 @@ def generate_bridge_model(no_cards_available, no_end_cards):
     # gc.disable()
     start = time.clock()
     for combination in itertools.combinations(cards_available, no_end_cards * 4):
+        history = list(cards_available)
+        for i in combination:
+            history.remove(i)
         for player1 in itertools.combinations(combination, no_end_cards):
             combination2 = list(combination)
             for i in player1:
@@ -98,7 +101,7 @@ def generate_bridge_model(no_cards_available, no_end_cards):
                         player4.remove(i)
                     hands = [list(player1), list(player2), list(player3), list(player4)]
                     state = {'hands': hands, 'lefts': [0, 0, 0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
-                             'beginning': 0}
+                             'beginning': 0, 'history': history}
                     states.append(state)
                     state_str = ' '.join(str(state[e]) for e in state)
                     states_dictionary[state_str] = state_number
@@ -131,7 +134,7 @@ def generate_bridge_model(no_cards_available, no_end_cards):
                 new_hands[3] = state['hands'][3][:]
                 new_hands[state['next']].remove(card)
                 new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
-                             'beginning': state['beginning']}
+                             'beginning': state['beginning'], 'history': state['history']}
                 agent_number = state['next']
                 if agent_number == 2:
                     agent_number = 0
@@ -148,6 +151,9 @@ def generate_bridge_model(no_cards_available, no_end_cards):
                     new_state_number = states_dictionary[new_state_str]
                 bridge_model.add_transition(current_state_number, new_state_number, action)
         elif state['next'] == -1:
+            new_history = state['history'][:]
+            for i in state['board']:
+                new_history.remove(i)
             beginning = state['beginning']
             board = state['board']
             card1 = board[beginning]
@@ -173,7 +179,7 @@ def generate_bridge_model(no_cards_available, no_end_cards):
             new_beginning = winner
             action = {0: -1, 1: -1, 2: -1, 3: -1}
             new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
-                         'beginning': new_beginning}
+                         'beginning': new_beginning, 'history': new_history}
             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
             new_state_number = 0
             if new_state_str not in states_dictionary:
@@ -208,7 +214,7 @@ def generate_bridge_model(no_cards_available, no_end_cards):
                     new_next = -1
 
                 new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
-                             'beginning': state['beginning']}
+                             'beginning': state['beginning'], 'history': state['history']}
                 agent_number = state['next']
                 if agent_number == 2:
                     agent_number = 0
@@ -254,7 +260,7 @@ def generate_bridge_model(no_cards_available, no_end_cards):
                 break
             if state_a['hands'][0] == state_b['hands'][0] and state_a['hands'][2] == state_b['hands'][2] and state_a[
                 'lefts'] == state_b['lefts'] and state_a['board'] == state_b['board'] and state_a['beginning'] == \
-                    state_b['beginning'] and state_a['next'] == state_b['next']:
+                    state_b['beginning'] and state_a['next'] == state_b['next'] and state_a['history'] == state_b['history']:
                 bridge_model.set_same_state(0, i, j)
                 # same_relation[i].append(j)
                 # same_relation[j].append(i)
