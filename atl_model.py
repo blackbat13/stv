@@ -259,6 +259,21 @@ class ATLModel:
                 # resultStates.add(state)
         return result_states
 
+    def basic_formula_one_agent_multiple_states_perfect_information(self, agent, winning_states):
+        result_states = set()
+        actions = self.agentsActions[agent]
+        winning_states_reverse = []
+        for winning_state in winning_states:
+            winning_states_reverse += self.reverseStates[winning_state]
+
+        unique(winning_states_reverse)
+
+        for state in winning_states_reverse:
+            if self.is_reachable_by_agent(actions, state, winning_states, agent):
+                result_states.update(state)
+
+        return result_states
+
     def minimum_formula_multiple_agents_and_states(self, agents, winning_states):
         resultStates = set()
         resultStates.update(winning_states)
@@ -282,6 +297,28 @@ class ATLModel:
         return resultStates
 
     def minimum_formula_one_agent_multiple_states(self, agent, winningStates):
+        resultStates = set()
+        resultStates.update(winningStates)
+        resultStatesLength = len(resultStates)
+        number_of_iterations = 0
+        while True:
+            # for state in winningStates:
+            #     print(self.stateNames[state])
+
+            # print()
+            resultStates.update(self.basic_formula_one_agent_multiple_states(agent, winningStates))
+            winningStates = list(resultStates)
+            if resultStatesLength == len(resultStates):
+                break
+
+            resultStatesLength = len(resultStates)
+            number_of_iterations += 1
+
+
+        print('Minimum formula iterations:', number_of_iterations)
+        return resultStates
+
+    def minimum_formula_one_agent_multiple_states_perfect_information(self, agent, winningStates):
         resultStates = set()
         resultStates.update(winningStates)
         resultStatesLength = len(resultStates)

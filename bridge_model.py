@@ -565,14 +565,14 @@ def write_bridge_model(a, b):
 #                                                                     [143, 141]], 'next': 0, 'history': [],
 #                                                           'beginning': 0})
 
-# bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[144, 141, 143], [133, 142, 122], [134, 131, 123],
-#                                                                     [121, 132, 124]], 'next': 0, 'history': [],
-#                                                           'beginning': 0})
-bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                                          'hands': [[144, 132, 121, 111], [133, 142, 122, 112], [134, 131, 123, 113],
-                                                                    [143, 141, 124, 114]], 'next': 0, 'history': [],
+bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                          'hands': [[144, 141, 143], [133, 142, 122], [134, 131, 123],
+                                                                    [121, 132, 124]], 'next': 0, 'history': [],
                                                           'beginning': 0})
+# bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+#                                                           'hands': [[144, 132, 121, 111], [133, 142, 122, 112], [134, 131, 123, 113],
+#                                                                     [143, 141, 124, 114]], 'next': 0, 'history': [],
+#                                                           'beginning': 0})
 # bridge_model = read_bridge_model(3)
 print("Ilość stanów ", len(bridge_model.states))
 print("Maksymalne zużycie pamięci ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
@@ -581,7 +581,7 @@ winning_states = []
 i = -1
 for state in bridge_model.states:
     i += 1
-    if len(state['hands'][0]) == 0 and state['lefts'][0] == 4:
+    if len(state['hands'][0]) == 0 and state['lefts'][0] == 3:
         winning_states.append(i)
 
 start = time.clock()
@@ -593,5 +593,12 @@ for state_nr in wynik:
     if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1, -1]:
         print(bridge_model.states[state_nr])
 
-
-        # TODO: model checking z pełną informacją
+print("Model checking perfect information")
+start = time.clock()
+wynik = bridge_model.minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
+end = time.clock()
+print("Time:", end - start, "s")
+print("Ilość spełniających stanów ", len(wynik))
+for state_nr in wynik:
+    if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1, -1]:
+        print(bridge_model.states[state_nr])
