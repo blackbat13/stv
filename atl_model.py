@@ -161,6 +161,22 @@ class ATLModel:
                 return True
         return False
 
+    def is_reachable_by_agent(self, actions, fromState, toStates, agent):
+        for action in actions:
+            actionOk = False
+            for transition in self.transitions[fromState]:
+
+                if transition['actions'][0] == action:
+                    actionOk = True
+
+                    # print(self.stateDescriptions[transition['nextState']])
+                    if transition['nextState'] not in toStates:
+                        actionOk = False
+                        break
+            if actionOk:
+                return True
+        return False
+
     def basic_formula_multiple_agents_and_states(self, agents, winningStates):
         resultStates = set()
         actions = self.create_agents_actions_combinations(agents)
@@ -202,7 +218,70 @@ class ATLModel:
                 # resultStates.add(state)
         return resultStates
 
-    def minimum_formula_multiple_agents_and_states(self, agents, winningStates):
+    def basic_formula_one_agent_multiple_states(self, agent, winning_states):
+        result_states = set()
+        actions = self.agentsActions[agent]
+        winning_states_reverse = []
+        for winning_state in winning_states:
+            winning_states_reverse += self.reverseStates[winning_state]
+
+        unique(winning_states_reverse)
+        # print('Reverse', winning_states_reverse)
+        # for state in winning_states_reverse:
+        #     print('Reverse', self.stateNames[state])
+        #
+        # print()
+
+        for state in winning_states_reverse:
+            # print('Reverse', self.stateNames[state])
+            # print(self.stateDescriptions[state])
+            ok = True
+            # start = time.clock()
+            same_states = self.imperfectInformation[agent][state]
+            # print('Same States', sameStates)
+            # end = time.clock()
+            # print('Basic Formula Multiple Agents And States, same states computed in', round(end - start, 3))
+            # start = time.clock()
+            winning_states_reverse_same = [state]
+
+            for same_state in same_states:
+                # print('Same', self.stateNames[sameState])
+                if ok and not self.is_reachable_by_agent(actions, same_state, winning_states, agent):
+                    ok = False
+                    # break
+                if same_state != state and same_state in winning_states_reverse:
+                    winning_states_reverse.remove(same_state)
+                    winning_states_reverse_same.append(same_state)
+            # end = time.clock()
+            # print('Basic Formula Multiple Agents And States, most inner for computed in', round(end - start, 3))
+            if ok:
+                result_states.update(winning_states_reverse_same)
+                # resultStates.add(state)
+        return result_states
+
+    def minimum_formula_multiple_agents_and_states(self, agents, winning_states):
+        resultStates = set()
+        resultStates.update(winning_states)
+        resultStatesLength = len(resultStates)
+        number_of_iterations = 0
+        while True:
+            # for state in winningStates:
+            #     print(self.stateNames[state])
+
+            # print()
+            resultStates.update(self.basic_formula_multiple_agents_and_states(agents, winning_states))
+            winning_states = list(resultStates)
+            if resultStatesLength == len(resultStates):
+                break
+
+            resultStatesLength = len(resultStates)
+            number_of_iterations += 1
+
+
+        print('Minimum formula iterations:', number_of_iterations)
+        return resultStates
+
+    def minimum_formula_one_agent_multiple_states(self, agent, winningStates):
         resultStates = set()
         resultStates.update(winningStates)
         resultStatesLength = len(resultStates)
@@ -212,7 +291,7 @@ class ATLModel:
             #     print(self.stateNames[state])
 
             # print()
-            resultStates.update(self.basic_formula_multiple_agents_and_states(agents, winningStates))
+            resultStates.update(self.basic_formula_one_agent_multiple_states(agent, winningStates))
             winningStates = list(resultStates)
             if resultStatesLength == len(resultStates):
                 break

@@ -261,7 +261,8 @@ def generate_bridge_model(no_cards_available, no_end_cards):
                 break
             if state_a['hands'][0] == state_b['hands'][0] and state_a['hands'][2] == state_b['hands'][2] and state_a[
                 'lefts'] == state_b['lefts'] and state_a['board'] == state_b['board'] and state_a['beginning'] == \
-                    state_b['beginning'] and state_a['next'] == state_b['next'] and state_a['history'] == state_b['history']:
+                    state_b['beginning'] and state_a['next'] == state_b['next'] and state_a['history'] == state_b[
+                'history']:
                 bridge_model.set_same_state(0, i, j)
                 # same_relation[i].append(j)
                 # same_relation[j].append(i)
@@ -279,7 +280,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     #     bridge_model = pickle.load(input)
     # 1294936 dla (3,2)
     # bridge_model = ATLModel(3, 3445920)
-    bridge_model = ATLModel(4, 100000)
+    bridge_model = ATLModel(4, 4000000)
     print(bridge_model.numberOfAgents)
     print(bridge_model.numberOfStates)
     cards_available = []
@@ -310,8 +311,8 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
         new_hands = first_state['hands'][:]
         new_hands[1] = list(player2)
         new_hands[3] = list(player4)
-        state = {'hands': new_hands, 'lefts': [0, 0, 0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
-                             'beginning': 0, 'history': first_state['history']}
+        state = {'hands': new_hands, 'lefts': [0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
+                 'beginning': 0, 'history': first_state['history']}
         states.append(state)
         state_str = ' '.join(str(state[e]) for e in state)
         states_dictionary[state_str] = state_number
@@ -385,7 +386,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 winner = (beginning + 3) % 4
 
             new_lefts = state['lefts'][:]
-            new_lefts[winner] += 1
+            new_lefts[winner%2] += 1
             new_next = winner
             new_beginning = winner
             action = {0: -1, 1: -1, 2: -1, 3: -1}
@@ -462,19 +463,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     gc.disable()
     start = time.clock()
     bridge_model.states = states
-    # same_relation = [[] for i in itertools.repeat(None, len(states))]
-    for i in range(0, len(states)):
-        for j in range(i + 1, len(states)):
-            state_a = states[i]
-            state_b = states[j]
-            if len(state_a['hands'][0]) != len(state_b['hands'][0]):
-                break
-            if state_a['hands'][0] == state_b['hands'][0] and state_a['hands'][2] == state_b['hands'][2] and state_a[
-                'lefts'] == state_b['lefts'] and state_a['board'] == state_b['board'] and state_a['beginning'] == \
-                    state_b['beginning'] and state_a['next'] == state_b['next'] and state_a['history'] == state_b['history']:
-                bridge_model.set_same_state(0, i, j)
-                # same_relation[i].append(j)
-                # same_relation[j].append(i)
+    prepare_epistemic_relation(bridge_model, states_dictionary)
     end = time.clock()
     gc.enable()
     print("Created indistuiginshable relation in", end - start, "s")
@@ -482,6 +471,59 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     #     pickle.dump(same_relation, output, pickle.HIGHEST_PROTOCOL)
 
     return bridge_model
+
+
+def prepare_epistemic_relation(bridge_model, states_dictionary):
+    states = bridge_model.states
+    visited_states = [0 for i in itertools.repeat(None, len(states))]
+    for i in range(0, len(states)):
+        if visited_states[i] == 1:
+            continue
+        epistemic_class = prepare_epistemic_class_fo_state(states[i])
+        for x in range(0, len(epistemic_class)):
+            state_a = epistemic_class[x]
+            state_a_string = ' '.join(str(state_a[e]) for e in state_a)
+            if state_a_string not in states_dictionary:
+                    continue
+            state_a_number = states_dictionary[state_a_string]
+            visited_states[state_a_number] = 1
+            for y in range(x + 1, len(epistemic_class)):
+                state_b = epistemic_class[y]
+                state_b_string = ' '.join(str(state_b[e]) for e in state_b)
+                # print(state_a_string)
+                # print(state_b_string)
+                if state_b_string not in states_dictionary:
+                    continue
+                state_b_number = states_dictionary[state_b_string]
+                bridge_model.set_same_state(0, state_a_number, state_b_number)
+
+    # for i in range(0, len(states)):
+    #     for j in range(i + 1, len(states)):
+    #         state_a = states[i]
+    #         state_b = states[j]
+    #         if len(state_a['hands'][0]) != len(state_b['hands'][0]):
+    #             break
+    #         if state_a['hands'][0] == state_b['hands'][0] and state_a['hands'][2] == state_b['hands'][2] and state_a[
+    #             'lefts'] == state_b['lefts'] and state_a['board'] == state_b['board'] and state_a['beginning'] == \
+    #                 state_b['beginning'] and state_a['next'] == state_b['next'] and state_a['history'] == state_b[
+    #             'history']:
+    #             bridge_model.set_same_state(0, i, j)
+
+
+def prepare_epistemic_class_fo_state(state):
+    no_cards_player_2 = len(state['hands'][1])
+    cards = state['hands'][1] + state['hands'][3]
+    # print(cards)
+    epistemic_class = [state]
+    for player_2_cards in itertools.combinations(cards, no_cards_player_2):
+        player_4_cards = cards[:]
+        for card in player_2_cards:
+            player_4_cards.remove(card)
+        new_hands = [state['hands'][0], list(player_2_cards), state['hands'][2], list(player_4_cards)]
+        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': state['next'], 'board': state['board'],
+                     'beginning': state['beginning'], 'history': state['history']}
+        epistemic_class.append(new_state)
+    return epistemic_class
 
 
 def write_empty_atl_model(size):
@@ -517,7 +559,20 @@ def write_bridge_model(a, b):
 # print("Ilość stanów ", len(bridge_model.states))
 
 # bridge_model = generate_bridge_model(2, 2)
-bridge_model = generate_bridge_model_for_epistemic(2, 2, {'board': [-1, -1, -1, -1], 'lefts': [0, 0, 0, 0], 'hands': [[144, 132], [133, 142], [134, 131], [143, 141]], 'next': 0, 'history': [], 'beginning': 0})
+
+# bridge_model = generate_bridge_model_for_epistemic(2, 2, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+#                                                           'hands': [[144, 132], [133, 142], [134, 131],
+#                                                                     [143, 141]], 'next': 0, 'history': [],
+#                                                           'beginning': 0})
+
+# bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+#                                                           'hands': [[144, 141, 143], [133, 142, 122], [134, 131, 123],
+#                                                                     [121, 132, 124]], 'next': 0, 'history': [],
+#                                                           'beginning': 0})
+bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                          'hands': [[144, 132, 121, 111], [133, 142, 122, 112], [134, 131, 123, 113],
+                                                                    [143, 141, 124, 114]], 'next': 0, 'history': [],
+                                                          'beginning': 0})
 # bridge_model = read_bridge_model(3)
 print("Ilość stanów ", len(bridge_model.states))
 print("Maksymalne zużycie pamięci ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
@@ -526,14 +581,17 @@ winning_states = []
 i = -1
 for state in bridge_model.states:
     i += 1
-    if len(state['hands'][0]) == 0 and state['lefts'][0] == 2:
+    if len(state['hands'][0]) == 0 and state['lefts'][0] == 4:
         winning_states.append(i)
 
 start = time.clock()
-wynik = bridge_model.minimum_formula_multiple_agents_and_states([0], winning_states)
+wynik = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states)
 end = time.clock()
 print("Time:", end - start, "s")
 print("Ilość spełniających stanów ", len(wynik))
 for state_nr in wynik:
-    if len(bridge_model.states[state_nr]['history']) == 0:
+    if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1, -1]:
         print(bridge_model.states[state_nr])
+
+
+        # TODO: model checking z pełną informacją
