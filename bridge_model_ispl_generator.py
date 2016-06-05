@@ -49,6 +49,8 @@ class BridgeModelIsplGenerator:
         for player_name in self.player_names:
             self.ispl_model += self.__create_player(player_name)
 
+        self.ispl_model += self.__create_evaluation()
+        self.ispl_model += self.__create_groups()
         return self.ispl_model
 
     def __create_environment(self):
@@ -191,6 +193,19 @@ class BridgeModelIsplGenerator:
 
         evolution += "\tend Evolution\n"
         return evolution
+
+    def __create_evaluation(self):
+        evaulation = "Evaluation\n"
+        evaulation += "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=1;\n"
+        evaulation += "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=1;\n"
+        evaulation += "end Evaulation\n\n"
+        return evaulation
+
+    def __create_groups(self):
+        groups = "Groups\n"
+        groups += "\tg1={FirstPlayer, ThirdPlayer};\n"
+        groups += "end Groups\n\n"
+        return groups
 
 
 bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2)
