@@ -212,7 +212,7 @@ class BridgeModelIsplGenerator:
 
     def __create_player(self, player_name):
         player = "Agent " + player_name + "\n"
-        # if player_name != "SecondPlayer":
+        # if player_name != "ThirdPlayer":
         #     player += self.__create_player_lobsvars()
 
         player += self.__create_player_vars()
@@ -225,7 +225,7 @@ class BridgeModelIsplGenerator:
     def __create_player_lobsvars(self):
         lobsvars = "\tLobsvars = {"
         for i in range(1, self.number_of_cards_in_hand + 1):
-            lobsvars += "SecondPlayer.card" + str(i)
+            lobsvars += "ThirdPlayer.card" + str(i)
             if i != self.number_of_cards_in_hand:
                 lobsvars += ", "
 
@@ -274,8 +274,8 @@ class BridgeModelIsplGenerator:
 
     def __create_evaluation(self):
         evaulation = "Evaluation\n"
-        evaulation += "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=1;\n"
-        evaulation += "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=1;\n"
+        evaulation += "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=" + str(self.number_of_cards_in_hand) +";\n"
+        evaulation += "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=" + str(self.number_of_cards_in_hand) +";\n"
         evaulation += "end Evaluation\n\n"
         return evaulation
 
@@ -321,7 +321,7 @@ def generate_random_array(length):
 
     return array
 
-bridge_model_ispl_generator = BridgeModelIsplGenerator(4, 4, generate_random_array(16))
+bridge_model_ispl_generator = BridgeModelIsplGenerator(1, 1, generate_random_array(4))
 f = open("output", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
 f.close()
