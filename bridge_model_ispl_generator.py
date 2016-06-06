@@ -1,4 +1,5 @@
 import itertools
+import random
 
 
 class BridgeModelIsplGenerator:
@@ -11,9 +12,10 @@ class BridgeModelIsplGenerator:
     cards_values = {}
     cards_colors = {}
 
-    def __init__(self, number_of_cards, number_of_cards_in_hand):
+    def __init__(self, number_of_cards, number_of_cards_in_hand, card_ordering):
         self.number_of_cards = number_of_cards
         self.number_of_cards_in_hand = number_of_cards_in_hand
+        self.card_ordering = card_ordering
         self.__create_cards_array()
         self.__create_available_cards_array()
         self.__assign_cards_values()
@@ -50,11 +52,13 @@ class BridgeModelIsplGenerator:
             self.ispl_model += self.__create_player(player_name)
 
         self.ispl_model += self.__create_evaluation()
+        self.ispl_model += self.__create_init_states()
         self.ispl_model += self.__create_groups()
+        self.ispl_model += self.__create_formulae()
         return self.ispl_model
 
     def __create_environment(self):
-        environment = "Agent Environment:\n"
+        environment = "Agent Environment\n"
         environment += self.__create_environment_obsvars()
         environment += self.__create_environment_actions()
         environment += self.__create_environment_protocol()
@@ -203,18 +207,30 @@ class BridgeModelIsplGenerator:
 
         evolution += ";\n"
 
-        evolution += ");\n"
         evolution += "\tend Evolution\n"
         return evolution
 
     def __create_player(self, player_name):
         player = "Agent " + player_name + "\n"
+        # if player_name != "SecondPlayer":
+        #     player += self.__create_player_lobsvars()
+
         player += self.__create_player_vars()
         player += self.__create_player_actions()
         player += self.__create_player_protocol()
         player += self.__create_player_evolution()
         player += "end Agent\n\n"
         return player
+
+    def __create_player_lobsvars(self):
+        lobsvars = "\tLobsvars = {"
+        for i in range(1, self.number_of_cards_in_hand + 1):
+            lobsvars += "SecondPlayer.card" + str(i)
+            if i != self.number_of_cards_in_hand:
+                lobsvars += ", "
+
+        lobsvars += "};\n"
+        return lobsvars
 
     def __create_player_vars(self):
         vars = "\tVars:\n"
@@ -251,7 +267,7 @@ class BridgeModelIsplGenerator:
         for i in range(1, self.number_of_cards_in_hand + 1):
             for j in range(0, 4 * self.number_of_cards):
                 evolution += "\t\tcard" + str(i) + "=None if card" + str(i)
-                evolution += "=" + self.cards[j] + " And Action=Play" + self.cards[j] + ";\n"
+                evolution += "=" + self.cards[j] + " and Action=Play" + self.cards[j] + ";\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -260,8 +276,20 @@ class BridgeModelIsplGenerator:
         evaulation = "Evaluation\n"
         evaulation += "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=1;\n"
         evaulation += "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=1;\n"
-        evaulation += "end Evaulation\n\n"
+        evaulation += "end Evaluation\n\n"
         return evaulation
+
+    def __create_init_states(self):
+        init_states = "InitStates\n"
+        init_states += "\tEnvironment.firstTeamScore=0 and Environment.secondTeamScore=0 and Environment.beginningPlayer=0"
+        i = 0
+        for player in self.player_names:
+            for j in range(1, self.number_of_cards_in_hand+1):
+                init_states += " and " + player + ".card" + str(j) + "=" + self.cards[i]
+                i += 1
+
+        init_states += ";\nend InitStates\n\n"
+        return init_states
 
     def __create_groups(self):
         groups = "Groups\n"
@@ -269,6 +297,31 @@ class BridgeModelIsplGenerator:
         groups += "end Groups\n\n"
         return groups
 
+    def __create_formulae(self):
+        formulae = "Formulae\n"
+        formulae += "\t<g1>F FirstTeamWin;\n"
+        formulae += "\t<g1>G FirstTeamWin;\n"
+        formulae += "end Formulae\n\n"
+        return formulae
 
-bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2)
-print(bridge_model_ispl_generator.create_ispl_model())
+
+def generate_random_array(length):
+    array = []
+    used = []
+    for i in range(0, length):
+        used.append(False)
+
+    for i in range(0, length):
+        number = random.randrange(length)
+        while used[number]:
+            number = random.randrange(length)
+
+        array.append(number)
+        used[number] = True
+
+    return array
+
+bridge_model_ispl_generator = BridgeModelIsplGenerator(4, 4, generate_random_array(16))
+f = open("output", "w")
+f.write(bridge_model_ispl_generator.create_ispl_model())
+f.close()
