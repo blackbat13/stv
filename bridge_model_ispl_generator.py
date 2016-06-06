@@ -285,7 +285,7 @@ class BridgeModelIsplGenerator:
         i = 0
         for player in self.player_names:
             for j in range(1, self.number_of_cards_in_hand+1):
-                init_states += " and " + player + ".card" + str(j) + "=" + self.cards[i]
+                init_states += " and " + player + ".card" + str(j) + "=" + self.cards[self.card_ordering[i]]
                 i += 1
 
         init_states += ";\nend InitStates\n\n"
@@ -322,6 +322,7 @@ def generate_random_array(length):
     return array
 
 bridge_model_ispl_generator = BridgeModelIsplGenerator(1, 1, generate_random_array(4))
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(4, 4, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
 f = open("output", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
 f.close()
