@@ -80,7 +80,8 @@ class BridgeModelIsplGenerator:
 
     def __create_environment_evolution(self):
         evolution = "\tEvolution:\n"
-        evolution += "\tfirstTeamScore=firstTeamScore+1 if\n"
+
+        evolution += "\tfirstTeamScore=firstTeamScore+1 and beginningPlayer=0 if\n"
         add_or = False
 
         for combination in itertools.combinations(self.available_cards, 4):
@@ -94,7 +95,7 @@ class BridgeModelIsplGenerator:
                         if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
                             winning_player_number = i
 
-                if winning_player_number == 1 or winning_player_number == 3:
+                if not (winning_player_number == 0):
                     continue
 
                 if add_or:
@@ -110,7 +111,37 @@ class BridgeModelIsplGenerator:
 
         evolution += ";\n"
 
-        evolution += "\tsecondTeamScore=secondTeamScore+1 if\n"
+        evolution += "\tfirstTeamScore=firstTeamScore+1 and beginningPlayer=2 if\n"
+        add_or = False
+
+        for combination in itertools.combinations(self.available_cards, 4):
+            for beginning_player in range(0, 4):
+                winning_player_number = beginning_player
+                for i in range(0, 4):
+                    if i == beginning_player:
+                        continue
+
+                    if self.cards_colors[combination[i]] == self.cards_colors[combination[winning_player_number]]:
+                        if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
+                            winning_player_number = i
+
+                if not (winning_player_number == 2):
+                    continue
+
+                if add_or:
+                    evolution += " or\n"
+                else:
+                    add_or = True
+
+                evolution += "\t\t("
+                for player in range(0, 4):
+                    evolution += self.player_names[player] + ".Action=Play" + combination[player] + " and "
+
+                evolution += "beginningPlayer=" + str(beginning_player) + ")"
+
+        evolution += ";\n"
+
+        evolution += "\tsecondTeamScore=secondTeamScore+1 and beginningPlayer=1 if\n"
 
         add_or = False
 
@@ -125,7 +156,38 @@ class BridgeModelIsplGenerator:
                         if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
                             winning_player_number = i
 
-                if winning_player_number == 0 or winning_player_number == 2:
+                if not (winning_player_number == 1):
+                    continue
+
+                if add_or:
+                    evolution += " or\n"
+                else:
+                    add_or = True
+
+                evolution += "\t\t("
+                for player in range(0, 4):
+                    evolution += self.player_names[player] + ".Action=Play" + combination[player] + " and "
+
+                evolution += "beginningPlayer=" + str(beginning_player) + ")"
+
+        evolution += ";\n"
+
+        evolution += "\tsecondTeamScore=secondTeamScore+1 and beginningPlayer=3 if\n"
+
+        add_or = False
+
+        for combination in itertools.combinations(self.available_cards, 4):
+            for beginning_player in range(0, 4):
+                winning_player_number = beginning_player
+                for i in range(0, 4):
+                    if i == beginning_player:
+                        continue
+
+                    if self.cards_colors[combination[i]] == self.cards_colors[combination[winning_player_number]]:
+                        if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
+                            winning_player_number = i
+
+                if not (winning_player_number == 3):
                     continue
 
                 if add_or:
