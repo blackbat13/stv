@@ -3,7 +3,7 @@ import random
 
 
 class BridgeModelIsplGenerator:
-    card_names = ["As", "Krol", "Dama", "Walet", "10", "9", "8", "7", "6", "5", "4", "3", "2"]
+    card_names = ["As", "Krol", "Dama", "Walet", "ten", "nine", "eight", "seven", "six", "five", "four", "three", "two"]
     card_colors = ["Pik", "Trefl", "Kier", "Karo"]
     player_names = ["FirstPlayer", "SecondPlayer", "ThirdPlayer", "FourthPlayer"]
     ispl_model = ""
@@ -88,7 +88,7 @@ class BridgeModelIsplGenerator:
         evolution += "\tfirstTeamScore=firstTeamScore+1 and beginningPlayer=0 if\n"
         add_or = False
 
-        for combination in itertools.combinations(self.available_cards, 4):
+        for combination in itertools.permutations(self.available_cards, 4):
             for beginning_player in range(0, 4):
                 winning_player_number = beginning_player
                 for i in range(0, 4):
@@ -118,7 +118,7 @@ class BridgeModelIsplGenerator:
         evolution += "\tfirstTeamScore=firstTeamScore+1 and beginningPlayer=2 if\n"
         add_or = False
 
-        for combination in itertools.combinations(self.available_cards, 4):
+        for combination in itertools.permutations(self.available_cards, 4):
             for beginning_player in range(0, 4):
                 winning_player_number = beginning_player
                 for i in range(0, 4):
@@ -149,7 +149,7 @@ class BridgeModelIsplGenerator:
 
         add_or = False
 
-        for combination in itertools.combinations(self.available_cards, 4):
+        for combination in itertools.permutations(self.available_cards, 4):
             for beginning_player in range(0, 4):
                 winning_player_number = beginning_player
                 for i in range(0, 4):
@@ -180,7 +180,7 @@ class BridgeModelIsplGenerator:
 
         add_or = False
 
-        for combination in itertools.combinations(self.available_cards, 4):
+        for combination in itertools.permutations(self.available_cards, 4):
             for beginning_player in range(0, 4):
                 winning_player_number = beginning_player
                 for i in range(0, 4):
@@ -321,7 +321,7 @@ def generate_random_array(length):
 
     return array
 
-bridge_model_ispl_generator = BridgeModelIsplGenerator(1, 1, generate_random_array(4))
+bridge_model_ispl_generator = BridgeModelIsplGenerator(5, 5, generate_random_array(20))
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(4, 4, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
 f = open("output", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
