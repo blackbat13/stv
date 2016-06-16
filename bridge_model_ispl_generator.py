@@ -60,6 +60,7 @@ class BridgeModelIsplGenerator:
     def __create_environment(self):
         environment = "Agent Environment\n"
         environment += self.__create_environment_obsvars()
+        # environment += self.__create_environment_vars()
         environment += self.__create_environment_actions()
         environment += self.__create_environment_protocol()
         environment += self.__create_environment_evolution()
@@ -71,8 +72,25 @@ class BridgeModelIsplGenerator:
         obsvars += "\t\tfirstTeamScore: 0.." + str(self.number_of_cards_in_hand) + ";\n"
         obsvars += "\t\tsecondTeamScore: 0.." + str(self.number_of_cards_in_hand) + ";\n"
         obsvars += "\t\tbeginningPlayer: 0..3;\n"
+
+        for i in range(1, self.number_of_cards_in_hand + 1):
+            obsvars += "\t\tu_card" + str(i) + ": {"
+            for j in range(0, 4 * self.number_of_cards):
+                obsvars += self.cards[j] + ", "
+            obsvars += "None};\n"
+
         obsvars += "\tend Obsvars\n"
         return obsvars
+
+    def __create_environment_vars(self):
+        vars = "\tVars:\n"
+        for i in range(1, self.number_of_cards_in_hand * 2 + 1):
+            vars += "\t\thascard" + str(i) + "={"
+            for card in self.available_cards:
+                vars += card + ", "
+            vars += "None};\n"
+        vars += "\tend Vars\n"
+        return vars
 
     def __create_environment_actions(self):
         actions = "\tActions = {none};\n"
@@ -85,127 +103,42 @@ class BridgeModelIsplGenerator:
     def __create_environment_evolution(self):
         evolution = "\tEvolution:\n"
 
-        evolution += "\tfirstTeamScore=firstTeamScore+1 and beginningPlayer=0 if\n"
-        add_or = False
-
-        for combination in itertools.permutations(self.available_cards, 4):
-            for beginning_player in range(0, 4):
-                winning_player_number = beginning_player
-                for i in range(0, 4):
-                    if i == beginning_player:
-                        continue
-
-                    if self.cards_colors[combination[i]] == self.cards_colors[combination[winning_player_number]]:
-                        if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
-                            winning_player_number = i
-
-                if not (winning_player_number == 0):
-                    continue
-
-                if add_or:
-                    evolution += " or\n"
+        for g in range(1, self.number_of_cards_in_hand + 1):
+            for winning_player in range(0, 4):
+                if winning_player % 2 == 0:
+                    evolution += "\t\tfirstTeamScore=firstTeamScore+1"
                 else:
-                    add_or = True
+                    evolution += "\t\tsecondTeamScore=secondTeamScore+1"
 
-                evolution += "\t\t("
-                for player in range(0, 4):
-                    evolution += self.player_names[player] + ".Action=Play" + combination[player] + " and "
+                evolution += " and beginningPlayer=" + str(winning_player) + " and u_card" + str(g) +"=None if\n"
+                add_or = False
+                for combination in itertools.permutations(self.available_cards, 4):
+                    for beginning_player in range(0, 4):
+                        winning_player_number = beginning_player
+                        for i in range(0, 4):
+                            if i == beginning_player:
+                                continue
 
-                evolution += "beginningPlayer=" + str(beginning_player) + ")"
+                            if self.cards_colors[combination[i]] == self.cards_colors[combination[winning_player_number]]:
+                                if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
+                                    winning_player_number = i
 
-        evolution += ";\n"
+                        if not (winning_player_number == winning_player):
+                            continue
 
-        evolution += "\tfirstTeamScore=firstTeamScore+1 and beginningPlayer=2 if\n"
-        add_or = False
+                        if add_or:
+                            evolution += " or\n"
+                        else:
+                            add_or = True
 
-        for combination in itertools.permutations(self.available_cards, 4):
-            for beginning_player in range(0, 4):
-                winning_player_number = beginning_player
-                for i in range(0, 4):
-                    if i == beginning_player:
-                        continue
+                        evolution += "\t\t\t("
+                        for player in range(0, 4):
+                            evolution += self.player_names[player] + ".Action=Play" + combination[player] + " and "
 
-                    if self.cards_colors[combination[i]] == self.cards_colors[combination[winning_player_number]]:
-                        if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
-                            winning_player_number = i
+                        evolution += "beginningPlayer=" + str(beginning_player)
+                        evolution += " and u_card" + str(g) + "=" + combination[2] + ")"
 
-                if not (winning_player_number == 2):
-                    continue
-
-                if add_or:
-                    evolution += " or\n"
-                else:
-                    add_or = True
-
-                evolution += "\t\t("
-                for player in range(0, 4):
-                    evolution += self.player_names[player] + ".Action=Play" + combination[player] + " and "
-
-                evolution += "beginningPlayer=" + str(beginning_player) + ")"
-
-        evolution += ";\n"
-
-        evolution += "\tsecondTeamScore=secondTeamScore+1 and beginningPlayer=1 if\n"
-
-        add_or = False
-
-        for combination in itertools.permutations(self.available_cards, 4):
-            for beginning_player in range(0, 4):
-                winning_player_number = beginning_player
-                for i in range(0, 4):
-                    if i == beginning_player:
-                        continue
-
-                    if self.cards_colors[combination[i]] == self.cards_colors[combination[winning_player_number]]:
-                        if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
-                            winning_player_number = i
-
-                if not (winning_player_number == 1):
-                    continue
-
-                if add_or:
-                    evolution += " or\n"
-                else:
-                    add_or = True
-
-                evolution += "\t\t("
-                for player in range(0, 4):
-                    evolution += self.player_names[player] + ".Action=Play" + combination[player] + " and "
-
-                evolution += "beginningPlayer=" + str(beginning_player) + ")"
-
-        evolution += ";\n"
-
-        evolution += "\tsecondTeamScore=secondTeamScore+1 and beginningPlayer=3 if\n"
-
-        add_or = False
-
-        for combination in itertools.permutations(self.available_cards, 4):
-            for beginning_player in range(0, 4):
-                winning_player_number = beginning_player
-                for i in range(0, 4):
-                    if i == beginning_player:
-                        continue
-
-                    if self.cards_colors[combination[i]] == self.cards_colors[combination[winning_player_number]]:
-                        if self.cards_values[combination[i]] > self.cards_values[combination[winning_player_number]]:
-                            winning_player_number = i
-
-                if not (winning_player_number == 3):
-                    continue
-
-                if add_or:
-                    evolution += " or\n"
-                else:
-                    add_or = True
-
-                evolution += "\t\t("
-                for player in range(0, 4):
-                    evolution += self.player_names[player] + ".Action=Play" + combination[player] + " and "
-
-                evolution += "beginningPlayer=" + str(beginning_player) + ")"
-
-        evolution += ";\n"
+                evolution += ";\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -214,11 +147,16 @@ class BridgeModelIsplGenerator:
         player = "Agent " + player_name + "\n"
         # if player_name != "ThirdPlayer":
         #     player += self.__create_player_lobsvars()
-
-        player += self.__create_player_vars()
-        player += self.__create_player_actions()
-        player += self.__create_player_protocol()
-        player += self.__create_player_evolution()
+        if player_name == "ThirdPlayer":
+            player += self.__create_second_player_vars()
+            player += self.__create_player_actions()
+            player += self.__create_second_player_protocol()
+            player += self.__create_second_player_evolution()
+        else:
+            player += self.__create_player_vars()
+            player += self.__create_player_actions()
+            player += self.__create_player_protocol()
+            player += self.__create_player_evolution()
         player += "end Agent\n\n"
         return player
 
@@ -243,12 +181,19 @@ class BridgeModelIsplGenerator:
         vars += "\tend Vars\n"
         return vars
 
+    def __create_second_player_vars(self):
+        vars = "\tVars:\n"
+        vars += "\t\tc: {None};\n"
+        vars += "\tend Vars\n"
+        return vars
+
     def __create_player_actions(self):
         actions = "\tActions = {"
         for i in range(0, 4 * self.number_of_cards):
             actions += "Play" + self.cards[i] + ", "
 
         actions += "Wait};\n"
+        # actions += "};\n"
         return actions
 
     def __create_player_protocol(self):
@@ -257,7 +202,18 @@ class BridgeModelIsplGenerator:
             for j in range(0, 4 * self.number_of_cards):
                 protocol += "\t\tcard" + str(i) + "="
                 protocol += self.cards[j] + ": {Play" + self.cards[j] + "};\n"
-            protocol += "\t\tcard" + str(i) + "=None: {Wait};\n"
+                # protocol += "\t\tcard" + str(i) + "=None: {Wait};\n"
+
+        protocol += "\tend Protocol\n"
+        return protocol
+
+    def __create_second_player_protocol(self):
+        protocol = "\tProtocol:\n"
+        for i in range(1, self.number_of_cards_in_hand + 1):
+            for j in range(0, 4 * self.number_of_cards):
+                protocol += "\t\tEnvironment.u_card" + str(i) + "="
+                protocol += self.cards[j] + ": {Play" + self.cards[j] + "};\n"
+                # protocol += "\t\tcard" + str(i) + "=None: {Wait};\n"
 
         protocol += "\tend Protocol\n"
         return protocol
@@ -272,22 +228,62 @@ class BridgeModelIsplGenerator:
         evolution += "\tend Evolution\n"
         return evolution
 
+    def __create_second_player_evolution(self):
+        evolution = "\tEvolution:\n"
+        evolution += "\t\tc=None if c=None;\n"
+        evolution += "\tend Evolution\n"
+        return evolution
+
     def __create_evaluation(self):
         evaulation = "Evaluation\n"
-        evaulation += "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=" + str(self.number_of_cards_in_hand) +";\n"
-        evaulation += "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=" + str(self.number_of_cards_in_hand) +";\n"
+        evaulation += "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=" + str(
+            self.number_of_cards_in_hand) + ";\n"
+        evaulation += "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=" + str(
+            self.number_of_cards_in_hand) + ";\n"
         evaulation += "end Evaluation\n\n"
         return evaulation
 
     def __create_init_states(self):
         init_states = "InitStates\n"
-        init_states += "\tEnvironment.firstTeamScore=0 and Environment.secondTeamScore=0 and Environment.beginningPlayer=0"
-        i = 0
-        for player in self.player_names:
-            for j in range(1, self.number_of_cards_in_hand+1):
-                init_states += " and " + player + ".card" + str(j) + "=" + self.cards[self.card_ordering[i]]
+        oponents_cards = []
+        for k in range(self.number_of_cards_in_hand, self.number_of_cards_in_hand * 2):
+            oponents_cards.append(self.card_ordering[k])
+
+        for k in range(self.number_of_cards_in_hand * 3, self.number_of_cards_in_hand * 4):
+            oponents_cards.append(self.card_ordering[k])
+
+        oponents_cards.sort()
+
+        for combination in itertools.combinations(oponents_cards, self.number_of_cards_in_hand):
+            second_player_cards = combination
+            fourth_player_cards = oponents_cards[:]
+            for card in second_player_cards:
+                fourth_player_cards.remove(card)
+
+            new_card_ordering = self.card_ordering[:]
+            i = 0
+            for k in range(self.number_of_cards_in_hand, self.number_of_cards_in_hand * 2):
+                new_card_ordering[k] = second_player_cards[i]
                 i += 1
 
+            i = 0
+            for k in range(self.number_of_cards_in_hand * 3, self.number_of_cards_in_hand * 4):
+                new_card_ordering[k] = fourth_player_cards[i]
+                i += 1
+
+            i = 0
+            init_states += "\t(Environment.firstTeamScore=0 and Environment.secondTeamScore=0 and Environment.beginningPlayer=0"
+            for player in self.player_names:
+                for j in range(1, self.number_of_cards_in_hand + 1):
+                    if player == "ThirdPlayer":
+                        init_states += " and Environment.u_card" + str(j) + "=" + self.cards[new_card_ordering[i]]
+                    else:
+                        init_states += " and " + player + ".card" + str(j) + "=" + self.cards[new_card_ordering[i]]
+                    i += 1
+
+            init_states += ") or\n"
+
+        init_states = init_states.rstrip("\nro ")
         init_states += ";\nend InitStates\n\n"
         return init_states
 
@@ -300,7 +296,7 @@ class BridgeModelIsplGenerator:
     def __create_formulae(self):
         formulae = "Formulae\n"
         formulae += "\t<g1>F FirstTeamWin;\n"
-        formulae += "\t<g1>G FirstTeamWin;\n"
+        # formulae += "\t<g1>G FirstTeamWin;\n"
         formulae += "end Formulae\n\n"
         return formulae
 
@@ -321,8 +317,9 @@ def generate_random_array(length):
 
     return array
 
-bridge_model_ispl_generator = BridgeModelIsplGenerator(5, 5, generate_random_array(20))
-# bridge_model_ispl_generator = BridgeModelIsplGenerator(4, 4, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
-f = open("output", "w")
+n = 2
+bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(n*4))
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(4, 2, [4, 8, 0, 12, 13, 14, 1, 5])
+f = open("bridge_"+str(n)+"_"+str(n)+".ispl", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
 f.close()
