@@ -317,7 +317,7 @@ def generate_random_array(length):
 
     return array
 
-n = 2
+n = 1
 bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(n*4))
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(4, 2, [4, 8, 0, 12, 13, 14, 1, 5])
 f = open("bridge_"+str(n)+"_"+str(n)+".ispl", "w")
