@@ -52,7 +52,6 @@ class BridgeModelIsplGenerator:
         self.ispl_model += self.__create_player(1)
         self.ispl_model += self.__create_player(3)
 
-
         self.ispl_model += self.__create_evaluation()
         self.ispl_model += self.__create_init_states()
         self.ispl_model += self.__create_groups()
@@ -87,6 +86,11 @@ class BridgeModelIsplGenerator:
             for j in range(0, 4 * self.number_of_cards):
                 obsvars += self.cards[j] + ", "
             obsvars += "None};\n"
+
+        for i in range(0, self.number_of_cards * 4):
+            obsvars += "\t\t" + self.cards[i] + "H: boolean;\n"
+
+        obsvars += "\t\tsuit: {Pik, Trefl, Kier, Karo, None};\n"
 
         obsvars += "\tend Obsvars\n"
         return obsvars
@@ -146,15 +150,16 @@ class BridgeModelIsplGenerator:
             for player_number in range(0, 4):
                 if (player_number - 1) % 4 != 2:
                     evolution += "\t\tclock=clock+1 and currentPlayer=" + str(
-                        player_number) + " and " + self.player_names[(player_number - 1) % 4] + "Card=" + card + " if\n"
+                        player_number) + " and " + self.player_names[
+                                     (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true if\n"
                     evolution += "\t\t\t" + self.player_names[
                         (player_number - 1) % 4] + ".Action=Play" + card + " and currentPlayer=" + str(
                         (player_number - 1) % 4) + ";\n"
                 else:
-                    for j in range(1, self.number_of_cards_in_hand+1):
+                    for j in range(1, self.number_of_cards_in_hand + 1):
                         evolution += "\t\tclock=clock+1 and cardN" + str(j) + "=None and currentPlayer=" + str(
                             player_number) + " and " + self.player_names[
-                                         (player_number - 1) % 4] + "Card=" + card + " if\n"
+                                         (player_number - 1) % 4] + "Card=" + card + " and "+card+"H=true if\n"
                         evolution += "\t\t\t" + self.player_names[
                             0] + ".Action=Play" + card + " and currentPlayer=" + str(
                             (player_number - 1) % 4) + " and cardN" + str(j) + "=" + card + ";\n"
@@ -215,7 +220,8 @@ class BridgeModelIsplGenerator:
             for i in range(1, self.number_of_cards_in_hand + 1):
                 for j in range(0, 4 * self.number_of_cards):
                     protocol += "\t\tEnvironment.cardN" + str(i) + "="
-                    protocol += self.cards[j] + " and Environment.currentPlayer=2 and Environment.clock<4: {Play" + self.cards[j] + "};\n"
+                    protocol += self.cards[j] + " and Environment.currentPlayer=2 and Environment.clock<4: {Play" + \
+                                self.cards[j] + "};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -226,7 +232,8 @@ class BridgeModelIsplGenerator:
         for i in range(1, self.number_of_cards_in_hand + 1):
             for j in range(0, 4 * self.number_of_cards):
                 evolution += "\t\tcard" + str(i) + "=None if card" + str(i)
-                evolution += "=" + self.cards[j] + " and Action=Play" + self.cards[j] + " and Environment.currentPlayer="+str(player_number)+";\n"
+                evolution += "=" + self.cards[j] + " and Action=Play" + self.cards[
+                    j] + " and Environment.currentPlayer=" + str(player_number) + ";\n"
 
         evolution += "\tend Evolution\n"
         return evolution
