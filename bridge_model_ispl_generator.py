@@ -126,7 +126,12 @@ class BridgeModelIsplGenerator:
 
             evolution += " and beginningPlayer=" + str(
                 winning_player) + " and clock=0 and suit=None and currentPlayer=" + str(
-                winning_player) + " if\n"
+                winning_player)
+
+            for player in self.player_names:
+                evolution += " and " + player + "Card=None"
+
+            evolution += " if\n"
             add_or = False
             for combination in itertools.permutations(self.available_cards, 4):
                 for beginning_player in range(0, 4):
@@ -372,9 +377,9 @@ def generate_random_array(length):
     return array
 
 
-n = 2
-# bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(4 * n))
-bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 1, 2, 3, 4, 5, 6, 7])
+n = 1
+bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(4 * n))
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 1, 6, 7, 2, 3, 4, 5])
 f = open("bridge_" + str(n) + "_" + str(n) + ".ispl", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
 f.close()
