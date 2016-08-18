@@ -60,7 +60,6 @@ class ATLModel:
     agents_actions = []
     state_names = []
     state_descriptions = []
-    states = []
 
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
@@ -107,19 +106,6 @@ class ATLModel:
                 result_states.append(state)
         return result_states
 
-    def is_reachable_by_agent(self, from_state, to_state, agent):
-        for action in self.agents_actions[agent]:
-            action_ok = False
-            for transition in self.transitions[from_state]:
-                if transition['actions'][agent] == action:
-                    action_ok = True
-                    if transition['nextState'] != to_state:
-                        action_ok = False
-                        break
-            if action_ok:
-                return True
-        return False
-
     def basic_formula_multiple_agents(self, agents, winning_state):
         result_states = []
         actions = self.create_agents_actions_combinations(agents)
@@ -156,7 +142,7 @@ class ATLModel:
         return False
 
     def is_reachable_by_agent(self, actions, from_state, to_states, agent):
-        for action in actions:
+        for action in self.agents_actions[agent]:
             action_ok = False
             for transition in self.transitions[from_state]:
                 if transition['actions'][0] == action:
