@@ -60,6 +60,7 @@ class ATLModel:
     agents_actions = []
     state_names = []
     state_descriptions = []
+    states = []
 
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
