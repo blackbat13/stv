@@ -72,9 +72,9 @@ class ATLModel:
         # self.stateNames = create_array_of_size(number_of_states, [])
         # self.stateDescriptions = create_array_of_size(number_of_states, [])
         for i in range(0, 1):#number_of_agents):
-            self.imperfectInformation[i] = [[] for i in itertools.repeat(None, number_of_states)] #create_array_of_size(number_of_states, [])
+            self.imperfectInformation[i] = [set() for i in itertools.repeat(None, number_of_states)] #create_array_of_size(number_of_states, [])
             for j in range(0, number_of_states):
-                self.imperfectInformation[i][j].append(j)
+                self.imperfectInformation[i][j].add(j)
 
     def add_action(self, agent, action):
         self.agentsActions[agent].append(action)
@@ -95,8 +95,8 @@ class ATLModel:
 
     def set_same_state(self, agent_number, state_a, state_b):
         # if state_b not in self.imperfectInformation[agent_number][state_a]:
-        self.imperfectInformation[agent_number][state_a].append(state_b)
-        self.imperfectInformation[agent_number][state_b].append(state_a)
+        self.imperfectInformation[agent_number][state_a].add(state_b)
+        self.imperfectInformation[agent_number][state_b].add(state_a)
 
     def basic_formula(self, agent_number, winning_state):
         result_states = []
@@ -149,11 +149,8 @@ class ATLModel:
         for action in actions:
             actionOk = False
             for transition in self.transitions[fromState]:
-
                 if self.is_possible_transition(agents, action, transition):
                     actionOk = True
-
-                    # print(self.stateDescriptions[transition['nextState']])
                     if transition['nextState'] not in toStates:
                         actionOk = False
                         break
@@ -165,11 +162,8 @@ class ATLModel:
         for action in actions:
             actionOk = False
             for transition in self.transitions[fromState]:
-
                 if transition['actions'][0] == action:
                     actionOk = True
-
-                    # print(self.stateDescriptions[transition['nextState']])
                     if transition['nextState'] not in toStates:
                         actionOk = False
                         break
@@ -185,37 +179,19 @@ class ATLModel:
             winning_states_reverse += self.reverseStates[winningState]
 
         unique(winning_states_reverse)
-        # print('Reverse', winning_states_reverse)
-        # for state in winning_states_reverse:
-        #     print('Reverse', self.stateNames[state])
-        #
-        # print()
-
         for state in winning_states_reverse:
-            # print('Reverse', self.stateNames[state])
-            # print(self.stateDescriptions[state])
             ok = True
-            # start = time.clock()
             sameStates = self.get_same_states_for_agents(agents, state)
-            # print('Same States', sameStates)
-            # end = time.clock()
-            # print('Basic Formula Multiple Agents And States, same states computed in', round(end - start, 3))
-            # start = time.clock()
             winning_states_reverse_same = [state]
 
             for sameState in sameStates:
-                # print('Same', self.stateNames[sameState])
                 if ok and not self.is_reachable_by_agents(actions, sameState, winningStates, agents):
                     ok = False
-                    # break
                 if sameState != state and sameState in winning_states_reverse:
                     winning_states_reverse.remove(sameState)
                     winning_states_reverse_same.append(sameState)
-            # end = time.clock()
-            # print('Basic Formula Multiple Agents And States, most inner for computed in', round(end - start, 3))
             if ok:
                 resultStates.update(winning_states_reverse_same)
-                # resultStates.add(state)
         return resultStates
 
     def basic_formula_one_agent_multiple_states(self, agent, current_states, winning_states):
@@ -226,37 +202,19 @@ class ATLModel:
             winning_states_reverse += self.reverseStates[winning_state]
 
         unique(winning_states_reverse)
-        # print('Reverse', winning_states_reverse)
-        # for state in winning_states_reverse:
-        #     print('Reverse', self.stateNames[state])
-        #
-        # print()
-
         for state in winning_states_reverse:
-            # print('Reverse', self.stateNames[state])
-            # print(self.stateDescriptions[state])
             ok = True
-            # start = time.clock()
             same_states = self.imperfectInformation[agent][state]
-            # print('Same States', sameStates)
-            # end = time.clock()
-            # print('Basic Formula Multiple Agents And States, same states computed in', round(end - start, 3))
-            # start = time.clock()
             winning_states_reverse_same = [state]
 
             for same_state in same_states:
-                # print('Same', self.stateNames[sameState])
                 if ok and not self.is_reachable_by_agent(actions, same_state, winning_states, agent):
                     ok = False
-                    # break
                 if same_state != state and same_state in winning_states_reverse:
                     winning_states_reverse.remove(same_state)
                     winning_states_reverse_same.append(same_state)
-            # end = time.clock()
-            # print('Basic Formula Multiple Agents And States, most inner for computed in', round(end - start, 3))
             if ok:
                 result_states.update(winning_states_reverse_same)
-                # resultStates.add(state)
         return result_states
 
     def basic_formula_one_agent_multiple_states_perfect_information(self, agent, current_states, winning_states):
@@ -280,10 +238,6 @@ class ATLModel:
         resultStatesLength = len(resultStates)
         number_of_iterations = 0
         while True:
-            # for state in winningStates:
-            #     print(self.stateNames[state])
-
-            # print()
             resultStates.update(self.basic_formula_multiple_agents_and_states(agents, winning_states))
             winning_states = list(resultStates)
             if resultStatesLength == len(resultStates):
@@ -303,15 +257,7 @@ class ATLModel:
         number_of_iterations = 0
         current_states = winningStates[:]
         while True:
-            # for state in winningStates:
-            #     print(self.stateNames[state])
-
-            # print()
-            # print(number_of_iterations)
-            # print(len(winningStates))
-            # print(len(current_states))
             current_states = self.basic_formula_one_agent_multiple_states(agent, current_states, winningStates)
-            # print("a", len(current_states))
             resultStates.update(current_states)
             winningStates = list(resultStates)
             if resultStatesLength == len(resultStates):
@@ -331,15 +277,7 @@ class ATLModel:
         number_of_iterations = 0
         current_states = winningStates[:]
         while True:
-            # for state in winningStates:
-            #     print(self.stateNames[state])
-
-            # print()
-            # print(number_of_iterations)
-            # print(len(winningStates))
-            # print(len(current_states))
             current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states, winningStates)
-            # print("a", len(current_states))
             resultStates.update(current_states)
             winningStates = list(resultStates)
             if resultStatesLength == len(resultStates):
@@ -360,7 +298,6 @@ class ATLModel:
         first_winning_states = list(winningStates)
         while True:
             resultStates = set(and_operator(first_winning_states, self.basic_formula_multiple_agents_and_states(agents, winningStates)))
-            #resultStates.update(self.basic_formula_multiple_agents_and_states(agents, winningStates))
 
             winningStates = list(resultStates)
             if resultStatesLength == len(resultStates):
@@ -375,17 +312,10 @@ class ATLModel:
 
 
     def is_possible_transition(self, agents, action, transition):
-        # print('Agents', agents)
-        # print('Action', action)
-        # print('Transition', transition)
-        # print(action, transition['actions'])
-        # good_transition_actions = [transition['actions'][i] for i in agents]
-        # print(action, good_transition_actions, list(action) == good_transition_actions)
         for i, j in zip(agents, range(0, len(agents))):
             if transition['actions'][i] != action[j]:
                 return False
         return True
-        # return good_transition_actions == list(action)
 
     def create_agents_actions_combinations(self, agents):
         combinations = []
