@@ -61,8 +61,8 @@ def generate_bridge_model(no_cards_available, no_end_cards):
     # 1294936 dla (3,2)
     # bridge_model = ATLModel(3, 3445920)
     bridge_model = ATLModel(4, 1000000)
-    print(bridge_model.numberOfAgents)
-    print(bridge_model.numberOfStates)
+    print(bridge_model.number_of_agents)
+    print(bridge_model.number_of_states)
     cards_available = []
     card_number = 14
     for i in range(0, no_cards_available):
@@ -278,8 +278,6 @@ def generate_bridge_model(no_cards_available, no_end_cards):
 def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_state):
     # with open('atl_3_1294940.pkl', 'rb') as input:
     #     bridge_model = pickle.load(input)
-    # 1294936 dla (3,2)
-    # bridge_model = ATLModel(3, 3445920)
     if no_cards_available == 1:
         bridge_model = ATLModel(3, 100)
     elif no_cards_available == 2:
@@ -290,9 +288,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
         bridge_model = ATLModel(3, 300000)
     else:
         bridge_model = ATLModel(3, 4000000)
-    # bridge_model = ATLModel(3, 415950)
-    print(bridge_model.numberOfAgents)
-    print(bridge_model.numberOfStates)
+
     cards_available = []
     card_number = 14
     for i in range(0, no_cards_available):
@@ -311,7 +307,6 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     states_dictionary = {}
     state_number = 0
     print("Start creating beginning epistemic class states of model")
-    # gc.disable()
     enemy_hands = first_state['hands'][1][:] + first_state['hands'][3][:]
     start = time.clock()
     for player2 in itertools.combinations(enemy_hands, no_end_cards):
@@ -329,15 +324,10 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
         state_number += 1
 
     end = time.clock()
-    # gc.enable()
-    # gc.collect()
     print("Created beginning states of model in", end - start, "s")
     print("Number of beginning states of model:", len(states))
 
     print("Start creating rest of model")
-    # gc.disable()
-    # transitions = []
-    trans = 0
     start = time.clock()
     current_state_number = -1
     for state in states:
@@ -380,7 +370,6 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 action = {0: -1, 1: -1, 2: -1, 3: -1}
                 action[agent_number] = card
                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-                new_state_number = 0
                 if new_state_str not in states_dictionary:
                     states_dictionary[new_state_str] = state_number
                     new_state_number = state_number
@@ -391,8 +380,6 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 bridge_model.add_transition(current_state_number, new_state_number, action)
         elif state['clock'] == 4:
             new_history = state['history'][:]
-            # for i in state['board']:
-            #     new_history.add(i)
             beginning = state['beginning']
             board = state['board']
             card1 = board[beginning]
@@ -422,7 +409,6 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
             new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
                          'beginning': new_beginning, 'history': new_history, 'clock': new_clock, 'suit': new_suit}
             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-            new_state_number = 0
             if new_state_str not in states_dictionary:
                 states_dictionary[new_state_str] = state_number
                 new_state_number = state_number
@@ -456,8 +442,6 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 new_hands[2] = state['hands'][2][:]
                 new_hands[3] = state['hands'][3][:]
                 new_hands[state['next']][card_index] = -1
-                # if new_next == state['beginning']:
-                #     new_next = -1
 
                 new_clock = state['clock'] + 1
                 new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
@@ -469,7 +453,6 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 action = {0: -1, 1: -1, 2: -1, 3: -1}
                 action[agent_number] = card
                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-                new_state_number = 0
                 if new_state_str not in states_dictionary:
                     states_dictionary[new_state_str] = state_number
                     new_state_number = state_number
@@ -480,21 +463,8 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 bridge_model.add_transition(current_state_number, new_state_number, action)
 
     end = time.clock()
-    # gc.enable()
     print("Created rest of model in", end - start, "s")
-
     print("Created model have", len(states), "states")
-    # print("Created model have", trans, "transitions")
-
-    # with open('state_array_3_2.pkl', 'wb') as output:
-    #     pickle.dump(states, output, pickle.HIGHEST_PROTOCOL)
-    #
-    # with open('state_dictionary_3_2.pkl', 'wb') as output:
-    #     pickle.dump(states_dictionary, output, pickle.HIGHEST_PROTOCOL)
-
-    # with open('transitions_array_3_2.pkl', 'wb') as output:
-    #     pickle.dump(transitions, output, pickle.HIGHEST_PROTOCOL)
-
     print("Begin defining indistuiginshable relation")
     gc.disable()
     start = time.clock()
@@ -503,54 +473,30 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     end = time.clock()
     gc.enable()
     print("Created indistuiginshable relation in", end - start, "s")
-    # with open('same_array_3_2.pkl', 'wb') as output:
-    #     pickle.dump(same_relation, output, pickle.HIGHEST_PROTOCOL)
-
     return bridge_model
 
 
 def prepare_epistemic_relation(bridge_model, states_dictionary):
     states = bridge_model.states
-    visited_states = [0 for i in itertools.repeat(None, len(states))]
+    visited_states = [0 for _ in itertools.repeat(None, len(states))]
     for i in range(0, len(states)):
         if visited_states[i] == 1:
             continue
-        epistemic_class = prepare_epistemic_class_for_state(states[i])
+
+        epistemic_class = list(prepare_epistemic_class_for_state(states[i], states_dictionary))
         for x in range(0, len(epistemic_class)):
-            state_a = epistemic_class[x]
-            state_a_string = ' '.join(str(state_a[e]) for e in state_a)
-            if state_a_string not in states_dictionary:
-                continue
-            state_a_number = states_dictionary[state_a_string]
+            state_a_number = epistemic_class[x]
             visited_states[state_a_number] = 1
             for y in range(x + 1, len(epistemic_class)):
-                state_b = epistemic_class[y]
-                state_b_string = ' '.join(str(state_b[e]) for e in state_b)
-                # print(state_a_string)
-                # print(state_b_string)
-                if state_b_string not in states_dictionary:
-                    continue
-                state_b_number = states_dictionary[state_b_string]
+                state_b_number = epistemic_class[y]
                 bridge_model.set_same_state(0, state_a_number, state_b_number)
 
-                # for i in range(0, len(states)):
-                #     for j in range(i + 1, len(states)):
-                #         state_a = states[i]
-                #         state_b = states[j]
-                #         if len(state_a['hands'][0]) != len(state_b['hands'][0]):
-                #             break
-                #         if state_a['hands'][0] == state_b['hands'][0] and state_a['hands'][2] == state_b['hands'][2] and state_a[
-                #             'lefts'] == state_b['lefts'] and state_a['board'] == state_b['board'] and state_a['beginning'] == \
-                #                 state_b['beginning'] and state_a['next'] == state_b['next'] and state_a['history'] == state_b[
-                #             'history']:
-                #             bridge_model.set_same_state(0, i, j)
 
-
-def prepare_epistemic_class_for_state(state):
+def prepare_epistemic_class_for_state(state, states_dictionary):
     no_cards_player_2 = len(state['hands'][1])
     cards = state['hands'][1] + state['hands'][3]
-    # print(cards)
-    epistemic_class = [state]
+    state_str = ' '.join(str(state[e]) for e in state)
+    epistemic_class = {states_dictionary[state_str]}
     for player_2_cards in itertools.combinations(cards, no_cards_player_2):
         player_4_cards = cards[:]
         for card in player_2_cards:
@@ -558,7 +504,10 @@ def prepare_epistemic_class_for_state(state):
         new_hands = [state['hands'][0], list(player_2_cards), state['hands'][2], list(player_4_cards)]
         new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': state['next'], 'board': state['board'],
                      'beginning': state['beginning'], 'history': state['history']}
-        epistemic_class.append(new_state)
+        new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+        if new_state_str in states_dictionary:
+            epistemic_class.add(states_dictionary[new_state_str])
+
     return epistemic_class
 
 
@@ -586,6 +535,7 @@ def write_bridge_model(a, b):
     with open('bridge_' + a + '_' + b + '.pkl', 'wb') as output:
         pickle.dump(bridge_model, output, pickle.HIGHEST_PROTOCOL)
     print("Number of states", len(bridge_model.states))
+
 
 # write_bridge_model(3, 1)
 

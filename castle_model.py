@@ -284,7 +284,7 @@ end = time.clock()
 print('Computed in', end - start, 's')
 print('Number of states:', len(castle3defeatedResult))
 for state in castle3defeatedResult:
-    print(state, castleModel.stateDescriptions[state])
+    print(state, castleModel.state_descriptions[state])
 
 print("All castles defeated:")
 start = time.clock()
@@ -294,7 +294,7 @@ end = time.clock()
 print('Computed in', end - start, 's')
 print('Number of states:', len(all_castles_defeated_result))
 for state in all_castles_defeated_result:
-    print(state, castleModel.stateDescriptions[state])
+    print(state, castleModel.state_descriptions[state])
 
 # print(63, castleModel.basicFormulaMultipleAgentsAndStates([0, 1], [63, 62, 61, 56]))
 
