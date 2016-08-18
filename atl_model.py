@@ -65,11 +65,11 @@ class ATLModel:
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
         self.number_of_states = number_of_states
-        self.transitions = [[] for i in itertools.repeat(None, number_of_states)]
-        self.reverse_transitions = [[] for i in itertools.repeat(None, number_of_states)]
+        self.transitions = [[] for _ in itertools.repeat(None, number_of_states)]
+        self.reverse_transitions = [[] for _ in itertools.repeat(None, number_of_states)]
         self.imperfect_information = create_array_of_size(number_of_agents, [])
-        self.reverse_states = [[] for i in itertools.repeat(None, number_of_states)]
-        self.agents_actions = [[] for i in itertools.repeat(None, number_of_states)]
+        self.reverse_states = [set() for _ in itertools.repeat(None, number_of_states)]
+        self.agents_actions = [[] for _ in itertools.repeat(None, number_of_states)]
         # self.stateNames = create_array_of_size(number_of_states, [])
         # self.stateDescriptions = create_array_of_size(number_of_states, [])
         for i in range(0, 1):  # number_of_agents):
@@ -83,8 +83,7 @@ class ATLModel:
     def add_transition(self, from_state, to_state, actions):
         self.transitions[from_state].append({'nextState': to_state, 'actions': actions})
         self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions})
-        # if from_state not in self.reverseStates[to_state]:
-        self.reverse_states[to_state].append(from_state)
+        self.reverse_states[to_state].add(from_state)
         # for i in range(0, self.numberOfAgents):
         #     if actions[i] not in self.agentsActions[i]:
         #         self.agentsActions[i].append(actions[i])
