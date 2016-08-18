@@ -218,11 +218,11 @@ class ATLModel:
                 # resultStates.add(state)
         return resultStates
 
-    def basic_formula_one_agent_multiple_states(self, agent, winning_states):
+    def basic_formula_one_agent_multiple_states(self, agent, current_states, winning_states):
         result_states = set()
         actions = self.agentsActions[agent]
         winning_states_reverse = []
-        for winning_state in winning_states:
+        for winning_state in current_states:
             winning_states_reverse += self.reverseStates[winning_state]
 
         unique(winning_states_reverse)
@@ -259,18 +259,18 @@ class ATLModel:
                 # resultStates.add(state)
         return result_states
 
-    def basic_formula_one_agent_multiple_states_perfect_information(self, agent, winning_states):
+    def basic_formula_one_agent_multiple_states_perfect_information(self, agent, current_states, winning_states):
         result_states = set()
         actions = self.agentsActions[agent]
         winning_states_reverse = []
-        for winning_state in winning_states:
+        for winning_state in current_states:
             winning_states_reverse += self.reverseStates[winning_state]
 
         unique(winning_states_reverse)
 
         for state in winning_states_reverse:
             if self.is_reachable_by_agent(actions, state, winning_states, agent):
-                result_states.update(state)
+                result_states.add(state)
 
         return result_states
 
@@ -301,12 +301,18 @@ class ATLModel:
         resultStates.update(winningStates)
         resultStatesLength = len(resultStates)
         number_of_iterations = 0
+        current_states = winningStates[:]
         while True:
             # for state in winningStates:
             #     print(self.stateNames[state])
 
             # print()
-            resultStates.update(self.basic_formula_one_agent_multiple_states(agent, winningStates))
+            # print(number_of_iterations)
+            # print(len(winningStates))
+            # print(len(current_states))
+            current_states = self.basic_formula_one_agent_multiple_states(agent, current_states, winningStates)
+            # print("a", len(current_states))
+            resultStates.update(current_states)
             winningStates = list(resultStates)
             if resultStatesLength == len(resultStates):
                 break
@@ -323,12 +329,18 @@ class ATLModel:
         resultStates.update(winningStates)
         resultStatesLength = len(resultStates)
         number_of_iterations = 0
+        current_states = winningStates[:]
         while True:
             # for state in winningStates:
             #     print(self.stateNames[state])
 
             # print()
-            resultStates.update(self.basic_formula_one_agent_multiple_states(agent, winningStates))
+            # print(number_of_iterations)
+            # print(len(winningStates))
+            # print(len(current_states))
+            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states, winningStates)
+            # print("a", len(current_states))
+            resultStates.update(current_states)
             winningStates = list(resultStates)
             if resultStatesLength == len(resultStates):
                 break
