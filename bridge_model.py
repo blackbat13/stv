@@ -2,7 +2,7 @@ from atl_model import *
 import time
 import pickle
 import gc
-import resource
+# import resource
 
 __author__ = 'blackbat'
 
@@ -610,15 +610,15 @@ def write_bridge_model(a, b):
 #                                                                     [132]], 'next': 0, 'history': [],
 #                                                           'beginning': 0, 'clock': 0, 'suit': -1})
 
-# bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[144, 143, 142], [141, 134, 133], [132, 131, 124],
-#                                                                     [123, 122, 121]], 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                                          'hands': [[114, 113, 112, 111], [144, 143, 142, 141],
-                                                                    [134, 133, 132, 131], [124, 123, 122, 121]],
-                                                          'next': 0, 'history': [],
+bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                          'hands': [[144, 143, 142], [141, 134, 133], [132, 131, 124],
+                                                                    [123, 122, 121]], 'next': 0, 'history': [],
                                                           'beginning': 0, 'clock': 0, 'suit': -1})
+# bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+#                                                           'hands': [[114, 113, 112, 111], [144, 143, 142, 141],
+#                                                                     [134, 133, 132, 131], [124, 123, 122, 121]],
+#                                                           'next': 0, 'history': [],
+#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
 
 # bridge_model = generate_bridge_model_for_epistemic(5, 5, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
 #                                                           'hands': [[144, 143, 142, 141, 134], [133, 132, 131, 124, 123],
@@ -628,7 +628,7 @@ bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, 
 
 # bridge_model = read_bridge_model(3)
 print("Ilość stanów ", len(bridge_model.states))
-print("Maksymalne zużycie pamięci ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+# print("Maksymalne zużycie pamięci ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
 # for state in bridge_model.states:
 #     print(state)
@@ -637,7 +637,7 @@ winning_states = []
 i = -1
 for state in bridge_model.states:
     i += 1
-    if state['lefts'][0] == 4:
+    if state['lefts'][0] == 3:
         winning_states.append(i)
 
 start = time.clock()
