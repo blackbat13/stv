@@ -183,14 +183,14 @@ class BridgeModelIsplGenerator:
                         (player_number - 1) % 4) + " and clock=0;\n"
                 else:
                     for j in range(1, self.number_of_cards_in_hand + 1):
-                        evolution += "\t\tclock=clock+1 and cardN" + str(j) + "=None and currentPlayer=" + str(
+                        evolution += "\t\tclock=clock+1 and cardN" + str(j) + "=None and ma"+ self.cards_colors[card] +"=ma"+self.cards_colors[card]+"-1 and currentPlayer=" + str(
                             player_number) + " and " + self.player_names[
                                          (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true if\n"
                         evolution += "\t\t\t" + self.player_names[
                             0] + ".Action=Play" + card + " and currentPlayer=" + str(
                             (player_number - 1) % 4) + " and cardN" + str(j) + "=" + card + " and clock>0;\n"
 
-                        evolution += "\t\tclock=clock+1 and cardN" + str(j) + "=None and currentPlayer=" + str(
+                        evolution += "\t\tclock=clock+1 and cardN" + str(j) + "=None and ma"+ self.cards_colors[card] +"=ma"+self.cards_colors[card]+"-1 and currentPlayer=" + str(
                             player_number) + " and " + self.player_names[
                                          (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true and suit=" + self.cards_colors[card] + " if\n"
                         evolution += "\t\t\t" + self.player_names[
@@ -294,6 +294,7 @@ class BridgeModelIsplGenerator:
             oponents_cards.append(self.card_ordering[k])
 
         oponents_cards.sort()
+        number_of_beginning_states = 0
 
         for combination in itertools.combinations(oponents_cards, self.number_of_cards_in_hand):
             second_player_cards = combination
@@ -342,7 +343,9 @@ class BridgeModelIsplGenerator:
                 init_states += " and Environment." + self.cards[j] + "H=false"
 
             init_states += ") or\n"
+            number_of_beginning_states += 1
 
+        print("Number of beginning states:", number_of_beginning_states)
         init_states = init_states.rstrip("\nro ")
         init_states += ";\nend InitStates\n\n"
         return init_states
@@ -377,9 +380,14 @@ def generate_random_array(length):
     return array
 
 
-n = 1
-bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(4 * n))
-# bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 1, 6, 7, 2, 3, 4, 5])
-f = open("bridge_" + str(n) + "_" + str(n) + ".ispl", "w")
+n = 2
+k = 2
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(4 * n))
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 7, 1, 2, 3, 4, 5, 6])
+bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 1, 2, 3, 4, 5, 6, 7])
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 7, 3, 4, 1, 2, 5, 6])
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(3, 3, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+# bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 1, [4, 0, 5, 1])
+f = open("bridge_" + str(n) + "_" + str(k) + ".ispl", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
 f.close()
