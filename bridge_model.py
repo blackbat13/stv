@@ -3,6 +3,7 @@ import time
 import pickle
 import gc
 import resource
+import random
 
 __author__ = 'blackbat'
 
@@ -283,7 +284,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     elif no_cards_available == 2:
         bridge_model = ATLModel(3, 400)
     elif no_cards_available == 3:
-        bridge_model = ATLModel(3, 10000)
+        bridge_model = ATLModel(3, 50000)
     elif no_cards_available == 4:
         bridge_model = ATLModel(3, 300000)
     else:
@@ -537,6 +538,33 @@ def write_bridge_model(a, b):
     print("Number of states", len(bridge_model.states))
 
 
+def generate_random_hands(length):
+    array = []
+    used = []
+    card_numbers = [144, 143, 142, 141, 134, 133, 132, 131, 124, 123, 122, 121, 114, 113, 112, 111, 104, 103, 102, 101, 94, 93, 92, 91]
+    for i in range(0, length):
+        used.append(False)
+
+    for i in range(0, length):
+        number = random.randrange(length)
+        while used[number]:
+            number = random.randrange(length)
+
+        array.append(card_numbers[number])
+        used[number] = True
+
+    hands = []
+    j = 0
+    for i in range(0, 4):
+        hand = []
+        for _ in range(0, int(length/4)):
+            hand.append(array[j])
+            j += 1
+
+        hands.append(hand)
+
+    return hands
+
 # write_bridge_model(3, 1)
 
 # with open('bridge_2_2.pkl', 'rb') as input:
@@ -544,6 +572,9 @@ def write_bridge_model(a, b):
 # print("Ilość stanów ", len(bridge_model.states))
 
 # bridge_model = generate_bridge_model(2, 2)
+
+hands = generate_random_hands(3*4)
+print('Układ rąk', hands)
 
 # bridge_model = generate_bridge_model_for_epistemic(1, 1, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
 #                                                           'hands': [[144], [143], [142],
@@ -560,15 +591,14 @@ def write_bridge_model(a, b):
 #                                                                     [132]], 'next': 0, 'history': [],
 #                                                           'beginning': 0, 'clock': 0, 'suit': -1})
 
-# bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[144, 143, 142], [141, 134, 133], [132, 131, 124],
-#                                                                     [123, 122, 121]], 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                                          'hands': [[114, 113, 112, 111], [144, 143, 142, 141],
-                                                                    [134, 133, 132, 131], [124, 123, 122, 121]],
-                                                          'next': 0, 'history': [],
+bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                          'hands': hands, 'next': 0, 'history': [],
                                                           'beginning': 0, 'clock': 0, 'suit': -1})
+# bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+#                                                           'hands': [[114, 113, 112, 111], [144, 143, 142, 141],
+#                                                                     [134, 133, 132, 131], [124, 123, 122, 121]],
+#                                                           'next': 0, 'history': [],
+#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
 
 # bridge_model = generate_bridge_model_for_epistemic(5, 5, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
 #                                                           'hands': [[144, 143, 142, 141, 134], [133, 132, 131, 124, 123],
@@ -587,7 +617,7 @@ winning_states = []
 i = -1
 for state in bridge_model.states:
     i += 1
-    if state['lefts'][0] == 4:
+    if state['lefts'][0] == 3:
         winning_states.append(i)
 
 start = time.clock()
