@@ -276,9 +276,14 @@ def generate_bridge_model(no_cards_available, no_end_cards):
     return bridge_model
 
 
+number_of_beginning_states = 0
+
+
 def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_state):
     # with open('atl_3_1294940.pkl', 'rb') as input:
     #     bridge_model = pickle.load(input)
+    global number_of_beginning_states
+
     if no_cards_available == 1:
         bridge_model = ATLModel(3, 100)
     elif no_cards_available == 2:
@@ -327,7 +332,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     end = time.clock()
     print("Created beginning states of model in", end - start, "s")
     print("Number of beginning states of model:", len(states))
-
+    number_of_beginning_states = len(states)
     print("Start creating rest of model")
     start = time.clock()
     current_state_number = -1
@@ -625,10 +630,15 @@ wynik = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states
 end = time.clock()
 print("Time:", end - start, "s")
 print("Ilość spełniających stanów ", len(wynik))
+number_of_correct_beginning_states = 0
 for state_nr in wynik:
     if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
                                                                                                          -1]:
         print(bridge_model.states[state_nr])
+        number_of_correct_beginning_states += 1
+
+print("Ilość spełniających stanów początkowych", number_of_correct_beginning_states)
+print("Wynik formuły:", number_of_beginning_states == number_of_correct_beginning_states)
 
 print("Model checking perfect information")
 start = time.clock()
@@ -636,7 +646,12 @@ wynik = bridge_model.minimum_formula_one_agent_multiple_states_perfect_informati
 end = time.clock()
 print("Time:", end - start, "s")
 print("Ilość spełniających stanów ", len(wynik))
+number_of_correct_beginning_states = 0
 for state_nr in wynik:
     if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
                                                                                                          -1]:
         print(bridge_model.states[state_nr])
+        number_of_correct_beginning_states += 1
+
+print("Ilość spełniających stanów początkowych", number_of_correct_beginning_states)
+print("Wynik formuły:", number_of_beginning_states == number_of_correct_beginning_states)
