@@ -2,7 +2,7 @@ from atl_model import *
 import time
 import pickle
 import gc
-import resource
+# import resource
 import random
 
 __author__ = 'blackbat'
@@ -622,7 +622,7 @@ def test_bridge_model(n):
                                                               'hands': hands, 'next': 0, 'history': [],
                                                               'beginning': 0, 'clock': 0, 'suit': -1})
 
-    print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     winning_states = []
     i = -1
