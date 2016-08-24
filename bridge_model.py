@@ -576,59 +576,22 @@ def generate_random_hands(length):
 
     return hands
 
+n = 1
 
-# write_bridge_model(3, 1)
-
-# with open('bridge_2_2.pkl', 'rb') as input:
-#     bridge_model = pickle.load(input)
-# print("Ilość stanów ", len(bridge_model.states))
-
-# bridge_model = generate_bridge_model(2, 2)
-
-hands = generate_random_hands(1 * 4)
+hands = generate_random_hands(n * 4)
 print('Hands:', hands)
 
-bridge_model = generate_bridge_model_for_epistemic(1, 1, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
                                                           'hands': hands, 'next': 0, 'history': [],
                                                           'beginning': 0, 'clock': 0, 'suit': -1})
 
-# bridge_model = generate_bridge_model_for_epistemic(2, 2, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': hands, 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-
-# bridge_model = generate_bridge_model_for_epistemic(2, 1, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[134], [144], [133],
-#                                                                     [132]], 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-
-# bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': hands, 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-# bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': hands,
-#                                                           'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-
-# bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[143, 144, 134, 133], [111, 131, 112, 123], [113, 121, 141, 142], [124, 122, 114, 132]],
-#                                                           'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-
-# bridge_model = generate_bridge_model_for_epistemic(5, 5, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[144, 143, 142, 141, 134], [133, 132, 131, 124, 123],
-#                                                                     [122, 121, 114, 113, 112], [111, 104, 103, 102, 101]],
-#                                                           'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
-
-# bridge_model = read_bridge_model(3)
-# print("Ilość stanów ", len(bridge_model.states))
 print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
 winning_states = []
 i = -1
 for state in bridge_model.states:
     i += 1
-    if state['lefts'][0] >= 1:
+    if state['lefts'][0] > n/2:
         winning_states.append(i)
 
 print("Start formula verification under imperfect information")
