@@ -576,7 +576,7 @@ def generate_random_hands(length):
 
     return hands
 
-n = 1
+n = int(input("n="))
 
 hands = generate_random_hands(n * 4)
 print('Hands:', hands)
