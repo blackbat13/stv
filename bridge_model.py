@@ -576,10 +576,49 @@ def generate_random_hands(length):
 
     return hands
 
+def generate_readable_cards_array():
+    card_names = ["Ace", "King", "Queen", "Jack", "ten", "nine", "eight", "seven", "six", "five", "four", "three",
+                  "two"]
+    card_colors = ["Spade", "Heart", "Diamond", "Club"]
+    cards = []
+    for name in card_names:
+        for color in card_colors:
+            cards.append(name + color)
+
+    return cards
+
+def generate_cards_dictionary():
+    cards = generate_readable_cards_array()
+    card_name_number = 14
+    card_color_number = 4
+    cards_dictionary = {}
+    i = 0
+    while card_name_number > 1:
+        card_color_number = 4
+        while card_color_number > 0:
+            cards_dictionary[card_name_number * 10 + card_color_number] = cards[i]
+            i += 1
+            card_color_number -= 1
+        card_name_number -= 1
+
+    return cards_dictionary
+
+def hands_to_readable_hands(hands):
+    cards_dictionary = generate_cards_dictionary()
+    readable_hands = []
+    for hand in hands:
+        readable_hand = []
+        for card_number in hand:
+            readable_hand.append(cards_dictionary[card_number])
+        readable_hands.append(readable_hand)
+
+    return readable_hands
+
 n = int(input("n="))
 
 hands = generate_random_hands(n * 4)
 print('Hands:', hands)
+print('Readable hands:', hands_to_readable_hands(hands))
 
 bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
                                                           'hands': hands, 'next': 0, 'history': [],
