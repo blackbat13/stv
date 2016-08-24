@@ -406,6 +406,6 @@ bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_arr
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 7, 3, 4, 1, 2, 5, 6])
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(3, 3, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 1, [4, 0, 5, 1])
-f = open("bridge_" + str(n) + "_" + str(k) + ".ispl", "w")
+f = open("blind_bridge_" + str(n) + "_" + str(k) + ".ispl", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
 f.close()
