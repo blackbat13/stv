@@ -2,7 +2,8 @@ from atl_model import *
 import time
 import pickle
 import gc
-# import resource
+import resource
+import random
 
 __author__ = 'blackbat'
 
@@ -275,20 +276,26 @@ def generate_bridge_model(no_cards_available, no_end_cards):
     return bridge_model
 
 
+number_of_beginning_states = 0
+
+
 def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_state):
     # with open('atl_3_1294940.pkl', 'rb') as input:
     #     bridge_model = pickle.load(input)
+    global number_of_beginning_states
+
     if no_cards_available == 1:
         bridge_model = ATLModel(3, 100)
     elif no_cards_available == 2:
-        bridge_model = ATLModel(3, 400)
+        bridge_model = ATLModel(3, 1000)
     elif no_cards_available == 3:
-        bridge_model = ATLModel(3, 10000)
+        bridge_model = ATLModel(3, 50000)
     elif no_cards_available == 4:
-        bridge_model = ATLModel(3, 300000)
+        bridge_model = ATLModel(3, 800000)
     else:
         bridge_model = ATLModel(3, 4000000)
 
+    full_time = 0
     cards_available = []
     card_number = 14
     for i in range(0, no_cards_available):
@@ -324,9 +331,10 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
         state_number += 1
 
     end = time.clock()
+    full_time += end - start
     print("Created beginning states of model in", end - start, "s")
     print("Number of beginning states of model:", len(states))
-
+    number_of_beginning_states = len(states)
     print("Start creating rest of model")
     start = time.clock()
     current_state_number = -1
@@ -463,6 +471,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 bridge_model.add_transition(current_state_number, new_state_number, action)
 
     end = time.clock()
+    full_time += end - start
     print("Created rest of model in", end - start, "s")
     print("Created model have", len(states), "states")
     print("Begin defining indistuiginshable relation")
@@ -472,7 +481,9 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     prepare_epistemic_relation(bridge_model, states_dictionary)
     end = time.clock()
     gc.enable()
+    full_time += end - start
     print("Created indistuiginshable relation in", end - start, "s")
+    print("Created whole model in", full_time, "s")
     return bridge_model
 
 
@@ -537,76 +548,123 @@ def write_bridge_model(a, b):
     print("Number of states", len(bridge_model.states))
 
 
-# write_bridge_model(3, 1)
+def generate_random_hands(length):
+    array = []
+    used = []
+    card_numbers = [144, 143, 142, 141, 134, 133, 132, 131, 124, 123, 122, 121, 114, 113, 112, 111, 104, 103, 102, 101,
+                    94, 93, 92, 91]
+    for i in range(0, length):
+        used.append(False)
 
-# with open('bridge_2_2.pkl', 'rb') as input:
-#     bridge_model = pickle.load(input)
-# print("Ilość stanów ", len(bridge_model.states))
+    for i in range(0, length):
+        number = random.randrange(length)
+        while used[number]:
+            number = random.randrange(length)
 
-# bridge_model = generate_bridge_model(2, 2)
+        array.append(card_numbers[number])
+        used[number] = True
 
-# bridge_model = generate_bridge_model_for_epistemic(1, 1, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[144], [143], [142],
-#                                                                     [141]], 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
+    hands = []
+    j = 0
+    for i in range(0, 4):
+        hand = []
+        for _ in range(0, int(length / 4)):
+            hand.append(array[j])
+            j += 1
 
-# bridge_model = generate_bridge_model_for_epistemic(2, 2, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[144, 143], [142, 141], [134, 133],
-#                                                                     [132, 131]], 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
+        hands.append(hand)
 
-# bridge_model = generate_bridge_model_for_epistemic(2, 1, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[134], [144], [133],
-#                                                                     [132]], 'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
+    return hands
 
-bridge_model = generate_bridge_model_for_epistemic(3, 3, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                                          'hands': [[144, 143, 142], [141, 134, 133], [132, 131, 124],
-                                                                    [123, 122, 121]], 'next': 0, 'history': [],
-                                                          'beginning': 0, 'clock': 0, 'suit': -1})
-# bridge_model = generate_bridge_model_for_epistemic(4, 4, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[114, 113, 112, 111], [144, 143, 142, 141],
-#                                                                     [134, 133, 132, 131], [124, 123, 122, 121]],
-#                                                           'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
+def generate_readable_cards_array():
+    card_names = ["Ace", "King", "Queen", "Jack", "ten", "nine", "eight", "seven", "six", "five", "four", "three",
+                  "two"]
+    card_colors = ["Spade", "Heart", "Diamond", "Club"]
+    cards = []
+    for name in card_names:
+        for color in card_colors:
+            cards.append(name + color)
 
-# bridge_model = generate_bridge_model_for_epistemic(5, 5, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-#                                                           'hands': [[144, 143, 142, 141, 134], [133, 132, 131, 124, 123],
-#                                                                     [122, 121, 114, 113, 112], [111, 104, 103, 102, 101]],
-#                                                           'next': 0, 'history': [],
-#                                                           'beginning': 0, 'clock': 0, 'suit': -1})
+    return cards
 
-# bridge_model = read_bridge_model(3)
-print("Ilość stanów ", len(bridge_model.states))
-# print("Maksymalne zużycie pamięci ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+def generate_cards_dictionary():
+    cards = generate_readable_cards_array()
+    card_name_number = 14
+    cards_dictionary = {}
+    i = 0
+    while card_name_number > 1:
+        card_color_number = 4
+        while card_color_number > 0:
+            cards_dictionary[card_name_number * 10 + card_color_number] = cards[i]
+            i += 1
+            card_color_number -= 1
+        card_name_number -= 1
 
-# for state in bridge_model.states:
-#     print(state)
+    return cards_dictionary
 
-winning_states = []
-i = -1
-for state in bridge_model.states:
-    i += 1
-    if state['lefts'][0] == 3:
-        winning_states.append(i)
+def hands_to_readable_hands(hands):
+    cards_dictionary = generate_cards_dictionary()
+    readable_hands = []
+    for hand in hands:
+        readable_hand = []
+        for card_number in hand:
+            readable_hand.append(cards_dictionary[card_number])
+        readable_hands.append(readable_hand)
 
-start = time.clock()
-wynik = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states)
-end = time.clock()
-print("Time:", end - start, "s")
-print("Ilość spełniających stanów ", len(wynik))
-for state_nr in wynik:
-    if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
-                                                                                                         -1]:
-        print(bridge_model.states[state_nr])
+    return readable_hands
 
-print("Model checking perfect information")
-start = time.clock()
-wynik = bridge_model.minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
-end = time.clock()
-print("Time:", end - start, "s")
-print("Ilość spełniających stanów ", len(wynik))
-for state_nr in wynik:
-    if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
-                                                                                                         -1]:
-        print(bridge_model.states[state_nr])
+def test_bridge_model(n):
+    hands = generate_random_hands(n * 4)
+    print('Hands:', hands)
+    print('Readable hands:', hands_to_readable_hands(hands))
+
+    bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                              'hands': hands, 'next': 0, 'history': [],
+                                                              'beginning': 0, 'clock': 0, 'suit': -1})
+
+    print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+
+    winning_states = []
+    i = -1
+    for state in bridge_model.states:
+        i += 1
+        if state['lefts'][0] > n / 2:
+            winning_states.append(i)
+
+    print("Start formula verification under imperfect information")
+    start = time.clock()
+    wynik = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states)
+    end = time.clock()
+    print("Time:", end - start, "s")
+    print("Number of good states ", len(wynik))
+    number_of_correct_beginning_states = 0
+    for state_nr in wynik:
+        if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
+                                                                                                             -1]:
+            number_of_correct_beginning_states += 1
+
+    print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+
+    print("Start formula verification under perfect information")
+    start = time.clock()
+    wynik = bridge_model.minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
+    end = time.clock()
+    print("Time:", end - start, "s")
+    print("Number of good states ", len(wynik))
+    number_of_correct_beginning_states = 0
+    for state_nr in wynik:
+        if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
+                                                                                                             -1]:
+            number_of_correct_beginning_states += 1
+
+    print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+
+n = int(input("n="))
+number_of_tests = int(input("Number of tests="))
+
+for _ in range(0, number_of_tests):
+    test_bridge_model(n)
+    print()
+
+# Pik Kier Karo Trefl
+# Spade Heart Diamond Club
