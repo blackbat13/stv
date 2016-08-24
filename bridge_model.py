@@ -590,7 +590,6 @@ def generate_readable_cards_array():
 def generate_cards_dictionary():
     cards = generate_readable_cards_array()
     card_name_number = 14
-    card_color_number = 4
     cards_dictionary = {}
     i = 0
     while card_name_number > 1:
