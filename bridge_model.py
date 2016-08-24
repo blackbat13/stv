@@ -287,7 +287,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     if no_cards_available == 1:
         bridge_model = ATLModel(3, 100)
     elif no_cards_available == 2:
-        bridge_model = ATLModel(3, 400)
+        bridge_model = ATLModel(3, 1000)
     elif no_cards_available == 3:
         bridge_model = ATLModel(3, 50000)
     elif no_cards_available == 4:
@@ -613,52 +613,58 @@ def hands_to_readable_hands(hands):
 
     return readable_hands
 
+def test_bridge_model(n):
+    hands = generate_random_hands(n * 4)
+    print('Hands:', hands)
+    print('Readable hands:', hands_to_readable_hands(hands))
+
+    bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                              'hands': hands, 'next': 0, 'history': [],
+                                                              'beginning': 0, 'clock': 0, 'suit': -1})
+
+    print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+
+    winning_states = []
+    i = -1
+    for state in bridge_model.states:
+        i += 1
+        if state['lefts'][0] > n / 2:
+            winning_states.append(i)
+
+    print("Start formula verification under imperfect information")
+    start = time.clock()
+    wynik = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states)
+    end = time.clock()
+    print("Time:", end - start, "s")
+    print("Number of good states ", len(wynik))
+    number_of_correct_beginning_states = 0
+    for state_nr in wynik:
+        if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
+                                                                                                             -1]:
+            number_of_correct_beginning_states += 1
+
+    print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+
+    print("Start formula verification under perfect information")
+    start = time.clock()
+    wynik = bridge_model.minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
+    end = time.clock()
+    print("Time:", end - start, "s")
+    print("Number of good states ", len(wynik))
+    number_of_correct_beginning_states = 0
+    for state_nr in wynik:
+        if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
+                                                                                                             -1]:
+            number_of_correct_beginning_states += 1
+
+    print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+
 n = int(input("n="))
+number_of_tests = int(input("Number of tests="))
 
-hands = generate_random_hands(n * 4)
-print('Hands:', hands)
-print('Readable hands:', hands_to_readable_hands(hands))
-
-bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                                          'hands': hands, 'next': 0, 'history': [],
-                                                          'beginning': 0, 'clock': 0, 'suit': -1})
-
-print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-
-winning_states = []
-i = -1
-for state in bridge_model.states:
-    i += 1
-    if state['lefts'][0] > n/2:
-        winning_states.append(i)
-
-print("Start formula verification under imperfect information")
-start = time.clock()
-wynik = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states)
-end = time.clock()
-print("Time:", end - start, "s")
-print("Number of good states ", len(wynik))
-number_of_correct_beginning_states = 0
-for state_nr in wynik:
-    if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
-                                                                                                         -1]:
-        number_of_correct_beginning_states += 1
-
-print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
-
-print("Start formula verification under perfect information")
-start = time.clock()
-wynik = bridge_model.minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
-end = time.clock()
-print("Time:", end - start, "s")
-print("Number of good states ", len(wynik))
-number_of_correct_beginning_states = 0
-for state_nr in wynik:
-    if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
-                                                                                                         -1]:
-        number_of_correct_beginning_states += 1
-
-print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+for _ in range(0, number_of_tests):
+    test_bridge_model(n)
+    print()
 
 # Pik Kier Karo Trefl
 # Spade Heart Diamond Club
