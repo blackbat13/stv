@@ -180,7 +180,7 @@ class ATLModel:
                 result_states.update(winning_states_reverse_same)
         return result_states
 
-    def basic_formula_one_agent_multiple_states(self, agent, current_states, winning_states):
+    def basic_formula_one_agent_multiple_states(self, agent, current_states):
         result_states = set()
         actions = self.agents_actions[agent]
         winning_states_reverse = []
@@ -193,7 +193,7 @@ class ATLModel:
             same_states = self.imperfect_information[agent][state]
             winning_states_reverse_same = [state]
             for same_state in same_states:
-                if ok and not self.is_reachable_by_agent(actions, same_state, winning_states, agent):
+                if ok and not self.is_reachable_by_agent(actions, same_state, current_states, agent):
                     ok = False
 
                 if same_state != state and same_state in winning_states_reverse:
@@ -204,7 +204,7 @@ class ATLModel:
 
         return result_states
 
-    def basic_formula_one_agent_multiple_states_perfect_information(self, agent, current_states, winning_states):
+    def basic_formula_one_agent_multiple_states_perfect_information(self, agent, current_states):
         result_states = set()
         actions = self.agents_actions[agent]
         winning_states_reverse = []
@@ -213,7 +213,7 @@ class ATLModel:
 
         unique(winning_states_reverse)
         for state in winning_states_reverse:
-            if self.is_reachable_by_agent(actions, state, winning_states, agent):
+            if self.is_reachable_by_agent(actions, state, current_states, agent):
                 result_states.add(state)
 
         return result_states
@@ -242,9 +242,8 @@ class ATLModel:
         number_of_iterations = 0
         current_states = winning_states[:]
         while True:
-            current_states = self.basic_formula_one_agent_multiple_states(agent, current_states, winning_states)
+            current_states = self.basic_formula_one_agent_multiple_states(agent, current_states)
             result_states.update(current_states)
-            winning_states = list(result_states)
             if result_states_length == len(result_states):
                 break
 
@@ -261,10 +260,8 @@ class ATLModel:
         number_of_iterations = 0
         current_states = winning_states[:]
         while True:
-            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states,
-                                                                                              winning_states)
+            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states)
             result_states.update(current_states)
-            winning_states = list(result_states)
             if result_states_length == len(result_states):
                 break
 
