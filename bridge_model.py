@@ -495,30 +495,54 @@ def prepare_epistemic_relation(bridge_model, states_dictionary):
             continue
 
         epistemic_class = list(prepare_epistemic_class_for_state(states[i], states_dictionary))
-        for x in range(0, len(epistemic_class)):
-            state_a_number = epistemic_class[x]
-            visited_states[state_a_number] = 1
-            for y in range(x + 1, len(epistemic_class)):
-                state_b_number = epistemic_class[y]
-                bridge_model.set_same_state(0, state_a_number, state_b_number)
+        # print(i, "Epistemic class", epistemic_class)
+        bridge_model.add_epistemic_class(0, epistemic_class)
+        for state in epistemic_class:
+            visited_states[state] = 1
 
 
 def prepare_epistemic_class_for_state(state, states_dictionary):
-    no_cards_player_2 = len(state['hands'][1])
-    cards = state['hands'][1] + state['hands'][3]
     state_str = ' '.join(str(state[e]) for e in state)
     epistemic_class = {states_dictionary[state_str]}
+    hands_length = len(state['hands'][1])
+    no_cards_player_2 = hands_length - state['hands'][1].count(-1)
+    if no_cards_player_2 == 0:
+        return epistemic_class
+    cards = []
+    for card in state['hands'][1]:
+        if card != -1:
+            cards.append(card)
+
+    for card in state['hands'][3]:
+        if card != -1:
+            cards.append(card)
+
     for player_2_cards in itertools.combinations(cards, no_cards_player_2):
         player_4_cards = cards[:]
         for card in player_2_cards:
             player_4_cards.remove(card)
-        new_hands = [state['hands'][0], list(player_2_cards), state['hands'][2], list(player_4_cards)]
-        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': state['next'], 'board': state['board'],
-                     'beginning': state['beginning'], 'history': state['history']}
-        new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-        if new_state_str in states_dictionary:
-            epistemic_class.add(states_dictionary[new_state_str])
+        player_2_cards_list = list(player_2_cards)
+        player_4_cards_list = list(player_4_cards)
+        while len(player_2_cards_list) != hands_length:
+            player_2_cards_list.append(-1)
 
+        while len(player_4_cards_list) != hands_length:
+            player_4_cards_list.append(-1)
+        for player_2_cards_permutation in itertools.permutations(player_2_cards_list):
+            for player_4_cards_permutation in itertools.permutations(player_4_cards_list):
+                new_hands = [state['hands'][0], list(player_2_cards_permutation), state['hands'][2],
+                             list(player_4_cards_permutation)]
+                new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': state['next'],
+                             'board': state['board'],
+                             'beginning': state['beginning'], 'history': state['history'], 'clock': state['clock'],
+                             'suit': state['suit']}
+                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                # print(new_state)
+                if new_state_str in states_dictionary:
+                    # print("added")
+                    epistemic_class.add(states_dictionary[new_state_str])
+
+    # print()
     return epistemic_class
 
 
@@ -576,6 +600,7 @@ def generate_random_hands(length):
 
     return hands
 
+
 def generate_readable_cards_array():
     card_names = ["Ace", "King", "Queen", "Jack", "ten", "nine", "eight", "seven", "six", "five", "four", "three",
                   "two"]
@@ -586,6 +611,7 @@ def generate_readable_cards_array():
             cards.append(name + color)
 
     return cards
+
 
 def generate_cards_dictionary():
     cards = generate_readable_cards_array()
@@ -602,6 +628,7 @@ def generate_cards_dictionary():
 
     return cards_dictionary
 
+
 def hands_to_readable_hands(hands):
     cards_dictionary = generate_cards_dictionary()
     readable_hands = []
@@ -613,16 +640,18 @@ def hands_to_readable_hands(hands):
 
     return readable_hands
 
+
 def test_bridge_model(n):
     hands = generate_random_hands(n * 4)
     print('Hands:', hands)
     print('Readable hands:', hands_to_readable_hands(hands))
-
+    # hands = [[133, 121, 143, 141], [142, 134, 114, 122], [123, 132, 111, 112], [113, 144, 124, 131]]
     bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
                                                               'hands': hands, 'next': 0, 'history': [],
                                                               'beginning': 0, 'clock': 0, 'suit': -1})
 
     # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    bridge_model.walk()
 
     winning_states = []
     i = -1
@@ -658,6 +687,7 @@ def test_bridge_model(n):
             number_of_correct_beginning_states += 1
 
     print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+
 
 n = int(input("n="))
 number_of_tests = int(input("Number of tests="))

@@ -61,6 +61,7 @@ class ATLModel:
     state_names = []
     state_descriptions = []
     states = []
+    epistemic_class_membership = []
 
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
@@ -70,12 +71,11 @@ class ATLModel:
         self.imperfect_information = create_array_of_size(number_of_agents, [])
         self.reverse_states = [set() for _ in itertools.repeat(None, number_of_states)]
         self.agents_actions = [[] for _ in itertools.repeat(None, number_of_states)]
+        self.epistemic_class_membership = [-1 for _ in itertools.repeat(None, number_of_states)]
         # self.stateNames = create_array_of_size(number_of_states, [])
         # self.stateDescriptions = create_array_of_size(number_of_states, [])
         for i in range(0, 1):  # number_of_agents):
-            self.imperfect_information[i] = [set() for i in itertools.repeat(None, number_of_states)]
-            for j in range(0, number_of_states):
-                self.imperfect_information[i][j].add(j)
+            self.imperfect_information[i] = []
 
     def add_action(self, agent, action):
         self.agents_actions[agent].append(action)
@@ -91,9 +91,12 @@ class ATLModel:
     def is_same_state(self, agent_number, state_a, state_b):
         return state_b in self.imperfect_information[agent_number][state_a]
 
-    def set_same_state(self, agent_number, state_a, state_b):
-        self.imperfect_information[agent_number][state_a].add(state_b)
-        self.imperfect_information[agent_number][state_b].add(state_a)
+    def add_epistemic_class(self, agent_number, epistemic_class):
+        self.imperfect_information[agent_number].append(epistemic_class)
+        epistemic_class_number = len(self.imperfect_information[agent_number]) -1
+        # print(self.imperfect_information[agent_number])
+        for state in epistemic_class:
+            self.epistemic_class_membership[state] = epistemic_class_number
 
     def basic_formula(self, agent_number, winning_state):
         result_states = []
@@ -190,7 +193,10 @@ class ATLModel:
         unique(winning_states_reverse)
         for state in winning_states_reverse:
             ok = True
-            same_states = self.imperfect_information[agent][state]
+            if self.epistemic_class_membership[state] == -1:
+                same_states = [state]
+            else:
+                same_states = self.imperfect_information[agent][self.epistemic_class_membership[state]]
             winning_states_reverse_same = [state]
             for same_state in same_states:
                 if ok and not self.is_reachable_by_agent(actions, same_state, current_states, agent):
@@ -313,3 +319,32 @@ class ATLModel:
 
     def set_state_descriptions(self, state_number, description):
         self.state_descriptions[state_number] = description
+
+    def walk(self):
+        print("#####################################################")
+        print("Simulation")
+        current_state = 0
+        while(True):
+            print()
+            print("Current state:", self.states[current_state])
+            print("Epistemic states:")
+            for state in self.imperfect_information[0][self.epistemic_class_membership[current_state]]:
+                print(self.states[state])
+
+            if len(self.transitions[current_state]) == 0:
+                print("End")
+                return
+
+            print('Transitions:')
+            i = 0
+            for transition in self.transitions[current_state]:
+                print(str(i) + ":", transition)
+                i += 1
+
+
+            choice = int(input("Choose transition="))
+            if choice == -1:
+                print("End")
+                return
+
+            current_state = self.transitions[current_state][choice]['nextState']
