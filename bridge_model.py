@@ -291,9 +291,9 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     elif no_cards_available == 3:
         bridge_model = ATLModel(3, 50000)
     elif no_cards_available == 4:
-        bridge_model = ATLModel(3, 800000)
+        bridge_model = ATLModel(3, 1000000)
     else:
-        bridge_model = ATLModel(3, 4000000)
+        bridge_model = ATLModel(3, 8000000)
 
     full_time = 0
     cards_available = []
