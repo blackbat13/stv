@@ -651,7 +651,7 @@ def test_bridge_model(n):
                                                               'beginning': 0, 'clock': 0, 'suit': -1})
 
     # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    bridge_model.walk()
+    # bridge_model.walk()
 
     winning_states = []
     i = -1
