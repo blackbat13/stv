@@ -312,6 +312,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     bridge_model.add_action(0, -1)
     states = []
     states_dictionary = {}
+    alternative_states_dictionary = {}
     state_number = 0
     print("Start creating beginning epistemic class states of model")
     enemy_hands = first_state['hands'][1][:] + first_state['hands'][3][:]
@@ -321,13 +322,14 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
         for i in player2:
             player4.remove(i)
         new_hands = first_state['hands'][:]
-        new_hands[1] = list(player2)
-        new_hands[3] = list(player4)
+        new_hands[1] = sorted(list(player2))
+        new_hands[3] = sorted(list(player4))
         state = {'hands': new_hands, 'lefts': [0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
                  'beginning': 0, 'history': first_state['history'], 'clock': 0, 'suit': -1}
         states.append(state)
         state_str = ' '.join(str(state[e]) for e in state)
         states_dictionary[state_str] = state_number
+        alternative_states_dictionary[state_str] = {state_number}
         state_number += 1
 
     end = time.clock()
@@ -363,21 +365,34 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 new_next = (state['next'] + 1) % 4
                 new_clock = state['clock'] + 1
                 new_hands = [[], [], [], []]
-                new_hands[0] = state['hands'][0][:]
-                new_hands[1] = state['hands'][1][:]
-                new_hands[2] = state['hands'][2][:]
-                new_hands[3] = state['hands'][3][:]
+                for i in range(0, 4):
+                    new_hands[i] = state['hands'][i][:]
+
                 new_hands[state['next']][card_index] = -1
+
+                alternative_new_hands = [[], [], [], []]
+                alternative_new_hands[0] = new_hands[0][:]
+                alternative_new_hands[1] = remove_values_from_list(new_hands[1], -1)
+                alternative_new_hands[2] = new_hands[2][:]
+                alternative_new_hands[3] = remove_values_from_list(new_hands[3], -1)
+
+                # print(alternative_new_hands)
+
                 new_suit = card % 10
                 new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
                              'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                              'suit': new_suit}
+                alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'], 'next': new_next,
+                                         'board': new_board,
+                                         'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+                                         'suit': new_suit}
                 agent_number = state['next']
                 if agent_number == 2:
                     agent_number = 0
                 action = {0: -1, 1: -1, 2: -1, 3: -1}
                 action[agent_number] = card
                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
                 if new_state_str not in states_dictionary:
                     states_dictionary[new_state_str] = state_number
                     new_state_number = state_number
@@ -385,6 +400,12 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                     state_number += 1
                 else:
                     new_state_number = states_dictionary[new_state_str]
+
+                if alternative_new_state_str not in alternative_states_dictionary:
+                    alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+                else:
+                    alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+
                 bridge_model.add_transition(current_state_number, new_state_number, action)
         elif state['clock'] == 4:
             new_history = state['history'][:]
@@ -414,9 +435,21 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
             new_beginning = winner
             new_suit = -1
             action = {0: -1, 1: -1, 2: -1, 3: -1}
+
+            alternative_new_hands = [[], [], [], []]
+            alternative_new_hands[0] = state['hands'][0][:]
+            alternative_new_hands[1] = remove_values_from_list(state['hands'][1], -1)
+            alternative_new_hands[2] = state['hands'][2][:]
+            alternative_new_hands[3] = remove_values_from_list(state['hands'][3], -1)
+
             new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
                          'beginning': new_beginning, 'history': new_history, 'clock': new_clock, 'suit': new_suit}
+            alternative_new_state = {'hands': alternative_new_hands, 'lefts': new_lefts, 'next': new_next,
+                                     'board': [-1, -1, -1, -1],
+                                     'beginning': new_beginning, 'history': new_history, 'clock': new_clock,
+                                     'suit': new_suit}
             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+            alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
             if new_state_str not in states_dictionary:
                 states_dictionary[new_state_str] = state_number
                 new_state_number = state_number
@@ -424,6 +457,12 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 state_number += 1
             else:
                 new_state_number = states_dictionary[new_state_str]
+
+            if alternative_new_state_str not in alternative_states_dictionary:
+                alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+            else:
+                alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+
             bridge_model.add_transition(current_state_number, new_state_number, action)
 
         else:
@@ -451,16 +490,28 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                 new_hands[3] = state['hands'][3][:]
                 new_hands[state['next']][card_index] = -1
 
+                alternative_new_hands = [[], [], [], []]
+                alternative_new_hands[0] = new_hands[0][:]
+                alternative_new_hands[1] = remove_values_from_list(new_hands[1], -1)
+                alternative_new_hands[2] = new_hands[2][:]
+                alternative_new_hands[3] = remove_values_from_list(new_hands[3], -1)
+
                 new_clock = state['clock'] + 1
                 new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
                              'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                              'suit': state['suit']}
+                alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'], 'next': new_next,
+                                         'board': new_board,
+                                         'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+                                         'suit': state['suit']}
+
                 agent_number = state['next']
                 if agent_number == 2:
                     agent_number = 0
                 action = {0: -1, 1: -1, 2: -1, 3: -1}
                 action[agent_number] = card
                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
                 if new_state_str not in states_dictionary:
                     states_dictionary[new_state_str] = state_number
                     new_state_number = state_number
@@ -468,6 +519,12 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
                     state_number += 1
                 else:
                     new_state_number = states_dictionary[new_state_str]
+
+                if alternative_new_state_str not in alternative_states_dictionary:
+                    alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+                else:
+                    alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+
                 bridge_model.add_transition(current_state_number, new_state_number, action)
 
     end = time.clock()
@@ -478,7 +535,7 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     gc.disable()
     start = time.clock()
     bridge_model.states = states
-    prepare_epistemic_relation(bridge_model, states_dictionary)
+    prepare_epistemic_relation(bridge_model, states_dictionary, alternative_states_dictionary)
     end = time.clock()
     gc.enable()
     full_time += end - start
@@ -487,21 +544,22 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     return bridge_model
 
 
-def prepare_epistemic_relation(bridge_model, states_dictionary):
+def prepare_epistemic_relation(bridge_model, states_dictionary, alternative_states_dictionary):
     states = bridge_model.states
     visited_states = [0 for _ in itertools.repeat(None, len(states))]
     for i in range(0, len(states)):
         if visited_states[i] == 1:
             continue
 
-        epistemic_class = list(prepare_epistemic_class_for_state(states[i], states_dictionary))
+        epistemic_class = list(
+                prepare_epistemic_class_for_state(states[i], states_dictionary, alternative_states_dictionary))
         # print(i, "Epistemic class", epistemic_class)
         bridge_model.add_epistemic_class(0, epistemic_class)
         for state in epistemic_class:
             visited_states[state] = 1
 
 
-def prepare_epistemic_class_for_state(state, states_dictionary):
+def prepare_epistemic_class_for_state(state, states_dictionary, alternative_states_dictionary):
     state_str = ' '.join(str(state[e]) for e in state)
     epistemic_class = {states_dictionary[state_str]}
     hands_length = len(state['hands'][1])
@@ -517,30 +575,31 @@ def prepare_epistemic_class_for_state(state, states_dictionary):
         if card != -1:
             cards.append(card)
 
+    cards.sort()
     for player_2_cards in itertools.combinations(cards, no_cards_player_2):
         player_4_cards = cards[:]
         for card in player_2_cards:
             player_4_cards.remove(card)
-        player_2_cards_list = list(player_2_cards)
-        player_4_cards_list = list(player_4_cards)
-        while len(player_2_cards_list) != hands_length:
-            player_2_cards_list.append(-1)
+        # player_2_cards_list = list(player_2_cards)
+        # player_4_cards_list = list(player_4_cards)
+        # while len(player_2_cards_list) != hands_length:
+        #     player_2_cards_list.append(-1)
 
-        while len(player_4_cards_list) != hands_length:
-            player_4_cards_list.append(-1)
-        for player_2_cards_permutation in itertools.permutations(player_2_cards_list):
-            for player_4_cards_permutation in itertools.permutations(player_4_cards_list):
-                new_hands = [state['hands'][0], list(player_2_cards_permutation), state['hands'][2],
-                             list(player_4_cards_permutation)]
-                new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': state['next'],
-                             'board': state['board'],
-                             'beginning': state['beginning'], 'history': state['history'], 'clock': state['clock'],
-                             'suit': state['suit']}
-                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-                # print(new_state)
-                if new_state_str in states_dictionary:
-                    # print("added")
-                    epistemic_class.add(states_dictionary[new_state_str])
+        # while len(player_4_cards_list) != hands_length:
+        #     player_4_cards_list.append(-1)
+        # for player_2_cards_permutation in itertools.permutations(player_2_cards_list):
+        #     for player_4_cards_permutation in itertools.permutations(player_4_cards_list):
+        new_hands = [state['hands'][0], list(player_2_cards), state['hands'][2],
+                     list(player_4_cards)]
+        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': state['next'],
+                     'board': state['board'],
+                     'beginning': state['beginning'], 'history': state['history'], 'clock': state['clock'],
+                     'suit': state['suit']}
+        new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+        # print(new_state)
+        if new_state_str in alternative_states_dictionary:
+            # print("added")
+            epistemic_class.update(alternative_states_dictionary[new_state_str])
 
     # print()
     return epistemic_class
@@ -596,7 +655,7 @@ def generate_random_hands(length):
             hand.append(array[j])
             j += 1
 
-        hands.append(hand)
+        hands.append(sorted(hand))
 
     return hands
 
@@ -645,7 +704,7 @@ def test_bridge_model(n):
     hands = generate_random_hands(n * 4)
     print('Hands:', hands)
     print('Readable hands:', hands_to_readable_hands(hands))
-    # hands = [[133, 121, 143, 141], [142, 134, 114, 122], [123, 132, 111, 112], [113, 144, 124, 131]]
+    # hands = [[121, 133, 141, 143], [114, 122, 134, 142], [111, 112, 123, 132], [113, 124, 131, 144]]
     bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
                                                               'hands': hands, 'next': 0, 'history': [],
                                                               'beginning': 0, 'clock': 0, 'suit': -1})
@@ -687,6 +746,10 @@ def test_bridge_model(n):
             number_of_correct_beginning_states += 1
 
     print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+
+
+def remove_values_from_list(the_list, val):
+    return [value for value in the_list if value != val]
 
 
 n = int(input("n="))

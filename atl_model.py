@@ -145,13 +145,13 @@ class ATLModel:
                 return True
         return False
 
-    def is_reachable_by_agent(self, actions, from_state, to_states, agent):
+    def is_reachable_by_agent(self, actions, from_state, is_winning_state, agent):
         for action in self.agents_actions[agent]:
             action_ok = False
             for transition in self.transitions[from_state]:
                 if transition['actions'][0] == action:
                     action_ok = True
-                    if transition['nextState'] not in to_states:
+                    if not is_winning_state[transition['nextState']]:
                         action_ok = False
                         break
 
@@ -183,7 +183,7 @@ class ATLModel:
                 result_states.update(winning_states_reverse_same)
         return result_states
 
-    def basic_formula_one_agent_multiple_states(self, agent, current_states):
+    def basic_formula_one_agent_multiple_states(self, agent, current_states, is_winning_state):
         result_states = set()
         actions = self.agents_actions[agent]
         winning_states_reverse = []
@@ -199,7 +199,7 @@ class ATLModel:
                 same_states = self.imperfect_information[agent][self.epistemic_class_membership[state]]
             winning_states_reverse_same = [state]
             for same_state in same_states:
-                if ok and not self.is_reachable_by_agent(actions, same_state, current_states, agent):
+                if ok and not self.is_reachable_by_agent(actions, same_state, is_winning_state, agent):
                     ok = False
 
                 if same_state != state and same_state in winning_states_reverse:
@@ -208,9 +208,12 @@ class ATLModel:
             if ok:
                 result_states.update(winning_states_reverse_same)
 
+        for state_number in result_states:
+            is_winning_state[state_number] = True
+
         return result_states
 
-    def basic_formula_one_agent_multiple_states_perfect_information(self, agent, current_states):
+    def basic_formula_one_agent_multiple_states_perfect_information(self, agent, current_states, is_winning_state):
         result_states = set()
         actions = self.agents_actions[agent]
         winning_states_reverse = []
@@ -219,8 +222,11 @@ class ATLModel:
 
         unique(winning_states_reverse)
         for state in winning_states_reverse:
-            if self.is_reachable_by_agent(actions, state, current_states, agent):
+            if self.is_reachable_by_agent(actions, state, is_winning_state, agent):
                 result_states.add(state)
+
+        for state_number in result_states:
+            is_winning_state[state_number] = True
 
         return result_states
 
@@ -247,8 +253,12 @@ class ATLModel:
         result_states_length = len(result_states)
         number_of_iterations = 0
         current_states = winning_states[:]
+        is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
         while True:
-            current_states = self.basic_formula_one_agent_multiple_states(agent, current_states)
+            current_states = self.basic_formula_one_agent_multiple_states(agent, current_states, is_winning_state)
             result_states.update(current_states)
             if result_states_length == len(result_states):
                 break
@@ -265,8 +275,12 @@ class ATLModel:
         result_states_length = len(result_states)
         number_of_iterations = 0
         current_states = winning_states[:]
+        is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
         while True:
-            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states)
+            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states, is_winning_state)
             result_states.update(current_states)
             if result_states_length == len(result_states):
                 break
