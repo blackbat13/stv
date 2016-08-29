@@ -3,7 +3,8 @@ import random
 
 
 class BridgeModelIsplGenerator:
-    card_names = ["Ace", "King", "Queen", "Jack", "ten", "nine", "eight", "seven", "six", "five", "four", "three", "two"]
+    card_names = ["Ace", "King", "Queen", "Jack", "ten", "nine", "eight", "seven", "six", "five", "four", "three",
+                  "two"]
     card_colors = ["Spade", "Heart", "Diamond", "Club"]
     player_names = ["SPlayer", "WPlayer", "NPlayer", "EPlayer"]
     ispl_model = ""
@@ -74,7 +75,7 @@ class BridgeModelIsplGenerator:
         obsvars += "\t\tsecondTeamScore: 0.." + str(self.number_of_cards_in_hand) + ";\n"
         obsvars += "\t\tbeginningPlayer: 0..3;\n"
         obsvars += "\t\tcurrentPlayer: 0..4;\n"
-        obsvars += "\t\tclock: 0..4;\n"
+        obsvars += "\t\tclock: 0..5;\n"
 
         obsvars += "\t\t" + self.player_names[0] + "Card: {"
         for j in range(0, 4 * self.number_of_cards):
@@ -89,11 +90,6 @@ class BridgeModelIsplGenerator:
 
         for i in range(0, self.number_of_cards * 4):
             obsvars += "\t\t" + self.cards[i] + "H: boolean;\n"
-
-        obsvars += "\t\tsuit: {Spade, Heart, Diamond, Club, None};\n"
-
-        for color in self.card_colors:
-            obsvars += "\t\thas" + color + ": 0.." + str(self.number_of_cards_in_hand) + ";\n"
 
         obsvars += "\tend Obsvars\n"
         return obsvars
@@ -113,6 +109,8 @@ class BridgeModelIsplGenerator:
             for j in range(0, 4 * self.number_of_cards):
                 vars += self.cards[j] + ", "
             vars += "None};\n"
+
+        vars += "\t\tsuit: {Spade, Heart, Diamond, Club, None};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -172,43 +170,239 @@ class BridgeModelIsplGenerator:
                         evolution += self.player_names[player] + "Card=" + combination[player] + " and "
 
                     evolution += "beginningPlayer=" + str(beginning_player)
-                    evolution += " and clock=4)"
+                    evolution += " and clock>=4)"
 
             evolution += ";\n"
 
+        # for i in range(0, self.number_of_cards * 4):
+        #     card = self.cards[i]
+        #     for player_number in range(0, 4):
+        #         if (player_number - 1) % 4 != 2:
+        #             evolution += "\t\tclock=clock+1 and currentPlayer=" + str(
+        #                 player_number) + " and " + self.player_names[
+        #                              (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true if\n"
+        #             evolution += "\t\t\t" + self.player_names[
+        #                 (player_number - 1) % 4] + ".Action=Play" + card + " and currentPlayer=" + str(
+        #                 (player_number - 1) % 4) + " and clock>0;\n"
+        #
+        #             evolution += "\t\tclock=clock+1 and currentPlayer=" + str(
+        #                 player_number) + " and " + self.player_names[
+        #                              (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true and suit=" + \
+        #                          self.cards_colors[card] + " if\n"
+        #             evolution += "\t\t\t" + self.player_names[
+        #                 (player_number - 1) % 4] + ".Action=Play" + card + " and currentPlayer=" + str(
+        #                 (player_number - 1) % 4) + " and clock=0;\n"
+        #         else:
+        #             for j in range(1, self.number_of_cards_in_hand + 1):
+        #                 evolution += "\t\tclock=clock+1 and currentCardN" + str(j) + "=None and has"+ self.cards_colors[card] +"=has"+self.cards_colors[card]+"-1 and currentPlayer=" + str(
+        #                     player_number) + " and " + self.player_names[
+        #                                  (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true if\n"
+        #                 evolution += "\t\t\t" + self.player_names[
+        #                     0] + ".Action=Play" + card + " and currentPlayer=" + str(
+        #                     (player_number - 1) % 4) + " and currentCardN" + str(j) + "=" + card + " and clock>0;\n"
+        #
+        #                 evolution += "\t\tclock=clock+1 and currentCardN" + str(j) + "=None and has"+ self.cards_colors[card] +"=has"+self.cards_colors[card]+"-1 and currentPlayer=" + str(
+        #                     player_number) + " and " + self.player_names[
+        #                                  (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true and suit=" + self.cards_colors[card] + " if\n"
+        #                 evolution += "\t\t\t" + self.player_names[
+        #                     0] + ".Action=Play" + card + " and currentPlayer=" + str(
+        #                     (player_number - 1) % 4) + " and currentCardN" + str(j) + "=" + card + " and clock=0;\n"
+
         for i in range(0, self.number_of_cards * 4):
             card = self.cards[i]
-            for player_number in range(0, 4):
-                if (player_number - 1) % 4 != 2:
-                    evolution += "\t\tclock=clock+1 and currentPlayer=" + str(
-                        player_number) + " and " + self.player_names[
-                                     (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true if\n"
-                    evolution += "\t\t\t" + self.player_names[
-                        (player_number - 1) % 4] + ".Action=Play" + card + " and currentPlayer=" + str(
-                        (player_number - 1) % 4) + " and clock>0;\n"
 
-                    evolution += "\t\tclock=clock+1 and currentPlayer=" + str(
-                        player_number) + " and " + self.player_names[
-                                     (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true and suit=" + \
-                                 self.cards_colors[card] + " if\n"
-                    evolution += "\t\t\t" + self.player_names[
-                        (player_number - 1) % 4] + ".Action=Play" + card + " and currentPlayer=" + str(
-                        (player_number - 1) % 4) + " and clock=0;\n"
-                else:
-                    for j in range(1, self.number_of_cards_in_hand + 1):
-                        evolution += "\t\tclock=clock+1 and currentCardN" + str(j) + "=None and has"+ self.cards_colors[card] +"=has"+self.cards_colors[card]+"-1 and currentPlayer=" + str(
-                            player_number) + " and " + self.player_names[
-                                         (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true if\n"
-                        evolution += "\t\t\t" + self.player_names[
-                            0] + ".Action=Play" + card + " and currentPlayer=" + str(
-                            (player_number - 1) % 4) + " and currentCardN" + str(j) + "=" + card + " and clock>0;\n"
+            # Player S plays
+            evolution += "\t\tcurrentPlayer=1 and clock=clock+1 and SPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=0 and clock<4 and clock>0 and SPlayer.Action=Play" + card + ";\n"
 
-                        evolution += "\t\tclock=clock+1 and currentCardN" + str(j) + "=None and has"+ self.cards_colors[card] +"=has"+self.cards_colors[card]+"-1 and currentPlayer=" + str(
-                            player_number) + " and " + self.player_names[
-                                         (player_number - 1) % 4] + "Card=" + card + " and " + card + "H=true and suit=" + self.cards_colors[card] + " if\n"
-                        evolution += "\t\t\t" + self.player_names[
-                            0] + ".Action=Play" + card + " and currentPlayer=" + str(
-                            (player_number - 1) % 4) + " and currentCardN" + str(j) + "=" + card + " and clock=0;\n"
+            evolution += "\t\tcurrentPlayer=1 and clock=clock+1 and SPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " and suit=" + self.cards_colors[card]
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=0 and clock<4 and clock=0 and SPlayer.Action=Play" + card + ";\n"
+
+            # Player S should play, but play Player N card
+
+            for j in range(1, self.number_of_cards_in_hand + 1):
+                evolution += "\t\tNPlayerCard=" + card + " and " + card + "H=true and currentCardN" + str(j) + "=None"
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=0 and clock<4 and SPlayer.Action=PlayN" + card + " and currentCardN" + str(
+                    j) + "=" + card + " and NPlayerCard=None;\n"
+
+            # Player W plays, Player S Wait
+
+            evolution += "\t\tcurrentPlayer=2 and clock=clock+1 and WPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play" + card + " and SPlayer.Action=Wait and NPlayerCard=None;\n"
+
+            evolution += "\t\tcurrentPlayer=2 and clock=clock+1 and WPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " and suit=" + self.cards_colors[card]
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play" + card + " and SPlayer.Action=Wait and NPlayerCard=None;\n"
+
+            evolution += "\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play" + card + " and SPlayer.Action=Wait and !(NPlayerCard=None);\n"
+
+            evolution += "\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " and suit=" + self.cards_colors[card]
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play" + card + " and SPlayer.Action=Wait and !(NPlayerCard=None);\n"
+
+            # Player W plays, Player S Play his card
+            for i2 in range(0, self.number_of_cards * 4):
+                card2 = self.cards[i2]
+
+                if card == card2:
+                    continue
+
+                evolution += "\t\tcurrentPlayer=2 and clock=clock+1 and WPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " and SPlayerCard=" + card2 + " and " + card2 + "H=true"
+                evolution += " and suit=" + self.cards_colors[card]
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play" + card + " and SPlayer.Action=Play" + card2 + " and NPlayerCard=None;\n"
+
+                evolution += "\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " and SPlayerCard=" + card2 + " and " + card2 + "H=true"
+                evolution += " and suit=" + self.cards_colors[card]
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play" + card + " and SPlayer.Action=Play" + card2 + " and !(NPlayerCard=None);\n"
+
+            # Player W plays, Player S Play N card
+            for i2 in range(0, self.number_of_cards * 4):
+                card2 = self.cards[i2]
+                if card == card2:
+                    continue
+
+                for j in range(1, self.number_of_cards_in_hand + 1):
+                    evolution += "\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard=" + card + " and " + card + "H=true"
+                    evolution += " and NPlayerCard=" + card2 + " and " + card2 + "H=true"
+                    evolution += " and currentCardN" + str(j) + "=None"
+                    evolution += " if\n"
+                    evolution += "\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and NPlayerCard=None"
+                    evolution += " and currentCardN" + str(j) + "=" + card2
+                    evolution += ";\n"
+
+                    evolution += "\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard=" + card + " and " + card + "H=true"
+                    evolution += " and NPlayerCard=" + card2 + " and " + card2 + "H=true"
+                    evolution += " and currentCardN" + str(j) + "=None"
+                    evolution += " and suit=" + self.cards_colors[card]
+                    evolution += " if\n"
+                    evolution += "\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and NPlayerCard=None"
+                    evolution += " and currentCardN" + str(j) + "=" + card2
+                    evolution += ";\n"
+
+                evolution += "\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and !(NPlayerCard=None)"
+                evolution += ";\n"
+
+                evolution += "\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " and suit=" + self.cards_colors[card]
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and !(NPlayerCard=None)"
+                evolution += ";\n"
+
+            # Player N Plays
+
+            for j in range(1, self.number_of_cards_in_hand + 1):
+                evolution += "\t\tcurrentPlayer=3 and clock=clock+1 and NPlayerCard=" + card + " and " + card + "H=true and currentCardN" + str(
+                    j) + "=None"
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=2 and clock>0 and clock<4 and SPlayer.Action=PlayN" + card + " and currentCardN" + str(
+                    j) + "=" + card + " and NPlayerCard=None;\n"
+
+                evolution += "\t\tcurrentPlayer=3 and clock=clock+1 and NPlayerCard=" + card + " and " + card + "H=true and currentCardN" + str(
+                    j) + "=None"
+                evolution += " and suit=" + self.cards_colors[card]
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=2 and clock=0 and SPlayer.Action=PlayN" + card + " and currentCardN" + str(
+                    j) + "=" + card + " and NPlayerCard=None;\n"
+
+            # Player N should Play, Player S play his own card
+
+            evolution += "\t\tSPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=2 and clock<4 and SPlayer.Action=Play" + card + ";\n"
+
+            # Player E Plays, Player S Wait
+
+            evolution += "\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play" + card + " and SPlayer.Action=Wait and SPlayerCard=None;\n"
+
+            evolution += "\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " and suit=" + self.cards_colors[card]
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play" + card + " and SPlayer.Action=Wait and SPlayerCard=None;\n"
+
+            evolution += "\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play" + card + " and SPlayer.Action=Wait and !(SPlayerCard=None);\n"
+
+            evolution += "\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard=" + card + " and " + card + "H=true"
+            evolution += " and suit=" + self.cards_colors[card]
+            evolution += " if\n"
+            evolution += "\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play" + card + " and SPlayer.Action=Wait and !(SPlayerCard=None);\n"
+
+            # Player E Plays, Player S Play his card
+
+            for i2 in range(0, self.number_of_cards * 4):
+                card2 = self.cards[i2]
+
+                if card == card2:
+                    continue
+
+                evolution += "\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " and SPlayerCard=" + card2 + " and " + card2 + "H=true"
+                evolution += " and suit=" + self.cards_colors[card]
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play" + card + " and SPlayer.Action=Play" + card2 + ";\n"
+
+                evolution += "\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " and SPlayerCard=" + card2 + " and " + card2 + "H=true"
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play" + card + " and SPlayer.Action=Play" + card2 + ";\n"
+
+            # Player E Plays, Player S Play N card
+
+            for i2 in range(0, self.number_of_cards * 4):
+                card2 = self.cards[i2]
+                if card == card2:
+                    continue
+
+                for j in range(1, self.number_of_cards_in_hand + 1):
+                    evolution += "\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard=" + card + " and " + card + "H=true"
+                    evolution += " and NPlayerCard=" + card2 + " and " + card2 + "H=true"
+                    evolution += " and currentCardN" + str(j) + "=None"
+                    evolution += " and suit=" + self.cards_colors[card]
+                    evolution += " if\n"
+                    evolution += "\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and NPlayerCard=None"
+                    evolution += " and currentCardN" + str(j) + "=" + card2
+                    evolution += " and SPlayerCard=None"
+                    evolution += ";\n"
+
+                    evolution += "\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard=" + card + " and " + card + "H=true"
+                    evolution += " and NPlayerCard=" + card2 + " and " + card2 + "H=true"
+                    evolution += " and currentCardN" + str(j) + "=None"
+                    evolution += " and suit=" + self.cards_colors[card]
+                    evolution += " if\n"
+                    evolution += "\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and NPlayerCard=None"
+                    evolution += " and currentCardN" + str(j) + "=" + card2
+                    evolution += " and !(SPlayerCard=None)"
+                    evolution += ";\n"
+
+                evolution += "\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and !(NPlayerCard=None)"
+                evolution += " and SPlayerCard=None"
+                evolution += ";\n"
+
+                evolution += "\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard=" + card + " and " + card + "H=true"
+                evolution += " if\n"
+                evolution += "\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play" + card + " and SPlayer.Action=PlayN" + card2 + " and !(NPlayerCard=None)"
+                evolution += " and !(SPlayerCard=None)"
+                evolution += ";\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -218,8 +412,8 @@ class BridgeModelIsplGenerator:
         if player_number != 0:
             player += self.__create_player_lobsvars()
 
-        player += self.__create_player_vars()
-        player += self.__create_player_actions()
+        player += self.__create_player_vars(player_number)
+        player += self.__create_player_actions(player_number)
         player += self.__create_player_protocol(player_number)
         player += self.__create_player_evolution(player_number)
         player += "end Agent\n\n"
@@ -235,11 +429,11 @@ class BridgeModelIsplGenerator:
         for i in range(1, self.number_of_cards_in_hand + 1):
             lobsvars += "currentCardN" + str(i) + ", "
 
-        lobsvars = lobsvars.rstrip(" ,")
+        lobsvars += "suit"
         lobsvars += "};\n"
         return lobsvars
 
-    def __create_player_vars(self):
+    def __create_player_vars(self, player_number):
         vars = "\tVars:\n"
         for i in range(1, self.number_of_cards_in_hand + 1):
             vars += "\t\tcard" + str(i) + ": {"
@@ -247,16 +441,21 @@ class BridgeModelIsplGenerator:
                 vars += self.cards[j] + ", "
             vars += "None};\n"
 
-        for color in self.card_colors:
-            vars += "\t\thas" + color + ": 0.." + str(self.number_of_cards_in_hand) + ";\n"
+        if player_number != 0:
+            for color in self.card_colors:
+                vars += "\t\thas" + color + ": 0.." + str(self.number_of_cards_in_hand) + ";\n"
 
         vars += "\tend Vars\n"
         return vars
 
-    def __create_player_actions(self):
+    def __create_player_actions(self, player_number):
         actions = "\tActions = {"
         for i in range(0, 4 * self.number_of_cards):
             actions += "Play" + self.cards[i] + ", "
+
+        if player_number == 0:
+            for i in range(0, 4 * self.number_of_cards):
+                actions += "PlayN" + self.cards[i] + ", "
 
         actions += "Wait};\n"
         return actions
@@ -265,16 +464,25 @@ class BridgeModelIsplGenerator:
         protocol = "\tProtocol:\n"
         for i in range(1, self.number_of_cards_in_hand + 1):
             for j in range(0, 4 * self.number_of_cards):
-                protocol += "\t\tcard" + str(i) + "="
-                protocol += self.cards[j] + " and Environment.currentPlayer=" + str(
-                    player_number) + " and Environment.clock<4 and (Environment.suit=None or Environment.suit=" + self.cards_colors[self.cards[j]] + " or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {Play" + self.cards[j] + "};\n"
+                protocol += "\t\tcard" + str(i) + "=" + self.cards[j]
+                if player_number != 0:
+                    protocol += " and Environment.currentPlayer=" + str(
+                        player_number) + " and Environment.clock<4 and (Environment.suit=None or Environment.suit=" + \
+                                self.cards_colors[self.cards[
+                                    j]] + " or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))):"
+                else:
+                    protocol += " and Environment.SPlayerCard=None:"
+                protocol += " {Play" + self.cards[j]
+                if player_number == 0:
+                    protocol += ", Wait"
+
+                protocol += "};\n"
 
         if player_number == 0:
             for i in range(1, self.number_of_cards_in_hand + 1):
                 for j in range(0, 4 * self.number_of_cards):
-                    protocol += "\t\tEnvironment.cardN" + str(i) + "="
-                    protocol += self.cards[j] + " and Environment.currentPlayer=2 and Environment.clock<4 and (Environment.suit=None or Environment.suit=" + self.cards_colors[self.cards[j]] + " or ((Environment.hasSpade<=0 and Environment.suit=Spade) or (Environment.hasClub<=0 and Environment.suit=Club) or (Environment.hasDiamond<=0 and Environment.suit=Diamond) or (Environment.hasHeart<=0 and Environment.suit=Heart))): {Play" + \
-                                self.cards[j] + "};\n"
+                    protocol += "\t\tEnvironment.cardN" + str(i) + "=" + self.cards[j] + ":"
+                    protocol += " {PlayN" + self.cards[j] + ", Wait};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -284,10 +492,16 @@ class BridgeModelIsplGenerator:
         evolution = "\tEvolution:\n"
         for i in range(1, self.number_of_cards_in_hand + 1):
             for j in range(0, 4 * self.number_of_cards):
-                evolution += "\t\tcard" + str(i) + "=None and has" + self.cards_colors[self.cards[j]] + "=has" + \
-                             self.cards_colors[self.cards[j]] + "-1 if card" + str(i)
-                evolution += "=" + self.cards[j] + " and Action=Play" + self.cards[
-                    j] + " and Environment.currentPlayer=" + str(player_number) + ";\n"
+                evolution += "\t\tcard" + str(i) + "=None"
+                if player_number != 0:
+                    evolution += " and has" + self.cards_colors[self.cards[j]] + "=has" + \
+                                 self.cards_colors[self.cards[j]] + "-1"
+                evolution += " if card" + str(i)
+                evolution += "=" + self.cards[j] + " and Action=Play" + self.cards[j]
+                if player_number == 0:
+                    evolution += " and Environment.SPlayerCard=None;\n"
+                else:
+                    evolution += " and Environment.currentPlayer=" + str(player_number) + ";\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -343,9 +557,7 @@ class BridgeModelIsplGenerator:
             i = 0
             for player in self.player_names:
                 for color in self.card_colors:
-                    if player == "NPlayer":
-                        init_states += " and Environment.has" + color + "=" + str(colors_count[player][color])
-                    else:
+                    if player != "NPlayer" and player != 'SPlayer':
                         init_states += " and " + player + ".has" + color + "=" + str(colors_count[player][color])
 
             for player in self.player_names:
