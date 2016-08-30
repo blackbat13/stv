@@ -553,7 +553,6 @@ def prepare_epistemic_relation(bridge_model, states_dictionary, alternative_stat
 
         epistemic_class = list(
                 prepare_epistemic_class_for_state(states[i], states_dictionary, alternative_states_dictionary))
-        # print(i, "Epistemic class", epistemic_class)
         bridge_model.add_epistemic_class(0, epistemic_class)
         for state in epistemic_class:
             visited_states[state] = 1
@@ -580,15 +579,7 @@ def prepare_epistemic_class_for_state(state, states_dictionary, alternative_stat
         player_4_cards = cards[:]
         for card in player_2_cards:
             player_4_cards.remove(card)
-        # player_2_cards_list = list(player_2_cards)
-        # player_4_cards_list = list(player_4_cards)
-        # while len(player_2_cards_list) != hands_length:
-        #     player_2_cards_list.append(-1)
 
-        # while len(player_4_cards_list) != hands_length:
-        #     player_4_cards_list.append(-1)
-        # for player_2_cards_permutation in itertools.permutations(player_2_cards_list):
-        #     for player_4_cards_permutation in itertools.permutations(player_4_cards_list):
         new_hands = [state['hands'][0], list(player_2_cards), state['hands'][2],
                      list(player_4_cards)]
         new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': state['next'],
@@ -596,12 +587,9 @@ def prepare_epistemic_class_for_state(state, states_dictionary, alternative_stat
                      'beginning': state['beginning'], 'history': state['history'], 'clock': state['clock'],
                      'suit': state['suit']}
         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-        # print(new_state)
         if new_state_str in alternative_states_dictionary:
-            # print("added")
             epistemic_class.update(alternative_states_dictionary[new_state_str])
 
-    # print()
     return epistemic_class
 
 
