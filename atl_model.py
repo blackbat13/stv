@@ -81,9 +81,10 @@ class ATLModel:
         self.agents_actions[agent].append(action)
 
     def add_transition(self, from_state, to_state, actions):
-        self.transitions[from_state].append({'nextState': to_state, 'actions': actions})
-        self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions})
-        self.reverse_states[to_state].add(from_state)
+        if {'nextState': to_state, 'actions': actions} not in self.transitions[from_state]:
+            self.transitions[from_state].append({'nextState': to_state, 'actions': actions})
+            self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions})
+            self.reverse_states[to_state].add(from_state)
         # for i in range(0, self.numberOfAgents):
         #     if actions[i] not in self.agentsActions[i]:
         #         self.agentsActions[i].append(actions[i])
@@ -92,7 +93,7 @@ class ATLModel:
         return state_b in self.imperfect_information[agent_number][state_a]
 
     def add_epistemic_class(self, agent_number, epistemic_class):
-        self.imperfect_information[agent_number].append(epistemic_class)
+        self.imperfect_information[agent_number].append(set(epistemic_class))
         epistemic_class_number = len(self.imperfect_information[agent_number]) -1
         # print(self.imperfect_information[agent_number])
         for state in epistemic_class:
