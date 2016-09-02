@@ -617,7 +617,6 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
     number_of_beginning_states = len(states)
     print("Start creating rest of model")
     start = time.clock()
-    current_state_number = -1
     for state in states:
         state_str = ' '.join(str(state[e]) for e in state)
         current_state_number = states_dictionary[state_str]
@@ -628,8 +627,8 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                 if card != -1:
                     remaining_cards_count += 1
 
-            if remaining_cards_count == 0:
-                break
+            # if remaining_cards_count == 0:
+            #     break
 
             if state['next'] == 0:
                 # Player 0 should play, but wait
@@ -2010,13 +2009,13 @@ def test_bridge_model(n):
                                                               'beginning': 0, 'clock': 0, 'suit': -1})
 
     # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    bridge_model.walk()
+    # bridge_model.walk()
 
     winning_states = []
     i = -1
     for state in bridge_model.states:
         i += 1
-        if state['lefts'][0] > n / 2:
+        if state['lefts'][0] > n / 2 and state['lefts'][0] + state['lefts'][1] == n:
             winning_states.append(i)
 
     print("Start formula verification under imperfect information")

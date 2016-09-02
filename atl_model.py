@@ -146,18 +146,31 @@ class ATLModel:
                 return True
         return False
 
-    def is_reachable_by_agent(self, actions, from_state, is_winning_state, agent):
-        for action in self.agents_actions[agent]:
-            action_ok = False
-            for transition in self.transitions[from_state]:
-                if transition['actions'][0] == action:
-                    action_ok = True
-                    if not is_winning_state[transition['nextState']]:
-                        action_ok = False
-                        break
+    def is_reachable_by_agent(self, action, from_state, is_winning_state, agent):
+        action_ok = False
+        for transition in self.transitions[from_state]:
+            if transition['actions'][agent] == action:
+                action_ok = True
+                if not is_winning_state[transition['nextState']]:
+                    action_ok = False
+                    break
 
-            if action_ok:
-                return True
+        if action_ok:
+            return True
+
+        return False
+
+    def is_reachable_by_agent_in_set(self, action, from_state, winning_states, agent):
+        action_ok = False
+        for transition in self.transitions[from_state]:
+            if transition['actions'][agent] == action:
+                action_ok = True
+                if not transition['nextState'] in winning_states:
+                    action_ok = False
+                    break
+
+        if action_ok:
+            return True
 
         return False
 
@@ -198,16 +211,44 @@ class ATLModel:
                 same_states = [state]
             else:
                 same_states = self.imperfect_information[agent][self.epistemic_class_membership[state]]
-            winning_states_reverse_same = [state]
-            for same_state in same_states:
-                if ok and not self.is_reachable_by_agent(actions, same_state, is_winning_state, agent):
-                    ok = False
 
+            for action in actions:
+                good_states = []
+                number_of_good = 0
+                should_break = False
+                is_good_state = {}
+
+                for same_state in same_states:
+                    is_good_state[same_state] = False
+                    if self.is_reachable_by_agent(action, same_state, is_winning_state, agent):
+                        good_states.append(same_state)
+                        is_good_state[same_state] = True
+                        number_of_good += 1
+                    elif not self.is_reachable_by_agent_in_set(action, same_state, same_states, agent):
+                        should_break = True
+
+                if should_break:
+                    continue
+
+                modified = True
+                while(modified):
+                    modified = False
+                    for same_state in same_states:
+                        if is_good_state[same_state]:
+                            continue
+                        if self.is_reachable_by_agent_in_set(action, same_state, good_states, agent):
+                            good_states.append(same_state)
+                            is_good_state[same_state] = True
+                            number_of_good += 1
+                            modified = True
+
+                if number_of_good == len(same_states):
+                    result_states.update(same_states)
+                    break
+
+            for same_state in same_states:
                 if same_state != state and same_state in winning_states_reverse:
                     winning_states_reverse.remove(same_state)
-                    winning_states_reverse_same.append(same_state)
-            if ok:
-                result_states.update(winning_states_reverse_same)
 
         for state_number in result_states:
             is_winning_state[state_number] = True
@@ -223,8 +264,9 @@ class ATLModel:
 
         unique(winning_states_reverse)
         for state in winning_states_reverse:
-            if self.is_reachable_by_agent(actions, state, is_winning_state, agent):
-                result_states.add(state)
+            for action in actions:
+                if self.is_reachable_by_agent(action, state, is_winning_state, agent):
+                    result_states.add(state)
 
         for state_number in result_states:
             is_winning_state[state_number] = True
