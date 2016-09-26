@@ -55,7 +55,7 @@ class ATLModel:
     number_of_states = 0
     transitions = []
     reverse_transitions = []
-    reverse_states = []
+    pre_states = []
     imperfect_information = []
     agents_actions = []
     state_names = []
@@ -69,7 +69,7 @@ class ATLModel:
         self.transitions = [[] for _ in itertools.repeat(None, number_of_states)]
         self.reverse_transitions = [[] for _ in itertools.repeat(None, number_of_states)]
         self.imperfect_information = create_array_of_size(number_of_agents, [])
-        self.reverse_states = [set() for _ in itertools.repeat(None, number_of_states)]
+        self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
         self.agents_actions = [[] for _ in itertools.repeat(None, number_of_states)]
         self.epistemic_class_membership = [-1 for _ in itertools.repeat(None, number_of_states)]
         # self.stateNames = create_array_of_size(number_of_states, [])
@@ -82,9 +82,9 @@ class ATLModel:
 
     def add_transition(self, from_state, to_state, actions):
         if {'nextState': to_state, 'actions': actions} not in self.transitions[from_state]:
-            self.transitions[from_state].append({'nextState': to_state, 'actions': actions})
-            self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions})
-            self.reverse_states[to_state].add(from_state)
+            self.transitions[from_state].append({'nextState': to_state, 'actions': actions.copy()})
+            self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions.copy()})
+            self.pre_states[to_state].add(from_state)
         # for i in range(0, self.numberOfAgents):
         #     if actions[i] not in self.agentsActions[i]:
         #         self.agentsActions[i].append(actions[i])
@@ -101,7 +101,7 @@ class ATLModel:
 
     def basic_formula(self, agent_number, winning_state):
         result_states = []
-        for state in self.reverse_states[winning_state]:
+        for state in self.pre_states[winning_state]:
             ok = True
             for same_state in self.imperfect_information[agent_number][state]:
                 if not self.is_reachable_by_agent(same_state, winning_state, agent_number):
@@ -114,7 +114,7 @@ class ATLModel:
     def basic_formula_multiple_agents(self, agents, winning_state):
         result_states = []
         actions = self.create_agents_actions_combinations(agents)
-        for state in self.reverse_states[winning_state]:
+        for state in self.pre_states[winning_state]:
             ok = True
             same_states = self.get_same_states_for_agents(agents, state)
             for same_state in same_states:
@@ -169,17 +169,14 @@ class ATLModel:
                     action_ok = False
                     break
 
-        if action_ok:
-            return True
-
-        return False
+        return action_ok
 
     def basic_formula_multiple_agents_and_states(self, agents, winning_states):
         result_states = set()
         actions = self.create_agents_actions_combinations(agents)
         winning_states_reverse = []
         for winning_state in winning_states:
-            winning_states_reverse += self.reverse_states[winning_state]
+            winning_states_reverse += self.pre_states[winning_state]
 
         unique(winning_states_reverse)
         for state in winning_states_reverse:
@@ -200,12 +197,12 @@ class ATLModel:
     def basic_formula_one_agent_multiple_states(self, agent, current_states, is_winning_state):
         result_states = set()
         actions = self.agents_actions[agent]
-        winning_states_reverse = []
+        preimage = []
         for winning_state in current_states:
-            winning_states_reverse += self.reverse_states[winning_state]
+            preimage += self.pre_states[winning_state]
 
-        unique(winning_states_reverse)
-        for state in winning_states_reverse:
+        unique(preimage)
+        for state in preimage:
             ok = True
             if self.epistemic_class_membership[state] == -1:
                 same_states = [state]
@@ -226,6 +223,8 @@ class ATLModel:
                         number_of_good += 1
                     elif not self.is_reachable_by_agent_in_set(action, same_state, same_states, agent):
                         should_break = True
+                    # else: # for standard model
+                    #     should_break = True
 
                 if should_break:
                     continue
@@ -247,11 +246,14 @@ class ATLModel:
                     break
 
             for same_state in same_states:
-                if same_state != state and same_state in winning_states_reverse:
-                    winning_states_reverse.remove(same_state)
+                if same_state != state and same_state in preimage:
+                    preimage.remove(same_state)
 
         for state_number in result_states:
             is_winning_state[state_number] = True
+            # print(self.states[state_number])
+
+        # print()
 
         return result_states
 
@@ -260,7 +262,7 @@ class ATLModel:
         actions = self.agents_actions[agent]
         winning_states_reverse = []
         for winning_state in current_states:
-            winning_states_reverse += self.reverse_states[winning_state]
+            winning_states_reverse += self.pre_states[winning_state]
 
         unique(winning_states_reverse)
         for state in winning_states_reverse:
