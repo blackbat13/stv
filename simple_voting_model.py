@@ -23,7 +23,11 @@ class SimpleVotingModel:
         self.model = ATLModel(self.number_of_voters, 1000)
         self.add_actions()
 
-        first_state = {'voted': [-1], 'voters_action': [-1], 'coercer_actions': [-1]}
+        beginning_array = []
+        for _ in range(0, self.number_of_voters):
+            beginning_array.append(-1)
+
+        first_state = {'voted': beginning_array[:], 'voters_action': beginning_array[:], 'coercer_actions': beginning_array[:]}
         state_number = 0
 
         self.states.append(first_state)
@@ -32,18 +36,26 @@ class SimpleVotingModel:
         state_number += 1
         current_state_number = -1
 
+        voting_product_array = []
+        decision_product_array = []
+        for _ in range(0, self.number_of_voters):
+            voting_product_array.append(range(0, self.number_of_candidates))
+            decision_product_array.append(['give', 'ng'])
+
         for state in self.states:
             current_state_number += 1
             if state['voted'][0] == -1:
-                for candidate_number in range(0,self.number_of_candidates):
+                for voting_product in itertools.product(*voting_product_array):
                     new_state = {}
                     new_state['voted'] = state['voted'][:]
                     new_state['voters_action'] = state['voters_action'][:]
                     new_state['coercer_actions'] = state['coercer_actions'][:]
 
-                    new_state['voted'][0] = candidate_number
+                    action = {0: 'wait'}
+                    for voter_number in range(0, self.number_of_voters):
+                        new_state['voted'][voter_number] = voting_product[voter_number]
+                        action[voter_number+1] = voting_product[voter_number]
 
-                    action = {0: 'wait', 1: candidate_number}
                     new_state_str = ' '.join(str(new_state[e]) for e in new_state)
                     if new_state_str not in self.states_dictionary:
                         self.states_dictionary[new_state_str] = state_number
@@ -57,15 +69,18 @@ class SimpleVotingModel:
 
                     self.model.add_transition(current_state_number, new_state_number, action)
             elif state['voters_action'][0] == -1:
-                for voter_action in ['give', 'ng']:
+                for decision_product in itertools.product(*decision_product_array):
                     new_state = {}
                     new_state['voted'] = state['voted'][:]
                     new_state['voters_action'] = state['voters_action'][:]
                     new_state['coercer_actions'] = state['coercer_actions'][:]
 
-                    new_state['voters_action'][0] = voter_action
+                    action = {0: 'wait'}
 
-                    action = {0: 'wait', 1: voter_action}
+                    for voter_number in range(0, self.number_of_voters):
+                        new_state['voters_action'][voter_number] = decision_product[voter_number]
+                        action[voter_number+1] = decision_product[voter_number]
+
                     new_state_str = ' '.join(str(new_state[e]) for e in new_state)
                     if new_state_str not in self.states_dictionary:
                         self.states_dictionary[new_state_str] = state_number
@@ -79,29 +94,34 @@ class SimpleVotingModel:
 
                     self.model.add_transition(current_state_number, new_state_number, action)
             else:
-                action = {0: 'np', 1: 'wait'}
-                self.model.add_transition(current_state_number, current_state_number, action)
+                action = {}
+                for voter_number in range(1, self.number_of_voters + 1):
+                    action[voter_number] = 'wait'
 
-                new_state = {}
-                new_state['voted'] = state['voted'][:]
-                new_state['voters_action'] = state['voters_action'][:]
-                new_state['coercer_actions'] = state['coercer_actions'][:]
+                for voter_number in range(1, self.number_of_voters + 1):
+                    if state['coercer_actions'][voter_number - 1] == -1:
+                        action[0] = 'np' + str(voter_number)
+                        self.model.add_transition(current_state_number, current_state_number, action)
 
-                new_state['coercer_actions'][0] = 'pun'
+                        new_state = {}
+                        new_state['voted'] = state['voted'][:]
+                        new_state['voters_action'] = state['voters_action'][:]
+                        new_state['coercer_actions'] = state['coercer_actions'][:]
+                        new_state['coercer_actions'][voter_number - 1] = 'pun'
+                        action[0] = 'pun' + str(voter_number)
 
-                action = {0: 'pun', 1: 'wait'}
-                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-                if new_state_str not in self.states_dictionary:
-                    self.states_dictionary[new_state_str] = state_number
-                    new_state_number = state_number
-                    self.states.append(new_state)
-                    state_number += 1
-                else:
-                    new_state_number = self.states_dictionary[new_state_str]
+                        new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                        if new_state_str not in self.states_dictionary:
+                            self.states_dictionary[new_state_str] = state_number
+                            new_state_number = state_number
+                            self.states.append(new_state)
+                            state_number += 1
+                        else:
+                            new_state_number = self.states_dictionary[new_state_str]
 
-                self.add_epistemic_state(new_state, new_state_number)
+                        self.add_epistemic_state(new_state, new_state_number)
 
-                self.model.add_transition(current_state_number, new_state_number, action)
+                        self.model.add_transition(current_state_number, new_state_number, action)
 
         self.prepare_epistemic_class()
 
@@ -137,20 +157,21 @@ class SimpleVotingModel:
     def prepare_epistemic_class(self):
         for _, epistemic_class in self.epistemic_states_dictionary.items():
             self.model.add_epistemic_class(0, epistemic_class)
-            print(epistemic_class)
 
     def print_states(self):
         for state in self.states:
             print(state)
 
     def print_number_of_epistemic_classes(self):
-        print(len(self.epistemic_states_dictionary))
+        print('Number of epistemic classes:', len(self.epistemic_states_dictionary))
+
+    def print_number_of_states(self):
+        print('Number of states:', len(self.states))
 
 
 simple_voting_model = SimpleVotingModel(2, 1)
 simple_voting_model.generate()
-print(len(simple_voting_model.states))
+simple_voting_model.print_number_of_states()
 simple_voting_model.print_number_of_epistemic_classes()
 simple_voting_model.print_states()
-
 
