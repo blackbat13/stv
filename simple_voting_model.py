@@ -19,7 +19,78 @@ class SimpleVotingModel:
         self.number_of_candidates = number_of_candidates
         self.number_of_voters = number_of_voters
 
-    def generate(self):
+    def generate_asynchronous_voting(self):
+        self.model = ATLModel(self.number_of_voters, 1000)
+        self.add_actions()
+
+        beginning_array = []
+        for _ in range(0, self.number_of_voters):
+            beginning_array.append(-1)
+
+        first_state = {'voted': beginning_array[:], 'voters_action': beginning_array[:], 'coercer_actions': beginning_array[:]}
+        state_number = 0
+
+        self.states.append(first_state)
+        state_string = ' '.join(str(first_state[e]) for e in first_state)
+        self.states_dictionary[state_string] = state_number
+        state_number += 1
+        current_state_number = -1
+
+        for state in self.states:
+            current_state_number += 1
+            voting_product_array = []
+            coercer_possible_actions = ['wait']
+            for voter_number in range(0, self.number_of_voters):
+                if state['voted'][voter_number] == -1:
+                    voting_product_array.append(list(range(0, self.number_of_candidates)))
+                    voting_product_array[voter_number].append('wait')
+                elif state['voters_action'][voter_number] == -1:
+                    voting_product_array.append(['give', 'ng', 'wait'])
+                elif state['coercer_actions'][voter_number] == -1:
+                    coercer_possible_actions.append('np' + str(voter_number+1))
+                    coercer_possible_actions.append('pun' + str(voter_number+1))
+                    voting_product_array.append(['wait'])
+                else:
+                    voting_product_array.append(['wait'])
+
+            voting_product_array.append(coercer_possible_actions)
+
+            for possibility in itertools.product(*voting_product_array):
+                action = {}
+                new_state = {}
+                new_state['voted'] = state['voted'][:]
+                new_state['voters_action'] = state['voters_action'][:]
+                new_state['coercer_actions'] = state['coercer_actions'][:]
+                for voter_number in range(0, self.number_of_voters):
+                    action[voter_number+1] = possibility[voter_number]
+                    voter_action_string = str(possibility[voter_number])
+                    if voter_action_string[0] == 'g' or voter_action_string[0] == 'n':
+                        new_state['voters_action'][voter_number] = voter_action_string
+                    elif voter_action_string[0] != 'w':
+                        new_state['voted'][voter_number] = possibility[voter_number]
+
+                action[0] = possibility[self.number_of_voters]
+                if action[0][0] == 'p':
+                    pun_voter_number = int(action[0][3:])
+                    new_state['coercer_actions'][pun_voter_number-1] = 'pun'
+
+                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                if new_state_str not in self.states_dictionary:
+                    self.states_dictionary[new_state_str] = state_number
+                    new_state_number = state_number
+                    self.states.append(new_state)
+                    state_number += 1
+                else:
+                    new_state_number = self.states_dictionary[new_state_str]
+
+                self.add_epistemic_state(new_state, new_state_number)
+
+                self.model.add_transition(current_state_number, new_state_number, action)
+
+        self.prepare_epistemic_class()
+        self.model.states = self.states
+
+    def generate_simultaneously_voting(self):
         self.model = ATLModel(self.number_of_voters, 1000)
         self.add_actions()
 
@@ -124,6 +195,7 @@ class SimpleVotingModel:
                         self.model.add_transition(current_state_number, new_state_number, action)
 
         self.prepare_epistemic_class()
+        self.model.states = self.states
 
     def add_actions(self):
         self.model.add_action(0, 'wait')
@@ -170,8 +242,9 @@ class SimpleVotingModel:
 
 
 simple_voting_model = SimpleVotingModel(2, 1)
-simple_voting_model.generate()
+simple_voting_model.generate_asynchronous_voting()
 simple_voting_model.print_number_of_states()
 simple_voting_model.print_number_of_epistemic_classes()
 simple_voting_model.print_states()
+# simple_voting_model.model.walk()
 
