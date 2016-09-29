@@ -20,7 +20,7 @@ class SimpleVotingModel:
         self.number_of_voters = number_of_voters
 
     def generate_asynchronous_voting(self):
-        self.model = ATLModel(self.number_of_voters, 1000)
+        self.model = ATLModel(self.number_of_voters + 1, 1000)
         self.add_actions()
 
         beginning_array = []
@@ -102,7 +102,7 @@ class SimpleVotingModel:
         self.model.states = self.states
 
     def generate_simultaneously_voting(self):
-        self.model = ATLModel(self.number_of_voters, 1000)
+        self.model = ATLModel(self.number_of_voters + 1, 1000)
         self.add_actions()
 
         beginning_array = []
@@ -260,6 +260,10 @@ class SimpleVotingModel:
         for _, epistemic_class in self.epistemic_states_dictionary.items():
             self.model.add_epistemic_class(0, epistemic_class)
 
+        # for state_number in range(0, len(self.states)):
+        #     for voter_number in range(1, self.number_of_voters + 1):
+        #         self.model.add_epistemic_class(voter_number, {state_number})
+
     def print_states(self):
         for state in self.states:
             print(state)
@@ -272,9 +276,103 @@ class SimpleVotingModel:
 
 
 simple_voting_model = SimpleVotingModel(2, 1)
-simple_voting_model.generate_simultaneously_voting()
+simple_voting_model.generate_asynchronous_voting()
 simple_voting_model.print_number_of_states()
 simple_voting_model.print_number_of_epistemic_classes()
 simple_voting_model.print_states()
 # simple_voting_model.model.walk()
 
+winning_states = []
+i = -1
+for state in simple_voting_model.states:
+    i += 1
+    is_winning = True
+    for voter_number in range(0, simple_voting_model.number_of_voters):
+        if not ((state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] == 1) or state['coercer_actions'][voter_number] == 'pun'):
+            is_winning = False
+            break
+
+    if is_winning:
+        winning_states.append(i)
+
+start = time.clock()
+result = simple_voting_model.model.minimum_formula_one_agent_multiple_states(0, winning_states)
+end = time.clock()
+
+print("Time:", end - start, "s")
+print("Number of good states ", len(result))
+
+for state_number in result:
+    print(state_number, simple_voting_model.states[state_number])
+
+
+winning_states = []
+i = -1
+for state in simple_voting_model.states:
+    i += 1
+    is_winning = True
+    for voter_number in range(0, simple_voting_model.number_of_voters):
+        if not (state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1):
+            is_winning = False
+            break
+
+    if is_winning:
+        winning_states.append(i)
+
+start = time.clock()
+result = simple_voting_model.model.maximum_formula_one_agent_multiple_states(1, winning_states)
+end = time.clock()
+
+print("Time:", end - start, "s")
+print("Number of good states ", len(result))
+
+for state_number in result:
+    print(state_number, simple_voting_model.states[state_number])
+
+
+winning_states = []
+i = -1
+for state in simple_voting_model.states:
+    i += 1
+    is_winning = True
+    for voter_number in range(0, simple_voting_model.number_of_voters):
+        if not ((state['finish'] and state['coercer_actions'][0] != 'pun' and state['voted'][0] == 1) or (state['coercer_actions'][0] == 'pun' or not state['finish'])):
+            is_winning = False
+            break
+
+    if is_winning:
+        winning_states.append(i)
+
+start = time.clock()
+result = simple_voting_model.model.maximum_formula_one_agent_multiple_states(0, winning_states)
+end = time.clock()
+
+print("Time:", end - start, "s")
+print("Number of good states ", len(result))
+
+for state_number in result:
+    print(state_number, simple_voting_model.states[state_number])
+
+
+winning_states = []
+i = -1
+for state in simple_voting_model.states:
+    i += 1
+    is_winning = True
+    for voter_number in range(0, simple_voting_model.number_of_voters):
+        if not(state['finish'] and state['coercer_actions'][0] != 'pun' and state['voted'][0] != 1):
+            is_winning = False
+            break
+
+    if is_winning:
+        winning_states.append(i)
+
+start = time.clock()
+result = simple_voting_model.model.maximum_formula_one_agent_multiple_states(1, winning_states)
+end = time.clock()
+
+print("Time:", end - start, "s")
+print("Number of good states ", len(result))
+
+for state_number in result:
+    print(state_number, simple_voting_model.states[state_number])

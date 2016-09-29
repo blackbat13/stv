@@ -71,11 +71,12 @@ class ATLModel:
         self.imperfect_information = create_array_of_size(number_of_agents, [])
         self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
         self.agents_actions = [[] for _ in itertools.repeat(None, number_of_states)]
-        self.epistemic_class_membership = [-1 for _ in itertools.repeat(None, number_of_states)]
+        self.epistemic_class_membership = create_array_of_size(number_of_agents, [])
         # self.stateNames = create_array_of_size(number_of_states, [])
         # self.stateDescriptions = create_array_of_size(number_of_states, [])
-        for i in range(0, 1):  # number_of_agents):
+        for i in range(0, number_of_agents):
             self.imperfect_information[i] = []
+            self.epistemic_class_membership[i] = [-1 for _ in itertools.repeat(None, number_of_states)]
 
     def add_action(self, agent, action):
         self.agents_actions[agent].append(action)
@@ -97,7 +98,7 @@ class ATLModel:
         epistemic_class_number = len(self.imperfect_information[agent_number]) -1
         # print(self.imperfect_information[agent_number])
         for state in epistemic_class:
-            self.epistemic_class_membership[state] = epistemic_class_number
+            self.epistemic_class_membership[agent_number][state] = epistemic_class_number
 
     def basic_formula(self, agent_number, winning_state):
         result_states = []
@@ -204,10 +205,10 @@ class ATLModel:
         unique(preimage)
         for state in preimage:
             ok = True
-            if self.epistemic_class_membership[state] == -1:
+            if self.epistemic_class_membership[agent][state] == -1:
                 same_states = [state]
             else:
-                same_states = self.imperfect_information[agent][self.epistemic_class_membership[state]]
+                same_states = self.imperfect_information[agent][self.epistemic_class_membership[agent][state]]
 
             for action in actions:
                 good_states = []
@@ -334,6 +335,28 @@ class ATLModel:
             number_of_iterations += 1
 
         print('Minimum formula iterations:', number_of_iterations)
+        return result_states
+
+    def maximum_formula_one_agent_multiple_states(self, agent, winning_states):
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        number_of_iterations = 0
+        current_states = winning_states[:]
+        is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_one_agent_multiple_states(agent, current_states, is_winning_state)
+            result_states = set(and_operator(result_states, current_states))
+            if result_states_length == len(result_states):
+                break
+
+            result_states_length = len(result_states)
+            number_of_iterations += 1
+
+        print('Maximum formula iterations:', number_of_iterations)
         return result_states
 
     def maximum_formula_multiple_agents_and_states(self, agents, winning_states):
