@@ -226,10 +226,10 @@ class SimpleVotingModel:
 
     def add_actions(self):
         self.model.add_action(0, 'wait')
-        self.model.add_action(0, 'np')
-        self.model.add_action(0, 'pun')
 
         for voter_number in range(1, self.number_of_voters + 1):
+            self.model.add_action(0, 'np' + str(voter_number))
+            self.model.add_action(0, 'pun' + str(voter_number))
             self.model.add_action(voter_number, 'give')
             self.model.add_action(voter_number, 'ng')
             self.model.add_action(voter_number, 'wait')
