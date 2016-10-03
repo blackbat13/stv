@@ -402,7 +402,7 @@ class ATLModel:
     def set_state_descriptions(self, state_number, description):
         self.state_descriptions[state_number] = description
 
-    def walk(self):
+    def walk(self, agent_number):
         print("#####################################################")
         print("Simulation")
         current_state = 0
@@ -410,7 +410,7 @@ class ATLModel:
             print()
             print("Current state:", self.states[current_state])
             print("Epistemic states:")
-            for state in self.imperfect_information[0][self.epistemic_class_membership[current_state]]:
+            for state in self.imperfect_information[agent_number][self.epistemic_class_membership[agent_number][current_state]]:
                 print(self.states[state])
 
             if len(self.transitions[current_state]) == 0:
