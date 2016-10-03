@@ -21,7 +21,7 @@ class SimpleVotingModel:
         self.number_of_voters = number_of_voters
 
     def generate_asynchronous_voting(self):
-        self.model = ATLModel(self.number_of_voters + 1, 1000)
+        self.model = ATLModel(self.number_of_voters + 1, 1000000)
         self.add_actions()
 
         beginning_array = []
@@ -295,10 +295,16 @@ class SimpleVotingModel:
 
 
 simple_voting_model = SimpleVotingModel(2, 2)
+
+print('Started generating model')
+start = time.clock()
 simple_voting_model.generate_asynchronous_voting()
+end = time.clock()
+print('Generated model in', end-start, 's')
+
 simple_voting_model.print_number_of_states()
 simple_voting_model.print_number_of_epistemic_classes()
-simple_voting_model.print_states()
+# simple_voting_model.print_states()
 # simple_voting_model.model.walk(0)
 
 voter_number = 0
@@ -355,7 +361,7 @@ for state in simple_voting_model.states:
     i += 1
     is_winning = True
 
-    if (state['finish'] and state['coercer_actions'][0] != 'pun' and state['voted'][0] == 1) or (state['coercer_actions'][0] == 'pun' or not state['finish']):
+    if (state['finish'][voter_number] and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] == 1) or (state['coercer_actions'][voter_number] == 'pun' or not state['finish'][voter_number]):
         winning_states.append(i)
 
 start = time.clock()
@@ -377,7 +383,7 @@ i = -1
 for state in simple_voting_model.states:
     i += 1
     is_winning = True
-    if state['finish'] and state['coercer_actions'][0] != 'pun' and state['voted'][0] != 1:
+    if state['finish'][voter_number] and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1:
         winning_states.append(i)
 
 start = time.clock()
