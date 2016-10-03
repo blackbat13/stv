@@ -14,6 +14,7 @@ class SimpleVotingModel:
     states = []
     states_dictionary = {}
     epistemic_states_dictionary = {}
+    voter_epistemic_states_dictionary = {}
 
     def __init__(self, number_of_candidates, number_of_voters):
         self.number_of_candidates = number_of_candidates
@@ -27,13 +28,12 @@ class SimpleVotingModel:
         for _ in range(0, self.number_of_voters):
             beginning_array.append(-1)
 
-        first_state = {'voted': beginning_array[:], 'voters_action': beginning_array[:], 'coercer_actions': beginning_array[:], 'finish': False}
+        first_state = {'voted': beginning_array[:], 'voters_action': beginning_array[:], 'coercer_actions': beginning_array[:], 'finish': beginning_array[:]}
         state_number = 0
 
         self.states.append(first_state)
         state_string = ' '.join(str(first_state[e]) for e in first_state)
         self.states_dictionary[state_string] = state_number
-        # self.add_epistemic_state(first_state, state_number)
         state_number += 1
         current_state_number = -1
 
@@ -56,15 +56,13 @@ class SimpleVotingModel:
 
             voting_product_array.append(coercer_possible_actions)
 
-            is_finish_state = True
-
             for possibility in itertools.product(*voting_product_array):
                 action = {}
                 new_state = {}
                 new_state['voted'] = state['voted'][:]
                 new_state['voters_action'] = state['voters_action'][:]
                 new_state['coercer_actions'] = state['coercer_actions'][:]
-                new_state['finish'] = state['finish']
+                new_state['finish'] = state['finish'][:]
                 for voter_number in range(0, self.number_of_voters):
                     action[voter_number+1] = possibility[voter_number]
                     voter_action_string = str(possibility[voter_number])
@@ -77,9 +75,11 @@ class SimpleVotingModel:
                 if action[0][0:3] == 'pun':
                     pun_voter_number = int(action[0][3:])
                     new_state['coercer_actions'][pun_voter_number-1] = 'pun'
+                    new_state['finish'][pun_voter_number - 1] = 1
                 elif action[0][0:2] == 'np':
                     np_voter_number = int(action[0][2:])
                     new_state['coercer_actions'][np_voter_number-1] = 'np'
+                    new_state['finish'][np_voter_number - 1] = 1
 
                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
                 if new_state_str not in self.states_dictionary:
@@ -87,16 +87,13 @@ class SimpleVotingModel:
                     new_state_number = state_number
                     self.states.append(new_state)
                     state_number += 1
-                    is_finish_state = False
                 else:
                     new_state_number = self.states_dictionary[new_state_str]
-                    if new_state_number != current_state_number:
-                        is_finish_state = False
 
                 self.model.add_transition(current_state_number, new_state_number, action)
 
-            state['finish'] = is_finish_state
             self.add_epistemic_state(state, current_state_number)
+            self.add_voter_epistemic_state(state, current_state_number)
 
         self.prepare_epistemic_class()
         self.model.states = self.states
@@ -242,7 +239,7 @@ class SimpleVotingModel:
         epistemic_state['coercer_actions'] = new_state['coercer_actions'][:]
         epistemic_state['voted'] = new_state['voted'][:]
         epistemic_state['voters_action'] = new_state['voters_action'][:]
-        epistemic_state['finish'] = new_state['finish']
+        epistemic_state['finish'] = new_state['finish'][:]
         for voter_number in range(0, self.number_of_voters):
             if new_state['voters_action'][voter_number] == -1 and new_state['voted'][voter_number] != -1:
                 epistemic_state['voted'][voter_number] = -2
@@ -256,9 +253,31 @@ class SimpleVotingModel:
         else:
             self.epistemic_states_dictionary[epistemic_state_str].add(new_state_number)
 
+    def add_voter_epistemic_state(self, new_state, new_state_number):
+        epistemic_state = {}
+        epistemic_state['coercer_actions'] = new_state['coercer_actions'][:]
+        epistemic_state['voted'] = new_state['voted'][:]
+        epistemic_state['voters_action'] = new_state['voters_action'][:]
+        epistemic_state['finish'] = new_state['finish'][:]
+        for voter_number in range(1, self.number_of_voters):
+            epistemic_state['voters_action'][voter_number] = -1
+            epistemic_state['voted'][voter_number] = -1
+            epistemic_state['coercer_actions'][voter_number] = -1
+            # epistemic_state['finish'][voter_number] = -1
+
+        epistemic_state_str = ' '.join(str(epistemic_state[e]) for e in epistemic_state)
+
+        if epistemic_state_str not in self.voter_epistemic_states_dictionary:
+            self.voter_epistemic_states_dictionary[epistemic_state_str] = {new_state_number}
+        else:
+            self.voter_epistemic_states_dictionary[epistemic_state_str].add(new_state_number)
+
     def prepare_epistemic_class(self):
         for _, epistemic_class in self.epistemic_states_dictionary.items():
             self.model.add_epistemic_class(0, epistemic_class)
+
+        for _, epistemic_class in self.voter_epistemic_states_dictionary.items():
+            self.model.add_epistemic_class(1, epistemic_class)
 
         # for state_number in range(0, len(self.states)):
         #     for voter_number in range(1, self.number_of_voters + 1):
@@ -282,7 +301,7 @@ simple_voting_model.print_number_of_epistemic_classes()
 simple_voting_model.print_states()
 # simple_voting_model.model.walk(0)
 
-voter_number = 1
+voter_number = 0
 print()
 print("<<c>>F(~pun_i -> vote_{i,1})")
 winning_states = []
