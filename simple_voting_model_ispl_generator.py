@@ -32,7 +32,8 @@ class SimpleVotingModelIsplGenerator:
 
     def __create_environment_obsvars(self):
         obsvars = "\tObsvars:\n"
-
+        for voter_number in range(1, self.number_of_voters + 1):
+            obsvars += "\t\tvoter" + str(voter_number) + "Voted: boolean;\n"
         obsvars += "\tend Obsvars\n"
         return obsvars
 
@@ -115,26 +116,37 @@ class SimpleVotingModelIsplGenerator:
 
     def __create_voter_vars(self):
         vars = "\tVars:\n"
-
+        vars += "\t\tvote: 0.." + str(self.number_of_candidates) + ";\n"
+        vars += "\t\tdecision: {give, ng, None};\n"
         vars += "\tend Vars\n"
         return vars
 
     def __create_voter_actions(self):
         actions = "\tActions = {"
+        for candidate_number in range(1, self.number_of_candidates+1):
+            actions += "Vote" + str(candidate_number) + ", "
 
+        actions += "Give, Ng, "
         actions += "Wait};\n"
         return actions
 
     def __create_voter_protocol(self):
         protocol = "\tProtocol:\n"
-
+        protocol += "\t\tvote=0: {"
+        for candidate_number in range(1, self.number_of_candidates+1):
+            protocol += "Vote" + str(candidate_number) + ", "
+        protocol += "Wait};\n"
+        protocol += "\t\tvote>0 and decision=None: {Give, Ng, Wait};\n"
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
 
     def __create_voter_evolution(self, ):
         evolution = "\tEvolution:\n"
-
+        for candidate_number in range(1, self.number_of_candidates + 1):
+            evolution += "\t\tvote=" + str(candidate_number) + " if Action=Vote" + str(candidate_number) + ";\n"
+        evolution += "\t\tdecision=give if Action=Give;\n"
+        evolution += "\t\tdecision=ng if Action=Ng;\n"
         evolution += "\tend Evolution\n"
         return evolution
 
@@ -146,8 +158,11 @@ class SimpleVotingModelIsplGenerator:
 
     def __create_init_states(self):
         init_states = "InitStates\n"
-
-        init_states += ";\nend InitStates\n\n"
+        init_states += "\t\t"
+        for voter_number in range(1, self.number_of_voters + 1):
+            init_states += "Voter" + str(voter_number) + ".vote=0 and Voter" + str(voter_number) + ".decision=None and"
+        init_states += ";\n"
+        init_states += "end InitStates\n\n"
         return init_states
 
     def __create_groups(self):
