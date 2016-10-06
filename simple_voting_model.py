@@ -294,7 +294,7 @@ class SimpleVotingModel:
         print('Number of states:', len(self.states))
 
 
-simple_voting_model = SimpleVotingModel(2, 2)
+simple_voting_model = SimpleVotingModel(2, 3)
 
 print('Started generating model')
 start = time.clock()
@@ -316,7 +316,7 @@ for state in simple_voting_model.states:
     i += 1
     is_winning = True
 
-    if (state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] == 1) or state['coercer_actions'][voter_number] == 'pun':
+    if not (state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1):
         winning_states.append(i)
 
 start = time.clock()
@@ -336,7 +336,6 @@ winning_states = []
 i = -1
 for state in simple_voting_model.states:
     i += 1
-    is_winning = True
 
     if state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1:
         winning_states.append(i)
@@ -359,9 +358,8 @@ winning_states = []
 i = -1
 for state in simple_voting_model.states:
     i += 1
-    is_winning = True
 
-    if (state['finish'][voter_number] and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] == 1) or (state['coercer_actions'][voter_number] == 'pun' or not state['finish'][voter_number]):
+    if not (state['finish'][voter_number]==1 and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1):
         winning_states.append(i)
 
 start = time.clock()
@@ -382,8 +380,7 @@ winning_states = []
 i = -1
 for state in simple_voting_model.states:
     i += 1
-    is_winning = True
-    if state['finish'][voter_number] and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1:
+    if state['finish'][voter_number]==1 and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1:
         winning_states.append(i)
 
 start = time.clock()
