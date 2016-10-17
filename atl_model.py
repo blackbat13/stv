@@ -86,16 +86,16 @@ class ATLModel:
             self.transitions[from_state].append({'nextState': to_state, 'actions': actions.copy()})
             self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions.copy()})
             self.pre_states[to_state].add(from_state)
-        # for i in range(0, self.numberOfAgents):
-        #     if actions[i] not in self.agentsActions[i]:
-        #         self.agentsActions[i].append(actions[i])
+            # for i in range(0, self.numberOfAgents):
+            #     if actions[i] not in self.agentsActions[i]:
+            #         self.agentsActions[i].append(actions[i])
 
     def is_same_state(self, agent_number, state_a, state_b):
         return state_b in self.imperfect_information[agent_number][state_a]
 
     def add_epistemic_class(self, agent_number, epistemic_class):
         self.imperfect_information[agent_number].append(set(epistemic_class))
-        epistemic_class_number = len(self.imperfect_information[agent_number]) -1
+        epistemic_class_number = len(self.imperfect_information[agent_number]) - 1
         # print(self.imperfect_information[agent_number])
         for state in epistemic_class:
             self.epistemic_class_membership[agent_number][state] = epistemic_class_number
@@ -153,22 +153,17 @@ class ATLModel:
             if transition['actions'][agent] == action:
                 action_ok = True
                 if not is_winning_state[transition['nextState']]:
-                    action_ok = False
-                    break
+                    return False
 
-        if action_ok:
-            return True
-
-        return False
+        return action_ok
 
     def is_reachable_by_agent_in_set(self, action, from_state, winning_states, agent):
         action_ok = False
         for transition in self.transitions[from_state]:
             if transition['actions'][agent] == action:
                 action_ok = True
-                if not transition['nextState'] in winning_states:
-                    action_ok = False
-                    break
+                if not (transition['nextState'] in winning_states):
+                    return False
 
         return action_ok
 
@@ -204,11 +199,11 @@ class ATLModel:
 
         unique(preimage)
         for state in preimage:
-            ok = True
-            if self.epistemic_class_membership[agent][state] == -1:
+            state_epistemic_class= self.epistemic_class_membership[agent][state]
+            if state_epistemic_class == -1:
                 same_states = [state]
             else:
-                same_states = self.imperfect_information[agent][self.epistemic_class_membership[agent][state]]
+                same_states = self.imperfect_information[agent][state_epistemic_class]
 
             for action in actions:
                 good_states = []
@@ -231,7 +226,7 @@ class ATLModel:
                     continue
 
                 modified = True
-                while(modified):
+                while (modified):
                     modified = False
                     for same_state in same_states:
                         if is_good_state[same_state]:
@@ -306,10 +301,11 @@ class ATLModel:
         while True:
             current_states = self.basic_formula_one_agent_multiple_states(agent, current_states, is_winning_state)
             result_states.update(current_states)
-            if result_states_length == len(result_states):
+            new_results_states_length = len(result_states)
+            if result_states_length == new_results_states_length:
                 break
 
-            result_states_length = len(result_states)
+            result_states_length = new_results_states_length
             number_of_iterations += 1
 
         print('Minimum formula iterations:', number_of_iterations)
@@ -326,7 +322,8 @@ class ATLModel:
             is_winning_state[state_number] = True
 
         while True:
-            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states, is_winning_state)
+            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states,
+                                                                                              is_winning_state)
             result_states.update(current_states)
             if result_states_length == len(result_states):
                 break
@@ -352,6 +349,10 @@ class ATLModel:
             result_states = set(and_operator(result_states, current_states))
             if result_states_length == len(result_states):
                 break
+
+            for state_number in result_states:
+                if state_number not in current_states:
+                    is_winning_state[state_number] = False
 
             result_states_length = len(result_states)
             number_of_iterations += 1
@@ -406,11 +407,12 @@ class ATLModel:
         print("#####################################################")
         print("Simulation")
         current_state = 0
-        while(True):
+        while (True):
             print()
             print("Current state:", self.states[current_state])
             print("Epistemic states:")
-            for state in self.imperfect_information[agent_number][self.epistemic_class_membership[agent_number][current_state]]:
+            for state in self.imperfect_information[agent_number][
+                self.epistemic_class_membership[agent_number][current_state]]:
                 print(self.states[state])
 
             if len(self.transitions[current_state]) == 0:
@@ -422,7 +424,6 @@ class ATLModel:
             for transition in self.transitions[current_state]:
                 print(str(i) + ":", transition)
                 i += 1
-
 
             choice = int(input("Choose transition="))
             if choice == -1:
