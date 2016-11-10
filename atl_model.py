@@ -1,6 +1,8 @@
 __author__ = 'blackbat'
 
 import itertools
+import time
+from disjoint_set import *
 
 
 def create_array_of_size(size, basic_item):
@@ -62,6 +64,8 @@ class ATLModel:
     state_descriptions = []
     states = []
     epistemic_class_membership = []
+    epistemic_class_disjoint = None
+    can_go_there = []
 
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
@@ -74,6 +78,8 @@ class ATLModel:
         self.epistemic_class_membership = create_array_of_size(number_of_agents, [])
         # self.stateNames = create_array_of_size(number_of_states, [])
         # self.stateDescriptions = create_array_of_size(number_of_states, [])
+        self.epistemic_class_disjoint = [DisjointSet(number_of_states) for _ in itertools.repeat(None, 2)]
+        self.can_go_there = [[] for _ in itertools.repeat(None, number_of_agents)]
         for i in range(0, number_of_agents):
             self.imperfect_information[i] = []
             self.epistemic_class_membership[i] = [-1 for _ in itertools.repeat(None, number_of_states)]
@@ -96,9 +102,40 @@ class ATLModel:
     def add_epistemic_class(self, agent_number, epistemic_class):
         self.imperfect_information[agent_number].append(set(epistemic_class))
         epistemic_class_number = len(self.imperfect_information[agent_number]) - 1
+        first_state = next(iter(epistemic_class))
         # print(self.imperfect_information[agent_number])
         for state in epistemic_class:
             self.epistemic_class_membership[agent_number][state] = epistemic_class_number
+            self.epistemic_class_disjoint[agent_number].union(first_state, state)
+
+        self.find_where_can_go(epistemic_class, epistemic_class_number, agent_number)
+
+    def find_where_can_go(self, epistemic_class, epistemic_class_number, agent_number):
+        if len(self.can_go_there[agent_number]) == 0:
+            self.can_go_there[agent_number] = [{} for _ in itertools.repeat(None, self.number_of_states)]
+
+        # print(agent_number)
+
+        for action in self.agents_actions[agent_number]:
+            can_go_temp = set()
+            is_first = True
+            for state in epistemic_class:
+                can_go_state_temp = set()
+                for transition in self.transitions[state]:
+                    if transition['actions'][agent_number] == action:
+                        can_go_state_temp.add(transition['nextState'])
+
+                if is_first:
+                    is_first = False
+                    can_go_temp = set(can_go_state_temp)
+                else:
+                    can_go_temp = can_go_temp | can_go_state_temp
+
+                if len(can_go_state_temp) == 0:
+                    can_go_temp = set()
+                    break
+
+            self.can_go_there[agent_number][epistemic_class_number][action] = can_go_temp
 
     def basic_formula(self, agent_number, winning_state):
         result_states = []
@@ -147,6 +184,16 @@ class ATLModel:
                 return True
         return False
 
+    def is_reachable_by_agent_disjoint(self, action, from_state, agent, first_winning, winning_states_disjoint):
+        action_ok = False
+        for transition in self.transitions[from_state]:
+            if transition['actions'][agent] == action:
+                action_ok = True
+                if not winning_states_disjoint.is_same(first_winning, transition['nextState']):
+                    return False
+
+        return action_ok
+
     def is_reachable_by_agent(self, action, from_state, is_winning_state, agent):
         action_ok = False
         for transition in self.transitions[from_state]:
@@ -190,6 +237,55 @@ class ATLModel:
                 result_states.update(winning_states_reverse_same)
         return result_states
 
+    def basic_formula_one_agent_multiple_states_disjoint(self, agent, current_states, first_winning, winning_states_disjoint,
+                                                custom_can_go_there):
+        result_states = set()
+        actions = self.agents_actions[agent]
+        preimage = set()
+        for winning_state in current_states:
+            for pre_state in self.pre_states[winning_state]:
+                preimage.add(self.epistemic_class_membership[agent][pre_state])
+                # preimage.add(self.epistemic_class_disjoint[agent].find(pre_state))
+
+        first_winning = winning_states_disjoint.find(first_winning)
+
+        for state_epistemic_class in preimage:
+            state = next(iter(self.imperfect_information[agent][state_epistemic_class]))
+            # state_epistemic_class = self.epistemic_class_membership[agent][state]
+            if state_epistemic_class == -1:
+                print("ERROR")
+                same_states = [state]
+            else:
+                same_states = self.imperfect_information[agent][state_epistemic_class]
+
+            for action in actions:
+                states_can_go = custom_can_go_there[state_epistemic_class][action]
+
+                if len(states_can_go) == 0:
+                    continue
+
+                is_ok = True
+                new_states_can_go = set()
+                # print(len(states_can_go))
+                for state_can in states_can_go:
+                    new_state_can = winning_states_disjoint.find(state_can)
+
+                    if not first_winning == new_state_can:
+                        is_ok = False
+
+                    new_states_can_go.add(new_state_can)
+                    # print()
+
+                custom_can_go_there[state_epistemic_class][action] = new_states_can_go
+
+                if is_ok:
+                    result_states.update(same_states)
+                    winning_states_disjoint.union(first_winning, state)
+                    first_winning = winning_states_disjoint.find(first_winning)
+                    break
+
+        return result_states
+
     def basic_formula_one_agent_multiple_states(self, agent, current_states, is_winning_state):
         result_states = set()
         actions = self.agents_actions[agent]
@@ -199,7 +295,7 @@ class ATLModel:
 
         unique(preimage)
         for state in preimage:
-            state_epistemic_class= self.epistemic_class_membership[agent][state]
+            state_epistemic_class = self.epistemic_class_membership[agent][state]
             if state_epistemic_class == -1:
                 same_states = [state]
             else:
@@ -219,8 +315,8 @@ class ATLModel:
                         number_of_good += 1
                     elif not self.is_reachable_by_agent_in_set(action, same_state, same_states, agent):
                         should_break = True
-                    # else: # for standard model
-                    #     should_break = True
+                        # else: # for standard model
+                        #     should_break = True
 
                 if should_break:
                     continue
@@ -288,6 +384,53 @@ class ATLModel:
         print('Minimum formula iterations:', number_of_iterations)
         return resultStates
 
+    def minimum_formula_one_agent_multiple_states_disjoint(self, agent, winning_states):
+        start = time.clock()
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        number_of_iterations = 0
+        current_states = winning_states[:]
+        winning_states_disjoint = DisjointSet(0)
+        winning_states_disjoint.subsets = self.epistemic_class_disjoint[agent].subsets[:]
+        first_winning = winning_states_disjoint.find(winning_states[0])
+        epistemic_class_numbers = set()
+        for state_number in winning_states:
+            epistemic_class_number = self.epistemic_class_membership[agent][state_number]
+            epistemic_class_numbers.add(epistemic_class_number)
+
+        for epistemic_class_number in epistemic_class_numbers:
+            epistemic_states = self.imperfect_information[agent][epistemic_class_number]
+            is_ok = True
+            for epistemic_state in epistemic_states:
+                state_number = epistemic_state
+                if epistemic_state not in winning_states:
+                    is_ok = False
+                    break
+            if is_ok:
+                winning_states_disjoint.union(first_winning, state_number)
+
+        stop = time.clock()
+        custom_can_go_there = self.can_go_there[agent][:]
+        print("Done in", stop - start, 's')
+
+        while True:
+            start = time.clock()
+            current_states = self.basic_formula_one_agent_multiple_states_disjoint(agent, current_states, first_winning,
+                                                                          winning_states_disjoint, custom_can_go_there)
+            stop = time.clock()
+            print("Step done in", stop - start, 's')
+            result_states.update(current_states)
+            new_results_states_length = len(result_states)
+            if result_states_length == new_results_states_length:
+                break
+
+            result_states_length = new_results_states_length
+            number_of_iterations += 1
+
+        print('Minimum formula iterations:', number_of_iterations)
+        return result_states
+
     def minimum_formula_one_agent_multiple_states(self, agent, winning_states):
         result_states = set()
         result_states.update(winning_states)
@@ -341,8 +484,13 @@ class ATLModel:
         number_of_iterations = 0
         current_states = winning_states[:]
         is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
+        winning_states_disjoint = DisjointSet(self.number_of_states)
+        first_winning = winning_states[0]
         for state_number in winning_states:
             is_winning_state[state_number] = True
+            winning_states_disjoint.union(state_number, winning_states[0])
+
+        first_winning = winning_states_disjoint.find(first_winning)
 
         while True:
             current_states = self.basic_formula_one_agent_multiple_states(agent, current_states, is_winning_state)

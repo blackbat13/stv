@@ -7,6 +7,7 @@ class DisjointSet:
             self.subsets.append({'parent': i, 'rank': 0})
 
     def find(self, node_number):
+        # print(node_number)
         if self.subsets[node_number]['parent'] != node_number:
             self.subsets[node_number]['parent'] = self.find(self.subsets[node_number]['parent'])
 

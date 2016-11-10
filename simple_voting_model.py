@@ -21,7 +21,18 @@ class SimpleVotingModel:
         self.number_of_voters = number_of_voters
 
     def generate_asynchronous_voting(self):
-        self.model = ATLModel(self.number_of_voters + 1, 1000000)
+        if self.number_of_voters == 1:
+            self.model = ATLModel(self.number_of_voters + 1, 15)
+        elif self.number_of_voters == 2:
+            self.model = ATLModel(self.number_of_voters + 1, 225)
+        elif self.number_of_voters == 3:
+            self.model = ATLModel(self.number_of_voters + 1, 3375)
+        elif self.number_of_voters == 4:
+            self.model = ATLModel(self.number_of_voters + 1, 50625)
+        elif self.number_of_voters == 5:
+            self.model = ATLModel(self.number_of_voters + 1, 759375)
+        else:
+            self.model = ATLModel(self.number_of_voters + 1, 1000000)
         self.add_actions()
 
         beginning_array = []
@@ -384,7 +395,7 @@ for state in simple_voting_model.states:
         winning_states.append(i)
 
 start = time.clock()
-result = simple_voting_model.model.maximum_formula_one_agent_multiple_states(1, winning_states)
+result = simple_voting_model.model.minimum_formula_one_agent_multiple_states(1, winning_states)
 end = time.clock()
 
 print("Time:", end - start, "s")

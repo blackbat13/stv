@@ -284,13 +284,13 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     #     bridge_model = pickle.load(input)
     global number_of_beginning_states
 
-    if no_cards_available == 1:
+    if no_end_cards == 1:
         bridge_model = ATLModel(3, 100)
-    elif no_cards_available == 2:
+    elif no_end_cards == 2:
         bridge_model = ATLModel(3, 1000)
-    elif no_cards_available == 3:
-        bridge_model = ATLModel(3, 50000)
-    elif no_cards_available == 4:
+    elif no_end_cards == 3:
+        bridge_model = ATLModel(3, 100000)
+    elif no_end_cards == 4:
         bridge_model = ATLModel(3, 1000000)
     else:
         bridge_model = ATLModel(3, 8000000)
@@ -301,14 +301,14 @@ def generate_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_
     for i in range(0, no_cards_available):
         for c in range(1, 5):
             cards_available.append(card_number * 10 + (5 - c))
-            bridge_model.add_action(1, card_number * 10 + (5 - c))
-            bridge_model.add_action(2, card_number * 10 + (5 - c))
+            bridge_model.add_action(0, card_number * 10 + (5 - c))
+            # bridge_model.add_action(2, card_number * 10 + (5 - c))
         card_number -= 1
     pr = []
     pr.append(cards_available[:])
-    pr.append(cards_available[:])
-    for card in cards_available:
-        bridge_model.add_action(0, card)
+    # pr.append(cards_available[:])
+    # for card in cards_available:
+    #     bridge_model.add_action(0, card)
     bridge_model.add_action(0, -1)
     states = []
     states_dictionary = {}
@@ -554,7 +554,7 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
     elif no_cards_available == 2:
         bridge_model = ATLModel(3, 1000)
     elif no_cards_available == 3:
-        bridge_model = ATLModel(3, 50000)
+        bridge_model = ATLModel(3, 500000)
     elif no_cards_available == 4:
         bridge_model = ATLModel(3, 1000000)
     else:
@@ -666,11 +666,11 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[3] = []
 
                     new_suit = card % 10
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': new_suit, 'current_s_hand': state['current_s_hand'],
+                                 'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
                                  'current_history': alternative_history}
-                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                              'board': new_board[0],
                                              'beginning': state['beginning'], 'history': alternative_history}
 
@@ -726,13 +726,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
-                                     'current_history': state['current_history']}
-                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+                                     'current_history': state['current_history'][:]}
+                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history']}
+                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
                         agent_number = 2
                         if agent_number == 2:
                             agent_number = 0
@@ -794,13 +794,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[3] = []
 
                     new_suit = card % 10
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': new_suit, 'current_s_hand': state['current_s_hand'],
-                                 'current_history': state['current_history']}
-                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                 'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+                                 'current_history': state['current_history'][:]}
+                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                              'board': new_board[0],
-                                             'beginning': state['beginning'], 'history': state['current_history']}
+                                             'beginning': state['beginning'], 'history': state['current_history'][:]}
                     agent_number = state['next']
                     if agent_number == 2:
                         agent_number = 0
@@ -854,11 +854,11 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
+                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': alternative_history}
-                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
                                                  'beginning': state['beginning'], 'history': alternative_history}
                         agent_number = 0
@@ -908,13 +908,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[3] = []
 
                     new_suit = card % 10
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': new_suit, 'current_s_hand': state['current_s_hand'],
-                                 'current_history': state['current_history']}
-                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                 'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+                                 'current_history': state['current_history'][:]}
+                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                              'board': new_board[0],
-                                             'beginning': state['beginning'], 'history': state['current_history']}
+                                             'beginning': state['beginning'], 'history': state['current_history'][:]}
                     agent_number = state['next']
                     if agent_number == 2:
                         agent_number = 0
@@ -975,11 +975,11 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[3] = []
 
                         new_suit = card % 10
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                     'suit': new_suit, 'current_s_hand': state['current_s_hand'],
+                                     'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': alternative_history}
-                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
                                                  'beginning': state['beginning'], 'history': alternative_history}
                         agent_number = state['next']
@@ -1042,13 +1042,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[3] = []
 
                         new_suit = card % 10
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                     'suit': new_suit, 'current_s_hand': state['current_s_hand'],
-                                     'current_history': state['current_history']}
-                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                     'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+                                     'current_history': state['current_history'][:]}
+                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history']}
+                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
                         agent_number = state['next']
                         if agent_number == 2:
                             agent_number = 0
@@ -1106,12 +1106,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
             alternative_new_hands[2] = state['hands'][2][:]
             alternative_new_hands[3] = []
 
-            new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
+            new_state = {'hands': state['hands'][:], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
                          'beginning': new_beginning, 'history': new_history, 'clock': new_clock, 'suit': new_suit,
-                         'current_s_hand': state['hands'][2], 'current_history': new_history}
+                         'current_s_hand': state['hands'][2][:], 'current_history': new_history}
             alternative_new_state = {'hands': alternative_new_hands, 'lefts': new_lefts,
                                      'board': -1,
                                      'beginning': new_beginning, 'history': new_history}
+
             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
             alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
             if new_state_str not in states_dictionary:
@@ -1166,12 +1167,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                 alternative_new_hands[2] = state['hands'][2][:]
                 alternative_new_hands[3] = []
 
-                new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
+                new_state = {'hands': state['hands'][:], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
                              'beginning': new_beginning, 'history': new_history, 'clock': new_clock, 'suit': new_suit,
-                             'current_s_hand': state['hands'][2], 'current_history': new_history}
+                             'current_s_hand': state['hands'][2][:], 'current_history': new_history}
                 alternative_new_state = {'hands': alternative_new_hands, 'lefts': new_lefts,
                                          'board': -1,
                                          'beginning': new_beginning, 'history': new_history}
+
                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
                 alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
                 if new_state_str not in states_dictionary:
@@ -1233,11 +1235,11 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[3] = []
 
                     new_clock = state['clock'] + 1
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
+                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                  'current_history': alternative_history}
-                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                              'board': new_board[0],
                                              'beginning': state['beginning'], 'history': alternative_history}
                     agent_number = state['next']
@@ -1289,13 +1291,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[3] = []
 
                     new_clock = state['clock']
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
-                                 'current_history': state['current_history']}
-                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+                                 'current_history': state['current_history'][:]}
+                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                              'board': new_board[0],
-                                             'beginning': state['beginning'], 'history': state['current_history']}
+                                             'beginning': state['beginning'], 'history': state['current_history'][:]}
                     action = {0: card, 1: -1, 2: -1, 3: -1}
                     new_state_str = ' '.join(str(new_state[e]) for e in new_state)
                     alternative_new_state_str = ' '.join(
@@ -1346,13 +1348,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[3] = []
 
                     new_clock = state['clock']
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
-                                 'current_history': state['current_history']}
-                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+                                 'current_history': state['current_history'][:]}
+                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                              'board': new_board[0],
-                                             'beginning': state['beginning'], 'history': state['current_history']}
+                                             'beginning': state['beginning'], 'history': state['current_history'][:]}
                     action = {0: card, 1: -1, 2: -1, 3: -1}
                     new_state_str = ' '.join(str(new_state[e]) for e in new_state)
                     alternative_new_state_str = ' '.join(
@@ -1403,11 +1405,11 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[3] = []
 
                         new_clock = state['clock']
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
+                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': alternative_history}
-                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
                                                  'beginning': state['beginning'], 'history': alternative_history}
                         action = {0: card, 1: -1, 2: -1, 3: -1}
@@ -1461,13 +1463,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[2] = state['current_s_hand'][:]
                     alternative_new_hands[3] = []
 
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
-                                 'current_history': state['current_history']}
-                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+                                 'current_history': state['current_history'][:]}
+                    alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                              'board': new_board[0],
-                                             'beginning': state['beginning'], 'history': state['current_history']}
+                                             'beginning': state['beginning'], 'history': state['current_history'][:]}
                     agent_number = state['next']
                     if agent_number == 2:
                         agent_number = 0
@@ -1531,12 +1533,12 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                             alternative_new_hands[2] = state['current_s_hand'][:]
                             alternative_new_hands[3] = []
 
-                            new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next,
+                            new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
                                          'board': new_board,
                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                         'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
+                                         'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                          'current_history': alternative_history}
-                            alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                            alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                      'board': new_board[0],
                                                      'beginning': state['beginning'],
                                                      'history': alternative_history}
@@ -1599,13 +1601,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
-                                     'current_history': state['current_history']}
-                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+                                     'current_history': state['current_history'][:]}
+                        alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history']}
+                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
 
                         agent_number = state['next']
                         if agent_number == 2:
@@ -1661,13 +1663,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                     alternative_new_hands[2] = state['current_s_hand'][:]
                     alternative_new_hands[3] = []
 
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                    new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                  'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
-                                 'current_history': state['current_history']}
+                                 'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+                                 'current_history': state['current_history'][:]}
                     alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
                                              'board': new_board[0],
-                                             'beginning': state['beginning'], 'history': state['current_history']}
+                                             'beginning': state['beginning'], 'history': state['current_history'][:]}
 
                     agent_number = state['next']
                     if agent_number == 2:
@@ -1729,12 +1731,12 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                             alternative_new_hands[2] = state['current_s_hand'][:]
                             alternative_new_hands[3] = []
 
-                            new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next,
+                            new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
                                          'board': new_board,
                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                         'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
+                                         'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                          'current_history': alternative_history}
-                            alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+                            alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                      'board': new_board[0],
                                                      'beginning': state['beginning'],
                                                      'history': alternative_history}
@@ -1802,13 +1804,13 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'],
-                                     'current_history': state['current_history']}
+                                     'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+                                     'current_history': state['current_history'][:]}
                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history']}
+                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
 
                         agent_number = state['next']
                         if agent_number == 2:
@@ -2001,10 +2003,16 @@ def hands_to_readable_hands(hands):
 
 def test_bridge_model(n):
     hands = generate_random_hands(n * 4)
+    # hands = [[133, 134], [132, 143], [141, 144], [131, 142]]
+    # hands = [[133, 141, 142], [123, 143, 144], [121, 122, 124], [131, 132, 134]]
+    # hands = [[74, 114, 144], [84, 94, 124], [64, 104, 134], [34, 44, 54]]
+    # hands = [[124, 131, 142, 144], [111, 112, 133, 141], [114, 122, 123, 143], [113, 121, 132, 134]]
     print('Hands:', hands)
     print('Readable hands:', hands_to_readable_hands(hands))
+    print("Standard bridge model")
+
     # hands = [[121, 133, 141, 143], [114, 122, 134, 142], [111, 112, 123, 132], [113, 124, 131, 144]]
-    bridge_model = generate_blind_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+    bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
                                                               'hands': hands, 'next': 0, 'history': [],
                                                               'beginning': 0, 'clock': 0, 'suit': -1})
 
@@ -2015,7 +2023,7 @@ def test_bridge_model(n):
     i = -1
     for state in bridge_model.states:
         i += 1
-        if state['lefts'][0] > n / 2 and state['lefts'][0] + state['lefts'][1] == n:
+        if state['lefts'][0] >= n/2 and state['lefts'][0] + state['lefts'][1] == n:
             winning_states.append(i)
 
     print("Start formula verification under imperfect information")
