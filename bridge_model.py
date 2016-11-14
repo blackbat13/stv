@@ -2000,8 +2000,21 @@ def hands_to_readable_hands(hands):
 
     return readable_hands
 
+tgen = 0
+low_tverif = 0
+up_tverif = 0
+low_true = 0
+up_true = 0
+match = 0
 
 def test_bridge_model(n):
+    global tgen
+    global low_tverif
+    global up_tverif
+    global low_true
+    global up_true
+    global match
+
     hands = generate_random_hands(n * 4)
     # hands = [[133, 134], [132, 143], [141, 144], [131, 142]]
     # hands = [[133, 141, 142], [123, 143, 144], [121, 122, 124], [131, 132, 134]]
@@ -2009,13 +2022,16 @@ def test_bridge_model(n):
     # hands = [[124, 131, 142, 144], [111, 112, 133, 141], [114, 122, 123, 143], [113, 121, 132, 134]]
     print('Hands:', hands)
     print('Readable hands:', hands_to_readable_hands(hands))
-    print("Standard bridge model")
+    print("Blind bridge model")
 
+    start = time.clock()
     # hands = [[121, 133, 141, 143], [114, 122, 134, 142], [111, 112, 123, 132], [113, 124, 131, 144]]
-    bridge_model = generate_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+    bridge_model = generate_blind_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
                                                               'hands': hands, 'next': 0, 'history': [],
                                                               'beginning': 0, 'clock': 0, 'suit': -1})
+    end = time.clock()
 
+    tgen += (end - start)
     # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     # bridge_model.walk()
 
@@ -2028,31 +2044,45 @@ def test_bridge_model(n):
 
     print("Start formula verification under imperfect information")
     start = time.clock()
-    wynik = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states)
+    result = bridge_model.minimum_formula_one_agent_multiple_states(0, winning_states)
     end = time.clock()
+    low_tverif += (end - start)
     print("Time:", end - start, "s")
-    print("Number of good states ", len(wynik))
+    print("Number of good states ", len(result))
     number_of_correct_beginning_states = 0
-    for state_nr in wynik:
+    for state_nr in result:
         if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
                                                                                                              -1]:
             number_of_correct_beginning_states += 1
 
     print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+    imperfect = False
+    if number_of_beginning_states == number_of_correct_beginning_states:
+        low_true += 1
+        imperfect = True
 
     print("Start formula verification under perfect information")
     start = time.clock()
-    wynik = bridge_model.minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
+    result = bridge_model.minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
     end = time.clock()
+    up_tverif += (end - start)
     print("Time:", end - start, "s")
-    print("Number of good states ", len(wynik))
+    print("Number of good states ", len(result))
     number_of_correct_beginning_states = 0
-    for state_nr in wynik:
+    for state_nr in result:
         if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
                                                                                                              -1]:
             number_of_correct_beginning_states += 1
 
     print("Formula result:", number_of_beginning_states == number_of_correct_beginning_states)
+
+    perfect = False
+    if number_of_beginning_states == number_of_correct_beginning_states:
+        up_true += 1
+        perfect = True
+
+    if perfect == imperfect:
+        match += 1
 
 
 def remove_values_from_list(the_list, val):
@@ -2066,5 +2096,13 @@ for _ in range(0, number_of_tests):
     test_bridge_model(n)
     print()
 
+print()
+print("STATISTICS")
+print("tgen", tgen/number_of_tests)
+print("low tverif", low_tverif/number_of_tests)
+print("low true", 100*(low_true/number_of_tests), "%")
+print("up tverif", up_tverif/number_of_tests)
+print("up true", 100*(up_true/number_of_tests), "%")
+print("match", 100*(match/number_of_tests), "%")
 # Pik Kier Karo Trefl
 # Spade Heart Diamond Club
