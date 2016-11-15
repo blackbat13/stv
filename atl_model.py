@@ -626,6 +626,32 @@ class ATLModel:
         print('Maximum formula iterations:', number_of_iterations)
         return result_states
 
+    def maximum_formula_one_agent_multiple_states_perfect_information(self, agent, winning_states):
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        number_of_iterations = 0
+        current_states = winning_states[:]
+        is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states, is_winning_state)
+            result_states = set(and_operator(result_states, current_states))
+            if result_states_length == len(result_states):
+                break
+
+            for state_number in result_states:
+                if state_number not in current_states:
+                    is_winning_state[state_number] = False
+
+            result_states_length = len(result_states)
+            number_of_iterations += 1
+
+        print('Maximum formula iterations:', number_of_iterations)
+        return result_states
+
     def is_possible_transition(self, agents, action, transition):
         for i, j in zip(agents, range(0, len(agents))):
             if transition['actions'][i] != action[j]:

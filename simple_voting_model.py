@@ -305,7 +305,7 @@ class SimpleVotingModel:
         print('Number of states:', len(self.states))
 
 
-simple_voting_model = SimpleVotingModel(2, 3)
+simple_voting_model = SimpleVotingModel(2, 4)
 
 print('Started generating model')
 start = time.clock()
@@ -325,7 +325,6 @@ winning_states = []
 i = -1
 for state in simple_voting_model.states:
     i += 1
-    is_winning = True
 
     if not (state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1):
         winning_states.append(i)
@@ -404,3 +403,42 @@ print("Formula result:", list(result)[0] == 0)
 
 # for state_number in result:
 #     print(state_number, simple_voting_model.states[state_number])
+
+print()
+print("Perfect <<c>>G( (finish_i & ~pun_i) -> vote_{i,1} )")
+winning_states = []
+i = -1
+for state in simple_voting_model.states:
+    i += 1
+
+    if not (state['finish'][voter_number]==1 and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1):
+        winning_states.append(i)
+
+start = time.clock()
+result = simple_voting_model.model.maximum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
+end = time.clock()
+
+print("Time:", end - start, "s")
+print("Number of good states ", len(result))
+print("Formula result:", list(result)[0] == 0)
+
+# for state_number in result:
+#     print(state_number, simple_voting_model.states[state_number])
+
+
+print()
+print("Perfect <<v_i>>F( finish_i & ~pun_i & ~vote_{i,1} )")
+winning_states = []
+i = -1
+for state in simple_voting_model.states:
+    i += 1
+    if state['finish'][voter_number]==1 and state['coercer_actions'][voter_number] != 'pun' and state['voted'][voter_number] != 1:
+        winning_states.append(i)
+
+start = time.clock()
+result = simple_voting_model.model.minimum_formula_one_agent_multiple_states_perfect_information(1, winning_states)
+end = time.clock()
+
+print("Time:", end - start, "s")
+print("Number of good states ", len(result))
+print("Formula result:", list(result)[0] == 0)
