@@ -2006,6 +2006,7 @@ up_tverif = 0
 low_true = 0
 up_true = 0
 match = 0
+states_count = 0
 
 def test_bridge_model(n):
     global tgen
@@ -2014,6 +2015,7 @@ def test_bridge_model(n):
     global low_true
     global up_true
     global match
+    global states_count
 
     hands = generate_random_hands(n * 4)
     # hands = [[133, 134], [132, 143], [141, 144], [131, 142]]
@@ -2034,7 +2036,7 @@ def test_bridge_model(n):
     tgen += (end - start)
     # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     # bridge_model.walk()
-
+    states_count += len(bridge_model.states)
     winning_states = []
     i = -1
     for state in bridge_model.states:
@@ -2098,6 +2100,7 @@ for _ in range(0, number_of_tests):
 
 print()
 print("STATISTICS")
+print("#states", states_count/number_of_tests)
 print("tgen", tgen/number_of_tests)
 print("low tverif", low_tverif/number_of_tests)
 print("low true", 100*(low_true/number_of_tests), "%")
