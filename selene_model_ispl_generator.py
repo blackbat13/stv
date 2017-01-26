@@ -51,6 +51,7 @@ class SeleneModelIsplGenerator:
             vars += "\t\tvoter" + str(i) + "Voted: boolean;\n"
             vars += "\t\tvoter" + str(i) + "Vote: 0.." + str(self.number_of_candidates) + ";\n"
             vars += "\t\tvoter" + str(i) + "TrackerSet: boolean;\n"
+            vars += "\t\tvoter" + str(i) + "OwnedTracker: 0.." + str(self.number_of_voters) + ";\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -126,6 +127,12 @@ class SeleneModelIsplGenerator:
                 evolution += "\t\ttracker" + str(i) + "=" + str(j) + " if\n"
                 evolution += "\t\t\tAction=SetTracker" + str(i) + "To" + str(j) + ";\n"
 
+        for i in range(1, self.number_of_voters + 1):
+            for j in range(1, self.number_of_voters + 1):
+                evolution += "\t\tvoter" + str(i) + "OwnedTracker=" + str(j) + " if\n"
+                evolution += "\t\t\tVoter" + str(i) + ".Action=FetchGoodTracker and "
+                evolution += "tracker" + str(j) + "=" + str(i) + ";\n"
+
         evolution += "\t\tvotesPublished=true if Action=PublishVotes;\n"
         evolution += "\t\tvotingStarted=true if Action=StartVoting;\n"
 
@@ -179,21 +186,20 @@ class SeleneModelIsplGenerator:
         player += self.__create_voter_lobsvars(voter_number)
         player += self.__create_voter_vars()
         player += self.__create_voter_actions()
-        player += self.__create_voter_protocol()
+        player += self.__create_voter_protocol(voter_number)
         player += self.__create_voter_evolution()
         player += "end Agent\n\n"
         return player
 
     def __create_voter_lobsvars(self, voter_number):
         lobsvars = "\tLobsvars = {"
-
+        lobsvars += "voter" + str(voter_number) + "OwnedTracker"
         lobsvars += "};\n"
         return lobsvars
 
     def __create_voter_vars(self):
         vars = "\tVars:\n"
 
-        vars += "\t\ttracker: 0.." + str(self.number_of_voters) + ";\n"
         vars += "\t\tvote: 0.." + str(self.number_of_candidates) + ";\n"
 
         vars += "\tend Vars\n"
@@ -209,7 +215,7 @@ class SeleneModelIsplGenerator:
         actions += "Wait};\n"
         return actions
 
-    def __create_voter_protocol(self):
+    def __create_voter_protocol(self, voter_number):
         protocol = "\tProtocol:\n"
 
         protocol += "\t\tvote=0 and Environment.votingStarted=true: {"
@@ -218,7 +224,7 @@ class SeleneModelIsplGenerator:
 
         protocol += "Wait};\n"
 
-        protocol += "\t\tvote>1 and tracker=0 and Environment.votesPublished=true: {FetchGoodTracker, Wait};\n"
+        protocol += "\t\tvote>0 and Environment.voter" + str(voter_number) + "OwnedTracker=0 and Environment.votesPublished=true: {FetchGoodTracker, Wait};\n"
         protocol += "\t\tOther: {Wait};\n"
 
         protocol += "\tend Protocol\n"
@@ -244,7 +250,6 @@ class SeleneModelIsplGenerator:
         init_states += "\t\t"
         # Set trackers to voter number
         for i in range(1, self.number_of_voters + 1):
-            init_states += "Voter" + str(i) + ".tracker=0 and "
             init_states += "Voter" + str(i) + ".vote=0 and "
             init_states += "Environment.publicTracker" + str(i) + "=0 and "
             init_states += "Environment.publicVote" + str(i) + "=0 and "
@@ -252,6 +257,7 @@ class SeleneModelIsplGenerator:
             init_states += "Environment.voter" + str(i) + "Voted=false and "
             init_states += "Environment.voter" + str(i) + "Vote=0 and "
             init_states += "Environment.voter" + str(i) + "TrackerSet=false and "
+            init_states += "Environment.voter" + str(i) + "OwnedTracker=0 and "
 
         init_states += "Environment.votesPublished=false and "
         init_states += "Environment.votingStarted=false"
