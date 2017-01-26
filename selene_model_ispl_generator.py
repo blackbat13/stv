@@ -39,6 +39,7 @@ class SeleneModelIsplGenerator:
             obsvars += "\t\tpublicVote" + str(i) + ": 0.." + str(self.number_of_candidates) + ";\n"
 
         obsvars += "\t\tvotesPublished: boolean;\n"
+        obsvars += "\t\tvotingStarted: boolean;\n"
         obsvars += "\tend Obsvars\n"
         return obsvars
 
@@ -46,15 +47,20 @@ class SeleneModelIsplGenerator:
         vars = "\tVars:\n"
 
         for i in range(1, self.number_of_voters+1):
-            vars += "\t\ttracker" + str(i) + ": 1.." + str(self.number_of_voters) + ";\n"
+            vars += "\t\ttracker" + str(i) + ": 0.." + str(self.number_of_voters) + ";\n"
             vars += "\t\tvoter" + str(i) + "Voted: boolean;\n"
             vars += "\t\tvoter" + str(i) + "Vote: 0.." + str(self.number_of_candidates) + ";\n"
+            vars += "\t\tvoter" + str(i) + "TrackerSet: boolean;\n"
 
         vars += "\tend Vars\n"
         return vars
 
     def __create_environment_actions(self):
-        actions = "\tActions = {PublishVotes, Wait};\n"
+        actions = "\tActions = {PublishVotes, "
+        for i in range(1, self.number_of_voters + 1):
+            for j in range(1, self.number_of_voters + 1):
+                actions += "SetTracker" + str(i) + "To" + str(j) + ", "
+        actions += "StartVoting, Wait};\n"
         return actions
 
     def __create_environment_protocol(self):
@@ -64,10 +70,18 @@ class SeleneModelIsplGenerator:
         for i in range(1, self.number_of_voters + 1):
             protocol += "voter" + str(i) + "Voted=true and "
 
-        protocol += "publicVote1=0"
-        protocol += ": {PublishVotes};\n"
+        protocol += "publicVote1=0: {PublishVotes};\n"
 
-        protocol += "\t\tOther:{Wait};\n"
+        for i in range(1, self.number_of_voters + 1):
+            for j in range(1, self.number_of_voters + 1):
+                protocol += "\t\ttracker" + str(i) + "=0 and voter" + str(j) + "TrackerSet=false: {SetTracker" + str(i) + "To" + str(j) + "};\n"
+
+        protocol += "\t\t"
+        for i in range(1, self.number_of_voters + 1):
+            protocol += "tracker" + str(i) + ">0 and "
+
+        protocol += "votingStarted=false: {StartVoting};\n"
+        protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
 
@@ -100,7 +114,20 @@ class SeleneModelIsplGenerator:
                 evolution += "\t\tvoter" + str(i) + "Vote=" + str(j) + " if\n"
                 evolution += "\t\t\tVoter" + str(i) + ".Action=Vote" + str(j) + ";\n"
 
+        for i in range(1, self.number_of_voters + 1):
+            evolution += "\t\tvoter" + str(i) + "TrackerSet=true if\n"
+            for j in range(1, self.number_of_voters + 1):
+                evolution += "\t\t\tAction=SetTracker" + str(j) + "To" + str(i) + " or\n"
+            evolution = evolution.rstrip("\nro ")
+            evolution += ";\n"
+
+        for i in range(1, self.number_of_voters + 1):
+            for j in range(1, self.number_of_voters + 1):
+                evolution += "\t\ttracker" + str(i) + "=" + str(j) + " if\n"
+                evolution += "\t\t\tAction=SetTracker" + str(i) + "To" + str(j) + ";\n"
+
         evolution += "\t\tvotesPublished=true if Action=PublishVotes;\n"
+        evolution += "\t\tvotingStarted=true if Action=StartVoting;\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -185,7 +212,7 @@ class SeleneModelIsplGenerator:
     def __create_voter_protocol(self):
         protocol = "\tProtocol:\n"
 
-        protocol += "\t\tvote=0: {"
+        protocol += "\t\tvote=0 and Environment.votingStarted=true: {"
         for i in range(1, self.number_of_candidates + 1):
             protocol += "Vote" + str(i) + ", "
 
@@ -221,11 +248,13 @@ class SeleneModelIsplGenerator:
             init_states += "Voter" + str(i) + ".vote=0 and "
             init_states += "Environment.publicTracker" + str(i) + "=0 and "
             init_states += "Environment.publicVote" + str(i) + "=0 and "
-            init_states += "Environment.tracker" + str(i) + "=" + str(i) + " and "
+            init_states += "Environment.tracker" + str(i) + "=" + str(0) + " and "
             init_states += "Environment.voter" + str(i) + "Voted=false and "
             init_states += "Environment.voter" + str(i) + "Vote=0 and "
+            init_states += "Environment.voter" + str(i) + "TrackerSet=false and "
 
-        init_states += "Environment.votesPublished=false"
+        init_states += "Environment.votesPublished=false and "
+        init_states += "Environment.votingStarted=false"
         init_states += ";\n"
         init_states += "end InitStates\n\n"
         return init_states
