@@ -598,7 +598,7 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                  'beginning': 0, 'history': first_state['history'], 'clock': 0, 'suit': -1,
                  'current_s_hand': new_hands[2], 'current_history': first_state['history']}
         alternative_state = {'hands': alternative_new_hands, 'lefts': [0, 0], 'board': -1,
-                 'beginning': 0, 'history': first_state['history']}
+                             'beginning': 0, 'history': first_state['history']}
         states.append(state)
         state_str = ' '.join(str(state[e]) for e in state)
         alternative_state_str = ' '.join(str(alternative_state[e]) for e in alternative_state)
@@ -674,8 +674,6 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                                              'board': new_board[0],
                                              'beginning': state['beginning'], 'history': alternative_history}
 
-
-
                     agent_number = state['next']
                     if agent_number == 2:
                         agent_number = 0
@@ -726,13 +724,15 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+                                     'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': state['current_history'][:]}
                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
+                                                 'beginning': state['beginning'],
+                                                 'history': state['current_history'][:]}
                         agent_number = 2
                         if agent_number == 2:
                             agent_number = 0
@@ -854,7 +854,8 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+                                     'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': alternative_history}
@@ -865,7 +866,8 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         action = {0: -1, 1: -1, 2: -1, 3: -1}
                         action[agent_number] = card
                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
-                        alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
+                        alternative_new_state_str = ' '.join(
+                            str(alternative_new_state[e]) for e in alternative_new_state)
                         if new_state_str not in states_dictionary:
                             states_dictionary[new_state_str] = state_number
                             new_state_number = state_number
@@ -975,7 +977,8 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[3] = []
 
                         new_suit = card % 10
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+                                     'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                                      'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': alternative_history}
@@ -1042,13 +1045,15 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[3] = []
 
                         new_suit = card % 10
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+                                     'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                                      'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': state['current_history'][:]}
                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
+                                                 'beginning': state['beginning'],
+                                                 'history': state['current_history'][:]}
                         agent_number = state['next']
                         if agent_number == 2:
                             agent_number = 0
@@ -1167,7 +1172,8 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                 alternative_new_hands[2] = state['hands'][2][:]
                 alternative_new_hands[3] = []
 
-                new_state = {'hands': state['hands'][:], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
+                new_state = {'hands': state['hands'][:], 'lefts': new_lefts, 'next': new_next,
+                             'board': [-1, -1, -1, -1],
                              'beginning': new_beginning, 'history': new_history, 'clock': new_clock, 'suit': new_suit,
                              'current_s_hand': state['hands'][2][:], 'current_history': new_history}
                 alternative_new_state = {'hands': alternative_new_hands, 'lefts': new_lefts,
@@ -1405,7 +1411,8 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[3] = []
 
                         new_clock = state['clock']
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+                                     'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': alternative_history}
@@ -1601,13 +1608,15 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+                                     'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': state['current_history'][:]}
                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
+                                                 'beginning': state['beginning'],
+                                                 'history': state['current_history'][:]}
 
                         agent_number = state['next']
                         if agent_number == 2:
@@ -1804,13 +1813,15 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
                         alternative_new_hands[2] = state['current_s_hand'][:]
                         alternative_new_hands[3] = []
 
-                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next, 'board': new_board,
+                        new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+                                     'board': new_board,
                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
                                      'current_history': state['current_history'][:]}
                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
                                                  'board': new_board[0],
-                                                 'beginning': state['beginning'], 'history': state['current_history'][:]}
+                                                 'beginning': state['beginning'],
+                                                 'history': state['current_history'][:]}
 
                         agent_number = state['next']
                         if agent_number == 2:
@@ -1850,6 +1861,451 @@ def generate_blind_bridge_model_for_epistemic(no_cards_available, no_end_cards, 
     print("Created indistuiginshable relation in", end - start, "s")
     print("Created whole model in", full_time, "s")
     return bridge_model
+
+
+def generate_abstract_bridge_model_for_epistemic(no_cards_available, no_end_cards, first_state, abstraction):
+    global number_of_beginning_states
+
+    if no_end_cards == 1:
+        bridge_model = ATLModel(3, 100)
+    elif no_end_cards == 2:
+        bridge_model = ATLModel(3, 1000)
+    elif no_end_cards == 3:
+        bridge_model = ATLModel(3, 100000)
+    elif no_end_cards == 4:
+        bridge_model = ATLModel(3, 1000000)
+    else:
+        bridge_model = ATLModel(3, 8000000)
+
+    full_time = 0
+    cards_available = prepare_available_cards(no_cards_available, bridge_model)
+
+    bridge_model.add_action(0, 1001)
+    bridge_model.add_action(0, 1002)
+    bridge_model.add_action(0, 1003)
+    bridge_model.add_action(0, 1004)
+    pr = []
+    pr.append(cards_available[:])
+    bridge_model.add_action(0, -1)
+    states = []
+    abstract_states = []
+    states_dictionary = {}
+    abstract_states_dictionary = {}
+    alternative_states_dictionary = {}
+    state_number = 0
+    abstract_state_number = 0
+    print("Start creating beginning epistemic class states of model")
+    enemy_hands = first_state['hands'][1][:] + first_state['hands'][3][:]
+    start = time.clock()
+    for player2 in itertools.combinations(enemy_hands, no_end_cards):
+        player4 = enemy_hands[:]
+        for i in player2:
+            player4.remove(i)
+        new_hands = first_state['hands'][:]
+        new_hands[1] = sorted(list(player2))
+        new_hands[3] = sorted(list(player4))
+
+        abstract_new_hands = [[], [], [], []]
+        for i in range(0, 4):
+            abstract_new_hands[i] = new_hands[i][:]
+            if i == 1 or i == 3:
+                for j in range(0, len(abstract_new_hands[i])):
+                    if abstract_new_hands[i][j] in abstraction:
+                        abstract_new_hands[i][j] = 1000 + abstract_new_hands[i][j] % 10
+                abstract_new_hands[i] = sorted(abstract_new_hands[i])
+
+        # print(abstract_new_hands)
+
+        alternative_new_hands = abstract_new_hands[:]
+        alternative_new_hands[1] = []
+        alternative_new_hands[3] = []
+
+        state = {'hands': new_hands, 'lefts': [0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
+                 'beginning': 0, 'history': first_state['history'], 'clock': 0, 'suit': -1}
+        abstract_state = {'hands': abstract_new_hands, 'lefts': [0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
+                          'beginning': 0, 'history': first_state['history'], 'clock': 0, 'suit': -1}
+        alternative_state = {'hands': alternative_new_hands, 'lefts': [0, 0], 'next': 0, 'board': [-1, -1, -1, -1],
+                          'beginning': 0, 'history': first_state['history'], 'clock': 0, 'suit': -1}
+        states.append(state)
+        state_str = ' '.join(str(state[e]) for e in state)
+        abstract_state_str = ' '.join(str(abstract_state[e]) for e in abstract_state)
+        alternative_state_str = ' '.join(str(alternative_state[e]) for e in alternative_state)
+        states_dictionary[state_str] = state_number
+        if abstract_state_str not in abstract_states_dictionary:
+            abstract_states_dictionary[abstract_state_str] = abstract_state_number
+            if alternative_state_str not in alternative_states_dictionary:
+                alternative_states_dictionary[alternative_state_str] = {abstract_state_number}
+            else:
+                alternative_states_dictionary[alternative_state_str].add(abstract_state_number)
+
+            abstract_state_number += 1
+            abstract_states.append(abstract_state)
+        # else:
+        #     new_state_number = abstract_states_dictionary[abstract_state_str]
+
+        state_number += 1
+
+    end = time.clock()
+    full_time += end - start
+    print("Created beginning states of model in", end - start, "s")
+    print("Number of beginning states of model:", len(states))
+    number_of_beginning_states = len(abstract_states)
+    print("Start creating rest of model")
+    start = time.clock()
+    current_state_number = -1
+    for state in states:
+        abstract_hands = [[], [], [], []]
+        for i in range(0, 4):
+            abstract_hands[i] = state['hands'][i][:]
+            if i == 1 or i == 3:
+                for j in range(0, len(abstract_hands[i])):
+                    if abstract_hands[i][j] in abstraction:
+                        abstract_hands[i][j] = 1000 + abstract_hands[i][j] % 10
+                abstract_hands[i] = sorted(abstract_hands[i])
+
+        # print(abstract_hands)
+
+        abstract_history = state['history'][:]
+        for i in range(0, len(abstract_history)):
+            if abstract_history[i] in abstraction:
+                abstract_history[i] = 1000 + abstract_history[i] % 10
+        abstract_history = sorted(abstract_history)
+
+        abstract_board = state['board'][:]
+        if abstract_board[1] in abstraction:
+            abstract_board[1] = 1000 + abstract_board[1] % 10
+        if abstract_board[3] in abstraction:
+            abstract_board[3] = 1000 + abstract_board[3] % 10
+
+        abstract_current_state = {'hands': abstract_hands, 'lefts': state['lefts'], 'next': state['next'],
+                                  'board': abstract_board, 'beginning': state['beginning'], 'history': abstract_history,
+                                  'clock': state['clock'], 'suit': state['suit']}
+
+        abstract_state_str = ' '.join(str(abstract_current_state[e]) for e in abstract_current_state)
+
+        current_state_number = abstract_states_dictionary[abstract_state_str]
+
+        if state['next'] == state['beginning'] and state['clock'] == 0:
+            remaining_cards_count = 0
+            for card in state['hands'][state['next']]:
+                if card != -1:
+                    remaining_cards_count += 1
+
+            if remaining_cards_count == 0:
+                break
+
+            for card_index, card in enumerate(state['hands'][state['next']]):
+                if card == -1:
+                    continue
+
+                new_board = state['board'][:]
+                new_board[state['next']] = card
+
+                new_history = state['history'][:]
+                new_history.append(card)
+                new_history = sorted(new_history)
+
+                abstract_history = new_history[:]
+                for i in range(0, len(abstract_history)):
+                    if abstract_history[i] in abstraction:
+                        abstract_history[i] = 1000 + abstract_history[i] % 10
+
+                abstract_history = sorted(abstract_history)
+
+                abstract_board = new_board[:]
+                if abstract_board[1] in abstraction:
+                    abstract_board[1] = 1000 + abstract_board[1] % 10
+                if abstract_board[3] in abstraction:
+                    abstract_board[3] = 1000 + abstract_board[3] % 10
+
+                new_next = (state['next'] + 1) % 4
+                new_clock = state['clock'] + 1
+                new_hands = [[], [], [], []]
+                abstract_new_hands = [[], [], [], []]
+                for i in range(0, 4):
+                    new_hands[i] = state['hands'][i][:]
+                    abstract_new_hands[i] = state['hands'][i][:]
+                    if i == 1 or i == 3:
+                        for j in range(0, len(abstract_new_hands[i])):
+                            if abstract_new_hands[i][j] in abstraction:
+                                abstract_new_hands[i][j] = 1000 + abstract_new_hands[i][j] % 10
+
+                new_hands[state['next']][card_index] = -1
+                abstract_new_hands[state['next']][card_index] = -1
+                abstract_new_hands[1] = sorted(abstract_new_hands[1])
+                abstract_new_hands[3] = sorted(abstract_new_hands[3])
+
+                alternative_new_hands = [[], [], [], []]
+                alternative_new_hands[0] = abstract_new_hands[0][:]
+                alternative_new_hands[1] = keep_values_in_list(abstract_new_hands[1], -1)
+                alternative_new_hands[2] = abstract_new_hands[2][:]
+                alternative_new_hands[3] = keep_values_in_list(abstract_new_hands[3], -1)
+
+                # print(alternative_new_hands)
+
+                new_suit = card % 10
+                new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                             'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+                             'suit': new_suit}
+
+                abstract_new_state = {'hands': abstract_new_hands, 'lefts': state['lefts'], 'next': new_next,
+                                      'board': abstract_board,
+                                      'beginning': state['beginning'], 'history': abstract_history, 'clock': new_clock,
+                                      'suit': new_suit}
+
+                alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'], 'next': new_next,
+                                         'board': abstract_board,
+                                         'beginning': state['beginning'], 'history': abstract_history, 'clock': new_clock,
+                                         'suit': new_suit}
+
+                agent_number = state['next']
+                if agent_number == 2:
+                    agent_number = 0
+                action = {0: -1, 1: -1, 2: -1, 3: -1}
+                action[agent_number] = card
+                if (agent_number == 1 or agent_number == 3) and (card in abstraction):
+                    action[agent_number] = 1000 + card % 10
+                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                abstract_new_state_str = ' '.join(str(abstract_new_state[e]) for e in abstract_new_state)
+                alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
+                if new_state_str not in states_dictionary:
+                    states_dictionary[new_state_str] = state_number
+                    # new_state_number = state_number
+                    states.append(new_state)
+                    state_number += 1
+                # else:
+                #     new_state_number = states_dictionary[new_state_str]
+
+                if abstract_new_state_str not in abstract_states_dictionary:
+                    abstract_states_dictionary[abstract_new_state_str] = abstract_state_number
+                    new_state_number = abstract_state_number
+                    abstract_state_number += 1
+                    abstract_states.append(abstract_new_state)
+                else:
+                    new_state_number = abstract_states_dictionary[abstract_new_state_str]
+
+                if alternative_new_state_str not in alternative_states_dictionary:
+                    alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+                else:
+                    alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+
+                bridge_model.add_transition(current_state_number, new_state_number, action)
+        elif state['clock'] == 4:
+            new_history = state['history'][:]
+            beginning = state['beginning']
+            board = state['board']
+            card1 = board[beginning]
+            card2 = board[(beginning + 1) % 4]
+            card3 = board[(beginning + 2) % 4]
+            card4 = board[(beginning + 3) % 4]
+            winner = beginning
+            winning_card = card1
+            color = card1 % 10
+            if card2 % 10 == color and card2 > winning_card:
+                winning_card = card2
+                winner = (beginning + 1) % 4
+            if card3 % 10 == color and card3 > winning_card:
+                winning_card = card3
+                winner = (beginning + 2) % 4
+            if card4 % 10 == color and card4 > winning_card:
+                winning_card = card4
+                winner = (beginning + 3) % 4
+
+            new_lefts = state['lefts'][:]
+            new_lefts[winner % 2] += 1
+            new_next = winner
+            new_clock = 0
+            new_beginning = winner
+            new_suit = -1
+            action = {0: -1, 1: -1, 2: -1, 3: -1}
+
+            abstract_history = new_history[:]
+            for i in range(0, len(abstract_history)):
+                if abstract_history[i] in abstraction:
+                    abstract_history[i] = 1000 + abstract_history[i] % 10
+
+            abstract_history = sorted(abstract_history)
+
+            abstract_new_hands = [[], [], [], []]
+            for i in range(0, 4):
+                abstract_new_hands[i] = state['hands'][i][:]
+                if i == 1 or i == 3:
+                    for j in range(0, len(abstract_new_hands[i])):
+                        if abstract_new_hands[i][j] in abstraction:
+                            abstract_new_hands[i][j] = 1000 + abstract_new_hands[i][j] % 10
+                    abstract_new_hands[i] = sorted(abstract_new_hands[i])
+
+            alternative_new_hands = [[], [], [], []]
+            alternative_new_hands[0] = abstract_new_hands[0][:]
+            alternative_new_hands[1] = keep_values_in_list(abstract_new_hands[1], -1)
+            alternative_new_hands[2] = abstract_new_hands[2][:]
+            alternative_new_hands[3] = keep_values_in_list(abstract_new_hands[3], -1)
+
+            new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
+                         'beginning': new_beginning, 'history': new_history, 'clock': new_clock, 'suit': new_suit}
+            abstract_new_state = {'hands': abstract_new_hands, 'lefts': new_lefts, 'next': new_next,
+                                  'board': [-1, -1, -1, -1],
+                                  'beginning': new_beginning, 'history': abstract_history, 'clock': new_clock,
+                                  'suit': new_suit}
+            alternative_new_state = {'hands': alternative_new_hands, 'lefts': new_lefts, 'next': new_next,
+                                     'board': [-1, -1, -1, -1],
+                                     'beginning': new_beginning, 'history': abstract_history, 'clock': new_clock,
+                                     'suit': new_suit}
+            new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+            abstract_new_state_str = ' '.join(str(abstract_new_state[e]) for e in abstract_new_state)
+            alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
+            if new_state_str not in states_dictionary:
+                states_dictionary[new_state_str] = state_number
+                # new_state_number = state_number
+                states.append(new_state)
+                state_number += 1
+            # else:
+            #     new_state_number = states_dictionary[new_state_str]
+
+            if abstract_new_state_str not in abstract_states_dictionary:
+                abstract_states_dictionary[abstract_new_state_str] = abstract_state_number
+                new_state_number = abstract_state_number
+                abstract_state_number += 1
+                abstract_states.append(abstract_new_state)
+            else:
+                new_state_number = abstract_states_dictionary[abstract_new_state_str]
+
+            if alternative_new_state_str not in alternative_states_dictionary:
+                alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+            else:
+                alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+
+            bridge_model.add_transition(current_state_number, new_state_number, action)
+
+        else:
+            color = state['board'][state['beginning']] % 10
+            have_color = False
+            for card in state['hands'][state['next']]:
+                if (card % 10) == color:
+                    have_color = True
+                    break
+            for card_index, card in enumerate(state['hands'][state['next']]):
+                if not ((not have_color) or (card % 10) == color) or card == -1:
+                    continue
+                new_board = state['board'][:]
+                new_board[state['next']] = card
+
+                abstract_board = new_board[:]
+                if abstract_board[1] in abstraction:
+                    abstract_board[1] = 1000 + abstract_board[1] % 10
+                if abstract_board[3] in abstraction:
+                    abstract_board[3] = 1000 + abstract_board[3] % 10
+
+                new_history = state['history'][:]
+                new_history.append(card)
+                new_history = sorted(new_history)
+
+                abstract_history = new_history[:]
+                for i in range(0, len(abstract_history)):
+                    if abstract_history[i] in abstraction:
+                        abstract_history[i] = 1000 + abstract_history[i] % 10
+
+                abstract_history = sorted(abstract_history)
+
+                new_next = (state['next'] + 1) % 4
+                new_hands = [[], [], [], []]
+                new_hands[0] = state['hands'][0][:]
+                new_hands[1] = state['hands'][1][:]
+                new_hands[2] = state['hands'][2][:]
+                new_hands[3] = state['hands'][3][:]
+                new_hands[state['next']][card_index] = -1
+
+                abstract_new_hands = [[], [], [], []]
+                for i in range(0, 4):
+                    abstract_new_hands[i] = state['hands'][i][:]
+                    if i == 1 or i == 3:
+                        for j in range(0, len(abstract_new_hands[i])):
+                            if abstract_new_hands[i][j] in abstraction:
+                                abstract_new_hands[i][j] = 1000 + abstract_new_hands[i][j] % 10
+
+                abstract_new_hands[state['next']][card_index] = -1
+                abstract_new_hands[1] = sorted(abstract_new_hands[1])
+                abstract_new_hands[3] = sorted(abstract_new_hands[3])
+
+                alternative_new_hands = [[], [], [], []]
+                alternative_new_hands[0] = abstract_new_hands[0][:]
+                alternative_new_hands[1] = keep_values_in_list(abstract_new_hands[1], -1)
+                alternative_new_hands[2] = abstract_new_hands[2][:]
+                alternative_new_hands[3] = keep_values_in_list(abstract_new_hands[3], -1)
+
+                new_clock = state['clock'] + 1
+                new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                             'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+                             'suit': state['suit']}
+                abstract_new_state = {'hands': abstract_new_hands, 'lefts': state['lefts'], 'next': new_next,
+                                      'board': abstract_board,
+                                      'beginning': state['beginning'], 'history': abstract_history, 'clock': new_clock,
+                                      'suit': state['suit']}
+                alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'], 'next': new_next,
+                                         'board': abstract_board,
+                                         'beginning': state['beginning'], 'history': abstract_history, 'clock': new_clock,
+                                         'suit': state['suit']}
+
+                agent_number = state['next']
+                if agent_number == 2:
+                    agent_number = 0
+                action = {0: -1, 1: -1, 2: -1, 3: -1}
+                action[agent_number] = card
+                if (agent_number == 1 or agent_number == 3) and (card in abstraction):
+                    action[agent_number] = 1000 + card % 10
+                new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+                abstract_new_state_str = ' '.join(str(abstract_new_state[e]) for e in abstract_new_state)
+                alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
+                if new_state_str not in states_dictionary:
+                    states_dictionary[new_state_str] = state_number
+                    # new_state_number = state_number
+                    states.append(new_state)
+                    state_number += 1
+                # else:
+                #     new_state_number = states_dictionary[new_state_str]
+
+                if abstract_new_state_str not in abstract_states_dictionary:
+                    abstract_states_dictionary[abstract_new_state_str] = abstract_state_number
+                    new_state_number = abstract_state_number
+                    abstract_state_number += 1
+                    abstract_states.append(abstract_new_state)
+                else:
+                    new_state_number = abstract_states_dictionary[abstract_new_state_str]
+
+                if alternative_new_state_str not in alternative_states_dictionary:
+                    alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+                else:
+                    alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+
+                bridge_model.add_transition(current_state_number, new_state_number, action)
+
+    end = time.clock()
+    full_time += end - start
+    print("Created rest of model in", end - start, "s")
+    print("Created model have", len(states), "states")
+    print("Begin defining indistuiginshable relation")
+    gc.disable()
+    start = time.clock()
+    bridge_model.states = abstract_states
+    prepare_blind_epistemic_relation(bridge_model, abstract_states_dictionary, alternative_states_dictionary)
+    end = time.clock()
+    gc.enable()
+    full_time += end - start
+    print("Created indistuiginshable relation in", end - start, "s")
+    print("Created whole model in", full_time, "s")
+    return bridge_model
+
+
+def prepare_available_cards(no_cards_available, bridge_model):
+    cards_available = []
+    card_number = 14
+    for i in range(0, no_cards_available):
+        for c in range(1, 5):
+            cards_available.append(card_number * 10 + (5 - c))
+            bridge_model.add_action(0, card_number * 10 + (5 - c))
+        card_number -= 1
+
+    return cards_available
 
 
 def prepare_epistemic_relation(bridge_model, states_dictionary, alternative_states_dictionary):
@@ -1932,18 +2388,25 @@ def write_bridge_model(a, b):
     print("Number of states", len(bridge_model.states))
 
 
-def generate_random_hands(length):
+def generate_random_hands(no_cards_available, no_cards_in_hand):
     array = []
     used = []
-    card_numbers = [144, 143, 142, 141, 134, 133, 132, 131, 124, 123, 122, 121, 114, 113, 112, 111, 104, 103, 102, 101,
-                    94, 93, 92, 91]
-    for i in range(0, length):
+    # card_numbers = [144, 143, 142, 141, 134, 133, 132, 131, 124, 123, 122, 121, 114, 113, 112, 111, 104, 103, 102, 101,
+    #                 94, 93, 92, 91]
+    card_numbers = []
+    for i in range(14, 0, -1):
+        for j in range(4, 0, -1):
+            card_numbers.append(i * 10 + j)
+
+    print(card_numbers)
+
+    for i in range(0, no_cards_available * 4):
         used.append(False)
 
-    for i in range(0, length):
-        number = random.randrange(length)
+    for i in range(0, no_cards_in_hand * 4):
+        number = random.randrange(no_cards_available * 4)
         while used[number]:
-            number = random.randrange(length)
+            number = random.randrange(no_cards_available * 4)
 
         array.append(card_numbers[number])
         used[number] = True
@@ -1952,7 +2415,7 @@ def generate_random_hands(length):
     j = 0
     for i in range(0, 4):
         hand = []
-        for _ in range(0, int(length / 4)):
+        for _ in range(0, no_cards_in_hand):
             hand.append(array[j])
             j += 1
 
@@ -2000,6 +2463,7 @@ def hands_to_readable_hands(hands):
 
     return readable_hands
 
+
 tgen = 0
 low_tverif = 0
 up_tverif = 0
@@ -2008,7 +2472,8 @@ up_true = 0
 match = 0
 states_count = 0
 
-def test_bridge_model(n):
+
+def test_bridge_model(n, m):
     global tgen
     global low_tverif
     global up_tverif
@@ -2017,32 +2482,47 @@ def test_bridge_model(n):
     global match
     global states_count
 
-    hands = generate_random_hands(n * 4)
+    hands = generate_random_hands(n, m)
     # hands = [[133, 134], [132, 143], [141, 144], [131, 142]]
     # hands = [[133, 141, 142], [123, 143, 144], [121, 122, 124], [131, 132, 134]]
-    # hands = [[74, 114, 144], [84, 94, 124], [64, 104, 134], [34, 44, 54]]
+    # hands = [[124, 134, 144], [74, 84, 94], [64, 104, 114], [34, 44, 91]]
+    # hands = [[124, 134, 144], [71, 72, 74], [122, 132, 142], [64, 81, 82]]
     # hands = [[124, 131, 142, 144], [111, 112, 133, 141], [114, 122, 123, 143], [113, 121, 132, 134]]
     print('Hands:', hands)
     print('Readable hands:', hands_to_readable_hands(hands))
-    print("Blind bridge model")
+    # print("Blind bridge model")
+    print("Abstract bridge model")
 
     start = time.clock()
     # hands = [[121, 133, 141, 143], [114, 122, 134, 142], [111, 112, 123, 132], [113, 124, 131, 144]]
-    bridge_model = generate_blind_bridge_model_for_epistemic(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                                              'hands': hands, 'next': 0, 'history': [],
-                                                              'beginning': 0, 'clock': 0, 'suit': -1})
+    bridge_model = generate_abstract_bridge_model_for_epistemic(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                                       'hands': hands, 'next': 0, 'history': [],
+                                                                       'beginning': 0, 'clock': 0, 'suit': -1},
+                                                                [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42,
+                                                                 43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74,
+                                                                 81, 82, 83, 84, 91, 92, 93, 94])
+
+    # bridge_model = generate_bridge_model_for_epistemic(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+    #                                                                    'hands': hands, 'next': 0, 'history': [],
+    #                                                                    'beginning': 0, 'clock': 0, 'suit': -1})
+
     end = time.clock()
 
     tgen += (end - start)
     # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    # bridge_model.walk()
+    # bridge_model.walk(0)
     states_count += len(bridge_model.states)
     winning_states = []
     i = -1
     for state in bridge_model.states:
         i += 1
-        if state['lefts'][0] >= n/2 and state['lefts'][0] + state['lefts'][1] == n:
+        if state['lefts'][0] >= m / 2 and state['lefts'][0] + state['lefts'][1] == m:
             winning_states.append(i)
+            # print(i)
+            # print(state)
+        # elif state['lefts'][0] + state['lefts'][1] == m:
+            # print(state)
+
 
     print("Start formula verification under imperfect information")
     start = time.clock()
@@ -2053,6 +2533,8 @@ def test_bridge_model(n):
     print("Number of good states ", len(result))
     number_of_correct_beginning_states = 0
     for state_nr in result:
+        # if len(bridge_model.states[state_nr]['history']) <= 4:
+        #     print(bridge_model.states[state_nr])
         if len(bridge_model.states[state_nr]['history']) == 0 and bridge_model.states[state_nr]['board'] == [-1, -1, -1,
                                                                                                              -1]:
             number_of_correct_beginning_states += 1
@@ -2091,21 +2573,26 @@ def remove_values_from_list(the_list, val):
     return [value for value in the_list if value != val]
 
 
-n = int(input("n="))
+def keep_values_in_list(the_list, val):
+    return [value for value in the_list if value == val]
+
+
+n = int(input("number of figures in game ="))
+m = int(input("number of cards in hand ="))
 number_of_tests = int(input("Number of tests="))
 
 for _ in range(0, number_of_tests):
-    test_bridge_model(n)
+    test_bridge_model(n, m)
     print()
 
 print()
 print("STATISTICS")
-print("#states", states_count/number_of_tests)
-print("tgen", tgen/number_of_tests)
-print("low tverif", low_tverif/number_of_tests)
-print("low true", 100*(low_true/number_of_tests), "%")
-print("up tverif", up_tverif/number_of_tests)
-print("up true", 100*(up_true/number_of_tests), "%")
-print("match", 100*(match/number_of_tests), "%")
+print("#states", states_count / number_of_tests)
+print("tgen", tgen / number_of_tests)
+print("low tverif", low_tverif / number_of_tests)
+print("low true", 100 * (low_true / number_of_tests), "%")
+print("up tverif", up_tverif / number_of_tests)
+print("up true", 100 * (up_true / number_of_tests), "%")
+print("match", 100 * (match / number_of_tests), "%")
 # Pik Kier Karo Trefl
 # Spade Heart Diamond Club
