@@ -249,6 +249,78 @@ class BridgeModel:
         state_str = ' '.join(str(state[e]) for e in state)
         return state_str
 
+    @staticmethod
+    def generate_random_hands(no_cards_available, no_cards_in_hand):
+        array = []
+        used = []
+        card_numbers = []
+        for i in range(14, 0, -1):
+            for j in range(4, 0, -1):
+                card_numbers.append(i * 10 + j)
+
+        for i in range(0, no_cards_available * 4):
+            used.append(False)
+
+        for i in range(0, no_cards_in_hand * 4):
+            number = random.randrange(no_cards_available * 4)
+            while used[number]:
+                number = random.randrange(no_cards_available * 4)
+
+            array.append(card_numbers[number])
+            used[number] = True
+
+        hands = []
+        j = 0
+        for i in range(0, 4):
+            hand = []
+            for _ in range(0, no_cards_in_hand):
+                hand.append(array[j])
+                j += 1
+
+            hands.append(sorted(hand))
+
+        return hands
+
+    @staticmethod
+    def generate_readable_cards_array():
+        card_names = ["Ace", "King", "Queen", "Jack", "ten", "nine", "eight", "seven", "six", "five", "four", "three",
+                      "two"]
+        card_colors = ["Spade", "Heart", "Diamond", "Club"]
+        cards = []
+        for name in card_names:
+            for color in card_colors:
+                cards.append(name + color)
+
+        return cards
+
+    @staticmethod
+    def generate_cards_dictionary():
+        cards = BridgeModel.generate_readable_cards_array()
+        card_name_number = 14
+        cards_dictionary = {}
+        i = 0
+        while card_name_number > 1:
+            card_color_number = 4
+            while card_color_number > 0:
+                cards_dictionary[card_name_number * 10 + card_color_number] = cards[i]
+                i += 1
+                card_color_number -= 1
+            card_name_number -= 1
+
+        return cards_dictionary
+
+    @staticmethod
+    def hands_to_readable_hands(hands):
+        cards_dictionary = BridgeModel.generate_cards_dictionary()
+        readable_hands = []
+        for hand in hands:
+            readable_hand = []
+            for card_number in hand:
+                readable_hand.append(cards_dictionary[card_number])
+            readable_hands.append(readable_hand)
+
+        return readable_hands
+
 
 class AbstractBridgeModel(BridgeModel):
     abstraction = []
@@ -2094,83 +2166,6 @@ def write_bridge_model(a, b):
         pickle.dump(bridge_model, output, pickle.HIGHEST_PROTOCOL)
     print("Number of states", len(bridge_model.states))
 
-
-def generate_random_hands(no_cards_available, no_cards_in_hand):
-    array = []
-    used = []
-    # card_numbers = [144, 143, 142, 141, 134, 133, 132, 131, 124, 123, 122, 121, 114, 113, 112, 111, 104, 103, 102, 101,
-    #                 94, 93, 92, 91]
-    card_numbers = []
-    for i in range(14, 0, -1):
-        for j in range(4, 0, -1):
-            card_numbers.append(i * 10 + j)
-
-    print(card_numbers)
-
-    for i in range(0, no_cards_available * 4):
-        used.append(False)
-
-    for i in range(0, no_cards_in_hand * 4):
-        number = random.randrange(no_cards_available * 4)
-        while used[number]:
-            number = random.randrange(no_cards_available * 4)
-
-        array.append(card_numbers[number])
-        used[number] = True
-
-    hands = []
-    j = 0
-    for i in range(0, 4):
-        hand = []
-        for _ in range(0, no_cards_in_hand):
-            hand.append(array[j])
-            j += 1
-
-        hands.append(sorted(hand))
-
-    return hands
-
-
-def generate_readable_cards_array():
-    card_names = ["Ace", "King", "Queen", "Jack", "ten", "nine", "eight", "seven", "six", "five", "four", "three",
-                  "two"]
-    card_colors = ["Spade", "Heart", "Diamond", "Club"]
-    cards = []
-    for name in card_names:
-        for color in card_colors:
-            cards.append(name + color)
-
-    return cards
-
-
-def generate_cards_dictionary():
-    cards = generate_readable_cards_array()
-    card_name_number = 14
-    cards_dictionary = {}
-    i = 0
-    while card_name_number > 1:
-        card_color_number = 4
-        while card_color_number > 0:
-            cards_dictionary[card_name_number * 10 + card_color_number] = cards[i]
-            i += 1
-            card_color_number -= 1
-        card_name_number -= 1
-
-    return cards_dictionary
-
-
-def hands_to_readable_hands(hands):
-    cards_dictionary = generate_cards_dictionary()
-    readable_hands = []
-    for hand in hands:
-        readable_hand = []
-        for card_number in hand:
-            readable_hand.append(cards_dictionary[card_number])
-        readable_hands.append(readable_hand)
-
-    return readable_hands
-
-
 tgen = 0
 low_tverif = 0
 up_tverif = 0
@@ -2189,7 +2184,7 @@ def test_bridge_model(n, m):
     global match
     global states_count
 
-    hands = generate_random_hands(n, m)
+    hands = BridgeModel.generate_random_hands(n, m)
     # hands = [[133, 134], [132, 143], [141, 144], [131, 142]]
     # hands = [[133, 141, 142], [123, 143, 144], [121, 122, 124], [131, 132, 134]]
     # hands = [[124, 134, 144], [74, 84, 94], [64, 104, 114], [34, 44, 91]]
@@ -2197,7 +2192,7 @@ def test_bridge_model(n, m):
     # hands = [[124, 131, 142, 144], [111, 112, 133, 141], [114, 122, 123, 143], [113, 121, 132, 134]]
     # hands = [[21, 73, 143], [22, 24, 42], [43, 53, 111], [72, 81, 92]]
     print('Hands:', hands)
-    print('Readable hands:', hands_to_readable_hands(hands))
+    print('Readable hands:', BridgeModel.hands_to_readable_hands(hands))
     # print("Blind bridge model")
     print("Abstract bridge model")
 
