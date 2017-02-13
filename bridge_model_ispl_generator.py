@@ -379,10 +379,10 @@ def generate_random_array(length):
 
     return array
 
+n = int(input("Number of figures in game ="))
+k = int(input("Number of cards in hand ="))
 
-n = 1
-k = 1
-bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(4 * n))
+bridge_model_ispl_generator = BridgeModelIsplGenerator(n, k, generate_random_array(4 * n))
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 7, 1, 2, 3, 4, 5, 6])
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 1, 2, 3, 4, 5, 6, 7])
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 7, 3, 4, 1, 2, 5, 6])
@@ -391,3 +391,5 @@ bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_arr
 f = open("bridge_" + str(n) + "_" + str(k) + ".ispl", "w")
 f.write(bridge_model_ispl_generator.create_ispl_model())
 f.close()
+
+print("Done. Created model saved in bridge_" + str(n) + "_" + str(k) + ".ispl")
