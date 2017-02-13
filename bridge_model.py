@@ -84,37 +84,14 @@ class BridgeModel:
         for state in self.states:
             current_state_number += 1
             if state['next'] == state['beginning'] and state['clock'] == 0:
-                remaining_cards_count = 0
-                for card in state['hands'][state['next']]:
-                    if card != -1:
-                        remaining_cards_count += 1
-
-                if remaining_cards_count == 0:
+                if self.count_remaining_cards(state) == 0:
                     break
 
                 for card_index, card in enumerate(state['hands'][state['next']]):
                     if card == -1:
                         continue
 
-                    new_board = state['board'][:]
-                    new_board[state['next']] = card
-
-                    new_history = state['history'][:]
-                    new_history.append(card)
-                    new_history = sorted(new_history)
-
-                    new_next = (state['next'] + 1) % 4
-                    new_clock = state['clock'] + 1
-                    new_hands = [[], [], [], []]
-                    for i in range(0, 4):
-                        new_hands[i] = state['hands'][i][:]
-
-                    new_hands[state['next']][card_index] = -1
-
-                    new_suit = card % 10
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
-                                 'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': new_suit}
+                    new_state = self.new_state_after_play(state, card_index)
 
                     agent_number = state['next']
                     if agent_number == 2:
@@ -154,24 +131,8 @@ class BridgeModel:
                 for card_index, card in enumerate(state['hands'][state['next']]):
                     if not ((not have_color) or (card % 10) == color) or card == -1:
                         continue
-                    new_board = state['board'][:]
-                    new_board[state['next']] = card
 
-                    new_history = state['history'][:]
-                    new_history.append(card)
-                    new_history = sorted(new_history)
-
-                    new_next = (state['next'] + 1) % 4
-                    new_hands = [[], [], [], []]
-                    for i in range(0, 4):
-                        new_hands[i] = state['hands'][i][:]
-
-                    new_hands[state['next']][card_index] = -1
-
-                    new_clock = state['clock'] + 1
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
-                                 'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': state['suit']}
+                    new_state = self.new_state_after_play(state, card_index)
 
                     agent_number = state['next']
                     if agent_number == 2:
@@ -182,22 +143,6 @@ class BridgeModel:
                     new_state_number = self.add_state(new_state)
 
                     self.model.add_transition(current_state_number, new_state_number, action)
-
-    def get_winner(self, beginning, board):
-        cards = []
-        for i in range(0, 4):
-            cards.append(board[(beginning + i) % 4])
-
-        winner = beginning
-        winning_card = cards[0]
-        color = cards[0] % 10
-
-        for i in range(1, 4):
-            if cards[i] % 10 == color and cards[i] > winning_card:
-                winning_card = cards[i]
-                winner = (beginning + i) % 4
-
-        return winner
 
     def add_state(self, state):
         new_state_number = self.get_state_number(state)
@@ -233,16 +178,92 @@ class BridgeModel:
                            'clock': state['clock'], 'suit': state['suit']}
         return epistemic_state
 
-    @staticmethod
-    def keep_values_in_list(the_list, val):
-        return [value for value in the_list if value == val]
-
     def prepare_epistemic_relation(self):
         for state, epistemic_class in self.epistemic_states_dictionary.items():
             self.model.add_epistemic_class(0, epistemic_class)
 
     def get_model(self):
         return self.model
+
+    @staticmethod
+    def new_state_after_play(state, card_index):
+        card = state['hands'][state['next']][card_index]
+
+        new_board = BridgeModel.new_board_after_play(state, card)
+
+        new_history = BridgeModel.new_history_after_play(state, card)
+
+        new_next = (state['next'] + 1) % 4
+        new_clock = state['clock'] + 1
+
+        new_hands = BridgeModel.copy_hands(state['hands'])
+        new_hands[state['next']][card_index] = -1
+
+        new_suit = BridgeModel.new_suit(state, card)
+
+        new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
+                     'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+                     'suit': new_suit}
+
+        return new_state
+
+    @staticmethod
+    def new_suit(state, card):
+        if state['next'] == state['beginning']:
+            return card % 10
+        else:
+            return state['suit']
+
+    @staticmethod
+    def new_board_after_play(state, card):
+        new_board = state['board'][:]
+        new_board[state['next']] = card
+        return new_board
+
+    @staticmethod
+    def new_history_after_play(state, card):
+        new_history = state['history'][:]
+        new_history.append(card)
+        new_history = sorted(new_history)
+        return new_history
+
+    @staticmethod
+    def count_remaining_cards(state):
+        remaining_cards_count = 0
+        for card in state['hands'][state['next']]:
+            if card != -1:
+                remaining_cards_count += 1
+
+        return remaining_cards_count
+
+    @staticmethod
+    def get_winner(beginning, board):
+        cards = []
+        for i in range(0, 4):
+            cards.append(board[(beginning + i) % 4])
+
+        winner = beginning
+        winning_card = cards[0]
+        color = cards[0] % 10
+
+        for i in range(1, 4):
+            if cards[i] % 10 == color and cards[i] > winning_card:
+                winning_card = cards[i]
+                winner = (beginning + i) % 4
+
+        return winner
+
+    @staticmethod
+    def copy_hands(hands):
+        new_hands = [[], [], [], []]
+        for i in range(0, 4):
+            new_hands[i] = hands[i][:]
+
+        return new_hands
+
+    @staticmethod
+    def keep_values_in_list(the_list, val):
+        return [value for value in the_list if value == val]
 
     @staticmethod
     def get_state_string(state):
@@ -438,25 +459,7 @@ class AbstractBridgeModel(BridgeModel):
                     if card == -1:
                         continue
 
-                    new_board = state['board'][:]
-                    new_board[state['next']] = card
-
-                    new_history = state['history'][:]
-                    new_history.append(card)
-                    new_history = sorted(new_history)
-
-                    new_next = (state['next'] + 1) % 4
-                    new_clock = state['clock'] + 1
-                    new_hands = [[], [], [], []]
-                    for i in range(0, 4):
-                        new_hands[i] = state['hands'][i][:]
-
-                    new_hands[state['next']][card_index] = -1
-
-                    new_suit = card % 10
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
-                                 'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': new_suit}
+                    new_state = self.new_state_after_play(state, card_index)
 
                     new_state_number = self.add_state(new_state)
 
@@ -500,25 +503,8 @@ class AbstractBridgeModel(BridgeModel):
                 for card_index, card in enumerate(state['hands'][state['next']]):
                     if not ((not have_color) or (card % 10) == color) or card == -1:
                         continue
-                    new_board = state['board'][:]
-                    new_board[state['next']] = card
 
-                    new_history = state['history'][:]
-                    new_history.append(card)
-                    new_history = sorted(new_history)
-
-                    new_next = (state['next'] + 1) % 4
-                    new_hands = [[], [], [], []]
-                    new_hands[0] = state['hands'][0][:]
-                    new_hands[1] = state['hands'][1][:]
-                    new_hands[2] = state['hands'][2][:]
-                    new_hands[3] = state['hands'][3][:]
-                    new_hands[state['next']][card_index] = -1
-
-                    new_clock = state['clock'] + 1
-                    new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
-                                 'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
-                                 'suit': state['suit']}
+                    new_state = self.new_state_after_play(state, card_index)
 
                     new_state_number = self.add_state(new_state)
 
@@ -2175,7 +2161,7 @@ match = 0
 states_count = 0
 
 
-def test_bridge_model(n, m):
+def test_bridge_model(n, m, b):
     global tgen
     global low_tverif
     global up_tverif
@@ -2193,32 +2179,28 @@ def test_bridge_model(n, m):
     # hands = [[21, 73, 143], [22, 24, 42], [43, 53, 111], [72, 81, 92]]
     print('Hands:', hands)
     print('Readable hands:', BridgeModel.hands_to_readable_hands(hands))
-    # print("Blind bridge model")
-    print("Abstract bridge model")
 
     start = time.clock()
     # hands = [[121, 133, 141, 143], [114, 122, 134, 142], [111, 112, 123, 132], [113, 124, 131, 144]]
-    # bridge_model = generate_abstract_bridge_model_for_epistemic(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-    #                                                                    'hands': hands, 'next': 0, 'history': [],
-    #                                                                    'beginning': 0, 'clock': 0, 'suit': -1},
-    #                                                             [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42,
-    #                                                              43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74,
-    #                                                              81, 82, 83, 84, 91, 92, 93, 94])
 
-    # bridge_model = generate_bridge_model_for_epistemic(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-    #                                                                    'hands': hands, 'next': 0, 'history': [],
-    #                                                                    'beginning': 0, 'clock': 0, 'suit': -1})
-
-    # bridge_model = BridgeModel(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-    #                                   'hands': hands, 'next': 0, 'history': [],
-    #                                   'beginning': 0, 'clock': 0, 'suit': -1})
-
-    bridge_model = AbstractBridgeModel(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                              'hands': hands, 'next': 0, 'history': [],
-                                              'beginning': 0, 'clock': 0, 'suit': -1},
-                                       [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42,
-                                        43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74,
-                                        81, 82, 83, 84, 91, 92, 93, 94])
+    if b == 1:
+        print("Standard bridge model")
+        bridge_model = BridgeModel(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                          'hands': hands, 'next': 0, 'history': [],
+                                          'beginning': 0, 'clock': 0, 'suit': -1})
+    elif b == 2:
+        print("Abstract bridge model")
+        bridge_model = AbstractBridgeModel(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                  'hands': hands, 'next': 0, 'history': [],
+                                                  'beginning': 0, 'clock': 0, 'suit': -1},
+                                           [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42,
+                                            43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74,
+                                            81, 82, 83, 84, 91, 92, 93, 94])
+    else:
+        print("Standard bridge model")
+        bridge_model = BridgeModel(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                          'hands': hands, 'next': 0, 'history': [],
+                                          'beginning': 0, 'clock': 0, 'suit': -1})
 
     end = time.clock()
 
@@ -2289,12 +2271,13 @@ def keep_values_in_list(the_list, val):
     return [value for value in the_list if value == val]
 
 
-n = int(input("number of figures in game ="))
-m = int(input("number of cards in hand ="))
+b = int(input("Choose bridge model (1 - standard, 2 - abstract):"))
+n = int(input("Number of figures in game ="))
+m = int(input("Number of cards in hand ="))
 number_of_tests = int(input("Number of tests="))
 
 for _ in range(0, number_of_tests):
-    test_bridge_model(n, m)
+    test_bridge_model(n, m, b)
     print()
 
 print()
