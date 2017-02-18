@@ -76,8 +76,6 @@ class ATLModel:
         self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
         self.agents_actions = [[] for _ in itertools.repeat(None, number_of_states)]
         self.epistemic_class_membership = create_array_of_size(number_of_agents, [])
-        # self.stateNames = create_array_of_size(number_of_states, [])
-        # self.stateDescriptions = create_array_of_size(number_of_states, [])
         self.epistemic_class_disjoint = [DisjointSet(number_of_states) for _ in
                                          itertools.repeat(None, number_of_agents)]
         self.can_go_there = [[] for _ in itertools.repeat(None, number_of_agents)]
@@ -93,9 +91,6 @@ class ATLModel:
             self.transitions[from_state].append({'nextState': to_state, 'actions': actions.copy()})
             self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions.copy()})
             self.pre_states[to_state].add(from_state)
-            # for i in range(0, self.numberOfAgents):
-            #     if actions[i] not in self.agentsActions[i]:
-            #         self.agentsActions[i].append(actions[i])
 
     def is_same_state(self, agent_number, state_a, state_b):
         return state_b in self.imperfect_information[agent_number][state_a]
@@ -104,7 +99,6 @@ class ATLModel:
         self.imperfect_information[agent_number].append(set(epistemic_class))
         epistemic_class_number = len(self.imperfect_information[agent_number]) - 1
         first_state = next(iter(epistemic_class))
-        # print(self.imperfect_information[agent_number])
         for state in epistemic_class:
             self.epistemic_class_membership[agent_number][state] = epistemic_class_number
             self.epistemic_class_disjoint[agent_number].union(first_state, state)
@@ -114,8 +108,6 @@ class ATLModel:
     def find_where_can_go(self, epistemic_class, epistemic_class_number, agent_number):
         if len(self.can_go_there[agent_number]) == 0:
             self.can_go_there[agent_number] = [{} for _ in itertools.repeat(None, self.number_of_states)]
-
-        # print(agent_number)
 
         for action in self.agents_actions[agent_number]:
             can_go_temp = set()
@@ -130,7 +122,7 @@ class ATLModel:
                     is_first = False
                     can_go_temp = set(can_go_state_temp)
                 else:
-                    can_go_temp = can_go_temp | can_go_state_temp
+                    can_go_temp |= can_go_state_temp
 
                 if len(can_go_state_temp) == 0:
                     can_go_temp = set()
@@ -399,9 +391,6 @@ class ATLModel:
 
         for state_number in result_states:
             is_winning_state[state_number] = True
-            # print(self.states[state_number])
-
-        # print()
 
         return result_states
 
@@ -465,7 +454,6 @@ class ATLModel:
         return result_states
 
     def minimum_formula_one_agent_multiple_states_disjoint(self, agent, winning_states):
-        start = time.clock()
         result_states = set()
         result_states.update(winning_states)
         number_of_iterations = 0
@@ -489,19 +477,14 @@ class ATLModel:
             if is_ok:
                 winning_states_disjoint.union(first_winning, state_number)
 
-        stop = time.clock()
         custom_can_go_there = self.can_go_there[agent][:]
-        print("Done in", stop - start, 's')
 
         while True:
-            start = time.clock()
             formula_result = self.basic_formula_one_agent_multiple_states_disjoint(agent, current_states, first_winning,
                                                                                    winning_states_disjoint,
                                                                                    custom_can_go_there)
             current_states = formula_result['result']
             modified = formula_result['modified']
-            stop = time.clock()
-            print("Step done in", stop - start, 's')
             result_states.update(current_states)
             if not modified:
                 break
