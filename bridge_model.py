@@ -26,13 +26,13 @@ class BridgeModel:
         self.no_end_cards = no_end_cards
         self.first_state = first_state
         self.create_atl_model()
+        self.model.add_action(0, -1)
         self.generate_available_cards()
         self.generate_beginning_states()
         self.beginning_states_count = len(self.states)
         self.generate_rest_of_model()
         self.prepare_epistemic_relation()
         self.model.states = self.states
-        self.model.add_action(0, -1)
 
     def clear_variables(self):
         self.model = None
@@ -54,7 +54,7 @@ class BridgeModel:
         elif self.no_end_cards == 3:
             self.model = ATLModel(3, 100000)
         elif self.no_end_cards == 4:
-            self.model = ATLModel(3, 1000000)
+            self.model = ATLModel(3, 3000000)
         else:
             self.model = ATLModel(3, 8000000)
 
@@ -2220,7 +2220,8 @@ def test_bridge_model(n, m, b):
 
     print("Start formula verification under imperfect information")
     start = time.clock()
-    result = bridge_model.get_model().minimum_formula_one_agent_multiple_states(0, winning_states)
+    # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states(0, winning_states)
+    result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_disjoint(0, winning_states)
     end = time.clock()
     low_tverif += (end - start)
     print("Time:", end - start, "s")
