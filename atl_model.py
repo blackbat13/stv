@@ -454,6 +454,9 @@ class ATLModel:
         return result_states
 
     def minimum_formula_one_agent_multiple_states_disjoint(self, agent, winning_states):
+        if len(winning_states) == 0:
+            return []
+
         result_states = set()
         result_states.update(winning_states)
         number_of_iterations = 0
