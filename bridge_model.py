@@ -520,6 +520,1261 @@ class AbstractBridgeModel(BridgeModel):
                     self.model.add_transition(current_state_number, new_state_number, action)
 
 
+# class BlindBridgeModel(BridgeModel):
+#     def __init__(self, no_cards_available, no_end_cards, first_state):
+#         super().__init__(no_cards_available, no_end_cards, first_state)
+#
+#     def generate_rest_of_model(self):
+#         for state in self.states:
+#             state_str = ' '.join(str(state[e]) for e in state)
+#             current_state_number = self.states_dictionary[state_str]
+#
+#             if state['next'] == state['beginning'] and state['clock'] == 0:
+#                 remaining_cards_count = 0
+#                 for card in state['hands'][state['next']]:
+#                     if card != -1:
+#                         remaining_cards_count += 1
+#
+#                 if state['next'] == 0:
+#                     # Player 0 should play, but wait
+#                     action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                     self.model.add_transition(current_state_number, current_state_number, action)
+#
+#                     # Player 0 play his card
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if card == -1:
+#                             continue
+#
+#                         new_board = state['board'][:]
+#                         new_board[state['next']] = card
+#
+#                         new_history = state['history'][:]
+#                         new_history.append(card)
+#                         new_history = sorted(new_history)
+#
+#                         alternative_history = state['current_history'][:]
+#                         alternative_history.append(card)
+#                         alternative_history = sorted(alternative_history)
+#
+#                         new_next = (state['next'] + 1) % 4
+#                         new_clock = state['clock'] + 1
+#                         new_hands = [[], [], [], []]
+#                         for i in range(0, 4):
+#                             new_hands[i] = state['hands'][i][:]
+#
+#                         new_hands[state['next']][card_index] = -1
+#
+#                         new_suit = card % 10
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': alternative_history}
+#
+#                         agent_number = state['next']
+#                         if agent_number == 2:
+#                             agent_number = 0
+#                         action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                         action[agent_number] = card
+#
+#                         new_state_number = self.add_state(new_state)
+#
+#                         self.model.add_transition(current_state_number, new_state_number, action)
+#
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#
+#                     if state['board'][2] == -1:
+#                         # Player 0 play card from table
+#                         for card_index, card in enumerate(state['hands'][2]):
+#                             if card == -1:
+#                                 continue
+#
+#                             new_board = state['board'][:]
+#                             new_board[2] = card
+#
+#                             new_history = state['history'][:]
+#                             new_history.append(card)
+#                             new_history = sorted(new_history)
+#
+#                             new_next = state['next']
+#                             new_clock = state['clock']
+#                             new_hands = [[], [], [], []]
+#                             for i in range(0, 4):
+#                                 new_hands[i] = state['hands'][i][:]
+#
+#                             new_hands[2][card_index] = -1
+#
+#                             alternative_new_hands = [[], [], [], []]
+#                             alternative_new_hands[0] = new_hands[0][:]
+#                             alternative_new_hands[1] = []
+#                             alternative_new_hands[2] = state['current_s_hand'][:]
+#                             alternative_new_hands[3] = []
+#
+#                             new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                          'board': new_board,
+#                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                          'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                          'current_history': state['current_history'][:]}
+#                             alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                      'board': new_board[0],
+#                                                      'beginning': state['beginning'],
+#                                                      'history': state['current_history'][:]}
+#                             agent_number = 2
+#                             if agent_number == 2:
+#                                 agent_number = 0
+#                             action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                             action[agent_number] = card
+#
+#
+#
+#                             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                             alternative_new_state_str = ' '.join(
+#                                 str(alternative_new_state[e]) for e in alternative_new_state)
+#                             if new_state_str not in states_dictionary:
+#                                 states_dictionary[new_state_str] = state_number
+#                                 new_state_number = state_number
+#                                 states.append(new_state)
+#                                 state_number += 1
+#                             else:
+#                                 new_state_number = states_dictionary[new_state_str]
+#
+#                             if alternative_new_state_str not in alternative_states_dictionary:
+#                                 alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                             else:
+#                                 alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                             bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     else:
+#                         # Player 0 try to play card from table
+#                         for card_index, card in enumerate(state['current_s_hand']):
+#                             if card == -1:
+#                                 continue
+#
+#                             action = {0: card, 1: -1, 2: -1, 3: -1}
+#                             bridge_model.add_transition(current_state_number, current_state_number, action)
+#                 elif state['next'] == 2:
+#                     # Player 0 waits
+#                     action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                     bridge_model.add_transition(current_state_number, current_state_number, action)
+#                     # Player 0 play card from table
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if card == -1:
+#                             continue
+#
+#                         new_board = state['board'][:]
+#                         new_board[state['next']] = card
+#
+#                         new_history = state['history'][:]
+#                         new_history.append(card)
+#                         new_history = sorted(new_history)
+#
+#                         new_next = (state['next'] + 1) % 4
+#                         new_clock = state['clock'] + 1
+#                         new_hands = [[], [], [], []]
+#                         for i in range(0, 4):
+#                             new_hands[i] = state['hands'][i][:]
+#
+#                         new_hands[state['next']][card_index] = -1
+#
+#                         alternative_new_hands = [[], [], [], []]
+#                         alternative_new_hands[0] = new_hands[0][:]
+#                         alternative_new_hands[1] = []
+#                         alternative_new_hands[2] = state['current_s_hand'][:]
+#                         alternative_new_hands[3] = []
+#
+#                         new_suit = card % 10
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': state['current_history'][:]}
+#                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                  'board': new_board[0],
+#                                                  'beginning': state['beginning'],
+#                                                  'history': state['current_history'][:]}
+#                         agent_number = state['next']
+#                         if agent_number == 2:
+#                             agent_number = 0
+#                         action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                         action[agent_number] = card
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#
+#                     # Player 0 should play from table, but play his card instead
+#                     if state['board'][0] == -1:
+#                         for card_index, card in enumerate(state['hands'][0]):
+#                             if card == -1:
+#                                 continue
+#
+#                             new_board = state['board'][:]
+#                             new_board[0] = card
+#
+#                             new_history = state['history'][:]
+#                             new_history.append(card)
+#                             new_history = sorted(new_history)
+#
+#                             alternative_history = state['current_history'][:]
+#                             alternative_history.append(card)
+#                             alternative_history = sorted(alternative_history)
+#
+#                             new_next = state['next']
+#                             new_clock = state['clock']
+#                             new_hands = [[], [], [], []]
+#                             for i in range(0, 4):
+#                                 new_hands[i] = state['hands'][i][:]
+#
+#                             new_hands[0][card_index] = -1
+#
+#                             alternative_new_hands = [[], [], [], []]
+#                             alternative_new_hands[0] = new_hands[0][:]
+#                             alternative_new_hands[1] = []
+#                             alternative_new_hands[2] = state['current_s_hand'][:]
+#                             alternative_new_hands[3] = []
+#
+#                             new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                          'board': new_board,
+#                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                          'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                          'current_history': alternative_history}
+#                             alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                      'board': new_board[0],
+#                                                      'beginning': state['beginning'], 'history': alternative_history}
+#                             agent_number = 0
+#                             action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                             action[agent_number] = card
+#                             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                             alternative_new_state_str = ' '.join(
+#                                 str(alternative_new_state[e]) for e in alternative_new_state)
+#                             if new_state_str not in states_dictionary:
+#                                 states_dictionary[new_state_str] = state_number
+#                                 new_state_number = state_number
+#                                 states.append(new_state)
+#                                 state_number += 1
+#                             else:
+#                                 new_state_number = states_dictionary[new_state_str]
+#
+#                             if alternative_new_state_str not in alternative_states_dictionary:
+#                                 alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                             else:
+#                                 alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                             bridge_model.add_transition(current_state_number, new_state_number, action)
+#                 else:
+#                     # Player 0 wait
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if card == -1:
+#                             continue
+#
+#                         new_board = state['board'][:]
+#                         new_board[state['next']] = card
+#
+#                         new_history = state['history'][:]
+#                         new_history.append(card)
+#                         new_history = sorted(new_history)
+#
+#                         new_next = (state['next'] + 1) % 4
+#                         new_clock = state['clock'] + 1
+#                         new_hands = [[], [], [], []]
+#                         for i in range(0, 4):
+#                             new_hands[i] = state['hands'][i][:]
+#
+#                         new_hands[state['next']][card_index] = -1
+#
+#                         alternative_new_hands = [[], [], [], []]
+#                         alternative_new_hands[0] = new_hands[0][:]
+#                         alternative_new_hands[1] = []
+#                         alternative_new_hands[2] = state['current_s_hand'][:]
+#                         alternative_new_hands[3] = []
+#
+#                         new_suit = card % 10
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': state['current_history'][:]}
+#                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                  'board': new_board[0],
+#                                                  'beginning': state['beginning'],
+#                                                  'history': state['current_history'][:]}
+#                         agent_number = state['next']
+#                         if agent_number == 2:
+#                             agent_number = 0
+#                         action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                         action[agent_number] = card
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     # Player 0 play his card
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         for card_index2, card2 in enumerate(state['hands'][0]):
+#                             if card == -1 or card2 == -1:
+#                                 continue
+#
+#                             new_board = state['board'][:]
+#                             new_board[state['next']] = card
+#                             new_board[0] = card2
+#
+#                             new_history = state['history'][:]
+#                             new_history.append(card)
+#                             new_history.append(card2)
+#                             new_history = sorted(new_history)
+#
+#                             alternative_history = state['current_history'][:]
+#                             alternative_history.append(card2)
+#                             alternative_history = sorted(alternative_history)
+#
+#                             if state['next'] == 3:
+#                                 new_next = (state['next'] + 2) % 4
+#                                 new_clock = state['clock'] + 2
+#                             else:
+#                                 new_next = (state['next'] + 1) % 4
+#                                 new_clock = state['clock'] + 1
+#                             new_hands = [[], [], [], []]
+#                             for i in range(0, 4):
+#                                 new_hands[i] = state['hands'][i][:]
+#
+#                             new_hands[state['next']][card_index] = -1
+#                             new_hands[0][card_index2] = -1
+#
+#                             alternative_new_hands = [[], [], [], []]
+#                             alternative_new_hands[0] = new_hands[0][:]
+#                             alternative_new_hands[1] = []
+#                             alternative_new_hands[2] = state['current_s_hand'][:]
+#                             alternative_new_hands[3] = []
+#
+#                             new_suit = card % 10
+#                             new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                          'board': new_board,
+#                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                          'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+#                                          'current_history': alternative_history}
+#                             alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                      'board': new_board[0],
+#                                                      'beginning': state['beginning'], 'history': alternative_history}
+#                             agent_number = state['next']
+#                             if agent_number == 2:
+#                                 agent_number = 0
+#                             action = {0: card2, 1: -1, 2: -1, 3: -1}
+#                             action[agent_number] = card
+#                             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                             alternative_new_state_str = ' '.join(
+#                                 str(alternative_new_state[e]) for e in alternative_new_state)
+#                             if new_state_str not in states_dictionary:
+#                                 states_dictionary[new_state_str] = state_number
+#                                 new_state_number = state_number
+#                                 states.append(new_state)
+#                                 state_number += 1
+#                             else:
+#                                 new_state_number = states_dictionary[new_state_str]
+#
+#                             if alternative_new_state_str not in alternative_states_dictionary:
+#                                 alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                             else:
+#                                 alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                             bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     # Player 0 play card from table
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         for card_index2, card2 in enumerate(state['hands'][2]):
+#                             if card == -1 or card2 == -1:
+#                                 continue
+#
+#                             new_board = state['board'][:]
+#                             new_board[state['next']] = card
+#
+#                             new_history = state['history'][:]
+#                             new_history.append(card)
+#
+#                             if state['board'][2] == -1:
+#                                 new_board[2] = card2
+#                                 new_history.append(card2)
+#
+#                             new_history = sorted(new_history)
+#
+#                             if state['next'] == 1:
+#                                 new_next = (state['next'] + 2) % 4
+#                                 new_clock = state['clock'] + 2
+#                             else:
+#                                 new_next = (state['next'] + 1) % 4
+#                                 new_clock = state['clock'] + 1
+#                             new_hands = [[], [], [], []]
+#                             for i in range(0, 4):
+#                                 new_hands[i] = state['hands'][i][:]
+#
+#                             new_hands[state['next']][card_index] = -1
+#                             new_hands[0][card_index2] = -1
+#
+#                             alternative_new_hands = [[], [], [], []]
+#                             alternative_new_hands[0] = new_hands[0][:]
+#                             alternative_new_hands[1] = []
+#                             alternative_new_hands[2] = state['current_s_hand'][:]
+#                             alternative_new_hands[3] = []
+#
+#                             new_suit = card % 10
+#                             new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                          'board': new_board,
+#                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                          'suit': new_suit, 'current_s_hand': state['current_s_hand'][:],
+#                                          'current_history': state['current_history'][:]}
+#                             alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                      'board': new_board[0],
+#                                                      'beginning': state['beginning'],
+#                                                      'history': state['current_history'][:]}
+#                             agent_number = state['next']
+#                             if agent_number == 2:
+#                                 agent_number = 0
+#                             action = {0: card2, 1: -1, 2: -1, 3: -1}
+#                             action[agent_number] = card
+#                             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                             alternative_new_state_str = ' '.join(
+#                                 str(alternative_new_state[e]) for e in alternative_new_state)
+#                             if new_state_str not in states_dictionary:
+#                                 states_dictionary[new_state_str] = state_number
+#                                 new_state_number = state_number
+#                                 states.append(new_state)
+#                                 state_number += 1
+#                             else:
+#                                 new_state_number = states_dictionary[new_state_str]
+#
+#                             if alternative_new_state_str not in alternative_states_dictionary:
+#                                 alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                             else:
+#                                 alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                             bridge_model.add_transition(current_state_number, new_state_number, action)
+#             elif state['clock'] >= 4:
+#                 new_history = state['history'][:]
+#                 beginning = state['beginning']
+#                 board = state['board']
+#                 card1 = board[beginning]
+#                 card2 = board[(beginning + 1) % 4]
+#                 card3 = board[(beginning + 2) % 4]
+#                 card4 = board[(beginning + 3) % 4]
+#                 winner = beginning
+#                 winning_card = card1
+#                 color = card1 % 10
+#                 if card2 % 10 == color and card2 > winning_card:
+#                     winning_card = card2
+#                     winner = (beginning + 1) % 4
+#                 if card3 % 10 == color and card3 > winning_card:
+#                     winning_card = card3
+#                     winner = (beginning + 2) % 4
+#                 if card4 % 10 == color and card4 > winning_card:
+#                     winning_card = card4
+#                     winner = (beginning + 3) % 4
+#
+#                 new_lefts = state['lefts'][:]
+#                 new_lefts[winner % 2] += 1
+#                 new_next = winner
+#                 new_clock = 0
+#                 new_beginning = winner
+#                 new_suit = -1
+#                 action = {0: -1, 1: -1, 2: -1, 3: -1}
+#
+#                 alternative_new_hands = [[], [], [], []]
+#                 alternative_new_hands[0] = state['hands'][0][:]
+#                 alternative_new_hands[1] = []
+#                 alternative_new_hands[2] = state['hands'][2][:]
+#                 alternative_new_hands[3] = []
+#
+#                 new_state = {'hands': state['hands'][:], 'lefts': new_lefts, 'next': new_next,
+#                              'board': [-1, -1, -1, -1],
+#                              'beginning': new_beginning, 'history': new_history, 'clock': new_clock, 'suit': new_suit,
+#                              'current_s_hand': state['hands'][2][:], 'current_history': new_history}
+#                 alternative_new_state = {'hands': alternative_new_hands, 'lefts': new_lefts,
+#                                          'board': -1,
+#                                          'beginning': new_beginning, 'history': new_history}
+#
+#                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                 alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
+#                 if new_state_str not in states_dictionary:
+#                     states_dictionary[new_state_str] = state_number
+#                     new_state_number = state_number
+#                     states.append(new_state)
+#                     state_number += 1
+#                 else:
+#                     new_state_number = states_dictionary[new_state_str]
+#
+#                 if alternative_new_state_str not in alternative_states_dictionary:
+#                     alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                 else:
+#                     alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                 bridge_model.add_transition(current_state_number, new_state_number, action)
+#
+#                 for card in state['current_s_hand']:
+#                     if card == -1:
+#                         continue
+#                     new_history = state['history'][:]
+#                     beginning = state['beginning']
+#                     board = state['board']
+#                     card1 = board[beginning]
+#                     card2 = board[(beginning + 1) % 4]
+#                     card3 = board[(beginning + 2) % 4]
+#                     card4 = board[(beginning + 3) % 4]
+#                     winner = beginning
+#                     winning_card = card1
+#                     color = card1 % 10
+#                     if card2 % 10 == color and card2 > winning_card:
+#                         winning_card = card2
+#                         winner = (beginning + 1) % 4
+#                     if card3 % 10 == color and card3 > winning_card:
+#                         winning_card = card3
+#                         winner = (beginning + 2) % 4
+#                     if card4 % 10 == color and card4 > winning_card:
+#                         winning_card = card4
+#                         winner = (beginning + 3) % 4
+#
+#                     new_lefts = state['lefts'][:]
+#                     new_lefts[winner % 2] += 1
+#                     new_next = winner
+#                     new_clock = 0
+#                     new_beginning = winner
+#                     new_suit = -1
+#                     action = {0: card, 1: -1, 2: -1, 3: -1}
+#
+#                     alternative_new_hands = [[], [], [], []]
+#                     alternative_new_hands[0] = state['hands'][0][:]
+#                     alternative_new_hands[1] = []
+#                     alternative_new_hands[2] = state['hands'][2][:]
+#                     alternative_new_hands[3] = []
+#
+#                     new_state = {'hands': state['hands'][:], 'lefts': new_lefts, 'next': new_next,
+#                                  'board': [-1, -1, -1, -1],
+#                                  'beginning': new_beginning, 'history': new_history, 'clock': new_clock,
+#                                  'suit': new_suit,
+#                                  'current_s_hand': state['hands'][2][:], 'current_history': new_history}
+#                     alternative_new_state = {'hands': alternative_new_hands, 'lefts': new_lefts,
+#                                              'board': -1,
+#                                              'beginning': new_beginning, 'history': new_history}
+#
+#                     new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                     alternative_new_state_str = ' '.join(str(alternative_new_state[e]) for e in alternative_new_state)
+#                     if new_state_str not in states_dictionary:
+#                         states_dictionary[new_state_str] = state_number
+#                         new_state_number = state_number
+#                         states.append(new_state)
+#                         state_number += 1
+#                     else:
+#                         new_state_number = states_dictionary[new_state_str]
+#
+#                     if alternative_new_state_str not in alternative_states_dictionary:
+#                         alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                     else:
+#                         alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                     bridge_model.add_transition(current_state_number, new_state_number, action)
+#
+#             else:
+#                 color = state['board'][state['beginning']] % 10
+#                 have_color = False
+#                 for card in state['hands'][state['next']]:
+#                     if (card % 10) == color:
+#                         have_color = True
+#                         break
+#
+#                 if state['next'] == 0:
+#                     # Player 0 should play, but wait
+#                     action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                     bridge_model.add_transition(current_state_number, current_state_number, action)
+#
+#                     # Player 0 play his card
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if card == -1:
+#                             continue
+#
+#                         new_board = state['board'][:]
+#                         new_board[state['next']] = card
+#
+#                         new_history = state['history'][:]
+#                         new_history.append(card)
+#                         new_history = sorted(new_history)
+#
+#                         alternative_history = state['current_history'][:]
+#                         alternative_history.append(card)
+#                         alternative_history = sorted(alternative_history)
+#
+#                         new_next = (state['next'] + 1) % 4
+#                         new_hands = [[], [], [], []]
+#                         new_hands[0] = state['hands'][0][:]
+#                         new_hands[1] = state['hands'][1][:]
+#                         new_hands[2] = state['hands'][2][:]
+#                         new_hands[3] = state['hands'][3][:]
+#                         new_hands[state['next']][card_index] = -1
+#
+#                         alternative_new_hands = [[], [], [], []]
+#                         alternative_new_hands[0] = new_hands[0][:]
+#                         alternative_new_hands[1] = []
+#                         alternative_new_hands[2] = state['current_s_hand'][:]
+#                         alternative_new_hands[3] = []
+#
+#                         new_clock = state['clock'] + 1
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': alternative_history}
+#                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                  'board': new_board[0],
+#                                                  'beginning': state['beginning'], 'history': alternative_history}
+#                         agent_number = state['next']
+#                         if agent_number == 2:
+#                             agent_number = 0
+#                         action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                         action[agent_number] = card
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     # Player 0 play card from table
+#                     for card_index, card in enumerate(state['current_s_hand']):
+#                         if card == -1:
+#                             continue
+#
+#                         new_board = state['board'][:]
+#                         new_history = state['history'][:]
+#
+#                         new_next = 0
+#                         new_hands = [[], [], [], []]
+#                         new_hands[0] = state['hands'][0][:]
+#                         new_hands[1] = state['hands'][1][:]
+#                         new_hands[2] = state['hands'][2][:]
+#                         new_hands[3] = state['hands'][3][:]
+#
+#                         if state['board'][2] == -1:
+#                             new_board[2] = card
+#                             new_history.append(card)
+#                             new_history = sorted(new_history)
+#                             new_hands[2][card_index] = -1
+#
+#                         alternative_new_hands = [[], [], [], []]
+#                         alternative_new_hands[0] = new_hands[0][:]
+#                         alternative_new_hands[1] = []
+#                         alternative_new_hands[2] = state['current_s_hand'][:]
+#                         alternative_new_hands[3] = []
+#
+#                         new_clock = state['clock']
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': state['current_history'][:]}
+#                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                  'board': new_board[0],
+#                                                  'beginning': state['beginning'],
+#                                                  'history': state['current_history'][:]}
+#                         action = {0: card, 1: -1, 2: -1, 3: -1}
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#                 elif state['next'] == 2:
+#                     # Player 0 should play, but wait
+#                     action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                     bridge_model.add_transition(current_state_number, current_state_number, action)
+#
+#                     # Player 0 play card from table
+#                     for card_index, card in enumerate(state['current_s_hand']):
+#                         if card == -1:
+#                             continue
+#
+#                         new_board = state['board'][:]
+#                         new_history = state['history'][:]
+#
+#                         new_next = (state['next'] + 1) % 4
+#                         new_hands = [[], [], [], []]
+#                         new_hands[0] = state['hands'][0][:]
+#                         new_hands[1] = state['hands'][1][:]
+#                         new_hands[2] = state['hands'][2][:]
+#                         new_hands[3] = state['hands'][3][:]
+#
+#                         new_board[2] = card
+#                         new_history.append(card)
+#                         new_history = sorted(new_history)
+#                         new_hands[2][card_index] = -1
+#
+#                         alternative_new_hands = [[], [], [], []]
+#                         alternative_new_hands[0] = new_hands[0][:]
+#                         alternative_new_hands[1] = []
+#                         alternative_new_hands[2] = state['current_s_hand'][:]
+#                         alternative_new_hands[3] = []
+#
+#                         new_clock = state['clock']
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': state['current_history'][:]}
+#                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                  'board': new_board[0],
+#                                                  'beginning': state['beginning'],
+#                                                  'history': state['current_history'][:]}
+#                         action = {0: card, 1: -1, 2: -1, 3: -1}
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#
+#                     # Player 0 play his card
+#                     if state['board'][0] == -1:
+#                         for card_index, card in enumerate(state['hands'][0]):
+#                             if card == -1:
+#                                 continue
+#                             new_board = state['board'][:]
+#                             new_history = state['history'][:]
+#
+#                             new_next = 2
+#                             new_hands = [[], [], [], []]
+#                             new_hands[0] = state['hands'][0][:]
+#                             new_hands[1] = state['hands'][1][:]
+#                             new_hands[2] = state['hands'][2][:]
+#                             new_hands[3] = state['hands'][3][:]
+#
+#                             new_board[0] = card
+#                             new_history.append(card)
+#                             new_history = sorted(new_history)
+#                             new_hands[0][card_index] = -1
+#
+#                             alternative_history = state['current_history'][:]
+#                             alternative_history.append(card)
+#                             alternative_history = sorted(alternative_history)
+#
+#                             alternative_new_hands = [[], [], [], []]
+#                             alternative_new_hands[0] = new_hands[0][:]
+#                             alternative_new_hands[1] = []
+#                             alternative_new_hands[2] = state['current_s_hand'][:]
+#                             alternative_new_hands[3] = []
+#
+#                             new_clock = state['clock']
+#                             new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                          'board': new_board,
+#                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                          'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                          'current_history': alternative_history}
+#                             alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                      'board': new_board[0],
+#                                                      'beginning': state['beginning'], 'history': alternative_history}
+#                             action = {0: card, 1: -1, 2: -1, 3: -1}
+#                             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                             alternative_new_state_str = ' '.join(
+#                                 str(alternative_new_state[e]) for e in alternative_new_state)
+#                             if new_state_str not in states_dictionary:
+#                                 states_dictionary[new_state_str] = state_number
+#                                 new_state_number = state_number
+#                                 states.append(new_state)
+#                                 state_number += 1
+#                             else:
+#                                 new_state_number = states_dictionary[new_state_str]
+#
+#                             if alternative_new_state_str not in alternative_states_dictionary:
+#                                 alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                             else:
+#                                 alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                             bridge_model.add_transition(current_state_number, new_state_number, action)
+#                 elif state['next'] == 1:
+#                     # Player 0 Wait
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if not ((not have_color) or (card % 10) == color) or card == -1:
+#                             continue
+#
+#                         new_board = state['board'][:]
+#                         new_board[state['next']] = card
+#
+#                         new_history = state['history'][:]
+#                         new_history.append(card)
+#                         new_history = sorted(new_history)
+#
+#                         if state['board'][2] != -1:
+#                             new_next = (state['next'] + 2) % 4
+#                             new_clock = state['clock'] + 2
+#                         else:
+#                             new_next = (state['next'] + 1) % 4
+#                             new_clock = state['clock'] + 1
+#
+#                         new_hands = [[], [], [], []]
+#                         new_hands[0] = state['hands'][0][:]
+#                         new_hands[1] = state['hands'][1][:]
+#                         new_hands[2] = state['hands'][2][:]
+#                         new_hands[3] = state['hands'][3][:]
+#                         new_hands[state['next']][card_index] = -1
+#
+#                         alternative_new_hands = [[], [], [], []]
+#                         alternative_new_hands[0] = new_hands[0][:]
+#                         alternative_new_hands[1] = []
+#                         alternative_new_hands[2] = state['current_s_hand'][:]
+#                         alternative_new_hands[3] = []
+#
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': state['current_history'][:]}
+#                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                  'board': new_board[0],
+#                                                  'beginning': state['beginning'],
+#                                                  'history': state['current_history'][:]}
+#                         agent_number = state['next']
+#                         if agent_number == 2:
+#                             agent_number = 0
+#                         action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                         action[agent_number] = card
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     # Player 0 play his card
+#                     if state['board'][0] == -1:
+#                         for card_index, card in enumerate(state['hands'][state['next']]):
+#                             if not ((not have_color) or (card % 10) == color) or card == -1:
+#                                 continue
+#                             for card_index2, card2 in enumerate(state['hands'][0]):
+#                                 if card2 == -1:
+#                                     continue
+#                                 new_board = state['board'][:]
+#                                 new_board[state['next']] = card
+#                                 new_board[0] = card2
+#
+#                                 new_history = state['history'][:]
+#                                 new_history.append(card)
+#                                 new_history.append(card2)
+#                                 new_history = sorted(new_history)
+#
+#                                 alternative_history = state['current_history'][:]
+#                                 alternative_history.append(card2)
+#                                 alternative_history = sorted(alternative_history)
+#
+#                                 if state['board'][2] != -1:
+#                                     new_next = (state['next'] + 2) % 4
+#                                     new_clock = state['clock'] + 2
+#                                 else:
+#                                     new_next = (state['next'] + 1) % 4
+#                                     new_clock = state['clock'] + 1
+#
+#                                 new_hands = [[], [], [], []]
+#                                 new_hands[0] = state['hands'][0][:]
+#                                 new_hands[1] = state['hands'][1][:]
+#                                 new_hands[2] = state['hands'][2][:]
+#                                 new_hands[3] = state['hands'][3][:]
+#                                 new_hands[state['next']][card_index] = -1
+#                                 new_hands[0][card_index2] = -1
+#
+#                                 alternative_new_hands = [[], [], [], []]
+#                                 alternative_new_hands[0] = new_hands[0][:]
+#                                 alternative_new_hands[1] = []
+#                                 alternative_new_hands[2] = state['current_s_hand'][:]
+#                                 alternative_new_hands[3] = []
+#
+#                                 new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                              'board': new_board,
+#                                              'beginning': state['beginning'], 'history': new_history,
+#                                              'clock': new_clock,
+#                                              'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                              'current_history': alternative_history}
+#                                 alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                          'board': new_board[0],
+#                                                          'beginning': state['beginning'],
+#                                                          'history': alternative_history}
+#                                 agent_number = state['next']
+#                                 if agent_number == 2:
+#                                     agent_number = 0
+#                                 action = {0: card2, 1: -1, 2: -1, 3: -1}
+#                                 action[agent_number] = card
+#                                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                                 alternative_new_state_str = ' '.join(
+#                                     str(alternative_new_state[e]) for e in alternative_new_state)
+#                                 if new_state_str not in states_dictionary:
+#                                     states_dictionary[new_state_str] = state_number
+#                                     new_state_number = state_number
+#                                     states.append(new_state)
+#                                     state_number += 1
+#                                 else:
+#                                     new_state_number = states_dictionary[new_state_str]
+#
+#                                 if alternative_new_state_str not in alternative_states_dictionary:
+#                                     alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                                 else:
+#                                     alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                                 bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     # Player 0 play card from table
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if not ((not have_color) or (card % 10) == color) or card == -1:
+#                             continue
+#                         for card_index2, card2 in enumerate(state['current_s_hand']):
+#                             if card2 == -1:
+#                                 continue
+#
+#                             new_board = state['board'][:]
+#                             new_board[state['next']] = card
+#
+#                             new_history = state['history'][:]
+#                             new_history.append(card)
+#
+#                             new_next = (state['next'] + 2) % 4
+#                             new_clock = state['clock'] + 2
+#
+#                             new_hands = [[], [], [], []]
+#                             new_hands[0] = state['hands'][0][:]
+#                             new_hands[1] = state['hands'][1][:]
+#                             new_hands[2] = state['hands'][2][:]
+#                             new_hands[3] = state['hands'][3][:]
+#                             new_hands[state['next']][card_index] = -1
+#
+#                             if state['board'][2] == -1:
+#                                 new_board[2] = card2
+#                                 new_history.append(card2)
+#                                 new_hands[2][card_index2] = -1
+#
+#                             new_history = sorted(new_history)
+#
+#                             alternative_new_hands = [[], [], [], []]
+#                             alternative_new_hands[0] = new_hands[0][:]
+#                             alternative_new_hands[1] = []
+#                             alternative_new_hands[2] = state['current_s_hand'][:]
+#                             alternative_new_hands[3] = []
+#
+#                             new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                          'board': new_board,
+#                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                          'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                          'current_history': state['current_history'][:]}
+#                             alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                      'board': new_board[0],
+#                                                      'beginning': state['beginning'],
+#                                                      'history': state['current_history'][:]}
+#
+#                             agent_number = state['next']
+#                             if agent_number == 2:
+#                                 agent_number = 0
+#                             action = {0: card2, 1: -1, 2: -1, 3: -1}
+#                             action[agent_number] = card
+#                             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                             alternative_new_state_str = ' '.join(
+#                                 str(alternative_new_state[e]) for e in alternative_new_state)
+#                             if new_state_str not in states_dictionary:
+#                                 states_dictionary[new_state_str] = state_number
+#                                 new_state_number = state_number
+#                                 states.append(new_state)
+#                                 state_number += 1
+#                             else:
+#                                 new_state_number = states_dictionary[new_state_str]
+#
+#                             if alternative_new_state_str not in alternative_states_dictionary:
+#                                 alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                             else:
+#                                 alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                             bridge_model.add_transition(current_state_number, new_state_number, action)
+#                 elif state['next'] == 3:
+#                     # Player 0 Wait
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if not ((not have_color) or (card % 10) == color) or card == -1:
+#                             continue
+#                         new_board = state['board'][:]
+#                         new_board[state['next']] = card
+#
+#                         new_history = state['history'][:]
+#                         new_history.append(card)
+#                         new_history = sorted(new_history)
+#
+#                         if state['board'][0] != -1:
+#                             new_next = (state['next'] + 2) % 4
+#                             new_clock = state['clock'] + 2
+#                         else:
+#                             new_next = (state['next'] + 1) % 4
+#                             new_clock = state['clock'] + 1
+#
+#                         new_hands = [[], [], [], []]
+#                         new_hands[0] = state['hands'][0][:]
+#                         new_hands[1] = state['hands'][1][:]
+#                         new_hands[2] = state['hands'][2][:]
+#                         new_hands[3] = state['hands'][3][:]
+#                         new_hands[state['next']][card_index] = -1
+#
+#                         alternative_new_hands = [[], [], [], []]
+#                         alternative_new_hands[0] = new_hands[0][:]
+#                         alternative_new_hands[1] = []
+#                         alternative_new_hands[2] = state['current_s_hand'][:]
+#                         alternative_new_hands[3] = []
+#
+#                         new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                      'board': new_board,
+#                                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                      'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                      'current_history': state['current_history'][:]}
+#                         alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+#                                                  'board': new_board[0],
+#                                                  'beginning': state['beginning'],
+#                                                  'history': state['current_history'][:]}
+#
+#                         agent_number = state['next']
+#                         if agent_number == 2:
+#                             agent_number = 0
+#                         action = {0: -1, 1: -1, 2: -1, 3: -1}
+#                         action[agent_number] = card
+#                         new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                         alternative_new_state_str = ' '.join(
+#                             str(alternative_new_state[e]) for e in alternative_new_state)
+#                         if new_state_str not in states_dictionary:
+#                             states_dictionary[new_state_str] = state_number
+#                             new_state_number = state_number
+#                             states.append(new_state)
+#                             state_number += 1
+#                         else:
+#                             new_state_number = states_dictionary[new_state_str]
+#
+#                         if alternative_new_state_str not in alternative_states_dictionary:
+#                             alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                         else:
+#                             alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                         bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     # Player 0 play his card
+#                     if state['board'][0] == -1:
+#                         for card_index, card in enumerate(state['hands'][state['next']]):
+#                             if not ((not have_color) or (card % 10) == color) or card == -1:
+#                                 continue
+#                             for card_index2, card2 in enumerate(state['hands'][0]):
+#                                 if card2 == -1:
+#                                     continue
+#
+#                                 new_board = state['board'][:]
+#                                 new_board[state['next']] = card
+#                                 new_board[0] = card2
+#
+#                                 new_history = state['history'][:]
+#                                 new_history.append(card)
+#                                 new_history.append(card2)
+#                                 new_history = sorted(new_history)
+#
+#                                 alternative_history = state['current_history'][:]
+#                                 alternative_history.append(card2)
+#                                 alternative_history = sorted(alternative_history)
+#
+#                                 new_next = (state['next'] + 2) % 4
+#                                 new_clock = state['clock'] + 2
+#
+#                                 new_hands = [[], [], [], []]
+#                                 new_hands[0] = state['hands'][0][:]
+#                                 new_hands[1] = state['hands'][1][:]
+#                                 new_hands[2] = state['hands'][2][:]
+#                                 new_hands[3] = state['hands'][3][:]
+#                                 new_hands[state['next']][card_index] = -1
+#                                 new_hands[0][card_index2] = -1
+#
+#                                 alternative_new_hands = [[], [], [], []]
+#                                 alternative_new_hands[0] = new_hands[0][:]
+#                                 alternative_new_hands[1] = []
+#                                 alternative_new_hands[2] = state['current_s_hand'][:]
+#                                 alternative_new_hands[3] = []
+#
+#                                 new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                              'board': new_board,
+#                                              'beginning': state['beginning'], 'history': new_history,
+#                                              'clock': new_clock,
+#                                              'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                              'current_history': alternative_history}
+#                                 alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'][:],
+#                                                          'board': new_board[0],
+#                                                          'beginning': state['beginning'],
+#                                                          'history': alternative_history}
+#
+#                                 agent_number = state['next']
+#                                 if agent_number == 2:
+#                                     agent_number = 0
+#                                 action = {0: card2, 1: -1, 2: -1, 3: -1}
+#                                 action[agent_number] = card
+#                                 new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                                 alternative_new_state_str = ' '.join(
+#                                     str(alternative_new_state[e]) for e in alternative_new_state)
+#                                 if new_state_str not in states_dictionary:
+#                                     states_dictionary[new_state_str] = state_number
+#                                     new_state_number = state_number
+#                                     states.append(new_state)
+#                                     state_number += 1
+#                                 else:
+#                                     new_state_number = states_dictionary[new_state_str]
+#
+#                                 if alternative_new_state_str not in alternative_states_dictionary:
+#                                     alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                                 else:
+#                                     alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                                 bridge_model.add_transition(current_state_number, new_state_number, action)
+#                     # Player 0 play card from table
+#                     for card_index, card in enumerate(state['hands'][state['next']]):
+#                         if not ((not have_color) or (card % 10) == color) or card == -1:
+#                             continue
+#                         for card_index2, card2 in enumerate(state['current_s_hand']):
+#                             if card2 == -1:
+#                                 continue
+#
+#                             new_board = state['board'][:]
+#                             new_board[state['next']] = card
+#
+#                             new_history = state['history'][:]
+#                             new_history.append(card)
+#
+#                             if state['board'][0] == -1:
+#                                 new_next = (state['next'] + 1) % 4
+#                                 new_clock = state['clock'] + 1
+#                             else:
+#                                 new_next = (state['next'] + 2) % 4
+#                                 new_clock = state['clock'] + 2
+#
+#                             new_hands = [[], [], [], []]
+#                             new_hands[0] = state['hands'][0][:]
+#                             new_hands[1] = state['hands'][1][:]
+#                             new_hands[2] = state['hands'][2][:]
+#                             new_hands[3] = state['hands'][3][:]
+#                             new_hands[state['next']][card_index] = -1
+#
+#                             if state['board'][2] == -1:
+#                                 new_board[2] = card2
+#                                 new_history.append(card2)
+#                                 new_hands[2][card_index2] = -1
+#
+#                             new_history = sorted(new_history)
+#
+#                             alternative_new_hands = [[], [], [], []]
+#                             alternative_new_hands[0] = new_hands[0][:]
+#                             alternative_new_hands[1] = []
+#                             alternative_new_hands[2] = state['current_s_hand'][:]
+#                             alternative_new_hands[3] = []
+#
+#                             new_state = {'hands': new_hands, 'lefts': state['lefts'][:], 'next': new_next,
+#                                          'board': new_board,
+#                                          'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
+#                                          'suit': state['suit'], 'current_s_hand': state['current_s_hand'][:],
+#                                          'current_history': state['current_history'][:]}
+#                             alternative_new_state = {'hands': alternative_new_hands, 'lefts': state['lefts'],
+#                                                      'board': new_board[0],
+#                                                      'beginning': state['beginning'],
+#                                                      'history': state['current_history'][:]}
+#
+#                             agent_number = state['next']
+#                             if agent_number == 2:
+#                                 agent_number = 0
+#                             action = {0: card2, 1: -1, 2: -1, 3: -1}
+#                             action[agent_number] = card
+#                             new_state_str = ' '.join(str(new_state[e]) for e in new_state)
+#                             alternative_new_state_str = ' '.join(
+#                                 str(alternative_new_state[e]) for e in alternative_new_state)
+#                             if new_state_str not in states_dictionary:
+#                                 states_dictionary[new_state_str] = state_number
+#                                 new_state_number = state_number
+#                                 states.append(new_state)
+#                                 state_number += 1
+#                             else:
+#                                 new_state_number = states_dictionary[new_state_str]
+#
+#                             if alternative_new_state_str not in alternative_states_dictionary:
+#                                 alternative_states_dictionary[alternative_new_state_str] = {new_state_number}
+#                             else:
+#                                 alternative_states_dictionary[alternative_new_state_str].add(new_state_number)
+#
+#                             bridge_model.add_transition(current_state_number, new_state_number, action)
+
+
 def read_bridge_model(no_cards_available):
     bridge_model = ATLModel(3, 1294938)
     cards_available = []
@@ -2171,12 +3426,21 @@ def test_bridge_model(n, m, b):
     global states_count
 
     hands = BridgeModel.generate_random_hands(n, m)
-    # hands = [[133, 134], [132, 143], [141, 144], [131, 142]]
+    # Diamond - 2
+    # Spade - 4
+    # Heart - 3
+    # Club - 1
+    # Ace = 140
+    # King = 130
+    # Queen = 120
+    # Jack = 110
+    # hands = [[132, 134], [141, 142], [143, 144], [131, 133]]
     # hands = [[133, 141, 142], [123, 143, 144], [121, 122, 124], [131, 132, 134]]
     # hands = [[124, 134, 144], [74, 84, 94], [64, 104, 114], [34, 44, 91]]
     # hands = [[124, 134, 144], [71, 72, 74], [122, 132, 142], [64, 81, 82]]
     # hands = [[124, 131, 142, 144], [111, 112, 133, 141], [114, 122, 123, 143], [113, 121, 132, 134]]
     # hands = [[21, 73, 143], [22, 24, 42], [43, 53, 111], [72, 81, 92]]
+    # hands = [[111, 112, 121, 123], [113, 114, 122, 131], [124, 142, 143, 144], [132, 133, 134, 141]]
     print('Hands:', hands)
     print('Readable hands:', BridgeModel.hands_to_readable_hands(hands))
 
