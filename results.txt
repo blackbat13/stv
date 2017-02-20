@@ -1,3 +1,340 @@
+Disjoint formula
+
+Choose bridge model (1 - standard, 2 - abstract):1
+Number of figures in game =13
+Number of cards in hand =4
+Number of tests=20
+Hands: [[54, 123, 124, 141], [34, 51, 101, 121], [24, 33, 62, 103], [71, 72, 131, 142]]
+Readable hands: [['fiveSpade', 'QueenHeart', 'QueenSpade', 'AceClub'], ['threeSpade', 'fiveClub', 'tenClub', 'QueenClub'], ['twoSpade', 'threeHeart', 'sixDiamond', 'tenHeart'], ['sevenClub', 'sevenDiamond', 'KingClub', 'AceDiamond']]
+Standard bridge model
+Number of states: 484141
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.4333029999999987 s
+Number of good states  484141
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 7.588719000000001 s
+Number of good states  484141
+Formula result: True
+
+Hands: [[23, 34, 62, 64], [32, 81, 114, 142], [61, 71, 84, 143], [51, 72, 122, 132]]
+Readable hands: [['twoHeart', 'threeSpade', 'sixDiamond', 'sixSpade'], ['threeDiamond', 'eightClub', 'JackSpade', 'AceDiamond'], ['sixClub', 'sevenClub', 'eightSpade', 'AceHeart'], ['fiveClub', 'sevenDiamond', 'QueenDiamond', 'KingDiamond']]
+Standard bridge model
+Number of states: 784623
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 18
+Time: 0.8832450000000023 s
+Number of good states  209306
+Formula result: False
+Start formula verification under perfect information
+Minimum formula iterations: 18
+Time: 3.6248359999999877 s
+Number of good states  225325
+Formula result: False
+
+Hands: [[71, 84, 103, 114], [72, 81, 104, 142], [21, 24, 42, 134], [51, 93, 112, 124]]
+Readable hands: [['sevenClub', 'eightSpade', 'tenHeart', 'JackSpade'], ['sevenDiamond', 'eightClub', 'tenSpade', 'AceDiamond'], ['twoClub', 'twoSpade', 'fourDiamond', 'KingSpade'], ['fiveClub', 'nineHeart', 'JackDiamond', 'QueenSpade']]
+Standard bridge model
+Number of states: 420011
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.8059370000000001 s
+Number of good states  180407
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 3.4068519999999864 s
+Number of good states  212333
+Formula result: True
+
+Hands: [[52, 102, 133, 144], [63, 64, 113, 123], [41, 71, 72, 104], [44, 83, 91, 131]]
+Readable hands: [['fiveDiamond', 'tenDiamond', 'KingHeart', 'AceSpade'], ['sixHeart', 'sixSpade', 'JackHeart', 'QueenHeart'], ['fourClub', 'sevenClub', 'sevenDiamond', 'tenSpade'], ['fourSpade', 'eightHeart', 'nineClub', 'KingClub']]
+Standard bridge model
+Number of states: 630762
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.9206140000000005 s
+Number of good states  581792
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 9.248372000000018 s
+Number of good states  596190
+Formula result: True
+
+Hands: [[24, 81, 84, 134], [32, 54, 72, 104], [53, 82, 124, 141], [42, 91, 123, 131]]
+Readable hands: [['twoSpade', 'eightClub', 'eightSpade', 'KingSpade'], ['threeDiamond', 'fiveSpade', 'sevenDiamond', 'tenSpade'], ['fiveHeart', 'eightDiamond', 'QueenSpade', 'AceClub'], ['fourDiamond', 'nineClub', 'QueenHeart', 'KingClub']]
+Standard bridge model
+Number of states: 319931
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.1054129999999986 s
+Number of good states  294618
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 4.684696000000002 s
+Number of good states  306757
+Formula result: True
+
+Hands: [[42, 63, 94, 102], [71, 104, 143, 144], [34, 53, 54, 83], [62, 93, 103, 111]]
+Readable hands: [['fourDiamond', 'sixHeart', 'nineSpade', 'tenDiamond'], ['sevenClub', 'tenSpade', 'AceHeart', 'AceSpade'], ['threeSpade', 'fiveHeart', 'fiveSpade', 'eightHeart'], ['sixDiamond', 'nineHeart', 'tenHeart', 'JackClub']]
+Standard bridge model
+Number of states: 720018
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.6412930000000188 s
+Number of good states  166584
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 2.6730640000000108 s
+Number of good states  166584
+Formula result: True
+
+Hands: [[52, 73, 92, 121], [33, 44, 74, 91], [31, 72, 132, 133], [23, 34, 41, 111]]
+Readable hands: [['fiveDiamond', 'sevenHeart', 'nineDiamond', 'QueenClub'], ['threeHeart', 'fourSpade', 'sevenSpade', 'nineClub'], ['threeClub', 'sevenDiamond', 'KingDiamond', 'KingHeart'], ['twoHeart', 'threeSpade', 'fourClub', 'JackClub']]
+Standard bridge model
+Number of states: 349222
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.1017989999999713 s
+Number of good states  349222
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 5.347632999999973 s
+Number of good states  349222
+Formula result: True
+
+Hands: [[21, 52, 134, 142], [23, 81, 103, 114], [22, 53, 61, 133], [32, 83, 94, 132]]
+Readable hands: [['twoClub', 'fiveDiamond', 'KingSpade', 'AceDiamond'], ['twoHeart', 'eightClub', 'tenHeart', 'JackSpade'], ['twoDiamond', 'fiveHeart', 'sixClub', 'KingHeart'], ['threeDiamond', 'eightHeart', 'nineSpade', 'KingDiamond']]
+Standard bridge model
+Number of states: 366089
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.1513439999999946 s
+Number of good states  290164
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 4.8688849999999775 s
+Number of good states  310563
+Formula result: True
+
+Hands: [[32, 51, 64, 142], [61, 101, 103, 141], [82, 83, 84, 122], [23, 34, 73, 74]]
+Readable hands: [['threeDiamond', 'fiveClub', 'sixSpade', 'AceDiamond'], ['sixClub', 'tenClub', 'tenHeart', 'AceClub'], ['eightDiamond', 'eightHeart', 'eightSpade', 'QueenDiamond'], ['twoHeart', 'threeSpade', 'sevenHeart', 'sevenSpade']]
+Standard bridge model
+Number of states: 932826
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.9150260000000117 s
+Number of good states  482110
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 8.507642999999973 s
+Number of good states  536069
+Formula result: True
+
+Hands: [[44, 73, 111, 142], [64, 91, 141, 144], [61, 71, 82, 101], [52, 113, 114, 134]]
+Readable hands: [['fourSpade', 'sevenHeart', 'JackClub', 'AceDiamond'], ['sixSpade', 'nineClub', 'AceClub', 'AceSpade'], ['sixClub', 'sevenClub', 'eightDiamond', 'tenClub'], ['fiveDiamond', 'JackHeart', 'JackSpade', 'KingSpade']]
+Standard bridge model
+Number of states: 688909
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 18
+Time: 0.7688200000000052 s
+Number of good states  170998
+Formula result: False
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 3.2623629999999366 s
+Number of good states  198576
+Formula result: False
+
+Hands: [[53, 61, 64, 131], [42, 43, 51, 63], [21, 24, 124, 143], [32, 52, 91, 132]]
+Readable hands: [['fiveHeart', 'sixClub', 'sixSpade', 'KingClub'], ['fourDiamond', 'fourHeart', 'fiveClub', 'sixHeart'], ['twoClub', 'twoSpade', 'QueenSpade', 'AceHeart'], ['threeDiamond', 'fiveDiamond', 'nineClub', 'KingDiamond']]
+Standard bridge model
+Number of states: 496733
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.3301260000000639 s
+Number of good states  393976
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 6.292635000000018 s
+Number of good states  406742
+Formula result: True
+
+Hands: [[22, 73, 92, 121], [24, 82, 131, 143], [52, 54, 81, 101], [31, 41, 64, 123]]
+Readable hands: [['twoDiamond', 'sevenHeart', 'nineDiamond', 'QueenClub'], ['twoSpade', 'eightDiamond', 'KingClub', 'AceHeart'], ['fiveDiamond', 'fiveSpade', 'eightClub', 'tenClub'], ['threeClub', 'fourClub', 'sixSpade', 'QueenHeart']]
+Standard bridge model
+Number of states: 487946
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.9171649999999545 s
+Number of good states  179214
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 3.3617550000000165 s
+Number of good states  205101
+Formula result: True
+
+Hands: [[61, 81, 83, 84], [22, 94, 112, 133], [52, 53, 111, 124], [23, 31, 32, 142]]
+Readable hands: [['sixClub', 'eightClub', 'eightHeart', 'eightSpade'], ['twoDiamond', 'nineSpade', 'JackDiamond', 'KingHeart'], ['fiveDiamond', 'fiveHeart', 'JackClub', 'QueenSpade'], ['twoHeart', 'threeClub', 'threeDiamond', 'AceDiamond']]
+Standard bridge model
+Number of states: 233410
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.5023549999999659 s
+Number of good states  111536
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 2.0808250000000044 s
+Number of good states  130737
+Formula result: True
+
+Hands: [[54, 92, 121, 122], [73, 84, 113, 124], [21, 52, 114, 134], [43, 53, 83, 141]]
+Readable hands: [['fiveSpade', 'nineDiamond', 'QueenClub', 'QueenDiamond'], ['sevenHeart', 'eightSpade', 'JackHeart', 'QueenSpade'], ['twoClub', 'fiveDiamond', 'JackSpade', 'KingSpade'], ['fourHeart', 'fiveHeart', 'eightHeart', 'AceClub']]
+Standard bridge model
+Number of states: 757506
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 1.4684680000000299 s
+Number of good states  424228
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 7.0451080000000275 s
+Number of good states  444755
+Formula result: True
+
+Hands: [[23, 63, 102, 112], [52, 113, 124, 132], [22, 81, 84, 143], [54, 74, 94, 114]]
+Readable hands: [['twoHeart', 'sixHeart', 'tenDiamond', 'JackDiamond'], ['fiveDiamond', 'JackHeart', 'QueenSpade', 'KingDiamond'], ['twoDiamond', 'eightClub', 'eightSpade', 'AceHeart'], ['fiveSpade', 'sevenSpade', 'nineSpade', 'JackSpade']]
+Standard bridge model
+Number of states: 344826
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.7102019999999811 s
+Number of good states  186999
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 3.1468189999999368 s
+Number of good states  198727
+Formula result: True
+
+Hands: [[83, 92, 141, 144], [32, 41, 63, 134], [43, 74, 82, 93], [23, 54, 73, 102]]
+Readable hands: [['eightHeart', 'nineDiamond', 'AceClub', 'AceSpade'], ['threeDiamond', 'fourClub', 'sixHeart', 'KingSpade'], ['fourHeart', 'sevenSpade', 'eightDiamond', 'nineHeart'], ['twoHeart', 'fiveSpade', 'sevenHeart', 'tenDiamond']]
+Standard bridge model
+Number of states: 280074
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.9257920000000013 s
+Number of good states  232144
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 3.773956999999996 s
+Number of good states  247191
+Formula result: True
+
+Hands: [[52, 64, 71, 134], [41, 104, 141, 144], [31, 34, 102, 143], [42, 43, 73, 101]]
+Readable hands: [['fiveDiamond', 'sixSpade', 'sevenClub', 'KingSpade'], ['fourClub', 'tenSpade', 'AceClub', 'AceSpade'], ['threeClub', 'threeSpade', 'tenDiamond', 'AceHeart'], ['fourDiamond', 'fourHeart', 'sevenHeart', 'tenClub']]
+Standard bridge model
+Number of states: 243026
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.5829009999999926 s
+Number of good states  118398
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 2.1095659999999725 s
+Number of good states  134790
+Formula result: True
+
+Hands: [[82, 102, 113, 123], [21, 64, 92, 142], [32, 41, 112, 144], [24, 31, 122, 134]]
+Readable hands: [['eightDiamond', 'tenDiamond', 'JackHeart', 'QueenHeart'], ['twoClub', 'sixSpade', 'nineDiamond', 'AceDiamond'], ['threeDiamond', 'fourClub', 'JackDiamond', 'AceSpade'], ['twoSpade', 'threeClub', 'QueenDiamond', 'KingSpade']]
+Standard bridge model
+Number of states: 1191828
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 3.237893000000099 s
+Number of good states  884149
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 16.01281400000005 s
+Number of good states  1015617
+Formula result: True
+
+Hands: [[44, 83, 92, 141], [102, 122, 131, 143], [33, 63, 111, 114], [31, 34, 53, 142]]
+Readable hands: [['fourSpade', 'eightHeart', 'nineDiamond', 'AceClub'], ['tenDiamond', 'QueenDiamond', 'KingClub', 'AceHeart'], ['threeHeart', 'sixHeart', 'JackClub', 'JackSpade'], ['threeClub', 'threeSpade', 'fiveHeart', 'AceDiamond']]
+Standard bridge model
+Number of states: 408546
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 0.7903239999999414 s
+Number of good states  160396
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 2.9842330000000175 s
+Number of good states  189992
+Formula result: True
+
+Hands: [[74, 94, 111, 142], [91, 103, 112, 121], [83, 131, 132, 143], [41, 42, 51, 123]]
+Readable hands: [['sevenSpade', 'nineSpade', 'JackClub', 'AceDiamond'], ['nineClub', 'tenHeart', 'JackDiamond', 'QueenClub'], ['eightHeart', 'KingClub', 'KingDiamond', 'AceHeart'], ['fourClub', 'fourDiamond', 'fiveClub', 'QueenHeart']]
+Standard bridge model
+Number of states: 1057901
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 3.210125000000062 s
+Number of good states  991492
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 15.972094999999968 s
+Number of good states  1018659
+Formula result: True
+
+
+STATISTICS
+#states 559916.4
+tgen 39.92107239999999
+low tverif 1.2701072500000046
+low true 90.0 %
+up tverif 5.799643499999993
+up true 90.0 %
+match 100.0 %
+
+Standard formula
 ATLFormulaChecker/bridge_model.py
 Choose bridge model (1 - standard, 2 - abstract):1
 Number of figures in game =4
