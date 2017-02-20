@@ -37,10 +37,16 @@ class SimpleVotingModel:
 
         beginning_array = []
         for _ in range(0, self.number_of_voters):
-            beginning_array.append(-1)
+            beginning_array.append('')
 
-        first_state = {'voted': beginning_array[:], 'voters_action': beginning_array[:], 'coercer_actions': beginning_array[:], 'finish': beginning_array[:]}
+        beginning_array_minus_one = []
+        for _ in range(0, self.number_of_voters):
+            beginning_array_minus_one.append(-1)
+
+        first_state = {'voted': beginning_array_minus_one[:], 'voters_action': beginning_array[:], 'coercer_actions': beginning_array[:], 'finish': beginning_array_minus_one[:]}
         state_number = 0
+
+        self.print_create_for_state(0, first_state)
 
         self.states.append(first_state)
         state_string = ' '.join(str(first_state[e]) for e in first_state)
@@ -56,9 +62,9 @@ class SimpleVotingModel:
                 if state['voted'][voter_number] == -1:
                     voting_product_array.append(list(range(0, self.number_of_candidates)))
                     voting_product_array[voter_number].append('wait')
-                elif state['voters_action'][voter_number] == -1:
+                elif state['voters_action'][voter_number] == '':
                     voting_product_array.append(['give', 'ng', 'wait'])
-                elif state['coercer_actions'][voter_number] == -1:
+                elif state['coercer_actions'][voter_number] == '':
                     coercer_possible_actions.append('np' + str(voter_number+1))
                     coercer_possible_actions.append('pun' + str(voter_number+1))
                     voting_product_array.append(['wait'])
@@ -98,9 +104,11 @@ class SimpleVotingModel:
                     new_state_number = state_number
                     self.states.append(new_state)
                     state_number += 1
+                    self.print_create_for_state(new_state_number, new_state)
                 else:
                     new_state_number = self.states_dictionary[new_state_str]
 
+                self.print_create_transition(current_state_number, new_state_number, action)
                 self.model.add_transition(current_state_number, new_state_number, action)
 
             self.add_epistemic_state(state, current_state_number)
@@ -108,6 +116,17 @@ class SimpleVotingModel:
 
         self.prepare_epistemic_class()
         self.model.states = self.states
+
+    def print_create_for_state(self, state_number, state):
+        print("CREATE (S" + str(state_number) + ":State {voted: " + str(state['voted']) + ", voters_action: " + str(state['voters_action']) + ", coercer_actions: " + str(state['coercer_actions']) + ", finish: " + str(state['finish']) + "})")
+
+    def print_create_transition(self, from_state_number, to_state_number, actions):
+        create_str = "CREATE (S" + str(from_state_number) + ")-[:ACTION {"
+        for i in range(0, len(actions)):
+            create_str += "A" + str(i) + ":['" + str(actions[i]) + "'], "
+        create_str = create_str.rstrip(" ,")
+        create_str += "}]->(S" + str(to_state_number) + ")"
+        print(create_str)
 
     def generate_simultaneously_voting(self):
         self.model = ATLModel(self.number_of_voters + 1, 1000)
@@ -305,7 +324,7 @@ class SimpleVotingModel:
         print('Number of states:', len(self.states))
 
 
-simple_voting_model = SimpleVotingModel(2, 4)
+simple_voting_model = SimpleVotingModel(2, 1)
 
 print('Started generating model')
 start = time.clock()
