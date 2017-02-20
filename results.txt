@@ -1,0 +1,32 @@
+ATLFormulaChecker/bridge_model.py
+Choose bridge model (1 - standard, 2 - abstract):1
+Number of figures in game =4
+Number of cards in hand =4
+Number of tests=1
+Hands: [[111, 112, 121, 123], [113, 114, 122, 131], [124, 142, 143, 144], [132, 133, 134, 141]]
+Readable hands: [['JackClub', 'JackDiamond', 'QueenClub', 'QueenHeart'], ['JackHeart', 'JackSpade', 'QueenDiamond', 'KingClub'], ['QueenSpade', 'AceDiamond', 'AceHeart', 'AceSpade'], ['KingDiamond', 'KingHeart', 'KingSpade', 'AceClub']]
+Standard bridge model
+Number of states: 513311
+Number of beginning states: 70
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 336.869498 s
+Number of good states  333197
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 20
+Time: 6.485915000000034 s
+Number of good states  367185
+Formula result: True
+
+
+STATISTICS
+#states 513311.0
+tgen 78.378613
+low tverif 336.869498
+low true 100.0 %
+up tverif 6.485915000000034
+up true 100.0 %
+match 100.0 %
+
+Process finished with exit code 0
