@@ -193,7 +193,7 @@ class BridgeModel:
 
     def print_model_size(self):
         print("Number of agents:", self.model.number_of_agents)
-        print("Number of states:", self.model.number_of_states)
+        print("Number of defined states:", self.model.number_of_states)
         print("Number of transitions", len(self.model.transitions))
         print("Number of reverse transitions", len(self.model.reverse_transitions))
         print("Number of pre states", len(self.model.pre_states))
