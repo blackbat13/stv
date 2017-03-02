@@ -2,15 +2,15 @@ from atl_model import *
 import time
 import pickle
 import gc
-# import resource
+import resource
 import random
+from sys import getsizeof
 
 __author__ = 'blackbat'
 
 
 class BridgeModel:
     model = None
-    states = []
     states_dictionary = {}
     epistemic_states_dictionary = {}
     no_cards_available = 0
@@ -29,14 +29,12 @@ class BridgeModel:
         self.model.add_action(0, -1)
         self.generate_available_cards()
         self.generate_beginning_states()
-        self.beginning_states_count = len(self.states)
+        self.beginning_states_count = len(self.model.states)
         self.generate_rest_of_model()
         self.prepare_epistemic_relation()
-        self.model.states = self.states
 
     def clear_variables(self):
         self.model = None
-        self.states = []
         self.states_dictionary = {}
         self.epistemic_states_dictionary = {}
         self.no_cards_available = 0
@@ -57,6 +55,8 @@ class BridgeModel:
             self.model = ATLModel(3, 3000000)
         else:
             self.model = ATLModel(3, 8000000)
+
+        self.model.states = []
 
     def generate_available_cards(self):
         card_number = 14
@@ -81,7 +81,7 @@ class BridgeModel:
 
     def generate_rest_of_model(self):
         current_state_number = -1
-        for state in self.states:
+        for state in self.model.states:
             current_state_number += 1
             if state['next'] == state['beginning'] and state['clock'] == 0:
                 if self.count_remaining_cards(state) == 0:
@@ -155,7 +155,7 @@ class BridgeModel:
         if state_str not in self.states_dictionary:
             self.states_dictionary[state_str] = self.state_number
             new_state_number = self.state_number
-            self.states.append(state)
+            self.model.states.append(state)
             self.state_number += 1
         else:
             new_state_number = self.states_dictionary[state_str]
@@ -184,6 +184,28 @@ class BridgeModel:
 
     def get_model(self):
         return self.model
+
+    def print_model_size(self):
+        print("Number of agents:", self.model.number_of_agents)
+        print("Number of states:", self.model.number_of_states)
+        print("Number of transitions", len(self.model.transitions))
+        print("Number of reverse transitions", len(self.model.reverse_transitions))
+        print("Number of pre states", len(self.model.pre_states))
+        print("Number of imperfect information classes", len(self.model.imperfect_information))
+        print("Number of agent actions", len(self.model.agents_actions))
+        print("Number of states", len(self.model.states))
+        print("Number of epistemic class membership", len(self.model.epistemic_class_membership))
+        print("Number of can go there", len(self.model.can_go_there))
+
+        print("Size of transitions:", getsizeof(self.model.transitions)/(1024**2), "MB")
+        print("Size of reverse transitions:", getsizeof(self.model.reverse_transitions)/(1024**2), "MB")
+        print("Size of pre states:", getsizeof(self.model.pre_states)/(1024**2), "MB")
+        print("Size of imperfect information:", getsizeof(self.model.imperfect_information)/(1024**2), "MB")
+        print("Size of agent actions:", getsizeof(self.model.agents_actions)/(1024**2), "MB")
+        print("Size of states:", getsizeof(self.model.states)/(1024**2), "MB")
+        print("Size of epistemic class membership:", getsizeof(self.model.epistemic_class_membership)/(1024**2), "MB")
+        print("Size of can go there:", getsizeof(self.model.can_go_there)/(1024**2), "MB")
+        print("Size of epistemic disjoint:", getsizeof(self.model.epistemic_class_disjoint)/(1024**2), "MB")
 
     @staticmethod
     def new_state_after_play(state, card_index):
@@ -348,6 +370,7 @@ class AbstractBridgeModel(BridgeModel):
     abstract_states = []
     abstract_states_dictionary = {}
     abstract_state_number = 0
+    states = []
 
     def __init__(self, no_cards_available, no_end_cards, first_state, abstraction):
         self.clear_variables()
@@ -3441,6 +3464,7 @@ def test_bridge_model(n, m, b):
     # hands = [[124, 131, 142, 144], [111, 112, 133, 141], [114, 122, 123, 143], [113, 121, 132, 134]]
     # hands = [[21, 73, 143], [22, 24, 42], [43, 53, 111], [72, 81, 92]]
     # hands = [[111, 112, 121, 123], [113, 114, 122, 131], [124, 142, 143, 144], [132, 133, 134, 141]]
+    # hands = [[134, 141, 142, 143, 144], [123, 124, 131, 132, 133], [112, 113, 114, 121, 122], [101, 102, 103, 104, 111]]
     print('Hands:', hands)
     print('Readable hands:', BridgeModel.hands_to_readable_hands(hands))
 
@@ -3470,9 +3494,10 @@ def test_bridge_model(n, m, b):
 
     tgen += (end - start)
 
-    print("Number of states:", len(bridge_model.states))
+    print("Number of states:", len(bridge_model.get_model().states))
     print("Number of beginning states:", bridge_model.beginning_states_count)
-    # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024**2), "MB")
+    bridge_model.print_model_size()
     # bridge_model.get_model().walk(0)
     states_count += len(bridge_model.get_model().states)
     winning_states = []

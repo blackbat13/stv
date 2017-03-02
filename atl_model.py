@@ -1,8 +1,8 @@
-__author__ = 'blackbat'
-
 import itertools
-import time
+
 from disjoint_set import *
+
+__author__ = 'blackbat'
 
 
 def create_array_of_size(size, basic_item):
@@ -53,15 +53,12 @@ def not_operator(a, number_of_states):
 
 class ATLModel:
     number_of_agents = 0
-    agent_names = {}
     number_of_states = 0
     transitions = []
     reverse_transitions = []
     pre_states = []
     imperfect_information = []
     agents_actions = []
-    state_names = []
-    state_descriptions = []
     states = []
     epistemic_class_membership = []
     epistemic_class_disjoint = None
@@ -70,11 +67,11 @@ class ATLModel:
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
         self.number_of_states = number_of_states
-        self.transitions = [[] for _ in itertools.repeat(None, number_of_states)]
-        self.reverse_transitions = [[] for _ in itertools.repeat(None, number_of_states)]
+        # self.transitions = [[] for _ in itertools.repeat(None, number_of_states)]
+        # self.reverse_transitions = [[] for _ in itertools.repeat(None, number_of_states)]
         self.imperfect_information = create_array_of_size(number_of_agents, [])
-        self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
-        self.agents_actions = [[] for _ in itertools.repeat(None, number_of_states)]
+        # self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
+        self.agents_actions = [[] for _ in itertools.repeat(None, number_of_agents)]
         self.epistemic_class_membership = create_array_of_size(number_of_agents, [])
         self.epistemic_class_disjoint = [DisjointSet(number_of_states) for _ in
                                          itertools.repeat(None, number_of_agents)]
@@ -86,7 +83,22 @@ class ATLModel:
     def add_action(self, agent, action):
         self.agents_actions[agent].append(action)
 
+    def enlarge_transitions(self, size):
+        if len(self.transitions) <= size:
+            to_add = size - len(self.transitions) + 1
+            for i in range(0, to_add):
+                self.transitions.append([])
+                self.reverse_transitions.append([])
+                self.pre_states.append(set())
+
+    def max(self, a, b):
+        if a > b:
+            return a
+        else:
+            return b
+
     def add_transition(self, from_state, to_state, actions):
+        self.enlarge_transitions(self.max(from_state, to_state))
         if {'nextState': to_state, 'actions': actions} not in self.transitions[from_state]:
             self.transitions[from_state].append({'nextState': to_state, 'actions': actions.copy()})
             self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions.copy()})
@@ -142,38 +154,6 @@ class ATLModel:
                 result_states.append(state)
         return result_states
 
-    def basic_formula_multiple_agents(self, agents, winning_state):
-        result_states = []
-        actions = self.create_agents_actions_combinations(agents)
-        for state in self.pre_states[winning_state]:
-            ok = True
-            same_states = self.get_same_states_for_agents(agents, state)
-            for same_state in same_states:
-                if not self.is_reachable_by_agents(actions, same_state, [winning_state], agents):
-                    ok = False
-                    break
-            if ok:
-                result_states.append(state)
-        return result_states
-
-    def get_same_states_for_agents(self, agents, state):
-        same_states = []
-        for agent in agents:
-            for same_state in self.imperfect_information[agent][state]:
-                if same_state not in same_states:
-                    same_states.append(same_state)
-        return same_states
-
-    def is_reachable_by_agents(self, action, from_state, is_winning_state, agents):
-        action_ok = False
-        for transition in self.transitions[from_state]:
-            if self.is_possible_transition(agents, action, transition):
-                action_ok = True
-                if not is_winning_state[transition['nextState']]:
-                    return False
-
-        return action_ok
-
     def is_reachable_by_agents_in_set(self, action, from_state, winning_states, agents):
         action_ok = False
         for transition in self.transitions[from_state]:
@@ -220,66 +200,6 @@ class ATLModel:
             actions.append(self.agents_actions[agent])
 
         return actions
-
-    def basic_formula_multiple_agents_and_states(self, agents, current_states, is_winning_state):
-        result_states = set()
-        actions = self.get_agents_actions(agents)
-        preimage = []
-        for winning_state in current_states:
-            preimage += self.pre_states[winning_state]
-
-        unique(preimage)
-        for state in preimage:
-            state_epistemic_class = self.epistemic_class_membership[agents[0]][state]
-            if state_epistemic_class == -1:
-                same_states = [state]
-            else:
-                same_states = self.imperfect_information[agents[0]][state_epistemic_class]
-
-            for action in itertools.product(*actions):
-                good_states = []
-                number_of_good = 0
-                should_break = False
-                is_good_state = {}
-
-                for same_state in same_states:
-                    is_good_state[same_state] = False
-                    if self.is_reachable_by_agents(action, same_state, is_winning_state, agents):
-                        good_states.append(same_state)
-                        is_good_state[same_state] = True
-                        number_of_good += 1
-                    elif not self.is_reachable_by_agents_in_set(action, same_state, same_states, agents):
-                        should_break = True
-                        # else: # for standard model
-                        #     should_break = True
-
-                if should_break:
-                    continue
-
-                modified = True
-                while (modified):
-                    modified = False
-                    for same_state in same_states:
-                        if is_good_state[same_state]:
-                            continue
-                        if self.is_reachable_by_agents_in_set(action, same_state, good_states, agents):
-                            good_states.append(same_state)
-                            is_good_state[same_state] = True
-                            number_of_good += 1
-                            modified = True
-
-                if number_of_good == len(same_states):
-                    result_states.update(same_states)
-                    break
-
-            for same_state in same_states:
-                if same_state != state and same_state in preimage:
-                    preimage.remove(same_state)
-
-        for state_number in result_states:
-            is_winning_state[state_number] = True
-
-        return result_states
 
     def basic_formula_one_agent_multiple_states_disjoint(self, agent, current_states, first_winning,
                                                          winning_states_disjoint,
@@ -370,7 +290,7 @@ class ATLModel:
                     continue
 
                 modified = True
-                while (modified):
+                while modified:
                     modified = False
                     for same_state in same_states:
                         if is_good_state[same_state]:
@@ -428,29 +348,6 @@ class ATLModel:
         for state_number in result_states:
             is_winning_state[state_number] = True
 
-        return result_states
-
-    def minimum_formula_multiple_agents_and_states(self, agents, winning_states):
-        result_states = set()
-        result_states.update(winning_states)
-        result_states_length = len(result_states)
-        number_of_iterations = 0
-        current_states = winning_states[:]
-        is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
-        for state_number in winning_states:
-            is_winning_state[state_number] = True
-
-        while True:
-            current_states = self.basic_formula_multiple_agents_and_states(agents, current_states, is_winning_state)
-            result_states.update(current_states)
-            new_results_states_length = len(result_states)
-            if result_states_length == new_results_states_length:
-                break
-
-            result_states_length = new_results_states_length
-            number_of_iterations += 1
-
-        print('Minimum formula iterations:', number_of_iterations)
         return result_states
 
     def minimum_formula_one_agent_multiple_states_disjoint(self, agent, winning_states):
@@ -532,7 +429,7 @@ class ATLModel:
 
         while True:
             current_states = self.basic_formula_multiple_agents_and_states_perfect_information(agents, current_states,
-                                                                                              is_winning_state)
+                                                                                               is_winning_state)
             result_states.update(current_states)
             if result_states_length == len(result_states):
                 break
@@ -592,26 +489,6 @@ class ATLModel:
         print('Maximum formula iterations:', number_of_iterations)
         return result_states
 
-    def maximum_formula_multiple_agents_and_states(self, agents, winning_states):
-        result_states = set()
-        result_states.update(winning_states)
-        result_states_length = len(result_states)
-        number_of_iterations = 0
-        first_winning_states = list(winning_states)
-        while True:
-            result_states = set(and_operator(first_winning_states,
-                                             self.basic_formula_multiple_agents_and_states(agents, winning_states)))
-
-            winning_states = list(result_states)
-            if result_states_length == len(result_states):
-                break
-
-            result_states_length = len(result_states)
-            number_of_iterations += 1
-
-        print('Maximum formula iterations:', number_of_iterations)
-        return result_states
-
     def maximum_formula_one_agent_multiple_states_perfect_information(self, agent, winning_states):
         result_states = set()
         result_states.update(winning_states)
@@ -623,7 +500,8 @@ class ATLModel:
             is_winning_state[state_number] = True
 
         while True:
-            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states, is_winning_state)
+            current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states,
+                                                                                              is_winning_state)
             result_states = set(and_operator(result_states, current_states))
             if result_states_length == len(result_states):
                 break
@@ -638,12 +516,6 @@ class ATLModel:
         print('Maximum formula iterations:', number_of_iterations)
         return result_states
 
-    def is_possible_transition(self, agents, action, transition):
-        for i, j in zip(agents, range(0, len(agents))):
-            if transition['actions'][i] != action[j]:
-                return False
-        return True
-
     def create_agents_actions_combinations(self, agents):
         combinations = []
         possible_actions = []
@@ -655,17 +527,11 @@ class ATLModel:
 
         return combinations
 
-    def set_state_name(self, state_number, name):
-        self.state_names[state_number] = name
-
-    def set_state_descriptions(self, state_number, description):
-        self.state_descriptions[state_number] = description
-
     def walk(self, agent_number):
         print("#####################################################")
         print("Simulation")
         current_state = 0
-        while (True):
+        while True:
             print()
             print("Current state:", self.states[current_state])
             print("Epistemic states:")
@@ -689,3 +555,10 @@ class ATLModel:
                 return
 
             current_state = self.transitions[current_state][choice]['nextState']
+
+    @staticmethod
+    def is_possible_transition(agents, action, transition):
+        for i, j in zip(agents, range(0, len(agents))):
+            if transition['actions'][i] != action[j]:
+                return False
+        return True
