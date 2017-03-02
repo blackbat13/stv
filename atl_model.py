@@ -1,5 +1,5 @@
 import itertools
-
+import time
 from disjoint_set import *
 
 __author__ = 'blackbat'
@@ -350,6 +350,54 @@ class ATLModel:
 
         return result_states
 
+    def basic_formula_one_agent_multiple_states_perfect_information_mcmas_approach(self, agent, current_states, is_winning_state):
+        result_states = set()
+        actions = self.agents_actions[agent]
+        winning_states_reverse = []
+        for winning_state in current_states:
+            winning_states_reverse += self.pre_states[winning_state]
+
+        unique(winning_states_reverse)
+        for state in winning_states_reverse:
+            all_actions = set()
+            bad_actions = set()
+            for transition in self.transitions[state]:
+                all_actions.add(transition['actions'][agent])
+                if not is_winning_state[transition['nextState']]:
+                    bad_actions.add(transition['actions'][agent])
+
+            all_actions -= bad_actions
+            if len(all_actions) > 0:
+                result_states.add(state)
+
+        for state_number in result_states:
+            is_winning_state[state_number] = True
+
+        return result_states
+
+    def minimum_formula_multiple_agents_and_states(self, agents, winning_states):
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        number_of_iterations = 0
+        current_states = winning_states[:]
+        is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_multiple_agents_and_states(agents, current_states, is_winning_state)
+            result_states.update(current_states)
+            new_results_states_length = len(result_states)
+            if result_states_length == new_results_states_length:
+                break
+
+            result_states_length = new_results_states_length
+            number_of_iterations += 1
+
+        print('Minimum formula iterations:', number_of_iterations)
+        return result_states
+
     def minimum_formula_one_agent_multiple_states_disjoint(self, agent, winning_states):
         if len(winning_states) == 0:
             return []
@@ -452,6 +500,29 @@ class ATLModel:
 
         while True:
             current_states = self.basic_formula_one_agent_multiple_states_perfect_information(agent, current_states,
+                                                                                              is_winning_state)
+            result_states.update(current_states)
+            if result_states_length == len(result_states):
+                break
+
+            result_states_length = len(result_states)
+            number_of_iterations += 1
+
+        print('Minimum formula iterations:', number_of_iterations)
+        return result_states
+
+    def minimum_formula_one_agent_multiple_states_perfect_information_mcmas_approach(self, agent, winning_states):
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        number_of_iterations = 0
+        current_states = winning_states[:]
+        is_winning_state = [False for _ in itertools.repeat(None, self.number_of_states)]
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_one_agent_multiple_states_perfect_information_mcmas_approach(agent, current_states,
                                                                                               is_winning_state)
             result_states.update(current_states)
             if result_states_length == len(result_states):
