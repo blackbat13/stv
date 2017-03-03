@@ -18,6 +18,7 @@ class BridgeModel:
     state_number = 0
     first_state = {}
     beginning_states_count = 0
+    number_of_transitions = 0
 
     def __init__(self, no_cards_available, no_end_cards, first_state):
         self.clear_variables()
@@ -48,6 +49,7 @@ class BridgeModel:
         self.state_number = 0
         self.first_state = {}
         self.beginning_states_count = 0
+        self.number_of_transitions = 0
 
     def create_atl_model(self):
         if self.no_end_cards == 1:
@@ -107,6 +109,7 @@ class BridgeModel:
                     new_state_number = self.add_state(new_state)
 
                     self.model.add_transition(current_state_number, new_state_number, action)
+                    self.number_of_transitions += 1
             elif state['clock'] == 4:
                 winner = self.get_winner(state['beginning'], state['board'])
 
@@ -125,7 +128,7 @@ class BridgeModel:
                 new_state_number = self.add_state(new_state)
 
                 self.model.add_transition(current_state_number, new_state_number, action)
-
+                self.number_of_transitions += 1
             else:
                 color = state['board'][state['beginning']] % 10
                 have_color = False
@@ -148,7 +151,7 @@ class BridgeModel:
                     new_state_number = self.add_state(new_state)
 
                     self.model.add_transition(current_state_number, new_state_number, action)
-
+                    self.number_of_transitions += 1
     def add_state(self, state):
         new_state_number = self.get_state_number(state)
         epistemic_state = self.get_epistemic_state(state)
@@ -184,8 +187,12 @@ class BridgeModel:
         return epistemic_state
 
     def prepare_epistemic_relation(self):
+        counter = 0
         for state, epistemic_class in self.epistemic_states_dictionary.items():
             self.model.add_epistemic_class(0, epistemic_class)
+            counter += 1
+
+        print("Number of epistemic classes:", counter)
 
     def get_model(self):
         return self.model
@@ -3421,6 +3428,7 @@ up_true = 0
 match = 0
 states_count = 0
 mcmas_tverif = 0
+low_mcmas_tverif = 0
 
 
 def test_bridge_model(n, m, b):
@@ -3432,6 +3440,7 @@ def test_bridge_model(n, m, b):
     global match
     global states_count
     global mcmas_tverif
+    global low_mcmas_tverif
 
     hands = BridgeModel.generate_random_hands(n, m)
     # Diamond - 2
@@ -3448,7 +3457,7 @@ def test_bridge_model(n, m, b):
     # hands = [[124, 134, 144], [71, 72, 74], [122, 132, 142], [64, 81, 82]]
     # hands = [[124, 131, 142, 144], [111, 112, 133, 141], [114, 122, 123, 143], [113, 121, 132, 134]]
     # hands = [[21, 73, 143], [22, 24, 42], [43, 53, 111], [72, 81, 92]]
-    # hands = [[134, 141, 142, 143, 144], [123, 124, 131, 132, 133], [112, 113, 114, 121, 122], [101, 102, 103, 104, 111]]
+    # hands = [[134, 141, 142, 143, 144], [123, 124, 131, 132, 133], [112, 113, 114, 121, 122], [101, 102, 103, 104, 111]] # classic (5,5)
     # hands = [[133, 134, 141, 142, 143, 144], [121, 122, 123, 124, 131, 132], [103, 104, 111, 112, 113, 114], [91, 92, 93, 94, 101, 102]]
     # hands = [[111, 112, 121, 123], [113, 114, 122, 131], [124, 142, 143, 144], [132, 133, 134, 141]]
     print('Hands:', hands)
@@ -3482,6 +3491,8 @@ def test_bridge_model(n, m, b):
 
     print("Number of states:", len(bridge_model.get_model().states))
     print("Number of beginning states:", bridge_model.beginning_states_count)
+    print("Number of transitions:", bridge_model.number_of_transitions)
+
     # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     # bridge_model.get_model().walk(0)
     states_count += len(bridge_model.get_model().states)
@@ -3512,6 +3523,25 @@ def test_bridge_model(n, m, b):
     if bridge_model.beginning_states_count == number_of_correct_beginning_states:
         low_true += 1
         imperfect = True
+
+    print("Start formula verification under imperfect information - mcmas approach")
+    start = time.clock()
+    # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states(0, winning_states)
+    result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_disjoint_mcmas_approach(0, winning_states)
+    end = time.clock()
+    low_mcmas_tverif += (end - start)
+    print("Time:", end - start, "s")
+    print("Number of good states ", len(result))
+    number_of_correct_beginning_states = 0
+    for state_nr in result:
+        if len(bridge_model.get_model().states[state_nr]['history']) == 0 and bridge_model.get_model().states[state_nr][
+            'board'] == [-1, -1, -1,
+                         -1]:
+            number_of_correct_beginning_states += 1
+
+    print("Formula result:", bridge_model.beginning_states_count == number_of_correct_beginning_states)
+
+    assert((bridge_model.beginning_states_count == number_of_correct_beginning_states) == imperfect)
 
     print("Start formula verification under perfect information")
     start = time.clock()
@@ -3550,8 +3580,7 @@ def test_bridge_model(n, m, b):
 
     print("Formula result:", bridge_model.beginning_states_count == number_of_correct_beginning_states)
 
-    if perfect != (bridge_model.beginning_states_count == number_of_correct_beginning_states):
-        print("ERROR!!! PERFECT INFORMATION MISMATCH")
+    assert ((bridge_model.beginning_states_count == number_of_correct_beginning_states) == perfect)
 
     if perfect == imperfect:
         match += 1
@@ -3579,6 +3608,7 @@ print("STATISTICS")
 print("#states", states_count / number_of_tests)
 print("tgen", tgen / number_of_tests)
 print("low tverif", low_tverif / number_of_tests)
+print("low mcmas tverif", low_mcmas_tverif / number_of_tests)
 print("low true", 100 * (low_true / number_of_tests), "%")
 print("up tverif", up_tverif / number_of_tests)
 print("mcmas tverif", mcmas_tverif / number_of_tests)

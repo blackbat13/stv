@@ -1,7 +1,7 @@
 __author__ = 'blackbat'
 
 import itertools
-import time
+import copy
 from disjoint_set import *
 
 
@@ -306,7 +306,9 @@ class ATLModel:
             else:
                 same_states = self.imperfect_information[agent][state_epistemic_class]
 
+            actions_count = 0
             for action in actions:
+                #actions_count+= 1
                 states_can_go = custom_can_go_there[state_epistemic_class][action]
 
                 if len(states_can_go) == 0:
@@ -326,11 +328,54 @@ class ATLModel:
                 custom_can_go_there[state_epistemic_class][action] = new_states_can_go
 
                 if is_ok:
+                    #print(actions_count)
                     result_states.extend(same_states)
                     winning_states_disjoint.union(first_winning, state)
                     first_winning = winning_states_disjoint.find(first_winning)
                     modified = True
                     break
+
+        return {'result': result_states, 'modified': modified}
+
+    def basic_formula_one_agent_multiple_states_disjoint_mcmas_approach(self, agent, current_states, first_winning,
+                                                         winning_states_disjoint,
+                                                         custom_can_go_there):
+        result_states = []
+        actions = self.agents_actions[agent]
+        preimage = set()
+        modified = False
+        for winning_state in current_states:
+            for pre_state in self.pre_states[winning_state]:
+                preimage.add(self.epistemic_class_membership[agent][pre_state])
+
+        first_winning = winning_states_disjoint.find(first_winning)
+
+        for state_epistemic_class in preimage:
+            state = next(iter(self.imperfect_information[agent][state_epistemic_class]))
+            state = winning_states_disjoint.find(state)
+            if state == first_winning:
+                continue
+
+            if state_epistemic_class == -1:
+                print("ERROR")
+                same_states = [state]
+            else:
+                same_states = self.imperfect_information[agent][state_epistemic_class]
+
+            all_actions = set()
+            bad_actions = set()
+            for same_state in same_states:
+                for transition in self.transitions[same_state]:
+                    all_actions.add(transition['actions'][agent])
+                    if winning_states_disjoint.find(transition['nextState']) != first_winning:
+                        bad_actions.add(transition['actions'][agent])
+
+            all_actions -= bad_actions
+            if len(all_actions) > 0:
+                result_states.extend(same_states)
+                winning_states_disjoint.union(first_winning, state)
+                first_winning = winning_states_disjoint.find(first_winning)
+                modified = True
 
         return {'result': result_states, 'modified': modified}
 
@@ -384,6 +429,42 @@ class ATLModel:
                 if number_of_good == len(same_states):
                     result_states.update(same_states)
                     break
+
+            for same_state in same_states:
+                if same_state != state and same_state in preimage:
+                    preimage.remove(same_state)
+
+        for state_number in result_states:
+            is_winning_state[state_number] = True
+
+        return result_states
+
+    def basic_formula_one_agent_multiple_states_mcmas_approach(self, agent, current_states, is_winning_state):
+        result_states = set()
+        actions = self.agents_actions[agent]
+        preimage = []
+        for winning_state in current_states:
+            preimage += self.pre_states[winning_state]
+
+        unique(preimage)
+        for state in preimage:
+            state_epistemic_class = self.epistemic_class_membership[agent][state]
+            if state_epistemic_class == -1:
+                same_states = [state]
+            else:
+                same_states = self.imperfect_information[agent][state_epistemic_class]
+
+            all_actions = set()
+            bad_actions = set()
+            for same_state in same_states:
+                for transition in self.transitions[same_state]:
+                    all_actions.add(transition['actions'][agent])
+                    if not is_winning_state[transition['nextState']]:
+                        bad_actions.add(transition['actions'][agent])
+
+            all_actions -= bad_actions
+            if len(all_actions) > 0:
+                result_states.update(same_states)
 
             for same_state in same_states:
                 if same_state != state and same_state in preimage:
@@ -487,7 +568,7 @@ class ATLModel:
         number_of_iterations = 0
         current_states = winning_states[:]
         winning_states_disjoint = DisjointSet(0)
-        winning_states_disjoint.subsets = self.epistemic_class_disjoint[agent].subsets[:]
+        winning_states_disjoint.subsets = copy.deepcopy(self.epistemic_class_disjoint[agent].subsets)
         first_winning = winning_states_disjoint.find(winning_states[0])
         epistemic_class_numbers = set()
         for state_number in winning_states:
@@ -509,6 +590,50 @@ class ATLModel:
 
         while True:
             formula_result = self.basic_formula_one_agent_multiple_states_disjoint(agent, current_states, first_winning,
+                                                                                   winning_states_disjoint,
+                                                                                   custom_can_go_there)
+            current_states = formula_result['result']
+            modified = formula_result['modified']
+            result_states.update(current_states)
+            if not modified:
+                break
+
+            number_of_iterations += 1
+
+        print('Minimum formula iterations:', number_of_iterations)
+        return result_states
+
+    def minimum_formula_one_agent_multiple_states_disjoint_mcmas_approach(self, agent, winning_states):
+        if len(winning_states) == 0:
+            return []
+
+        result_states = set()
+        result_states.update(winning_states)
+        number_of_iterations = 0
+        current_states = winning_states[:]
+        winning_states_disjoint = DisjointSet(0)
+        winning_states_disjoint.subsets = copy.deepcopy(self.epistemic_class_disjoint[agent].subsets)
+        first_winning = winning_states_disjoint.find(winning_states[0])
+        epistemic_class_numbers = set()
+        for state_number in winning_states:
+            epistemic_class_number = self.epistemic_class_membership[agent][state_number]
+            epistemic_class_numbers.add(epistemic_class_number)
+
+        for epistemic_class_number in epistemic_class_numbers:
+            epistemic_states = self.imperfect_information[agent][epistemic_class_number]
+            is_ok = True
+            for epistemic_state in epistemic_states:
+                state_number = epistemic_state
+                if epistemic_state not in winning_states:
+                    is_ok = False
+                    break
+            if is_ok:
+                winning_states_disjoint.union(first_winning, state_number)
+
+        custom_can_go_there = self.can_go_there[agent][:]
+
+        while True:
+            formula_result = self.basic_formula_one_agent_multiple_states_disjoint_mcmas_approach(agent, current_states, first_winning,
                                                                                    winning_states_disjoint,
                                                                                    custom_can_go_there)
             current_states = formula_result['result']
