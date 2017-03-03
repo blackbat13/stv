@@ -2,8 +2,9 @@ from atl_model import *
 import time
 import pickle
 import gc
-# import resource
+import resource
 import random
+from sys import getsizeof
 
 __author__ = 'blackbat'
 
@@ -18,7 +19,6 @@ class BridgeModel:
     state_number = 0
     first_state = {}
     beginning_states_count = 0
-    number_of_transitions = 0
 
     def __init__(self, no_cards_available, no_end_cards, first_state):
         self.clear_variables()
@@ -49,7 +49,6 @@ class BridgeModel:
         self.state_number = 0
         self.first_state = {}
         self.beginning_states_count = 0
-        self.number_of_transitions = 0
 
     def create_atl_model(self):
         if self.no_end_cards == 1:
@@ -109,7 +108,6 @@ class BridgeModel:
                     new_state_number = self.add_state(new_state)
 
                     self.model.add_transition(current_state_number, new_state_number, action)
-                    self.number_of_transitions += 1
             elif state['clock'] == 4:
                 winner = self.get_winner(state['beginning'], state['board'])
 
@@ -128,7 +126,7 @@ class BridgeModel:
                 new_state_number = self.add_state(new_state)
 
                 self.model.add_transition(current_state_number, new_state_number, action)
-                self.number_of_transitions += 1
+
             else:
                 color = state['board'][state['beginning']] % 10
                 have_color = False
@@ -151,7 +149,7 @@ class BridgeModel:
                     new_state_number = self.add_state(new_state)
 
                     self.model.add_transition(current_state_number, new_state_number, action)
-                    self.number_of_transitions += 1
+
     def add_state(self, state):
         new_state_number = self.get_state_number(state)
         epistemic_state = self.get_epistemic_state(state)
@@ -187,15 +185,33 @@ class BridgeModel:
         return epistemic_state
 
     def prepare_epistemic_relation(self):
-        counter = 0
         for state, epistemic_class in self.epistemic_states_dictionary.items():
             self.model.add_epistemic_class(0, epistemic_class)
-            counter += 1
-
-        print("Number of epistemic classes:", counter)
 
     def get_model(self):
         return self.model
+
+    def print_model_size(self):
+        print("Number of agents:", self.model.number_of_agents)
+        print("Number of defined states:", self.model.number_of_states)
+        print("Number of transitions", len(self.model.transitions))
+        print("Number of reverse transitions", len(self.model.reverse_transitions))
+        print("Number of pre states", len(self.model.pre_states))
+        print("Number of imperfect information classes", len(self.model.imperfect_information))
+        print("Number of agent actions", len(self.model.agents_actions))
+        print("Number of states", len(self.model.states))
+        print("Number of epistemic class membership", len(self.model.epistemic_class_membership))
+        print("Number of can go there", len(self.model.can_go_there))
+
+        print("Size of transitions:", getsizeof(self.model.transitions)/(1024**2), "MB")
+        print("Size of reverse transitions:", getsizeof(self.model.reverse_transitions)/(1024**2), "MB")
+        print("Size of pre states:", getsizeof(self.model.pre_states)/(1024**2), "MB")
+        print("Size of imperfect information:", getsizeof(self.model.imperfect_information)/(1024**2), "MB")
+        print("Size of agent actions:", getsizeof(self.model.agents_actions)/(1024**2), "MB")
+        print("Size of states:", getsizeof(self.model.states)/(1024**2), "MB")
+        print("Size of epistemic class membership:", getsizeof(self.model.epistemic_class_membership)/(1024**2), "MB")
+        print("Size of can go there:", getsizeof(self.model.can_go_there)/(1024**2), "MB")
+        print("Size of epistemic disjoint:", getsizeof(self.model.epistemic_class_disjoint)/(1024**2), "MB")
 
     @staticmethod
     def new_state_after_play(state, card_index):
@@ -3460,6 +3476,7 @@ def test_bridge_model(n, m, b):
     # hands = [[134, 141, 142, 143, 144], [123, 124, 131, 132, 133], [112, 113, 114, 121, 122], [101, 102, 103, 104, 111]] # classic (5,5)
     # hands = [[133, 134, 141, 142, 143, 144], [121, 122, 123, 124, 131, 132], [103, 104, 111, 112, 113, 114], [91, 92, 93, 94, 101, 102]]
     # hands = [[111, 112, 121, 123], [113, 114, 122, 131], [124, 142, 143, 144], [132, 133, 134, 141]]
+    # hands = [[134, 141, 142, 143, 144], [123, 124, 131, 132, 133], [112, 113, 114, 121, 122], [101, 102, 103, 104, 111]]
     print('Hands:', hands)
     print('Readable hands:', BridgeModel.hands_to_readable_hands(hands))
 
@@ -3491,9 +3508,8 @@ def test_bridge_model(n, m, b):
 
     print("Number of states:", len(bridge_model.get_model().states))
     print("Number of beginning states:", bridge_model.beginning_states_count)
-    print("Number of transitions:", bridge_model.number_of_transitions)
-
-    # print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024**2), "MB")
+    bridge_model.print_model_size()
     # bridge_model.get_model().walk(0)
     states_count += len(bridge_model.get_model().states)
     winning_states = []
