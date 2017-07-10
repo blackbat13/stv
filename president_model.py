@@ -11,9 +11,11 @@ class PresidentModel:
     states = []
     players_cards = {}
     deck = {"Two": 4, "As": 4,
-            "King": 4, "Queen":4, "Jack":4, "Ten":4, "Nine":4, "Eight": 4, "Seven":4, "Six":4, "Five":4, "Four":4, "Three":4}
+            "King": 4, "Queen": 4, "Jack": 4, "Ten": 4, "Nine": 4, "Eight": 4, "Seven": 4, "Six": 4, "Five": 4,
+            "Four": 4, "Three": 4}
     empty_deck = {"Two": 0, "As": 0,
-                  "King": 0, "Queen":0, "Jack":0, "Ten":0, "Nine":0, "Eight": 0, "Seven":0, "Six":0, "Five":0, "Four":0, "Three":0}
+                  "King": 0, "Queen": 0, "Jack": 0, "Ten": 0, "Nine": 0, "Eight": 0, "Seven": 0, "Six": 0, "Five": 0,
+                  "Four": 0, "Three": 0}
 
     def __init__(self, number_of_players, number_of_decks, number_of_cards=0):
         self.number_of_decks = number_of_decks
@@ -138,85 +140,99 @@ class PresidentModel:
         return False
 
     def generate_children(self, state, state_number):
-        if len(self.get_last_players(state['Cards'])) == 1:
-            return
-
-        next_hier = self.get_next_hierarchy(state['Cards'])
-        if next_hier == '-1':
-            print("Game end")
-            return
-
         actions = []
-        for n in range(0, self.number_of_players):
-            actions.insert(n, 'Wait')
+        for _ in range(0, self.number_of_players):
+            actions.append('Wait')
 
-        next_turn = self.get_next_turn(state['Turn'], self.get_last_players(state['Cards']))
-        children = 0
-        # I do not have the hand so I need to follow
-        if len(state['Table']) > 0:
-            count_pass = 0
-            for p in state['Table']:
-                if p == ['Pass']:
-                    count_pass += 1
-                else:
-                    break
+        states_to_process = [(state, state_number)]
+        while len(states_to_process) > 0:
+            state = states_to_process[0][0]
+            state_number = states_to_process[0][1]
+            states_to_process.pop(0)
 
-            # I take the hand and clear the board
-            if count_pass == len(self.get_last_players(state['Cards'])) - 1:
-                child = copy.deepcopy(state)
-                child['Table'] = []
-                new_actions = copy.deepcopy(actions)
-                new_actions[state['Turn']] = 'Clear'
-                self.model.add_transition(state_number, len(self.states), new_actions)
-                print_create_for_state(len(self.states), child)
-                self.states.append(child)
-                self.generate_children(child, len(self.states) - 1)
-                return
+            if len(self.get_last_players(state['Cards'])) == 1:
+                continue
 
-            nb_cards = len(state['Table'][count_pass])
-            for card in state['Cards'][state['Turn']]:
-                if state['Cards'][state['Turn']][card] >= nb_cards:
-                    if self.can_play(card, state['Table'][count_pass][0]):
-                        child = copy.deepcopy(state)
-                        child['Cards'][child['Turn']][card] -= nb_cards
-                        if self.get_nb_cards(child['Cards'][child['Turn']]) == 0:
-                            child['Hierarchy'][child['Turn']] = next_hier
-                        child['Table'].insert(0, [card] * nb_cards)
-                        child['Turn'] = next_turn
-                        self.states.append(child)
-                        children += 1
-                        new_actions = copy.deepcopy(actions)
-                        new_actions[state['Turn']] = card
-                        self.model.add_transition(state_number, len(self.states) - 1, new_actions)
-                        print_create_for_state(len(self.states) - 1, child)
-                        self.generate_children(child, len(self.states) - 1)
+            next_hier = self.get_next_hierarchy(state['Cards'])
+            if next_hier == '-1':
+                print("Game end")
+                continue
 
-            if children == 0:  # Cannot play so I pass
-                child = copy.deepcopy(state)
-                child['Turn'] = next_turn
-                child['Table'].insert(0, ['Pass'])
-                self.states.append(child)
-                new_actions = copy.deepcopy(actions)
-                new_actions[state['Turn']] = 'Pass'
-                self.model.add_transition(state_number, len(self.states) - 1, new_actions)
-                print_create_for_state(len(self.states) - 1, child)
-                self.generate_children(child, len(self.states) - 1)
-        else:
-            for nb_cards in range(1, 4 * self.number_of_decks):
+            next_turn = self.get_next_turn(state['Turn'], self.get_last_players(state['Cards']))
+            children = 0
+
+            # I do not have the hand so I need to follow
+            if len(state['Table']) > 0:
+                count_pass = 0
+                for p in state['Table']:
+                    if p == ['Pass']:
+                        count_pass += 1
+                    else:
+                        break
+
+                # I take the hand and clear the board
+                if count_pass == len(self.get_last_players(state['Cards'])) - 1:
+                    child = {'Cards': copy.deepcopy(state['Cards']), 'Hierarchy': state['Hierarchy'][:],
+                             'Turn': state['Turn'],
+                             'Table': []}
+
+                    new_actions = actions[:]
+                    new_actions[state['Turn']] = 'Clear'
+                    self.model.add_transition(state_number, len(self.states), new_actions)
+                    # print_create_for_state(len(self.states), child)
+                    self.states.append(child)
+                    states_to_process.append((child, len(self.states) - 1))
+                    continue
+
+                nb_cards = len(state['Table'][count_pass])
                 for card in state['Cards'][state['Turn']]:
                     if state['Cards'][state['Turn']][card] >= nb_cards:
-                        child = copy.deepcopy(state)
-                        child['Cards'][child['Turn']][card] -= nb_cards
-                        if self.get_nb_cards(child['Cards'][child['Turn']]) == 0:
-                            child['Hierarchy'][child['Turn']] = next_hier
-                        child['Table'].insert(0, [card] * nb_cards)
-                        child['Turn'] = next_turn
-                        self.states.append(child)
-                        new_actions = copy.deepcopy(actions)
-                        new_actions[state['Turn']] = card
-                        self.model.add_transition(state_number, len(self.states) - 1, new_actions)
-                        print_create_for_state(len(self.states) - 1, child)
-                        self.generate_children(child, len(self.states) - 1)
+                        if self.can_play(card, state['Table'][count_pass][0]):
+                            child = {'Cards': copy.deepcopy(state['Cards']), 'Hierarchy': state['Hierarchy'][:],
+                                     'Turn': state['Turn'],
+                                     'Table': state['Table'][:]}
+                            child['Cards'][child['Turn']][card] -= nb_cards
+                            if self.get_nb_cards(child['Cards'][child['Turn']]) == 0:
+                                child['Hierarchy'][child['Turn']] = next_hier
+                            child['Table'].insert(0, [card] * nb_cards)
+                            child['Turn'] = next_turn
+                            self.states.append(child)
+                            children += 1
+                            new_actions = actions[:]
+                            new_actions[state['Turn']] = card
+                            self.model.add_transition(state_number, len(self.states) - 1, new_actions)
+                            # print_create_for_state(len(self.states) - 1, child)
+                            states_to_process.append((child, len(self.states) - 1))
+
+                if children == 0:  # Cannot play so I pass
+                    child = {'Cards': copy.deepcopy(state['Cards']), 'Hierarchy': state['Hierarchy'][:],
+                             'Turn': next_turn,
+                             'Table': state['Table'][:]}
+                    child['Table'].insert(0, ['Pass'])
+                    self.states.append(child)
+                    new_actions = actions[:]
+                    new_actions[state['Turn']] = 'Pass'
+                    self.model.add_transition(state_number, len(self.states) - 1, new_actions)
+                    # print_create_for_state(len(self.states) - 1, child)
+                    states_to_process.append((child, len(self.states) - 1))
+            else:
+                for nb_cards in range(1, 4 * self.number_of_decks):
+                    for card in state['Cards'][state['Turn']]:
+                        if state['Cards'][state['Turn']][card] >= nb_cards:
+                            child = {'Cards': copy.deepcopy(state['Cards']), 'Hierarchy': state['Hierarchy'][:],
+                                     'Turn': state['Turn'],
+                                     'Table': state['Table'][:]}
+                            child['Cards'][child['Turn']][card] -= nb_cards
+                            if self.get_nb_cards(child['Cards'][child['Turn']]) == 0:
+                                child['Hierarchy'][child['Turn']] = next_hier
+                            child['Table'].insert(0, [card] * nb_cards)
+                            child['Turn'] = next_turn
+                            self.states.append(child)
+                            new_actions = actions[:]
+                            new_actions[state['Turn']] = card
+                            self.model.add_transition(state_number, len(self.states) - 1, new_actions)
+                            # print_create_for_state(len(self.states) - 1, child)
+                            states_to_process.append((child, len(self.states) - 1))
 
 
 def print_create_for_state(state_number, state):
@@ -239,7 +255,8 @@ def print_create_for_state(state_number, state):
     # msg += "]}"
     # print(msg)
 
-test = PresidentModel(3, 1, 4)
+
+test = PresidentModel(3, 1, 5)
 test.create_mvatl_model()
 test.generate_model()
 print(f'Number of states: {len(test.states)}')
