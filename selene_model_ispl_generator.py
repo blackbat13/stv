@@ -12,7 +12,7 @@ class SeleneModelIsplGenerator:
     def create_ispl_model(self):
         self.ispl_model += "Semantics = SA;\n"
         self.ispl_model += self.__create_environment()
-        # self.ispl_model += self.__create_coercer()
+        self.ispl_model += self.__create_coercer()
         for voter_number in range(1, self.number_of_voters + 1):
             self.ispl_model += self.__create_voter(voter_number)
         self.ispl_model += self.__create_evaluation()
@@ -133,6 +133,15 @@ class SeleneModelIsplGenerator:
                 evolution += "\t\t\tVoter" + str(i) + ".Action=FetchGoodTracker and "
                 evolution += "tracker" + str(j) + "=" + str(i) + ";\n"
 
+        for i in range(1, self.number_of_voters + 1):
+            for j in range(1, self.number_of_voters + 1):
+                for l in range(1, self.number_of_voters + 1):
+                    for k in range(1, self.number_of_candidates + 1):
+                        evolution += "\t\tvoter" + str(i) + "OwnedTracker=" + str(j) + " if\n"
+                        evolution += "\t\t\tVoter" + str(i) + ".Action=FetchTrackerForVote" + str(k) + " and "
+                        evolution += "voter" + str(l) + "Vote=" + str(k) + " and "
+                        evolution += "tracker" + str(j) + "=" + str(l) + ";\n"
+
         evolution += "\t\tvotesPublished=true if Action=PublishVotes;\n"
         evolution += "\t\tvotingStarted=true if Action=StartVoting;\n"
 
@@ -158,7 +167,8 @@ class SeleneModelIsplGenerator:
 
     def __create_coercer_vars(self):
         vars = "\tVars:\n"
-
+        for i in range(1, self.number_of_voters + 1):
+            vars += '\t\ttracker' + str(i) + ": 0.." + str(self.number_of_voters) + ";\n"
         vars += "\tend Vars\n"
         return vars
 
@@ -170,7 +180,7 @@ class SeleneModelIsplGenerator:
 
     def __create_coercer_protocol(self):
         protocol = "\tProtocol:\n"
-
+        protocol += "\t\tEnvironment.votesPublished=false: {Wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
 
@@ -211,6 +221,9 @@ class SeleneModelIsplGenerator:
         for i in range(1, self.number_of_candidates + 1):
             actions += "Vote" + str(i) + ", "
 
+        for i in range(1, self.number_of_candidates + 1):
+            actions += "FetchTrackerForVote" + str(i) + ", "
+
         actions += "FetchGoodTracker, "
         actions += "Wait};\n"
         return actions
@@ -224,7 +237,10 @@ class SeleneModelIsplGenerator:
 
         protocol += "Wait};\n"
 
-        protocol += "\t\tvote>0 and Environment.voter" + str(voter_number) + "OwnedTracker=0 and Environment.votesPublished=true: {FetchGoodTracker, Wait};\n"
+        protocol += "\t\tvote>0 and Environment.voter" + str(voter_number) + "OwnedTracker=0 and Environment.votesPublished=true: {"
+        for i in range(1, self.number_of_candidates + 1):
+            protocol += "FetchTrackerForVote" + str(i) + ", "
+        protocol += "FetchGoodTracker, Wait};\n"
         protocol += "\t\tOther: {Wait};\n"
 
         protocol += "\tend Protocol\n"
@@ -258,6 +274,7 @@ class SeleneModelIsplGenerator:
             init_states += "Environment.voter" + str(i) + "Vote=0 and "
             init_states += "Environment.voter" + str(i) + "TrackerSet=false and "
             init_states += "Environment.voter" + str(i) + "OwnedTracker=0 and "
+            init_states += "Coercer.tracker" + str(i) + "=0 and"
 
         init_states += "Environment.votesPublished=false and "
         init_states += "Environment.votingStarted=false"
@@ -279,9 +296,12 @@ class SeleneModelIsplGenerator:
         return formulae
 
 
-n = 4
-k = 2
+n = int(input("Number of candidates ="))
+k = int(input("Number of voters ="))
+
 selene_model_ispl_generator = SeleneModelIsplGenerator(n, k)
 f = open("selene_" + str(n) + "_" + str(k) + ".ispl", "w")
 f.write(selene_model_ispl_generator.create_ispl_model())
 f.close()
+
+print("Generated model saved in file selene_" + str(n) + "_" + str(k) + ".ispl")

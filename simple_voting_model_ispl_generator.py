@@ -216,8 +216,9 @@ class SimpleVotingModelIsplGenerator:
         return formulae
 
 
-n = 2
-k = 3
+n = int(input("Number of candidates = "))
+k = int(input("Number of voters = "))
+
 simple_voting_model_ispl_generator = SimpleVotingModelIsplGenerator(n, k)
 f = open("simple_voting_" + str(n) + "_" + str(k) + ".ispl", "w")
 f.write(simple_voting_model_ispl_generator.create_ispl_model())
