@@ -3515,6 +3515,7 @@ def test_bridge_model(n, m, b):
     winning_states = []
     i = -1
     for state in bridge_model.get_model().states:
+        print(state)
         i += 1
         if state['lefts'][0] >= m / 2 and state['lefts'][0] + state['lefts'][1] == m:
             winning_states.append(i)
@@ -3609,6 +3610,8 @@ def remove_values_from_list(the_list, val):
 def keep_values_in_list(the_list, val):
     return [value for value in the_list if value == val]
 
+number = 0
+print(getsizeof(number))
 
 b = int(input("Choose bridge model (1 - standard, 2 - abstract):"))
 n = int(input("Number of figures in game ="))

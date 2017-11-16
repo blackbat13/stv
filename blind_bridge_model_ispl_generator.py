@@ -610,8 +610,8 @@ def generate_random_array(length):
     return array
 
 
-n = 1
-k = 1
+n = 2
+k = 2
 bridge_model_ispl_generator = BridgeModelIsplGenerator(n, n, generate_random_array(4 * n))
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 7, 1, 2, 3, 4, 5, 6])
 # bridge_model_ispl_generator = BridgeModelIsplGenerator(2, 2, [0, 1, 2, 3, 4, 5, 6, 7])
