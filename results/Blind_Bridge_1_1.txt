@@ -1,0 +1,538 @@
+/usr/bin/python3.5 /home/blackbat/PycharmProjects/ATLFormulaChecker/bridge_model.py
+Choose bridge model (1 - standard, 2 - abstract):3
+Number of figures in game =1
+Number of cards in hand =1
+Number of tests=20
+Hands: [[141], [143], [144], [142]]
+Readable hands: [['AceClub'], ['AceHeart'], ['AceSpade'], ['AceDiamond']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 0.00013800000000000617 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0028890000000000027 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 0.00033700000000000396 s
+Created whole model in 0.003364000000000013 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00020399999999999585 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00012100000000000305 s
+Number of good states  19
+Formula result: True
+
+Hands: [[141], [143], [142], [144]]
+Readable hands: [['AceClub'], ['AceHeart'], ['AceDiamond'], ['AceSpade']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 4.600000000000437e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0008920000000000039 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 0.00010999999999999899 s
+Created whole model in 0.0010480000000000073 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00026500000000000135 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00011299999999999505 s
+Number of good states  19
+Formula result: True
+
+Hands: [[144], [143], [141], [142]]
+Readable hands: [['AceSpade'], ['AceHeart'], ['AceClub'], ['AceDiamond']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 4.000000000000531e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0008060000000000012 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.599999999999886e-05 s
+Created whole model in 0.0009420000000000053 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.0002489999999999992 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00011300000000000199 s
+Number of good states  19
+Formula result: True
+
+Hands: [[144], [142], [143], [141]]
+Readable hands: [['AceSpade'], ['AceDiamond'], ['AceHeart'], ['AceClub']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.699999999999537e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0008059999999999942 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.499999999999786e-05 s
+Created whole model in 0.0009379999999999875 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00017700000000000354 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010999999999999899 s
+Number of good states  19
+Formula result: True
+
+Hands: [[143], [141], [144], [142]]
+Readable hands: [['AceHeart'], ['AceClub'], ['AceSpade'], ['AceDiamond']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.700000000000231e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0012519999999999962 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.800000000000086e-05 s
+Created whole model in 0.0013869999999999993 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.0001500000000000043 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00011199999999999405 s
+Number of good states  19
+Formula result: True
+
+Hands: [[143], [141], [144], [142]]
+Readable hands: [['AceHeart'], ['AceClub'], ['AceSpade'], ['AceDiamond']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.800000000000331e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007969999999999991 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 0.00010099999999999693 s
+Created whole model in 0.0009359999999999993 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.0001470000000000013 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00011099999999999999 s
+Number of good states  19
+Formula result: True
+
+Hands: [[143], [142], [144], [141]]
+Readable hands: [['AceHeart'], ['AceDiamond'], ['AceSpade'], ['AceClub']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.700000000000231e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.000794000000000003 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.099999999999386e-05 s
+Created whole model in 0.0009219999999999992 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00014100000000000223 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010499999999999399 s
+Number of good states  19
+Formula result: True
+
+Hands: [[142], [143], [141], [144]]
+Readable hands: [['AceDiamond'], ['AceHeart'], ['AceClub'], ['AceSpade']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.600000000000825e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007689999999999919 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.100000000000774e-05 s
+Created whole model in 0.0008960000000000079 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00025599999999999234 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010599999999999499 s
+Number of good states  19
+Formula result: True
+
+Hands: [[142], [143], [144], [141]]
+Readable hands: [['AceDiamond'], ['AceHeart'], ['AceSpade'], ['AceClub']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.599999999999437e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007730000000000098 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.100000000000774e-05 s
+Created whole model in 0.0009000000000000119 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00014599999999999336 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010599999999999499 s
+Number of good states  19
+Formula result: True
+
+Hands: [[142], [144], [141], [143]]
+Readable hands: [['AceDiamond'], ['AceSpade'], ['AceClub'], ['AceHeart']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.600000000000825e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007699999999999929 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.000000000000674e-05 s
+Created whole model in 0.0008960000000000079 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00025399999999999034 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010599999999999499 s
+Number of good states  19
+Formula result: True
+
+Hands: [[144], [143], [142], [141]]
+Readable hands: [['AceSpade'], ['AceHeart'], ['AceDiamond'], ['AceClub']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 4.899999999999349e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007700000000000068 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.200000000000874e-05 s
+Created whole model in 0.000911000000000009 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00021200000000000385 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010699999999999599 s
+Number of good states  19
+Formula result: True
+
+Hands: [[144], [141], [143], [142]]
+Readable hands: [['AceSpade'], ['AceClub'], ['AceHeart'], ['AceDiamond']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.599999999999437e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007690000000000058 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.099999999999386e-05 s
+Created whole model in 0.000895999999999994 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00016900000000000248 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010599999999999499 s
+Number of good states  19
+Formula result: True
+
+Hands: [[141], [144], [143], [142]]
+Readable hands: [['AceClub'], ['AceSpade'], ['AceHeart'], ['AceDiamond']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.599999999999437e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007640000000000008 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.100000000000774e-05 s
+Created whole model in 0.0008910000000000029 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00018899999999999473 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010599999999999499 s
+Number of good states  19
+Formula result: True
+
+Hands: [[142], [141], [143], [144]]
+Readable hands: [['AceDiamond'], ['AceClub'], ['AceHeart'], ['AceSpade']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.599999999999437e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007690000000000058 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 8.999999999999286e-05 s
+Created whole model in 0.000894999999999993 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00018599999999999173 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010499999999999399 s
+Number of good states  19
+Formula result: True
+
+Hands: [[142], [141], [143], [144]]
+Readable hands: [['AceDiamond'], ['AceClub'], ['AceHeart'], ['AceSpade']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.600000000000825e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007670000000000038 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.099999999999386e-05 s
+Created whole model in 0.0008940000000000059 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.0001860000000000056 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010600000000000886 s
+Number of good states  19
+Formula result: True
+
+Hands: [[141], [142], [143], [144]]
+Readable hands: [['AceClub'], ['AceDiamond'], ['AceHeart'], ['AceSpade']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.599999999999437e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007710000000000078 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.099999999999386e-05 s
+Created whole model in 0.000897999999999996 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.0001900000000000096 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010600000000000886 s
+Number of good states  19
+Formula result: True
+
+Hands: [[141], [143], [142], [144]]
+Readable hands: [['AceClub'], ['AceHeart'], ['AceDiamond'], ['AceSpade']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.700000000000925e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007650000000000018 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 9.099999999999386e-05 s
+Created whole model in 0.0008930000000000049 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00022800000000000598 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010699999999999599 s
+Number of good states  19
+Formula result: True
+
+Hands: [[141], [143], [144], [142]]
+Readable hands: [['AceClub'], ['AceHeart'], ['AceSpade'], ['AceDiamond']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.500000000000725e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007619999999999988 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 8.700000000000374e-05 s
+Created whole model in 0.0008840000000000098 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00014499999999999236 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010200000000000486 s
+Number of good states  19
+Formula result: True
+
+Hands: [[142], [143], [144], [141]]
+Readable hands: [['AceDiamond'], ['AceHeart'], ['AceSpade'], ['AceClub']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.500000000000725e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007410000000000055 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 8.599999999998886e-05 s
+Created whole model in 0.0008620000000000017 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00014099999999998836 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 0.00010200000000000486 s
+Number of good states  19
+Formula result: True
+
+Hands: [[141], [143], [142], [144]]
+Readable hands: [['AceClub'], ['AceHeart'], ['AceDiamond'], ['AceSpade']]
+Blind bridge model
+Start creating beginning epistemic class states of model
+Created beginning states of model in 3.500000000000725e-05 s
+Number of beginning states of model: 2
+Start creating rest of model
+Created rest of model in 0.0007380000000000025 s
+Created model have 19 states
+Begin defining indistuiginshable relation
+Created indistuiginshable relation in 8.400000000000074e-05 s
+Created whole model in 0.0008570000000000105 s
+Number of states: 19
+Number of beginning states: 2
+Maximal memory usage  1.0669517517089844 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 2
+Time: 0.00021300000000000485 s
+Number of good states  19
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 4
+Time: 9.900000000000186e-05 s
+Number of good states  19
+Formula result: True
+
+
+STATISTICS
+#states 19.0
+tgen 0.0012711499999999993
+low tverif 0.00019239999999999917
+low mcmas tverif 0.0
+low true 100.0 %
+up tverif 0.0
+mcmas tverif 0.00010744999999999887
+up true 100.0 %
+match 100.0 %
+
+Process finished with exit code 0
