@@ -708,3 +708,73 @@ match 100.0 %
 
 Process finished with exit code 0
 
+/usr/bin/python3.5 /home/blackbat/PycharmProjects/ATLFormulaChecker/bridge_model.py
+Choose bridge model (1 - standard, 2 - abstract):1
+Number of figures in game =5
+Number of cards in hand =5
+Number of tests=1
+Hands: [[134, 141, 142, 143, 144], [123, 124, 131, 132, 133], [112, 113, 114, 121, 122], [101, 102, 103, 104, 111]]
+Readable hands: [['KingSpade', 'AceClub', 'AceDiamond', 'AceHeart', 'AceSpade'], ['QueenHeart', 'QueenSpade', 'KingClub', 'KingDiamond', 'KingHeart'], ['JackDiamond', 'JackHeart', 'JackSpade', 'QueenClub', 'QueenDiamond'], ['tenClub', 'tenDiamond', 'tenHeart', 'tenSpade', 'JackClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 252 beginning states
+Starting generating rest of model
+Generated model with 2443467 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 2443467
+Number of beginning states: 252
+Maximal memory usage  24.027950286865234 MB
+Number of agents: 3
+Number of defined states: 10000000
+Number of transitions 2443467
+Number of reverse transitions 2443467
+Number of pre states 2443467
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 2443467
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 18.917808532714844 MB
+Size of reverse transitions: 18.917808532714844 MB
+Size of pre states: 18.917808532714844 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 18.917808532714844 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 25
+Time: 44.095076000000006 s
+Number of good states  2443467
+Formula result: True
+Start formula verification under imperfect information - mcmas approach
+Minimum formula iterations: 25
+Time: 48.152739999999994 s
+Number of good states  2443467
+Formula result: True
+Start formula verification under perfect information
+Minimum formula iterations: 25
+Time: 16.11886599999997 s
+Number of good states  2443467
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 25
+Time: 4.419331 s
+Number of good states  2443467
+Formula result: True
+
+
+STATISTICS
+#states 2443467.0
+tgen 154.59696499999998
+low tverif 44.095076000000006
+low mcmas tverif 48.152739999999994
+low true 100.0 %
+up tverif 16.11886599999997
+mcmas tverif 4.419331
+up true 100.0 %
+match 100.0 %
+
+Process finished with exit code 0

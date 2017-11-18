@@ -46,7 +46,7 @@ class SimpleVotingModel:
         first_state = {'voted': beginning_array_minus_one[:], 'voters_action': beginning_array[:], 'coercer_actions': beginning_array[:], 'finish': beginning_array_minus_one[:]}
         state_number = 0
 
-        self.print_create_for_state(0, first_state)
+        # self.print_create_for_state(0, first_state)
 
         self.states.append(first_state)
         state_string = ' '.join(str(first_state[e]) for e in first_state)
@@ -104,11 +104,11 @@ class SimpleVotingModel:
                     new_state_number = state_number
                     self.states.append(new_state)
                     state_number += 1
-                    self.print_create_for_state(new_state_number, new_state)
+                    # self.print_create_for_state(new_state_number, new_state)
                 else:
                     new_state_number = self.states_dictionary[new_state_str]
 
-                self.print_create_transition(current_state_number, new_state_number, action)
+                # self.print_create_transition(current_state_number, new_state_number, action)
                 self.model.add_transition(current_state_number, new_state_number, action)
 
             self.add_epistemic_state(state, current_state_number)

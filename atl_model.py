@@ -67,10 +67,10 @@ class ATLModel:
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
         self.number_of_states = number_of_states
-        # self.transitions = [[] for _ in itertools.repeat(None, number_of_states)]
-        # self.reverse_transitions = [[] for _ in itertools.repeat(None, number_of_states)]
+        self.transitions = [[] for _ in itertools.repeat(None, number_of_states)]
+        self.reverse_transitions = [[] for _ in itertools.repeat(None, number_of_states)]
         self.imperfect_information = create_array_of_size(number_of_agents, [])
-        # self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
+        self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
         self.agents_actions = [[] for _ in itertools.repeat(None, number_of_agents)]
         self.epistemic_class_membership = create_array_of_size(number_of_agents, [])
         self.epistemic_class_disjoint = [DisjointSet(number_of_states) for _ in

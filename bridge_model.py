@@ -89,6 +89,8 @@ class BridgeModel:
         current_state_number = -1
         for state in self.model.states:
             current_state_number += 1
+            if current_state_number % 100000 == 0:
+                print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (1024 ** 2), "GB")
             if state['next'] == state['beginning'] and state['clock'] == 0:
                 if self.count_remaining_cards(state) == 0:
                     break
@@ -3436,6 +3438,17 @@ def write_bridge_model(a, b):
         pickle.dump(bridge_model, output, pickle.HIGHEST_PROTOCOL)
     print("Number of states", len(bridge_model.states))
 
+class Placeholder:
+    model = None
+    beginning_states_count = 0
+
+    def __init__(self, bridge_model):
+        self.model = bridge_model
+        self.beginning_states_count = number_of_beginning_states
+
+    def get_model(self):
+        return self.model
+
 tgen = 0
 low_tverif = 0
 up_tverif = 0
@@ -3496,6 +3509,12 @@ def test_bridge_model(n, m, b):
                                            [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42,
                                             43, 44, 51, 52, 53, 54, 61, 62, 63, 64, 71, 72, 73, 74,
                                             81, 82, 83, 84, 91, 92, 93, 94])
+    elif b == 3:
+        print("Blind bridge model")
+        bridge_model = Placeholder(generate_blind_bridge_model_for_epistemic(n,m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                                                  'hands': hands, 'next': 0, 'history': [],
+                                                  'beginning': 0, 'clock': 0, 'suit': -1}))
+
     else:
         print("Standard bridge model")
         bridge_model = BridgeModel(n, m, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
@@ -3508,8 +3527,8 @@ def test_bridge_model(n, m, b):
 
     print("Number of states:", len(bridge_model.get_model().states))
     print("Number of beginning states:", bridge_model.beginning_states_count)
-    print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024**2), "MB")
-    bridge_model.print_model_size()
+    print("Maximal memory usage ", resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024**2), "GB")
+    # bridge_model.print_model_size()
     # bridge_model.get_model().walk(0)
     states_count += len(bridge_model.get_model().states)
     winning_states = []
@@ -3521,8 +3540,8 @@ def test_bridge_model(n, m, b):
 
     print("Start formula verification under imperfect information")
     start = time.clock()
-    # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states(0, winning_states)
-    result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_disjoint(0, winning_states)
+    result = bridge_model.get_model().minimum_formula_one_agent_multiple_states(0, winning_states)
+    # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_disjoint(0, winning_states)
     end = time.clock()
     low_tverif += (end - start)
     print("Time:", end - start, "s")
@@ -3540,45 +3559,45 @@ def test_bridge_model(n, m, b):
         low_true += 1
         imperfect = True
 
-    print("Start formula verification under imperfect information - mcmas approach")
-    start = time.clock()
-    # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states(0, winning_states)
-    result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_disjoint_mcmas_approach(0, winning_states)
-    end = time.clock()
-    low_mcmas_tverif += (end - start)
-    print("Time:", end - start, "s")
-    print("Number of good states ", len(result))
-    number_of_correct_beginning_states = 0
-    for state_nr in result:
-        if len(bridge_model.get_model().states[state_nr]['history']) == 0 and bridge_model.get_model().states[state_nr][
-            'board'] == [-1, -1, -1,
-                         -1]:
-            number_of_correct_beginning_states += 1
+    # print("Start formula verification under imperfect information - mcmas approach")
+    # start = time.clock()
+    # # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states(0, winning_states)
+    # # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_disjoint_mcmas_approach(0, winning_states)
+    # end = time.clock()
+    # low_mcmas_tverif += (end - start)
+    # print("Time:", end - start, "s")
+    # print("Number of good states ", len(result))
+    # number_of_correct_beginning_states = 0
+    # for state_nr in result:
+    #     if len(bridge_model.get_model().states[state_nr]['history']) == 0 and bridge_model.get_model().states[state_nr][
+    #         'board'] == [-1, -1, -1,
+    #                      -1]:
+    #         number_of_correct_beginning_states += 1
+    #
+    # print("Formula result:", bridge_model.beginning_states_count == number_of_correct_beginning_states)
+    #
+    # assert((bridge_model.beginning_states_count == number_of_correct_beginning_states) == imperfect)
 
-    print("Formula result:", bridge_model.beginning_states_count == number_of_correct_beginning_states)
+    # print("Start formula verification under perfect information")
+    # start = time.clock()
+    # result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
+    # end = time.clock()
+    # up_tverif += (end - start)
+    # print("Time:", end - start, "s")
+    # print("Number of good states ", len(result))
+    # number_of_correct_beginning_states = 0
+    # for state_nr in result:
+    #     if len(bridge_model.get_model().states[state_nr]['history']) == 0 and bridge_model.get_model().states[state_nr][
+    #         'board'] == [-1, -1, -1,
+    #                      -1]:
+    #         number_of_correct_beginning_states += 1
+    #
+    # print("Formula result:", bridge_model.beginning_states_count == number_of_correct_beginning_states)
 
-    assert((bridge_model.beginning_states_count == number_of_correct_beginning_states) == imperfect)
-
-    print("Start formula verification under perfect information")
-    start = time.clock()
-    result = bridge_model.get_model().minimum_formula_one_agent_multiple_states_perfect_information(0, winning_states)
-    end = time.clock()
-    up_tverif += (end - start)
-    print("Time:", end - start, "s")
-    print("Number of good states ", len(result))
-    number_of_correct_beginning_states = 0
-    for state_nr in result:
-        if len(bridge_model.get_model().states[state_nr]['history']) == 0 and bridge_model.get_model().states[state_nr][
-            'board'] == [-1, -1, -1,
-                         -1]:
-            number_of_correct_beginning_states += 1
-
-    print("Formula result:", bridge_model.beginning_states_count == number_of_correct_beginning_states)
-
-    perfect = False
-    if bridge_model.beginning_states_count == number_of_correct_beginning_states:
-        up_true += 1
-        perfect = True
+    # perfect = False
+    # if bridge_model.beginning_states_count == number_of_correct_beginning_states:
+    #     up_true += 1
+    #     perfect = True
 
     print("Start formula verification under perfect information - mcmas approach")
     start = time.clock()
@@ -3596,7 +3615,12 @@ def test_bridge_model(n, m, b):
 
     print("Formula result:", bridge_model.beginning_states_count == number_of_correct_beginning_states)
 
-    assert ((bridge_model.beginning_states_count == number_of_correct_beginning_states) == perfect)
+    perfect = False
+    if bridge_model.beginning_states_count == number_of_correct_beginning_states:
+        up_true += 1
+        perfect = True
+
+    # assert ((bridge_model.beginning_states_count == number_of_correct_beginning_states) == perfect)
 
     if perfect == imperfect:
         match += 1
