@@ -104,9 +104,6 @@ class ATLModel:
             self.reverse_transitions[to_state].append({'nextState': from_state, 'actions': actions.copy()})
             self.pre_states[to_state].add(from_state)
 
-    def is_same_state(self, agent_number, state_a, state_b):
-        return state_b in self.imperfect_information[agent_number][state_a]
-
     def add_epistemic_class(self, agent_number, epistemic_class):
         self.imperfect_information[agent_number].append(set(epistemic_class))
         epistemic_class_number = len(self.imperfect_information[agent_number]) - 1
@@ -226,9 +223,7 @@ class ATLModel:
             else:
                 same_states = self.imperfect_information[agent][state_epistemic_class]
 
-            actions_count = 0
             for action in actions:
-                #actions_count+= 1
                 states_can_go = custom_can_go_there[state_epistemic_class][action]
 
                 if len(states_can_go) == 0:
@@ -248,7 +243,6 @@ class ATLModel:
                 custom_can_go_there[state_epistemic_class][action] = new_states_can_go
 
                 if is_ok:
-                    #print(actions_count)
                     result_states.extend(same_states)
                     winning_states_disjoint.union(first_winning, state)
                     first_winning = winning_states_disjoint.find(first_winning)
@@ -722,6 +716,31 @@ class ATLModel:
             combinations.append(t)
 
         return combinations
+
+    def walk_perfect_information(self, agent_number):
+        print("#####################################################")
+        print("Simulation")
+        current_state = 0
+        while True:
+            print()
+            print("Current state:", self.states[current_state])
+
+            if len(self.transitions[current_state]) == 0:
+                print("End")
+                return
+
+            print('Transitions:')
+            i = 0
+            for transition in self.transitions[current_state]:
+                print(str(i) + ":", transition)
+                i += 1
+
+            choice = int(input("Choose transition="))
+            if choice == -1:
+                print("End")
+                return
+
+            current_state = self.transitions[current_state][choice]['nextState']
 
     def walk(self, agent_number):
         print("#####################################################")
