@@ -1,0 +1,154 @@
+/usr/bin/python3.5 /home/blackbat/PycharmProjects/ATLFormulaChecker/simple_voting_model.py
+Started generating model
+Generated model in 159.163431 s
+{'actions': {0: 'wait', 1: 'give', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2401}
+{'actions': {0: 'np4', 1: 'give', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2404}
+{'actions': {0: 'pun4', 1: 'give', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2405}
+{'actions': {0: 'np5', 1: 'give', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2406}
+{'actions': {0: 'pun5', 1: 'give', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2407}
+{'actions': {0: 'wait', 1: 'give', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2851}
+{'actions': {0: 'np4', 1: 'give', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2854}
+{'actions': {0: 'pun4', 1: 'give', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2855}
+{'actions': {0: 'np5', 1: 'give', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2856}
+{'actions': {0: 'pun5', 1: 'give', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2857}
+{'actions': {0: 'wait', 1: 'give', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3301}
+{'actions': {0: 'np4', 1: 'give', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3302}
+{'actions': {0: 'pun4', 1: 'give', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3303}
+{'actions': {0: 'np5', 1: 'give', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3304}
+{'actions': {0: 'pun5', 1: 'give', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3305}
+{'actions': {0: 'wait', 1: 'give', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2408}
+{'actions': {0: 'np4', 1: 'give', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2411}
+{'actions': {0: 'pun4', 1: 'give', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2412}
+{'actions': {0: 'np5', 1: 'give', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2413}
+{'actions': {0: 'pun5', 1: 'give', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2414}
+{'actions': {0: 'wait', 1: 'give', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2858}
+{'actions': {0: 'np4', 1: 'give', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2861}
+{'actions': {0: 'pun4', 1: 'give', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2862}
+{'actions': {0: 'np5', 1: 'give', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2863}
+{'actions': {0: 'pun5', 1: 'give', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2864}
+{'actions': {0: 'wait', 1: 'give', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3306}
+{'actions': {0: 'np4', 1: 'give', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3307}
+{'actions': {0: 'pun4', 1: 'give', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3308}
+{'actions': {0: 'np5', 1: 'give', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3309}
+{'actions': {0: 'pun5', 1: 'give', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3310}
+{'actions': {0: 'wait', 1: 'give', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2415}
+{'actions': {0: 'np4', 1: 'give', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2418}
+{'actions': {0: 'pun4', 1: 'give', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2419}
+{'actions': {0: 'np5', 1: 'give', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2420}
+{'actions': {0: 'pun5', 1: 'give', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2421}
+{'actions': {0: 'wait', 1: 'give', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2865}
+{'actions': {0: 'np4', 1: 'give', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2868}
+{'actions': {0: 'pun4', 1: 'give', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2869}
+{'actions': {0: 'np5', 1: 'give', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2870}
+{'actions': {0: 'pun5', 1: 'give', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2871}
+{'actions': {0: 'wait', 1: 'give', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3311}
+{'actions': {0: 'np4', 1: 'give', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3312}
+{'actions': {0: 'pun4', 1: 'give', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3313}
+{'actions': {0: 'np5', 1: 'give', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3314}
+{'actions': {0: 'pun5', 1: 'give', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3315}
+{'actions': {0: 'wait', 1: 'ng', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2422}
+{'actions': {0: 'np4', 1: 'ng', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2425}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2426}
+{'actions': {0: 'np5', 1: 'ng', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2427}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2428}
+{'actions': {0: 'wait', 1: 'ng', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2872}
+{'actions': {0: 'np4', 1: 'ng', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2875}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2876}
+{'actions': {0: 'np5', 1: 'ng', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2877}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2878}
+{'actions': {0: 'wait', 1: 'ng', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3316}
+{'actions': {0: 'np4', 1: 'ng', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3317}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3318}
+{'actions': {0: 'np5', 1: 'ng', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3319}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3320}
+{'actions': {0: 'wait', 1: 'ng', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2429}
+{'actions': {0: 'np4', 1: 'ng', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2432}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2433}
+{'actions': {0: 'np5', 1: 'ng', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2434}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2435}
+{'actions': {0: 'wait', 1: 'ng', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2879}
+{'actions': {0: 'np4', 1: 'ng', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2882}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2883}
+{'actions': {0: 'np5', 1: 'ng', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2884}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2885}
+{'actions': {0: 'wait', 1: 'ng', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3321}
+{'actions': {0: 'np4', 1: 'ng', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3322}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3323}
+{'actions': {0: 'np5', 1: 'ng', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3324}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3325}
+{'actions': {0: 'wait', 1: 'ng', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2436}
+{'actions': {0: 'np4', 1: 'ng', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2439}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2440}
+{'actions': {0: 'np5', 1: 'ng', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2441}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2442}
+{'actions': {0: 'wait', 1: 'ng', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2886}
+{'actions': {0: 'np4', 1: 'ng', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2889}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2890}
+{'actions': {0: 'np5', 1: 'ng', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2891}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2892}
+{'actions': {0: 'wait', 1: 'ng', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3326}
+{'actions': {0: 'np4', 1: 'ng', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3327}
+{'actions': {0: 'pun4', 1: 'ng', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3328}
+{'actions': {0: 'np5', 1: 'ng', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3329}
+{'actions': {0: 'pun5', 1: 'ng', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3330}
+{'actions': {0: 'wait', 1: 'wait', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2443}
+{'actions': {0: 'np4', 1: 'wait', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2446}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2447}
+{'actions': {0: 'np5', 1: 'wait', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2448}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'give', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2449}
+{'actions': {0: 'wait', 1: 'wait', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2893}
+{'actions': {0: 'np4', 1: 'wait', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2896}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2897}
+{'actions': {0: 'np5', 1: 'wait', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2898}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'give', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2899}
+{'actions': {0: 'wait', 1: 'wait', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3331}
+{'actions': {0: 'np4', 1: 'wait', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3332}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3333}
+{'actions': {0: 'np5', 1: 'wait', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3334}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'give', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3335}
+{'actions': {0: 'wait', 1: 'wait', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2450}
+{'actions': {0: 'np4', 1: 'wait', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2453}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2454}
+{'actions': {0: 'np5', 1: 'wait', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2455}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'ng', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2456}
+{'actions': {0: 'wait', 1: 'wait', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2900}
+{'actions': {0: 'np4', 1: 'wait', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2903}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2904}
+{'actions': {0: 'np5', 1: 'wait', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2905}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'ng', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2906}
+{'actions': {0: 'wait', 1: 'wait', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3336}
+{'actions': {0: 'np4', 1: 'wait', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3337}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3338}
+{'actions': {0: 'np5', 1: 'wait', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3339}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'ng', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3340}
+{'actions': {0: 'wait', 1: 'wait', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 81}
+{'actions': {0: 'np4', 1: 'wait', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2459}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2460}
+{'actions': {0: 'np5', 1: 'wait', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2461}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'wait', 3: 'give', 4: 'wait', 5: 'wait'}, 'nextState': 2462}
+{'actions': {0: 'wait', 1: 'wait', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 90}
+{'actions': {0: 'np4', 1: 'wait', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2909}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2910}
+{'actions': {0: 'np5', 1: 'wait', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2911}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'wait', 3: 'ng', 4: 'wait', 5: 'wait'}, 'nextState': 2912}
+{'actions': {0: 'wait', 1: 'wait', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 99}
+{'actions': {0: 'np4', 1: 'wait', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3341}
+{'actions': {0: 'pun4', 1: 'wait', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3342}
+{'actions': {0: 'np5', 1: 'wait', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3343}
+{'actions': {0: 'pun5', 1: 'wait', 2: 'wait', 3: 'wait', 4: 'wait', 5: 'wait'}, 'nextState': 3344}
+Number of states: 662529
+Number of epistemic classes: 209736
+
+<<v_i>>F( finish_i & ~pun_i & ~vote_{i,1} )
+Minimum formula iterations: 0
+Time: 91.01323100000002 s
+Number of good states  94500
+Formula result: False
+
+Perfect <<v_i>>F( finish_i & ~pun_i & ~vote_{i,1} )
+Minimum formula iterations: 0
+Time: 1.4177389999999832 s
+Number of good states  94500
+Formula result: False
+
+Process finished with exit code 0
