@@ -1,15 +1,17 @@
 import sys
 import argparse
+import itertools
 
 
 class Model:
-    def __init__(self, votersNo, ballotsNo, maxCoerced, maxWaitingForVotes, maxWaitingForHelp):
+    def __init__(self, votersNo, ballotsNo, maxCoerced, maxWaitingForVotes, maxWaitingForHelp, coalitionSize):
 
         self.votersNo = votersNo
         self.ballotsNo = ballotsNo
         self.maxCoerced = maxCoerced
         self.voteWait = maxWaitingForVotes
         self.helpWait = maxWaitingForHelp
+        self.clSize = coalitionSize
 
         self.agentTxt = "-- ISPL model of SELENE protocol for {0} voters, {1} candidates, --\n".format(str(votersNo),
                                                                                                        str(ballotsNo))
@@ -113,25 +115,25 @@ class Model:
         txt += "\tvotesPublished = true if Action = PublishVotes;\n\n"
 
         txt += "\n".join([
-            "\tpublicVote{0} = {2} if Action = PublishVotes and voter{1}Vote = {2} and tracker{0} = {1};".format(
-                str(Ntrackr), str(Nvotr), str(Nballot)) \
-            for Ntrackr in range(1, self.votersNo + 1) \
-            for Nvotr in range(1, self.votersNo + 1)
-            for Nballot in range(1, self.ballotsNo + 1)])
+                             "\tpublicVote{0} = {2} if Action = PublishVotes and voter{1}Vote = {2} and tracker{0} = {1};".format(
+                                 str(Ntrackr), str(Nvotr), str(Nballot)) \
+                             for Ntrackr in range(1, self.votersNo + 1) \
+                             for Nvotr in range(1, self.votersNo + 1)
+                             for Nballot in range(1, self.ballotsNo + 1)])
 
         # Evolution: fetching correct trackers
         txt += "\n\n\t-- fetching correct trackers\n"
         txt += "\n".join([
-            "\tvoter{0}OwnedTracker = {1} if Voter{0}.Action = FetchGoodTracker and tracker{1} = {0};".format(
-                str(i), str(j)) \
-            for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
+                             "\tvoter{0}OwnedTracker = {1} if Voter{0}.Action = FetchGoodTracker and tracker{1} = {0};".format(
+                                 str(i), str(j)) \
+                             for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
 
         # Evolution: copying true trackers
         txt += "\n\n\t-- copying true trackers\n"
         txt += "\n".join([
-            "\tfalseOrCopiedTrackerForVoter{0} = {1} if Voter{0}.Action = CopyRealTracker and tracker{1} = {0};".format(
-                str(i), str(j)) \
-            for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
+                             "\tfalseOrCopiedTrackerForVoter{0} = {1} if Voter{0}.Action = CopyRealTracker and tracker{1} = {0};".format(
+                                 str(i), str(j)) \
+                             for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
 
         # Evolution: gathering help requests
         txt += "\n\n\t-- gathering help requests\n"
@@ -143,9 +145,9 @@ class Model:
         # Evolution: tracker forging, complementary to ElectionDefenseSystem actions
         txt += "\n\n\t-- falsifying trackers\n"
         txt += "\n".join([
-            "\tfalseOrCopiedTrackerForVoter{0} = {1} if ElectionDefenseSystem.Action = SetFalseTrackerForVoter{0}To{1} and !(Voter{0}.Action = CopyRealTracker);".format(
-                str(i), str(j)) \
-            for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
+                             "\tfalseOrCopiedTrackerForVoter{0} = {1} if ElectionDefenseSystem.Action = SetFalseTrackerForVoter{0}To{1} and !(Voter{0}.Action = CopyRealTracker);".format(
+                                 str(i), str(j)) \
+                             for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
 
         # Evolution: finish voting
         txt += "\n\n\t-- end voting\n"
@@ -162,8 +164,8 @@ class Model:
 
         # mark actions observable by this agent
         txt += "\tLobsvars = {" + ", ".join([
-            "tracker{0}, voter{0}Vote, voter{0}TrackerSet, voter{0}OwnedTracker, voteDemandedFromVoter{0}".format(
-                str(i)) for i in range(1, self.votersNo + 1)]) + "};\n"
+                                                "tracker{0}, voter{0}Vote, voter{0}TrackerSet, voter{0}OwnedTracker, voteDemandedFromVoter{0}".format(
+                                                    str(i)) for i in range(1, self.votersNo + 1)]) + "};\n"
 
         # building Vars
         txt += "\nVars:\n"
@@ -182,7 +184,7 @@ class Model:
 
         for vtr in range(1, self.votersNo + 1):
             txt += "\tfalseTrackerSentToVoter{0} = false and Environment.voteDemandedFromVoter{0} > 0".format(str(vtr))
-            txt += " and Environment.votesPublished = true: {"
+            txt += "\n\tand Environment.votesPublished = true and Environment.votingFinished = false: {"
             txt += ", ".join(
                 ["SetFalseTrackerForVoter{0}To{1}".format(str(vtr), str(i)) for i in range(1, self.votersNo + 1)])
             txt += ", Wait};\n"
@@ -338,10 +340,7 @@ class Model:
             ["\tCoercerReq{1}FromVoter{0} if Coercer.voteDemandedFromVoter{0} = {1};\n".format(str(i), str(j)) \
              for i in range(1, self.votersNo + 1) for j in range(1, self.ballotsNo + 1)])
 
-        txt += "\n\tNoFalseTrackerSet if " + \
-               " and ".join(["Environment.falseOrCopiedTrackerForVoter{} = 0".format(str(i)) for i in
-                             range(1, self.maxCoerced + 1)]) \
-               + ";\n"
+        txt += "\n\tNotStarted if Environment.votesPublished = false;\n"
 
         txt += "\n\tObservableThatSomeVoterDidntObey if \n"
         for i in range(1, self.maxCoerced + 1):  # for each coerced voter...
@@ -351,9 +350,9 @@ class Model:
                 cclause = "\t(Coercer.voteDemandedFromVoter{0} = {1} and (\n".format(voter, vote)
                 # ...go through trackers...
                 cclause += " or\n".join([
-                    "\t\t(Environment.falseOrCopiedTrackerForVoter{voterNb} = {trackerNb} and !(Environment.publicVote{trackerNb} = {voteExpect}))".format(
-                        voterNb=voter, trackerNb=str(k), voteExpect=vote) \
-                    for k in range(1, self.votersNo + 1)])
+                                            "\t\t(Environment.falseOrCopiedTrackerForVoter{voterNb} = {trackerNb} and !(Environment.publicVote{trackerNb} = {voteExpect}))".format(
+                                                voterNb=voter, trackerNb=str(k), voteExpect=vote) \
+                                            for k in range(1, self.votersNo + 1)])
 
                 cclause += "\n\t))"
                 if i == self.maxCoerced and j == self.ballotsNo:
@@ -376,9 +375,9 @@ class Model:
             cclause = "\t(Coercer.voteDemandedFromVoter{0} > 0 and Environment.falseOrCopiedTrackerForVoter{0} > 0 and (\n\t\t".format(
                 voter)
             cclause += "\n\t\tor ".join([
-                "(Environment.falseOrCopiedTrackerForVoter{0} = Environment.falseOrCopiedTrackerForVoter{1})".format(
-                    voter, str(j)) \
-                for j in range(1, self.votersNo + 1) if j != i])
+                                            "(Environment.falseOrCopiedTrackerForVoter{0} = Environment.falseOrCopiedTrackerForVoter{1})".format(
+                                                voter, str(j)) \
+                                            for j in range(1, self.votersNo + 1) if j != i])
             cclause += ")"
 
             if i < self.maxCoerced:
@@ -434,7 +433,7 @@ class Model:
         txt += "\n\tgoodGuysSansOne = {ElectionDefenseSystem, "
         txt += ", ".join(["Voter{0}".format(str(i)) for i in range(2, self.votersNo + 1)])
         txt += "};"
-
+        txt += "\n\tcoercer = {Coercer};"
         txt += "\nend Groups\n"
 
         return txt
@@ -442,14 +441,25 @@ class Model:
     def buildFormulae(self):
 
         txt = "\n\nFormulae\n"
-        # test formulae
-        txt += """
-	AG(
-	(Voter1Voted1 and Voter2Voted2 and CoercerReq2FromVoter1 and CoercerReq1FromVoter2 and NoFalseTrackerSet)
-	-> <goodGuys>F(!(ObservableThatSomeVoterDidntObey
-			 or ObservableRefusalToProvideTracker
-	   		 or ObservableInconsistencyinTrackerClaims) and votingFinished)
-	);"""
+
+        nvgroup = ["!Voter{}Voted1".format(str(i)) for i in range(1, self.clSize + 1)]
+
+        firstgroupformula = " and ".join(nvgroup)
+        secondgroupformula = " or ".join(nvgroup)
+        firstformula = "K(Coercer, (" + " or ".join(nvgroup) + "))"
+        secondformula = " or ".join(["K(Coercer, ({}))".format(nvv) for nvv in nvgroup])
+
+        groupformulas = [firstgroupformula, secondgroupformula]
+        coercerknowledgeformulas = [firstformula, secondformula]
+
+        formtemplate = "<coercer> F (votingFinished and (("
+        formtemplate += "{0}"
+        formtemplate += ") ->({1}))"
+        formtemplate += ");"
+
+        for gform, cknowform in itertools.product(groupformulas, coercerknowledgeformulas):
+            txt += "\n" + formtemplate.format(gform, cknowform)
+
         txt += "\nend Formulae\n"
 
         return txt
@@ -464,6 +474,7 @@ if __name__ == "__main__":
     maxCoerced = int(input("number of voters coerced by the coercer: "))
     maxWaitingForVotes = int(input("how many steps the environment will wait for votes: "))
     maxWaitingForHelp = int(input("how many steps the environment will wait for help requests, after voting is over: "))
+    coaltionSize = int(input("The size of coalitions in formulae 1 and 2: "))
     # parser.add_argument("votersNo", help="the number of voters", type=int)
     # parser.add_argument("ballotsNo", help="the number of possible ballots", type=int)
     # parser.add_argument("maxCoerced", help="the number of voters coerced by the coercer", type=int)
@@ -477,5 +488,11 @@ if __name__ == "__main__":
     #     print("Error: can't coerce more voters than present (maxCoerced too big).")
     #     sys.exit()
 
-    model = Model(votersNo, ballotsNo, maxCoerced, maxWaitingForVotes, maxWaitingForHelp)
-    print(model.getISPL())
+    model = Model(votersNo, ballotsNo, maxCoerced, maxWaitingForVotes, maxWaitingForHelp, coaltionSize)
+
+    f = open(f'selene_model_{votersNo}_{ballotsNo}_{maxCoerced}_{maxWaitingForVotes}_{maxWaitingForHelp}_{coaltionSize}.ispl', "w")
+    f.write(model.getISPL())
+    f.close()
+
+    # print(model.getISPL())
+    print(f'Saved model in selene_model_{votersNo}_{ballotsNo}_{maxCoerced}_{maxWaitingForVotes}_{maxWaitingForHelp}_{coaltionSize}.ispl')
