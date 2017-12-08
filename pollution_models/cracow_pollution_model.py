@@ -1,4 +1,5 @@
 from atl_model import ATLModel
+import itertools
 
 states = []
 
@@ -220,25 +221,17 @@ class PollutionModel:
     no_drones = 1
     sides = ["right", "up", "left", "down"]
 
-    def __init__(self, model_map, no_drones, energy):
+    def __init__(self, model_map, no_drones, energies):
         self.model_map = model_map
         self.no_drones = no_drones
         self.model = ATLModel(no_drones, 1000)
+        places = []
+        for i in range(0, no_drones):
+            places.append(0)
+
         self.states.append({
-            "place": 0,
-            "name": model_map[0]["name"],
-            "PM2.5": model_map[0]["PM2.5"],
-            "PM10": model_map[0]["PM10"],
-            "temperature": model_map[0]["temperature"],
-            "pressure": model_map[0]["pressure"],
-            "humidity": model_map[0]["humidity"],
-            "x": model_map[0]["x"],
-            "y": model_map[0]["y"],
-            "right": model_map[0]["right"],
-            "up": model_map[0]["up"],
-            "down": model_map[0]["down"],
-            "left": model_map[0]["left"],
-            "energy": energy
+            "place": places,
+            "energy": energies
         })
         self.generate_model()
         self.model.states = self.states
@@ -248,28 +241,46 @@ class PollutionModel:
         current_state_number = -1
         for state in self.states:
             current_state_number += 1
-            if state["energy"] == 0:
-                continue
-            for side in self.sides:
-                if state[side] == -1:
+
+            available_actions = []
+
+            for drone_number in range(0, self.no_drones):
+                available_actions.append([])
+                available_actions[drone_number].append(-1) # Wait
+                if state["energy"][drone_number] == 0:
                     continue
+                k = -1
+                for side in self.sides:
+                    k += 1
+                    if self.model_map[state["place"][drone_number]][side] == -1:
+                        continue
+                    available_actions[drone_number].append(k) # self.sides[k]
+
+            print(available_actions)
+
+            for drone_actions in itertools.product(*available_actions):
+                places = state["place"][:]
+                energies = state["energy"][:]
+                k = -1
+                actions = {}
+                print(drone_actions)
+                for d_action in drone_actions[0]:
+                    k += 1
+                    if d_action == -1:
+                        actions[k] = "wait"
+                        continue
+                    print(d_action)
+                    print(state["place"][k])
+                    places[k] = self.model_map[state["place"][k]][self.sides[d_action]]
+                    actions[k] = self.sides[d_action]
+                    if energies[k] > 0:
+                        energies[k] -= 1
 
                 new_state = {
-                    "place": state[side],
-                    "name": self.model_map[state[side]]["name"],
-                    "PM2.5": self.model_map[state[side]]["PM2.5"],
-                    "PM10": self.model_map[state[side]]["PM10"],
-                    "temperature": self.model_map[state[side]]["temperature"],
-                    "pressure": self.model_map[state[side]]["pressure"],
-                    "humidity": self.model_map[state[side]]["humidity"],
-                    "x": self.model_map[state[side]]["x"],
-                    "y": self.model_map[state[side]]["y"],
-                    "right": self.model_map[state[side]]["right"],
-                    "up": self.model_map[state[side]]["up"],
-                    "down": self.model_map[state[side]]["down"],
-                    "left": self.model_map[state[side]]["left"],
-                    "energy": state["energy"] - 1}
-                actions = {0: "fly " + side}
+                    "place": places,
+                    "energy": energies
+                }
+
                 new_state_number = self.add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
@@ -282,6 +293,6 @@ class PollutionModel:
             self.model.add_epistemic_class(0, {state_number})
 
 
-pollution_model = PollutionModel(states, 1, 4)
+pollution_model = PollutionModel(states, 2, [4, 4])
 pollution_model.model.walk(0)
 print(len(pollution_model.states))
