@@ -1,6 +1,10 @@
+import time
 import random
 import copy
 import mvatl_model
+import mvatl_parser
+
+__author__ = 'Arthur Queffelec'
 
 
 class PresidentModel:
@@ -10,9 +14,7 @@ class PresidentModel:
     model = None
     states = []
     players_cards = {}
-    deck = {"Two": 4, "As": 4,
-            "King": 4, "Queen": 4, "Jack": 4, "Ten": 4, "Nine": 4, "Eight": 4, "Seven": 4, "Six": 4, "Five": 4,
-            "Four": 4, "Three": 4}
+    deck = {}
     empty_deck = {"Two": 0, "As": 0,
                   "King": 0, "Queen": 0, "Jack": 0, "Ten": 0, "Nine": 0, "Eight": 0, "Seven": 0, "Six": 0, "Five": 0,
                   "Four": 0, "Three": 0}
@@ -21,6 +23,12 @@ class PresidentModel:
         self.number_of_decks = number_of_decks
         self.number_of_players = number_of_players
         self.number_of_cards = number_of_cards
+        self.deck = {"Two": 4, "As": 4,
+            "King": 4, "Queen": 4, "Jack": 4, "Ten": 4, "Nine": 4, "Eight": 4, "Seven": 4, "Six": 4, "Five": 4,
+            "Four": 4, "Three": 4}
+        self.states = []
+        self. players_cards = {}
+        self.model = None
 
     def add_actions(self):
         for key in self.deck:
@@ -69,7 +77,7 @@ class PresidentModel:
             lattice = mvatl_model.QBAlgebra('t', 'b', [('b', 'n'), ('n', 't')])
         else:
             lattice = mvatl_model.QBAlgebra('t', 'b', [('b', 'd'), ('d', 'n'), ('n', 'p'), ('p', 't')])
-        self.model = mvatl_model.MvATLModel(self.number_of_players, 10000, lattice)
+        self.model = mvatl_model.MvATLModel(self.number_of_players, 1000000, lattice)
         self.add_actions()
 
     def generate_model(self):
@@ -83,6 +91,27 @@ class PresidentModel:
         init_state = {'Cards': cards, 'Hierarchy': hier, 'Turn': 0, 'Table': []}
         self.states.append(init_state)
         self.generate_children(init_state, 0)
+
+    def get_epistemic_classes(self, agent):
+        cs = []
+        i = 0
+        for s1 in self.states:
+            c = []
+            j = 0
+            for s2 in self.states:
+                if i == j:
+                    continue
+                if s1['Cards'][agent] == s2['Cards'][agent] and s1['Hierarchy'] == s2['Hierarchy'] and s1['Turn'] == s2['Turn'] and s1['Table'] == s2['Table']:
+                    c.append(j)
+                    print("State i-"+str(i)+" = "+str(s1))
+                    print("State j-"+str(j)+" = "+str(s2))
+                j+=1
+            if len(c) > 0:
+                c.append(i)
+                cs.append(c)
+            i+=1
+        return cs
+
 
     def get_nb_cards(self, deck):
         nb = 0
@@ -255,33 +284,46 @@ def print_create_for_state(state_number, state):
     # msg += "]}"
     # print(msg)
 
+def print_automata(f):
+    i = 0
+    f.write("#states\n")
+    for s in test.states:
+        f.write("s" + str(i) + "\n")
+        i += 1
+    f.write("#initial\n")
+    f.write("s0\n")
+    f.write("#accepting\n")
+    f.write("#alphabet\n")
+    f.write("Wait\nPass\nClear\nTwo\nAs\nKing\nQueen\nJack\nTen\nNine\nEight\nSeven\nSix\nFive\nFour\nThree\n")
+    f.write("#transitions\n")
+    i = 0
+    for s1 in test.model.transitions:
+        for t in s1:
+            s2 = t['nextState']
+            for a in t['actions']:
+                if isinstance(a, str):
+                    f.write("s" + str(i) + ":" + a + ">s" + str(s2) + "\n")
+        i += 1
 
-test = PresidentModel(3, 1, 5)
+
+start = time.clock()
+test = PresidentModel(5, 1, 5)
 test.create_mvatl_model()
+#cards = {0: {'Two': 0, 'As': 0, 'King': 0, 'Queen': 2, 'Jack': 0, 'Ten': 2, 'Nine': 0, 'Eight': 0, 'Seven': 0, 'Six': 0, 'Five': 1, 'Four': 0, 'Three': 0}, 1: {'Two': 0, 'As': 0, 'King': 0, 'Queen': 2, 'Jack': 0, 'Ten': 0, 'Nine': 0, 'Eight': 0, 'Seven': 0, 'Six': 2, 'Five': 0, 'Four': 1, 'Three': 0}, 2: {'Two': 1, 'As': 2, 'King': 0, 'Queen': 0, 'Jack': 0, 'Ten': 0, 'Nine': 0, 'Eight': 2, 'Seven': 0, 'Six': 0, 'Five': 0, 'Four': 0, 'Three': 0}, 3: {'Two': 2, 'As': 0, 'King': 0, 'Queen': 0, 'Jack': 0, 'Ten': 0, 'Nine': 0, 'Eight': 0, 'Seven': 0, 'Six': 1, 'Five': 0, 'Four': 2, 'Three': 0}}
+#test.players_cards = cards
 test.generate_model()
+end = time.clock()
+print("Gen:", end - start, "s")
 print(f'Number of states: {len(test.states)}')
 test.model.states = test.states
-test.model.walk_perfect_information(0)
-# print(len(test.states))
-# i = 0
-# print()
-# print("#states")
-# for s in test.states:
-#    print("s"+str(i))
-#    i+=1
-# print("#initial")
-# print("s0")
-# print("#accepting")
-# print("#alphabet")
-# print("Wait1\nWait2\nWait3\nPass1\nPass2\nPass3\nClear1\nClear2\nClear3\nTwo1\nAs1\nKing1\nTwo2\nAs2\nKing2\nTwo3\nAs3\nKing3")
-# print("#transitions")
-# i = 0
-# for s1 in test.model.transitions:
-#    for t in s1:
-#        s2 = t['nextState']
-#        j = 1
-#        for a in t['actions']:
-#            print("s"+str(i)+":"+a+str(j)+">s"+str(s2))
-#            j +=1
-#    i+=1
-# print(test.model.transitions)
+
+start = time.clock()
+props = "Hierarchy"
+test.model.props = [props]
+const = "b n t"
+atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
+txt = "<<1>> F (t <= Hierarchy_1)"
+print("Formula : " + atlparser.parse(txt))
+print(str(test.model.interpreter(atlparser.parse(txt), 0)))
+end = time.clock()
+print("Verif:", end - start, "s")

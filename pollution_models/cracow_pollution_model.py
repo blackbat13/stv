@@ -220,19 +220,27 @@ class PollutionModel:
     states = []
     no_drones = 1
     sides = ["right", "up", "left", "down"]
+    states_dictionary = {}
+    epistemic_states_dictionary = {}
+    state_number = 0
 
     def __init__(self, model_map, no_drones, energies):
         self.model_map = model_map
         self.no_drones = no_drones
-        self.model = ATLModel(no_drones, 1000)
+        self.model = ATLModel(no_drones, 100000)
         places = []
+        visited = []
         for i in range(0, no_drones):
             places.append(0)
+            visited.append({0})
 
-        self.states.append({
+        self.add_state({
+            "map": model_map,
             "place": places,
-            "energy": energies
+            "energy": energies,
+            "visited": visited
         })
+
         self.generate_model()
         self.model.states = self.states
         self.prepare_epistemic_relation()
@@ -256,43 +264,86 @@ class PollutionModel:
                         continue
                     available_actions[drone_number].append(k) # self.sides[k]
 
-            print(available_actions)
+            # print(available_actions)
 
             for drone_actions in itertools.product(*available_actions):
                 places = state["place"][:]
                 energies = state["energy"][:]
+                visited = state["visited"][:]
                 k = -1
                 actions = {}
-                print(drone_actions)
-                for d_action in drone_actions[0]:
+                # print(drone_actions)
+                for d_action in drone_actions:
                     k += 1
+                    if energies[k] > 0:
+                        energies[k] -= 1
                     if d_action == -1:
                         actions[k] = "wait"
                         continue
-                    print(d_action)
-                    print(state["place"][k])
+                    # print(d_action)
+                    # print(state["place"][k])
                     places[k] = self.model_map[state["place"][k]][self.sides[d_action]]
+                    visited[k] = visited[k].copy()
+                    visited[k].add(places[k])
                     actions[k] = self.sides[d_action]
-                    if energies[k] > 0:
-                        energies[k] -= 1
 
                 new_state = {
+                    "map": self.model_map,
                     "place": places,
-                    "energy": energies
+                    "energy": energies,
+                    "visited": visited
                 }
 
                 new_state_number = self.add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
     def add_state(self, state):
-        self.states.append(state)
-        return len(self.states) - 1
+        new_state_number = self.get_state_number(state)
+        epistemic_state = self.get_epistemic_state(state)
+        self.add_to_epistemic_dictionary(epistemic_state, new_state_number)
+        return new_state_number
+
+    def get_state_number(self, state):
+        state_str = ' '.join(str(state[e]) for e in state)
+        if state_str not in self.states_dictionary:
+            self.states_dictionary[state_str] = self.state_number
+            new_state_number = self.state_number
+            self.states.append(state)
+            self.state_number += 1
+        else:
+            new_state_number = self.states_dictionary[state_str]
+
+        return new_state_number
+
+    def add_to_epistemic_dictionary(self, state, new_state_number):
+        state_str = ' '.join(str(state[e]) for e in state)
+        if state_str not in self.epistemic_states_dictionary:
+            self.epistemic_states_dictionary[state_str] = {new_state_number}
+        else:
+            self.epistemic_states_dictionary[state_str].add(new_state_number)
+
+    def get_epistemic_state(self, state):
+        epistemic_state = {'place': state['place'], 'energy': state['energy'],
+                           'visited': state['visited']}
+        return epistemic_state
 
     def prepare_epistemic_relation(self):
-        for state_number in range(0, len(self.states)):
-            self.model.add_epistemic_class(0, {state_number})
+        for state, epistemic_class in self.epistemic_states_dictionary.items():
+            self.model.add_epistemic_class(0, epistemic_class)
+
+    @staticmethod
+    def keep_values_in_list(the_list, val):
+        return [value for value in the_list if value == val]
 
 
-pollution_model = PollutionModel(states, 2, [4, 4])
-pollution_model.model.walk(0)
+pollution_model = PollutionModel(states, 1, [2])
+i = 0
+for state in pollution_model.states:
+    print(i)
+    print(state["place"])
+    print(state["energy"])
+    print(state["visited"])
+    print()
+    i+=1
+# pollution_model.model.walk(0)
 print(len(pollution_model.states))
