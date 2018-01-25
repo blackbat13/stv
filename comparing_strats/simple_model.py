@@ -33,7 +33,7 @@ class SimpleModel:
             while len(self.epistemic_class_membership[agent_number]) <= state_id:
                 self.epistemic_class_membership[agent_number].append(-1)
 
-        self.no_states = max(self.no_states, state_id)
+        self.no_states = max(self.no_states, state_id+1)
 
     def add_epistemic_relation(self, state_id_1, state_id_2, agent_number):
         if self.epistemic_class_membership[agent_number][state_id_1] != -1:
@@ -52,6 +52,12 @@ class SimpleModel:
                 self.epistemic_class_membership[agent_number]) - 1
             self.epistemic_class_membership[agent_number][state_id_2] = self.epistemic_class_membership[agent_number][
                 state_id_1]
+
+    def add_epistemic_class(self, agent_number, epistemic_class):
+        self.epistemic_classes[agent_number].append(epistemic_class)
+        epistemic_class_number = len(self.epistemic_classes[agent_number]) - 1
+        # for state in epistemic_class:
+        #     self.epistemic_class_membership[agent_number][state]
 
     def epistemic_class_for_state(self, state_id, agent_number):
         if self.epistemic_class_membership[agent_number][state_id] == -1:
