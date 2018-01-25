@@ -114,9 +114,19 @@ class StrategyComparer:
         return StrategyGenerator.count_no_reachable_states(strategy)
 
     def strategy_statistic_epistemic_h(self, strategy: list) -> int:
-        no_result_states = 0
+        epistemic_states = set()
         for state in range(0, self.model.no_states):
             if len(strategy[state]) > 0:
-                no_result_states += len(self.model.epistemic_class_for_state(state, 0))
+                epistemic_states.update(self.model.epistemic_class_for_state(state, 0))
 
-        return no_result_states
+        return len(epistemic_states)
+
+    def strategy_statistic_control_h(self, strategy: list) -> int:
+        """Return number of states where users lose control, i.e. their action is non deterministic"""
+        result = 0
+        for state in range(0, self.model.no_states):
+            if len(strategy[state]) > 0:
+                if len(self.get_action_result(state, strategy[state][0])) > 1:
+                    result += 1
+
+        return result
