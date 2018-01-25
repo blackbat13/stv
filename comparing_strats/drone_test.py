@@ -10,7 +10,7 @@ strategy = strategy_generator.create_strategy()
 print(strategy)
 
 strategy_comparer = StrategyComparer(drone_model.model, ['N', 'S', 'W', 'E', 'Wait'])
-strategy2 = strategy_comparer.simplify_strategy(strategy[:], None)
+strategy2 = strategy_comparer.simplify_strategy(strategy[:], strategy_comparer.epistemic_h)
 print(strategy2)
 
 print("Number of reachable states for basic strategy:", strategy_comparer.strategy_statistic_basic_h(strategy))
