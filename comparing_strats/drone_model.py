@@ -128,11 +128,13 @@ class CracowMap:
 
     def create_epistemic(self):
         self.disjoint_set = DisjointSet(len(self.places))
+        self.disjoint_set.union(0, 1)
         self.disjoint_set.union(1, 3)
         self.disjoint_set.union(4, 8)
         self.disjoint_set.union(7, 9)
         self.disjoint_set.union(11, 10)
         self.disjoint_set.union(10, 5)
+
 
 class DroneModel:
     no_drones = 0
@@ -167,6 +169,7 @@ class DroneModel:
 
         self.add_state(first_state)
         self.generate_model()
+        self.prepare_epistemic_relation()
 
     def create_map_graph(self):
         """Creates graph from connections between places in the map"""

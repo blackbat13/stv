@@ -26,6 +26,9 @@ class StrategyComparer:
 
         for state in range(0, self.model.no_states):
             # skip if state is in the epistemic class
+            if len(self.model.epistemic_class_for_state(state, 0)) > 1:
+                continue
+
             # skip if strategy not defined for state
             if len(strategy[state]) == 0:
                 continue
