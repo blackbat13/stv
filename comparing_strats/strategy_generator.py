@@ -37,7 +37,7 @@ class StrategyGenerator:
         """Removes states from given strategy that are not reachable in it"""
         self.reachable_states = set()
         self.reachable_states.add(0)
-        self.dfs(0)
+        self.dfs(0, strategy)
         new_strategy = []
         for _ in range(0, len(strategy)):
             new_strategy.append([])
@@ -48,9 +48,19 @@ class StrategyGenerator:
         self.reachable_states.clear()
         return new_strategy
 
-    def dfs(self, state: int) -> None:
+    def dfs(self, state: int, strategy) -> None:
         for transition in self.model.graph[state]:
+            if transition['actions'][0] != strategy[state][0]:
+                continue
             next_state = transition['next_state']
             if next_state not in self.reachable_states:
                 self.reachable_states.add(next_state)
-                self.dfs(next_state)
+                self.dfs(next_state, strategy)
+
+    @staticmethod
+    def count_no_reachable_states(strategy: list):
+        result = 0
+        for i in range(0, len(strategy)):
+            if len(strategy[i]) > 0:
+                result += 1
+        return result

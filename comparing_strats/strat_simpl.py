@@ -1,4 +1,5 @@
 from comparing_strats.simple_model import SimpleModel
+from comparing_strats.strategy_generator import *
 
 
 class StrategyComparer:
@@ -45,6 +46,9 @@ class StrategyComparer:
 
                 # Do additional heuristics
 
+                if compare_result == 2:
+                    compare_result = self.epistemic_h(state, current_strategy, [action])
+
                 if compare_result != 1:
                     continue
 
@@ -53,7 +57,8 @@ class StrategyComparer:
             if current_strategy != strategy[state]:
                 strategy[state] = current_strategy
 
-        return strategy
+        strategy_generator = StrategyGenerator(self.model)
+        return strategy_generator.cut_to_reachable(strategy)
 
     def get_action_result(self, state: int, action: str) -> list:
         result = []
@@ -88,9 +93,30 @@ class StrategyComparer:
 
         return 0 # strategy1 is better
 
+    def epistemic_h(self, state: int, strategy1: list, strategy2: list) -> int:
+        strategy1_result = self.get_action_result(state, strategy1[0])
+        strategy2_result = self.get_action_result(state, strategy2[0])
+        strategy1_epistemic_h = 0
+        strategy2_epistemic_h = 0
+        for state in strategy1_result:
+            strategy1_epistemic_h += len(self.model.epistemic_class_for_state(state, 0))
+        for state in strategy2_result:
+            strategy2_epistemic_h += len(self.model.epistemic_class_for_state(state, 0))
+
+        if strategy2_epistemic_h < strategy1_epistemic_h:
+            return 1
+        elif strategy2_epistemic_h > strategy1_epistemic_h:
+            return 0
+        else:
+            return 2
+
     def strategy_statistic_basic_h(self, strategy: list) -> int:
+        return StrategyGenerator.count_no_reachable_states(strategy)
+
+    def strategy_statistic_epistemic_h(self, strategy: list) -> int:
         no_result_states = 0
         for state in range(0, self.model.no_states):
-            no_result_states += len(self.get_action_result(state, strategy[state][0]))
+            if len(strategy[state]) > 0:
+                no_result_states += len(self.model.epistemic_class_for_state(state, 0))
 
         return no_result_states

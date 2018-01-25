@@ -1,6 +1,7 @@
 from comparing_strats.simple_model import SimpleModel
 import itertools
 from disjoint_set import DisjointSet
+from random import randint
 
 
 class CracowMap:
@@ -147,13 +148,15 @@ class DroneModel:
     epistemic_states_dictionary = {}
     state_number = 0
     drone_actions = ['N', 'W', 'S', 'E']
+    is_random = False
 
-    def __init__(self, no_drones, energies, map):
+    def __init__(self, no_drones, energies, map, is_random: bool = False):
         self.no_drones = no_drones
         self.energies = energies
         self.map = map
         self.model = SimpleModel(no_drones)
         self.create_map_graph()
+        self.is_random = is_random
         places = []
         visited = []
         for i in range(0, no_drones):
@@ -195,28 +198,40 @@ class DroneModel:
                 if drone_energy == 0:
                     continue
                 current_place = state["place"][drone_number]
-                used_actions = [0, 0, 0, 0, 0]
                 for place_id in self.graph[current_place]:
                     x, y = self.relation_between_places(current_place, place_id)
                     action_id = self.movement_to_action(x, y)
-                    used_actions[action_id] += 1
                     available_actions[drone_number].append([x, y, place_id, self.drone_actions[action_id]])
+                    if self.is_random:
+                        rnd = randint(0, 100)
+                        if rnd > 50:  # probability
+                            continue
+                        how_much = randint(1, 3)
+                        # how_much = min(how_much, 3)
+                        act = self.drone_actions[:]
+                        # act.remove("Wait")
+                        act.remove(self.drone_actions[action_id])
+                        for _ in range(0, how_much):
+                            action = act[randint(0, len(act) - 1)]
+                            act.remove(action)
+                            available_actions[drone_number].append([x, y, place_id, action])
 
-                actions_order = [0, 1, 2, 3] # Should be without one action - the good one
+                actions_order = [0, 1, 2, 3]  # Should be without one action - the good one
                 i = -1
                 # Add several bad actions
-                for action in actions_order:
-                    i += 1
-                    how_much = int(len(self.graph[current_place]) / (i+1))
-                    if i >= 2:
-                        how_much = int(len(self.graph[current_place]) / (2))
-                    for j in range(0, how_much):
-                        place_id = self.graph[current_place][j]
-                        x, y = self.relation_between_places(current_place, place_id)
-                        action_id = self.movement_to_action(x, y)
-                        if action_id == action:
-                            continue
-                        available_actions[drone_number].append([x, y, place_id, self.drone_actions[action]])
+                if not self.is_random:
+                    for action in actions_order:
+                        i += 1
+                        how_much = int(len(self.graph[current_place]) / (i+1))
+                        if i >= 2:
+                            how_much = int(len(self.graph[current_place]) / (2))
+                        for j in range(0, how_much):
+                            place_id = self.graph[current_place][j]
+                            x, y = self.relation_between_places(current_place, place_id)
+                            action_id = self.movement_to_action(x, y)
+                            if action_id == action:
+                                continue
+                            available_actions[drone_number].append([x, y, place_id, self.drone_actions[action]])
 
             for drone_actions in itertools.product(*available_actions):
                 places = state["place"][:]
