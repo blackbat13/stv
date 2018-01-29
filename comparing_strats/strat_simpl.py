@@ -56,8 +56,7 @@ class StrategyComparer:
                 # Maybe always compare with basic strategy? Or check for all better?
                 # compare_result = self.basic_h(state, current_strategy, actions)
                 compare_result = self.basic_h(state, strategy[state], actions)
-                # print(compare_result)
-                # print()
+
                 if compare_result == -1:
                     continue
 
@@ -73,7 +72,6 @@ class StrategyComparer:
 
             if current_strategy != strategy[state]:
                 self.strategy[state] = current_strategy[:]
-                # print("Hello@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", current_strategy)
 
         strategy_generator = StrategyGenerator(self.model)
         # return strategy
@@ -99,15 +97,11 @@ class StrategyComparer:
         strategy1_result = self.get_actions_result(state, strategy1)
         strategy2_result = self.get_actions_result(state, strategy2)
 
-        # print(strategy1_result)
-        # print(strategy2_result)
-
         if len(strategy1_result) == 0 or len(strategy2_result) == 0:
             return -1
 
         result = 1
 
-        # print()
         for state in strategy2_result:
             if not(state in strategy1_result):
                 result = -1

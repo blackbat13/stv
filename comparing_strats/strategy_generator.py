@@ -48,7 +48,6 @@ class StrategyGenerator:
         self.reachable_states = set()
         self.reachable_states.add(0)
         self.dfs(0, strategy)
-        print(self.reachable_states)
         new_strategy = []
         for _ in range(0, len(strategy)):
             new_strategy.append([])
@@ -62,7 +61,6 @@ class StrategyGenerator:
     def dfs(self, state: int, strategy) -> None:
         for transition in self.model.graph[state]:
             if transition['actions'] != strategy[state]:
-                # print(transition['actions'], strategy[state])
                 continue
             next_state = transition['next_state']
             if next_state not in self.reachable_states:

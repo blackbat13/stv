@@ -4,17 +4,17 @@ from comparing_strats.strategy_generator import StrategyGenerator
 
 
 test_data = []
-test_data.append([1, [3]])
-test_data.append([1, [5]])
-test_data.append([1, [8]])
-test_data.append([1, [10]])
-test_data.append([1, [15]])
-test_data.append([2, [2,2]])
-test_data.append([2, [5,5]])
+# test_data.append([1, [3]])
+# test_data.append([1, [5]])
+# test_data.append([1, [8]])
+# test_data.append([1, [10]])
+# test_data.append([1, [15]])
+# test_data.append([2, [2,2]])
+# test_data.append([2, [5,5]])
 test_data.append([2, [8,8]])
-test_data.append([3, [2,2,2]])
-test_data.append([3, [4,4,4]])
-test_data.append([3, [5,5,5]])
+# test_data.append([3, [2,2,2]])
+# test_data.append([3, [4,4,4]])
+# test_data.append([3, [5,5,5]])
 
 for data in test_data:
     no_drones = data[0]
@@ -28,7 +28,7 @@ for data in test_data:
     print(strategy)
 
     strategy_comparer = StrategyComparer(drone_model.model, ['N', 'S', 'W', 'E', 'Wait'])
-    strategy2 = strategy_comparer.simplify_strategy(strategy[:], strategy_comparer.control_h)
+    strategy2 = strategy_comparer.simplify_strategy(strategy[:], None)
     print(strategy2)
 
     reach_basic = strategy_comparer.strategy_statistic_basic_h(strategy, False)
@@ -49,8 +49,8 @@ for data in test_data:
     print("Number of states of losing control for simplified strategy:", contr_simp)
 
 
-    file_basic = open("comp_str_basic_control.txt", "a")
-    file_simpl = open("comp_str_simpl_control.txt", "a")
+    file_basic = open("comp_str_basic_none.txt", "a")
+    file_simpl = open("comp_str_simpl_none.txt", "a")
 
     file_basic.write(f'{no_drones};{energies};{no_states};{reach_basic};{epist_basic};{contr_basic}\n')
     file_simpl.write(f'{no_drones};{energies};{no_states};{reach_simpl};{epist_simpl};{contr_simp}\n')
