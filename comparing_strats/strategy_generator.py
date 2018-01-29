@@ -24,6 +24,8 @@ class StrategyGenerator:
             if len(self.model.graph[state]) == 0:
                 continue
 
+            if strategy[state][0] is not None:
+                continue
             for agent in range(0, self.model.no_agents):
                 actions_tr = {'N': 0, 'E': 0, 'W': 0, 'S': 0, 'Wait': 0, 'F': 0}
                 max_tr = 'N'
@@ -35,6 +37,9 @@ class StrategyGenerator:
                         max_tr = transition['actions'][agent]
 
                 strategy[state][agent] = max_tr
+
+            for ep_state in self.model.epistemic_class_for_state(state, 0):
+                strategy[ep_state] = strategy[state][:]
 
         return self.cut_to_reachable(strategy)
 
