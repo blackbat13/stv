@@ -6,7 +6,12 @@ class StrategyGenerator:
     reachable_states = set()
 
     def __init__(self, model: SimpleModel):
+        self.clear_all()
         self.model = model
+
+    def clear_all(self):
+        self.model = None
+        self.reachable_states = set()
 
     def create_strategy(self):
         strategy = []
@@ -20,7 +25,7 @@ class StrategyGenerator:
                 continue
 
             for agent in range(0, self.model.no_agents):
-                actions_tr = {'N': 0, 'E': 0, 'W': 0, 'S': 0, 'Wait': 0}
+                actions_tr = {'N': 0, 'E': 0, 'W': 0, 'S': 0, 'Wait': 0, 'F': 0}
                 max_tr = 'N'
                 for transition in self.model.graph[state]:
                     actions_tr[transition['actions'][agent]] += 1
@@ -38,6 +43,7 @@ class StrategyGenerator:
         self.reachable_states = set()
         self.reachable_states.add(0)
         self.dfs(0, strategy)
+        print(self.reachable_states)
         new_strategy = []
         for _ in range(0, len(strategy)):
             new_strategy.append([])
@@ -50,7 +56,8 @@ class StrategyGenerator:
 
     def dfs(self, state: int, strategy) -> None:
         for transition in self.model.graph[state]:
-            if transition['actions'][0] != strategy[state][0]:
+            if transition['actions'] != strategy[state]:
+                # print(transition['actions'], strategy[state])
                 continue
             next_state = transition['next_state']
             if next_state not in self.reachable_states:
@@ -58,9 +65,19 @@ class StrategyGenerator:
                 self.dfs(next_state, strategy)
 
     @staticmethod
-    def count_no_reachable_states(strategy: list):
+    def count_no_reachable_states(strategy: list, model: SimpleModel = None):
         result = 0
         for i in range(0, len(strategy)):
             if len(strategy[i]) > 0:
                 result += 1
+                if model != None:
+                    print(i, model.states[i])
         return result
+
+    @staticmethod
+    def compare_list(list1: list, list2: list) -> bool:
+        for x, y in zip(list1, list2):
+            if x != y:
+                return False
+
+        return True

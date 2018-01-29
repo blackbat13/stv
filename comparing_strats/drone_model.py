@@ -147,10 +147,11 @@ class DroneModel:
     states_dictionary = {}
     epistemic_states_dictionary = {}
     state_number = 0
-    drone_actions = ['N', 'W', 'S', 'E']
+    drone_actions = ['N', 'W', 'S', 'E', 'F']
     is_random = False
 
     def __init__(self, no_drones, energies, map, is_random: bool = False):
+        self.clear_all()
         self.no_drones = no_drones
         self.energies = energies
         self.map = map
@@ -164,7 +165,6 @@ class DroneModel:
             visited.append({0})
 
         first_state = {
-            # "map": map,
             "place": places,
             "energy": energies,
             "visited": visited
@@ -173,6 +173,20 @@ class DroneModel:
         self.add_state(first_state)
         self.generate_model()
         self.prepare_epistemic_relation()
+        self.model.states = self.states
+
+    def clear_all(self):
+        self.no_drones = 0
+        self.energies = []
+        self.map = []
+        self.model = None
+        self.graph = []
+        self.states = []
+        self.states_dictionary = {}
+        self.epistemic_states_dictionary = {}
+        self.state_number = 0
+        self.drone_actions = ['N', 'W', 'S', 'E', 'F']
+        self.is_random = False
 
     def create_map_graph(self):
         """Creates graph from connections between places in the map"""
@@ -209,14 +223,13 @@ class DroneModel:
                         how_much = randint(1, 3)
                         # how_much = min(how_much, 3)
                         act = self.drone_actions[:]
-                        # act.remove("Wait")
                         act.remove(self.drone_actions[action_id])
                         for _ in range(0, how_much):
                             action = act[randint(0, len(act) - 1)]
                             act.remove(action)
                             available_actions[drone_number].append([x, y, place_id, action])
 
-                actions_order = [0, 1, 2, 3]  # Should be without one action - the good one
+                actions_order = [4]  # Should be without one action - the good one
                 i = -1
                 # Add several bad actions
                 if not self.is_random:
@@ -237,7 +250,9 @@ class DroneModel:
                 places = state["place"][:]
                 energies = state["energy"][:]
                 visited = state["visited"][:]
-                actions = {}
+                actions = []
+                for _ in range(0, self.no_drones):
+                    actions.append(None)
                 drone_number = -1
                 for d_action in drone_actions:
                     drone_number += 1
@@ -247,6 +262,10 @@ class DroneModel:
                         actions[drone_number] = "Wait"
                         continue
                     next_place = d_action[2]
+                    # if next_place in visited[drone_number]:
+                    #     # Don't visit same place twice
+                    #     actions[drone_number] = "Wait"
+                    #     continue
                     places[drone_number] = next_place
                     visited[drone_number] = visited[drone_number].copy()
                     visited[drone_number].add(next_place)
