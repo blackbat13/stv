@@ -1,0 +1,43 @@
+/usr/bin/python3.5 /home/blackbat/PycharmProjects/ATLFormulaChecker/simple_voting_model.py
+Started generating model
+Generated model in 8.248778999999999 s
+Number of states: 50625
+Number of epistemic classes: 20736
+
+<<c>>F(~pun_i -> vote_{i,1})
+Minimum formula iterations: 1
+Time: 14.099641 s
+Number of good states  37125
+Formula result: False
+
+<<v_i>>G(~pun_i & ~vote_{i,1})
+Maximum formula iterations: 1
+Time: 2.9449749999999995 s
+Number of good states  13500
+Formula result: True
+
+<<c>>G( (finish_i & ~pun_i) -> vote_{i,1} )
+Maximum formula iterations: 1
+Time: 14.908632999999998 s
+Number of good states  40500
+Formula result: True
+
+<<v_i>>F( finish_i & ~pun_i & ~vote_{i,1} )
+Minimum formula iterations: 0
+Time: 0.5229519999999965 s
+Number of good states  6750
+Formula result: False
+
+Perfect <<c>>G( (finish_i & ~pun_i) -> vote_{i,1} )
+Maximum formula iterations: 0
+Time: 0.4700550000000021 s
+Number of good states  43875
+Formula result: True
+
+Perfect <<v_i>>F( finish_i & ~pun_i & ~vote_{i,1} )
+Minimum formula iterations: 0
+Time: 0.08470700000000164 s
+Number of good states  6750
+Formula result: False
+
+Process finished with exit code 0

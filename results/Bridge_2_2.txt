@@ -1,0 +1,878 @@
+/usr/bin/python3.5 /home/blackbat/PycharmProjects/ATLFormulaChecker/bridge_model.py
+Choose bridge model (1 - standard, 2 - abstract):1
+Number of figures in game =2
+Number of cards in hand =2
+Number of tests=20
+Hands: [[131, 143], [132, 133], [134, 142], [141, 144]]
+Readable hands: [['KingClub', 'AceHeart'], ['KingDiamond', 'KingHeart'], ['KingSpade', 'AceDiamond'], ['AceClub', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 319 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 319
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 319
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0009370000000000073 s
+Number of good states  200
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.0003379999999999911 s
+Number of good states  231
+Formula result: True
+
+Hands: [[132, 142], [131, 143], [141, 144], [133, 134]]
+Readable hands: [['KingDiamond', 'AceDiamond'], ['KingClub', 'AceHeart'], ['AceClub', 'AceSpade'], ['KingHeart', 'KingSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 507 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 507
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 507
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0040740966796875 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0014799999999999952 s
+Number of good states  507
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.0005490000000000078 s
+Number of good states  507
+Formula result: True
+
+Hands: [[132, 144], [133, 134], [131, 143], [141, 142]]
+Readable hands: [['KingDiamond', 'AceSpade'], ['KingHeart', 'KingSpade'], ['KingClub', 'AceHeart'], ['AceClub', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 319 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 319
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 319
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0007250000000000034 s
+Number of good states  200
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00026199999999999835 s
+Number of good states  231
+Formula result: True
+
+Hands: [[142, 143], [132, 141], [133, 134], [131, 144]]
+Readable hands: [['AceDiamond', 'AceHeart'], ['KingDiamond', 'AceClub'], ['KingHeart', 'KingSpade'], ['KingClub', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 270 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 270
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 270
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.00241851806640625 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0008149999999999963 s
+Number of good states  270
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00027800000000000047 s
+Number of good states  270
+Formula result: True
+
+Hands: [[132, 142], [133, 143], [134, 144], [131, 141]]
+Readable hands: [['KingDiamond', 'AceDiamond'], ['KingHeart', 'AceHeart'], ['KingSpade', 'AceSpade'], ['KingClub', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 507 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 507
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 507
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0040740966796875 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.001489000000000018 s
+Number of good states  507
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.0004860000000000142 s
+Number of good states  507
+Formula result: True
+
+Hands: [[141, 142], [133, 134], [131, 132], [143, 144]]
+Readable hands: [['AceClub', 'AceDiamond'], ['KingHeart', 'KingSpade'], ['KingClub', 'KingDiamond'], ['AceHeart', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 275 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 275
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 275
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.00241851806640625 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0008999999999999841 s
+Number of good states  275
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.0003160000000000107 s
+Number of good states  275
+Formula result: True
+
+Hands: [[142, 144], [131, 143], [132, 134], [133, 141]]
+Readable hands: [['AceDiamond', 'AceSpade'], ['KingClub', 'AceHeart'], ['KingDiamond', 'KingSpade'], ['KingHeart', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 275 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 275
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 275
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.00241851806640625 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0007769999999999999 s
+Number of good states  275
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00027900000000000147 s
+Number of good states  275
+Formula result: True
+
+Hands: [[131, 134], [141, 143], [133, 144], [132, 142]]
+Readable hands: [['KingClub', 'KingSpade'], ['AceClub', 'AceHeart'], ['KingHeart', 'AceSpade'], ['KingDiamond', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 322 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 322
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 322
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0004930000000000212 s
+Number of good states  143
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00017799999999998373 s
+Number of good states  143
+Formula result: True
+
+Hands: [[134, 142], [133, 144], [131, 141], [132, 143]]
+Readable hands: [['KingSpade', 'AceDiamond'], ['KingHeart', 'AceSpade'], ['KingClub', 'AceClub'], ['KingDiamond', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 334 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 334
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 334
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0006549999999999889 s
+Number of good states  187
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00029200000000001447 s
+Number of good states  214
+Formula result: True
+
+Hands: [[131, 133], [142, 143], [134, 141], [132, 144]]
+Readable hands: [['KingClub', 'KingHeart'], ['AceDiamond', 'AceHeart'], ['KingSpade', 'AceClub'], ['KingDiamond', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 322 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 322
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 322
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.00044500000000000095 s
+Number of good states  143
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00017100000000000448 s
+Number of good states  143
+Formula result: True
+
+Hands: [[131, 141], [132, 133], [134, 143], [142, 144]]
+Readable hands: [['KingClub', 'AceClub'], ['KingDiamond', 'KingHeart'], ['KingSpade', 'AceHeart'], ['AceDiamond', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 507 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 507
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 507
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0040740966796875 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0014359999999999928 s
+Number of good states  507
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.0005200000000000204 s
+Number of good states  507
+Formula result: True
+
+Hands: [[131, 142], [134, 144], [133, 143], [132, 141]]
+Readable hands: [['KingClub', 'AceDiamond'], ['KingSpade', 'AceSpade'], ['KingHeart', 'AceHeart'], ['KingDiamond', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 334 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 334
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 334
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0006500000000000117 s
+Number of good states  187
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00023599999999998622 s
+Number of good states  214
+Formula result: True
+
+Hands: [[132, 133], [141, 143], [131, 142], [134, 144]]
+Readable hands: [['KingDiamond', 'KingHeart'], ['AceClub', 'AceHeart'], ['KingClub', 'AceDiamond'], ['KingSpade', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 322 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 322
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 322
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0005660000000000109 s
+Number of good states  143
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00017300000000000648 s
+Number of good states  143
+Formula result: True
+
+Hands: [[132, 142], [131, 141], [134, 144], [133, 143]]
+Readable hands: [['KingDiamond', 'AceDiamond'], ['KingClub', 'AceClub'], ['KingSpade', 'AceSpade'], ['KingHeart', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 507 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 507
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 507
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0040740966796875 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0013270000000000226 s
+Number of good states  507
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.0004849999999999577 s
+Number of good states  507
+Formula result: True
+
+Hands: [[133, 144], [131, 132], [141, 143], [134, 142]]
+Readable hands: [['KingHeart', 'AceSpade'], ['KingClub', 'KingDiamond'], ['AceClub', 'AceHeart'], ['KingSpade', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 271 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 271
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 271
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.00241851806640625 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0006709999999999772 s
+Number of good states  271
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00028000000000000247 s
+Number of good states  271
+Formula result: True
+
+Hands: [[142, 143], [134, 141], [131, 132], [133, 144]]
+Readable hands: [['AceDiamond', 'AceHeart'], ['KingSpade', 'AceClub'], ['KingClub', 'KingDiamond'], ['KingHeart', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 286 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 286
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 286
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.00241851806640625 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0010279999999999734 s
+Number of good states  286
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.0004069999999999907 s
+Number of good states  286
+Formula result: True
+
+Hands: [[132, 133], [134, 144], [131, 142], [141, 143]]
+Readable hands: [['KingDiamond', 'KingHeart'], ['KingSpade', 'AceSpade'], ['KingClub', 'AceDiamond'], ['AceClub', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 322 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 322
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 322
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0004709999999999992 s
+Number of good states  143
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00017300000000003424 s
+Number of good states  143
+Formula result: True
+
+Hands: [[131, 144], [141, 143], [132, 134], [133, 142]]
+Readable hands: [['KingClub', 'AceSpade'], ['AceClub', 'AceHeart'], ['KingDiamond', 'KingSpade'], ['KingHeart', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 322 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 322
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 322
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0005119999999999569 s
+Number of good states  143
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.000260000000000038 s
+Number of good states  143
+Formula result: True
+
+Hands: [[141, 142], [131, 143], [133, 134], [132, 144]]
+Readable hands: [['AceClub', 'AceDiamond'], ['KingClub', 'AceHeart'], ['KingHeart', 'KingSpade'], ['KingDiamond', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 281 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 281
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 281
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.00241851806640625 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0012579999999999814 s
+Number of good states  281
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00035400000000002096 s
+Number of good states  281
+Formula result: True
+
+Hands: [[133, 134], [131, 141], [142, 144], [132, 143]]
+Readable hands: [['KingHeart', 'KingSpade'], ['KingClub', 'AceClub'], ['AceDiamond', 'AceSpade'], ['KingDiamond', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 6 beginning states
+Starting generating rest of model
+Maximal memory usage  0.9865303039550781 GB
+Generated model with 321 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 321
+Number of beginning states: 6
+Maximal memory usage  0.9865303039550781 GB
+Number of agents: 3
+Number of defined states: 1000
+Number of transitions 1000
+Number of reverse transitions 1000
+Number of pre states 1000
+Number of imperfect information classes 3
+Number of agent actions 3
+Number of states 321
+Number of epistemic class membership 3
+Number of can go there 3
+Size of transitions: 0.00860595703125 MB
+Size of reverse transitions: 0.00860595703125 MB
+Size of pre states: 0.00860595703125 MB
+Size of imperfect information: 8.392333984375e-05 MB
+Size of agent actions: 9.1552734375e-05 MB
+Size of states: 0.0027618408203125 MB
+Size of epistemic class membership: 8.392333984375e-05 MB
+Size of can go there: 9.1552734375e-05 MB
+Size of epistemic disjoint: 9.1552734375e-05 MB
+Start formula verification under imperfect information
+Minimum formula iterations: 10
+Time: 0.0005979999999999874 s
+Number of good states  158
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 10
+Time: 0.00022800000000000598 s
+Number of good states  174
+Formula result: True
+
+
+STATISTICS
+#states 346.15
+tgen 0.0118704
+low tverif 0.0008616499999999965
+low mcmas tverif 0.0
+low true 100.0 %
+up tverif 0.0
+mcmas tverif 0.0003132500000000045
+up true 100.0 %
+match 100.0 %
+
+Process finished with exit code 0

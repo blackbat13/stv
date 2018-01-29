@@ -1,0 +1,770 @@
+/usr/bin/python3.5 /home/blackbat/PycharmProjects/ATLFormulaChecker/bridge_model.py
+Choose bridge model (1 - standard, 2 - abstract):1
+Number of figures in game =4
+Number of cards in hand =4
+Number of tests=5
+Hands: [[112, 122, 123, 144], [113, 121, 132, 133], [111, 141, 142, 143], [114, 124, 131, 134]]
+Readable hands: [['JackDiamond', 'QueenDiamond', 'QueenHeart', 'AceSpade'], ['JackHeart', 'QueenClub', 'KingDiamond', 'KingHeart'], ['JackClub', 'AceClub', 'AceDiamond', 'AceHeart'], ['JackSpade', 'QueenSpade', 'KingClub', 'KingSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  4.043769836425781 GB
+Maximal memory usage  4.454326629638672 GB
+Maximal memory usage  4.941661834716797 GB
+Maximal memory usage  5.175159454345703 GB
+Generated model with 362568 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 362568
+Number of beginning states: 70
+Maximal memory usage  6.7066192626953125 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 83.138833 s
+Number of good states  287526
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.5585570000000075 s
+Number of good states  314286
+Formula result: True
+
+Hands: [[112, 113, 114, 121], [111, 122, 131, 141], [132, 133, 134, 143], [123, 124, 142, 144]]
+Readable hands: [['JackDiamond', 'JackHeart', 'JackSpade', 'QueenClub'], ['JackClub', 'QueenDiamond', 'KingClub', 'AceClub'], ['KingDiamond', 'KingHeart', 'KingSpade', 'AceHeart'], ['QueenHeart', 'QueenSpade', 'AceDiamond', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  6.755023956298828 GB
+Maximal memory usage  6.755023956298828 GB
+Maximal memory usage  6.755023956298828 GB
+Maximal memory usage  6.755023956298828 GB
+Maximal memory usage  6.755023956298828 GB
+Generated model with 459692 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 459692
+Number of beginning states: 70
+Maximal memory usage  7.353565216064453 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 28.797885000000008 s
+Number of good states  166746
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.3740579999999909 s
+Number of good states  178427
+Formula result: True
+
+Hands: [[121, 123, 132, 142], [114, 122, 143, 144], [112, 133, 134, 141], [111, 113, 124, 131]]
+Readable hands: [['QueenClub', 'QueenHeart', 'KingDiamond', 'AceDiamond'], ['JackSpade', 'QueenDiamond', 'AceHeart', 'AceSpade'], ['JackDiamond', 'KingHeart', 'KingSpade', 'AceClub'], ['JackClub', 'JackHeart', 'QueenSpade', 'KingClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Generated model with 257626 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 257626
+Number of beginning states: 70
+Maximal memory usage  7.399486541748047 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 30.767623999999984 s
+Number of good states  183797
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.44121999999998707 s
+Number of good states  197849
+Formula result: True
+
+Hands: [[122, 124, 142, 144], [123, 132, 134, 143], [111, 112, 113, 133], [114, 121, 131, 141]]
+Readable hands: [['QueenDiamond', 'QueenSpade', 'AceDiamond', 'AceSpade'], ['QueenHeart', 'KingDiamond', 'KingSpade', 'AceHeart'], ['JackClub', 'JackDiamond', 'JackHeart', 'KingHeart'], ['JackSpade', 'QueenClub', 'KingClub', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Maximal memory usage  7.399486541748047 GB
+Generated model with 600732 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 600732
+Number of beginning states: 70
+Maximal memory usage  7.897624969482422 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 135.063202 s
+Number of good states  334177
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.6842129999999997 s
+Number of good states  355453
+Formula result: True
+
+Hands: [[113, 121, 122, 131], [123, 124, 134, 141], [111, 112, 114, 142], [132, 133, 143, 144]]
+Readable hands: [['JackHeart', 'QueenClub', 'QueenDiamond', 'KingClub'], ['QueenHeart', 'QueenSpade', 'KingSpade', 'AceClub'], ['JackClub', 'JackDiamond', 'JackSpade', 'AceDiamond'], ['KingDiamond', 'KingHeart', 'AceHeart', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  7.964298248291016 GB
+Maximal memory usage  7.964298248291016 GB
+Maximal memory usage  7.964298248291016 GB
+Maximal memory usage  7.964298248291016 GB
+Maximal memory usage  7.964298248291016 GB
+Maximal memory usage  7.964298248291016 GB
+Generated model with 537076 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 537076
+Number of beginning states: 70
+Maximal memory usage  7.964298248291016 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 9.63235800000001 s
+Number of good states  89433
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.23270299999995814 s
+Number of good states  89433
+Formula result: True
+
+
+STATISTICS
+#states 443538.8
+tgen 26.43198900000001
+low tverif 57.4799804
+low mcmas tverif 0.0
+low true 100.0 %
+up tverif 0.0
+mcmas tverif 0.4581501999999887
+up true 100.0 %
+match 100.0 %
+
+Process finished with exit code 0
+
+
+/usr/bin/python3.5 /home/blackbat/PycharmProjects/ATLFormulaChecker/bridge_model.py
+Choose bridge model (1 - standard, 2 - abstract):1
+Number of figures in game =4
+Number of cards in hand =4
+Number of tests=20
+Hands: [[121, 132, 134, 141], [122, 131, 133, 142], [114, 124, 143, 144], [111, 112, 113, 123]]
+Readable hands: [['QueenClub', 'KingDiamond', 'KingSpade', 'AceClub'], ['QueenDiamond', 'KingClub', 'KingHeart', 'AceDiamond'], ['JackSpade', 'QueenSpade', 'AceHeart', 'AceSpade'], ['JackClub', 'JackDiamond', 'JackHeart', 'QueenHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  4.043743133544922 GB
+Maximal memory usage  4.721626281738281 GB
+Maximal memory usage  5.249885559082031 GB
+Maximal memory usage  5.418682098388672 GB
+Maximal memory usage  5.584888458251953 GB
+Maximal memory usage  6.062202453613281 GB
+Maximal memory usage  6.588691711425781 GB
+Maximal memory usage  7.105556488037109 GB
+Maximal memory usage  7.619937896728516 GB
+Maximal memory usage  8.104595184326172 GB
+Maximal memory usage  8.652427673339844 GB
+Maximal memory usage  8.839588165283203 GB
+Maximal memory usage  8.999332427978516 GB
+Maximal memory usage  9.158714294433594 GB
+Maximal memory usage  9.317726135253906 GB
+Maximal memory usage  9.501537322998047 GB
+Generated model with 1533809 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 1533809
+Number of beginning states: 70
+Maximal memory usage  12.35671615600586 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 2650.7529449999997 s
+Number of good states  1185646
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 2.185298999999759 s
+Number of good states  1232343
+Formula result: True
+
+Hands: [[113, 132, 142, 143], [121, 122, 133, 144], [114, 124, 131, 134], [111, 112, 123, 141]]
+Readable hands: [['JackHeart', 'KingDiamond', 'AceDiamond', 'AceHeart'], ['QueenClub', 'QueenDiamond', 'KingHeart', 'AceSpade'], ['JackSpade', 'QueenSpade', 'KingClub', 'KingSpade'], ['JackClub', 'JackDiamond', 'QueenHeart', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 797117 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 797117
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 369.6247330000001 s
+Number of good states  547345
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 1.0758949999999459 s
+Number of good states  612823
+Formula result: True
+
+Hands: [[121, 124, 131, 134], [111, 114, 123, 132], [113, 133, 143, 144], [112, 122, 141, 142]]
+Readable hands: [['QueenClub', 'QueenSpade', 'KingClub', 'KingSpade'], ['JackClub', 'JackSpade', 'QueenHeart', 'KingDiamond'], ['JackHeart', 'KingHeart', 'AceHeart', 'AceSpade'], ['JackDiamond', 'QueenDiamond', 'AceClub', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 903438 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 903438
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 773.2924949999997 s
+Number of good states  572522
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 1.0822549999998046 s
+Number of good states  603464
+Formula result: True
+
+Hands: [[111, 114, 122, 143], [121, 123, 124, 144], [112, 133, 141, 142], [113, 131, 132, 134]]
+Readable hands: [['JackClub', 'JackSpade', 'QueenDiamond', 'AceHeart'], ['QueenClub', 'QueenHeart', 'QueenSpade', 'AceSpade'], ['JackDiamond', 'KingHeart', 'AceClub', 'AceDiamond'], ['JackHeart', 'KingClub', 'KingDiamond', 'KingSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 421293 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 421293
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 35.19950400000016 s
+Number of good states  195364
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.40913700000010067 s
+Number of good states  214113
+Formula result: True
+
+Hands: [[111, 131, 133, 143], [122, 123, 124, 132], [112, 113, 134, 141], [114, 121, 142, 144]]
+Readable hands: [['JackClub', 'KingClub', 'KingHeart', 'AceHeart'], ['QueenDiamond', 'QueenHeart', 'QueenSpade', 'KingDiamond'], ['JackDiamond', 'JackHeart', 'KingSpade', 'AceClub'], ['JackSpade', 'QueenClub', 'AceDiamond', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 226897 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 226897
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 27.696967000000313 s
+Number of good states  164240
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.3341339999997217 s
+Number of good states  174504
+Formula result: True
+
+Hands: [[113, 124, 133, 144], [112, 122, 123, 134], [111, 131, 132, 141], [114, 121, 142, 143]]
+Readable hands: [['JackHeart', 'QueenSpade', 'KingHeart', 'AceSpade'], ['JackDiamond', 'QueenDiamond', 'QueenHeart', 'KingSpade'], ['JackClub', 'KingClub', 'KingDiamond', 'AceClub'], ['JackSpade', 'QueenClub', 'AceDiamond', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 1191037 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 1191037
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 18
+Time: 1002.8368419999997 s
+Number of good states  643705
+Formula result: False
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 1.3520619999999326 s
+Number of good states  742911
+Formula result: False
+
+Hands: [[114, 123, 142, 144], [121, 122, 124, 133], [111, 134, 141, 143], [112, 113, 131, 132]]
+Readable hands: [['JackSpade', 'QueenHeart', 'AceDiamond', 'AceSpade'], ['QueenClub', 'QueenDiamond', 'QueenSpade', 'KingHeart'], ['JackClub', 'KingSpade', 'AceClub', 'AceHeart'], ['JackDiamond', 'JackHeart', 'KingClub', 'KingDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 357556 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 357556
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 91.56507300000067 s
+Number of good states  305855
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.5648970000002009 s
+Number of good states  323573
+Formula result: True
+
+Hands: [[121, 122, 142, 144], [112, 113, 131, 133], [114, 132, 134, 141], [111, 123, 124, 143]]
+Readable hands: [['QueenClub', 'QueenDiamond', 'AceDiamond', 'AceSpade'], ['JackDiamond', 'JackHeart', 'KingClub', 'KingHeart'], ['JackSpade', 'KingDiamond', 'KingSpade', 'AceClub'], ['JackClub', 'QueenHeart', 'QueenSpade', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 161885 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 161885
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 25.837139000000207 s
+Number of good states  161885
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.30293799999981275 s
+Number of good states  161885
+Formula result: True
+
+Hands: [[112, 122, 124, 133], [114, 131, 142, 144], [121, 123, 132, 143], [111, 113, 134, 141]]
+Readable hands: [['JackDiamond', 'QueenDiamond', 'QueenSpade', 'KingHeart'], ['JackSpade', 'KingClub', 'AceDiamond', 'AceSpade'], ['QueenClub', 'QueenHeart', 'KingDiamond', 'AceHeart'], ['JackClub', 'JackHeart', 'KingSpade', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 594161 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 594161
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 51.421620999999504 s
+Number of good states  201186
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.4133350000001883 s
+Number of good states  207350
+Formula result: True
+
+Hands: [[114, 123, 134, 142], [112, 122, 133, 143], [111, 113, 132, 144], [121, 124, 131, 141]]
+Readable hands: [['JackSpade', 'QueenHeart', 'KingSpade', 'AceDiamond'], ['JackDiamond', 'QueenDiamond', 'KingHeart', 'AceHeart'], ['JackClub', 'JackHeart', 'KingDiamond', 'AceSpade'], ['QueenClub', 'QueenSpade', 'KingClub', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 200003 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 200003
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 5.666129000000183 s
+Number of good states  78201
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.2116890000006606 s
+Number of good states  99617
+Formula result: True
+
+Hands: [[112, 131, 134, 141], [114, 124, 132, 142], [113, 123, 143, 144], [111, 121, 122, 133]]
+Readable hands: [['JackDiamond', 'KingClub', 'KingSpade', 'AceClub'], ['JackSpade', 'QueenSpade', 'KingDiamond', 'AceDiamond'], ['JackHeart', 'QueenHeart', 'AceHeart', 'AceSpade'], ['JackClub', 'QueenClub', 'QueenDiamond', 'KingHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 898855 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 898855
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 504.8159879999994 s
+Number of good states  587738
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 1.115287000000535 s
+Number of good states  653786
+Formula result: True
+
+Hands: [[122, 123, 131, 141], [112, 124, 134, 142], [113, 114, 133, 144], [111, 121, 132, 143]]
+Readable hands: [['QueenDiamond', 'QueenHeart', 'KingClub', 'AceClub'], ['JackDiamond', 'QueenSpade', 'KingSpade', 'AceDiamond'], ['JackHeart', 'JackSpade', 'KingHeart', 'AceSpade'], ['JackClub', 'QueenClub', 'KingDiamond', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 954836 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 954836
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 392.6084120000005 s
+Number of good states  514412
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 1.0516889999998966 s
+Number of good states  591111
+Formula result: True
+
+Hands: [[123, 124, 133, 144], [113, 122, 141, 143], [111, 112, 114, 134], [121, 131, 132, 142]]
+Readable hands: [['QueenHeart', 'QueenSpade', 'KingHeart', 'AceSpade'], ['JackHeart', 'QueenDiamond', 'AceClub', 'AceHeart'], ['JackClub', 'JackDiamond', 'JackSpade', 'KingSpade'], ['QueenClub', 'KingClub', 'KingDiamond', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 1183015 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 1183015
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 493.2888630000007 s
+Number of good states  590714
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 1.1672019999996337 s
+Number of good states  632591
+Formula result: True
+
+Hands: [[111, 123, 124, 143], [121, 131, 132, 133], [112, 113, 142, 144], [114, 122, 134, 141]]
+Readable hands: [['JackClub', 'QueenHeart', 'QueenSpade', 'AceHeart'], ['QueenClub', 'KingClub', 'KingDiamond', 'KingHeart'], ['JackDiamond', 'JackHeart', 'AceDiamond', 'AceSpade'], ['JackSpade', 'QueenDiamond', 'KingSpade', 'AceClub']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 552777 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 552777
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 78.56390699999974 s
+Number of good states  265874
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.5601999999998952 s
+Number of good states  295334
+Formula result: True
+
+Hands: [[112, 113, 121, 144], [111, 114, 131, 132], [122, 141, 142, 143], [123, 124, 133, 134]]
+Readable hands: [['JackDiamond', 'JackHeart', 'QueenClub', 'AceSpade'], ['JackClub', 'JackSpade', 'KingClub', 'KingDiamond'], ['QueenDiamond', 'AceClub', 'AceDiamond', 'AceHeart'], ['QueenHeart', 'QueenSpade', 'KingHeart', 'KingSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 311747 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 311747
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 51.769280000000435 s
+Number of good states  241407
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.4629189999996015 s
+Number of good states  262833
+Formula result: True
+
+Hands: [[113, 114, 121, 142], [111, 112, 122, 134], [124, 132, 133, 143], [123, 131, 141, 144]]
+Readable hands: [['JackHeart', 'JackSpade', 'QueenClub', 'AceDiamond'], ['JackClub', 'JackDiamond', 'QueenDiamond', 'KingSpade'], ['QueenSpade', 'KingDiamond', 'KingHeart', 'AceHeart'], ['QueenHeart', 'KingClub', 'AceClub', 'AceSpade']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 453532 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 453532
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 34.0509519999996 s
+Number of good states  196992
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.4209439999995084 s
+Number of good states  221231
+Formula result: True
+
+Hands: [[111, 121, 123, 124], [122, 134, 141, 144], [112, 113, 114, 132], [131, 133, 142, 143]]
+Readable hands: [['JackClub', 'QueenClub', 'QueenHeart', 'QueenSpade'], ['QueenDiamond', 'KingSpade', 'AceClub', 'AceSpade'], ['JackDiamond', 'JackHeart', 'JackSpade', 'KingDiamond'], ['KingClub', 'KingHeart', 'AceDiamond', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 474193 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 474193
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 14
+Time: 1.0823310000005222 s
+Number of good states  26947
+Formula result: False
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 14
+Time: 0.09726700000010169 s
+Number of good states  26987
+Formula result: False
+
+Hands: [[111, 131, 134, 144], [112, 114, 122, 124], [123, 133, 141, 143], [113, 121, 132, 142]]
+Readable hands: [['JackClub', 'KingClub', 'KingSpade', 'AceSpade'], ['JackDiamond', 'JackSpade', 'QueenDiamond', 'QueenSpade'], ['QueenHeart', 'KingHeart', 'AceClub', 'AceHeart'], ['JackHeart', 'QueenClub', 'KingDiamond', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 478142 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 478142
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 206.14191000000028 s
+Number of good states  427326
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.7682349999995495 s
+Number of good states  444194
+Formula result: True
+
+Hands: [[114, 121, 141, 142], [111, 122, 123, 133], [113, 124, 131, 144], [112, 132, 134, 143]]
+Readable hands: [['JackSpade', 'QueenClub', 'AceClub', 'AceDiamond'], ['JackClub', 'QueenDiamond', 'QueenHeart', 'KingHeart'], ['JackHeart', 'QueenSpade', 'KingClub', 'AceSpade'], ['JackDiamond', 'KingDiamond', 'KingSpade', 'AceHeart']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 437408 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 437408
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 125.18178100000023 s
+Number of good states  341145
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.630895999999666 s
+Number of good states  356672
+Formula result: True
+
+Hands: [[121, 134, 141, 144], [122, 124, 132, 133], [112, 114, 131, 143], [111, 113, 123, 142]]
+Readable hands: [['QueenClub', 'KingSpade', 'AceClub', 'AceSpade'], ['QueenDiamond', 'QueenSpade', 'KingDiamond', 'KingHeart'], ['JackDiamond', 'JackSpade', 'KingClub', 'AceHeart'], ['JackClub', 'JackHeart', 'QueenHeart', 'AceDiamond']]
+Standard bridge model
+Starting generating beginning states
+Generated 70 beginning states
+Starting generating rest of model
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Maximal memory usage  12.487472534179688 GB
+Generated model with 226243 states
+Starting preparing epistemic relation
+Prepared epistemic relation
+Number of states: 226243
+Number of beginning states: 70
+Maximal memory usage  12.487472534179688 GB
+Start formula verification under imperfect information
+Minimum formula iterations: 20
+Time: 46.03385400000025 s
+Number of good states  212411
+Formula result: True
+Start formula verification under perfect information - mcmas approach
+Minimum formula iterations: 20
+Time: 0.3903389999995852 s
+Number of good states  214347
+Formula result: True
+
+
+STATISTICS
+#states 617897.2
+tgen 35.198485250000026
+low tverif 348.37153630000006
+low mcmas tverif 0.0
+low true 90.0 %
+up tverif 0.0
+mcmas tverif 0.7298309499999049
+up true 90.0 %
+match 100.0 %
+
+Process finished with exit code 0
