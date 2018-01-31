@@ -124,12 +124,15 @@ class StrategyComparer:
     def epistemic_h(self, state: int, strategy1: list, strategy2: list) -> int:
         strategy1_result = self.get_actions_result(state, strategy1)
         strategy2_result = self.get_actions_result(state, strategy2)
-        strategy1_epistemic_h = 0
-        strategy2_epistemic_h = 0
+        strategy1_epistemic_h = set()
+        strategy2_epistemic_h = set()
         for state in strategy1_result:
-            strategy1_epistemic_h += len(self.model.epistemic_class_for_state(state, 0))
+            strategy1_epistemic_h.update(self.model.epistemic_class_for_state(state, 0))
         for state in strategy2_result:
-            strategy2_epistemic_h += len(self.model.epistemic_class_for_state(state, 0))
+            strategy2_epistemic_h.update(self.model.epistemic_class_for_state(state, 0))
+
+        strategy1_epistemic_h = len(strategy1_epistemic_h)
+        strategy2_epistemic_h = len(strategy2_epistemic_h)
 
         if strategy2_epistemic_h < strategy1_epistemic_h:
             return 1
