@@ -742,17 +742,18 @@ class ATLModel:
 
             current_state = self.transitions[current_state][choice]['nextState']
 
-    def walk(self, agent_number):
+    def walk(self, agent_number, print_state):
         print("#####################################################")
         print("Simulation")
         current_state = 0
         while True:
             print()
-            print("Current state:", self.states[current_state])
+            print("Current state:")
+            print_state(self.states[current_state])
             print("Epistemic states:")
             for state in self.imperfect_information[agent_number][
                 self.epistemic_class_membership[agent_number][current_state]]:
-                print(self.states[state])
+                print_state(self.states[state])
 
             if len(self.transitions[current_state]) == 0:
                 print("End")

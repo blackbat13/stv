@@ -27,7 +27,7 @@ class PresidentModel:
             "King": 4, "Queen": 4, "Jack": 4, "Ten": 4, "Nine": 4, "Eight": 4, "Seven": 4, "Six": 4, "Five": 4,
             "Four": 4, "Three": 4}
         self.states = []
-        self. players_cards = {}
+        self.players_cards = {}
         self.model = None
 
     def add_actions(self):

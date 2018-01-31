@@ -1,8 +1,7 @@
 import atl_model
 import copy
 
-import mvatl_parser
-import mvatl_parser as P
+from mv_atl import mvatl_parser as P
 
 __author__ = 'Arthur Queffelec'
 
