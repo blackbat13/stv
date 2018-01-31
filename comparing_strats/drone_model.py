@@ -127,6 +127,12 @@ class CracowMap:
         self.connections.append([7, 10])
         self.connections.append([8, 11])
 
+        self.connections.append([4, 7])
+        # self.connections.append([7, 8])
+        self.connections.append([0, 3])
+        # self.connections.append([0, 5])
+        self.connections.append([0, 7])
+
     def create_epistemic(self):
         self.disjoint_set = DisjointSet(len(self.places))
         self.disjoint_set.union(0, 1)
@@ -235,9 +241,10 @@ class DroneModel:
                 if not self.is_random:
                     for action in actions_order:
                         i += 1
-                        how_much = int(len(self.graph[current_place]) / (i+1))
-                        if i >= 2:
-                            how_much = int(len(self.graph[current_place]) / (2))
+                        how_much = len(self.graph[current_place]) - 1
+                        # how_much = int(len(self.graph[current_place]) / (i+1))
+                        # if i >= 2:
+                        #     how_much = int(len(self.graph[current_place]) / (2))
                         for j in range(0, how_much):
                             place_id = self.graph[current_place][j]
                             x, y = self.relation_between_places(current_place, place_id)
