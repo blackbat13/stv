@@ -25,11 +25,12 @@ test_data = []
 # test_data.append([2, [8,8]])
 # test_data.append([2, [10,10]])
 # test_data.append([3, [2,2,2]])
-test_data.append([3, [4,4,4]])
+# test_data.append([3, [4,4,4]])
 # test_data.append([3, [5,5,5]])
 # test_data.append([4, [5,5,5,5]])
 
-type = 1
+type = 0
+test_data.append([1, [30]])
 
 for data in test_data:
     no_drones = data[0]

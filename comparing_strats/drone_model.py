@@ -135,8 +135,8 @@ class CracowMap:
 
     def create_epistemic(self):
         self.disjoint_set = DisjointSet(len(self.places))
-        self.disjoint_set.union(0, 1)
-        self.disjoint_set.union(1, 3)
+        #self.disjoint_set.union(0, 1)
+        #elf.disjoint_set.union(1, 3)
         self.disjoint_set.union(4, 8)
         self.disjoint_set.union(7, 9)
         self.disjoint_set.union(11, 10)
@@ -316,8 +316,13 @@ class DroneModel:
         new_places = state['place'][:]
         for i in range(0, len(new_places)):
             new_places[i] = self.map.disjoint_set.find(new_places[i])
+        new_visited = []
+        for i in range(0, len(state['visited'])):
+            new_visited.append(set())
+            for place in state['visited'][i]:
+                new_visited[i].add(self.map.disjoint_set.find(place))
         epistemic_state = {'place': new_places, 'energy': state['energy'],
-                           'visited': state['visited']}
+                           'visited': new_visited}
         return epistemic_state
 
     def prepare_epistemic_relation(self):

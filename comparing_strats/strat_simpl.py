@@ -62,7 +62,7 @@ class StrategyComparer:
 
                 # Do additional heuristics
 
-                if compare_result == 1 and heuristic is not None:
+                if compare_result >= 0 and heuristic is not None:
                     compare_result = heuristic(state, current_strategy, actions)
 
                 if compare_result != 1:
