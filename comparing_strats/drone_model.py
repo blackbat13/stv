@@ -136,7 +136,8 @@ class CracowMap:
     def create_epistemic(self):
         self.disjoint_set = DisjointSet(len(self.places))
         #self.disjoint_set.union(0, 1)
-        #elf.disjoint_set.union(1, 3)
+        #self.disjoint_set.union(1, 3)
+        self.disjoint_set.union(3, 2)
         self.disjoint_set.union(4, 8)
         self.disjoint_set.union(7, 9)
         self.disjoint_set.union(11, 10)

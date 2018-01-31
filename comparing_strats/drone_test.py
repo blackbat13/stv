@@ -2,7 +2,6 @@ from comparing_strats.drone_model import *
 from comparing_strats.strat_simpl import StrategyComparer
 from comparing_strats.strategy_generator import StrategyGenerator
 
-
 test_data = []
 # test_data.append([1, [3]])
 # test_data.append([1, [5]])
@@ -30,7 +29,7 @@ test_data = []
 # test_data.append([4, [5,5,5,5]])
 
 type = 0
-test_data.append([1, [30]])
+test_data.append([1, [10]])
 
 for data in test_data:
     no_drones = data[0]
@@ -42,10 +41,10 @@ for data in test_data:
     strategy_generator = StrategyGenerator(drone_model.model)
     strategy = strategy_generator.create_strategy()
     # strategy_generator.print_strategy(strategy)
-    #print(strategy)
+    # print(strategy)
 
     strategy_comparer = StrategyComparer(drone_model.model, ['N', 'S', 'W', 'E', 'Wait'])
-    if type==0:
+    if type == 0:
         strategy2 = strategy_comparer.simplify_strategy(strategy[:], None)
     elif type == 1:
         strategy2 = strategy_comparer.simplify_strategy(strategy[:], strategy_comparer.epistemic_h)
@@ -71,7 +70,7 @@ for data in test_data:
     print("Number of states of losing control for basic strategy:", contr_basic)
     print("Number of states of losing control for simplified strategy:", contr_simp)
 
-    if type==0:
+    if type == 0:
         file_basic = open("comp_str_basic_none.txt", "a")
         file_simpl = open("comp_str_simpl_none.txt", "a")
     elif type == 1:
