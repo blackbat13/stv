@@ -1,7 +1,8 @@
 from atl_model import ATLModel
 import itertools
-from mv_atl import mvatl_model
+from mv_atl import mvatl_model, mvatl_parser
 from enum import Enum
+import random
 
 map = []
 
@@ -201,7 +202,7 @@ class PollutionModel:
     no_drones = 1
     sides = ["right", "up", "left", "down"]
     states_dictionary = {}
-    epistemic_states_dictionary = {}
+    epistemic_states_dictionary = []
     state_number = 0
     graph = []
 
@@ -209,12 +210,14 @@ class PollutionModel:
         self.model_map = model_map
         self.no_drones = no_drones
         self.comm_radius = comm_radius # Communication radius for drones
-        self.model = ATLModel(no_drones, 100000)
+        self.create_mvatl_model()
         places = []
         visited = []
+        readings = []
         for i in range(0, no_drones):
             places.append(0)
             visited.append({0})
+            readings.append('t')
 
         first_state = {
             "map": model_map,
@@ -224,6 +227,9 @@ class PollutionModel:
         }
 
         first_state["prop"] = self.prop_for_state(first_state)
+        first_state["reading"] = self.readings_for_state(first_state)
+
+        self.prepare_epistemic_states_dictionary()
 
         self.add_state(first_state)
 
@@ -231,6 +237,23 @@ class PollutionModel:
         self.generate_model()
         self.model.states = self.states
         self.prepare_epistemic_relation()
+
+    def prepare_epistemic_states_dictionary(self):
+        self.epistemic_states_dictionary = []
+        for _ in range(0, self.no_drones):
+            self.epistemic_states_dictionary.append({})
+
+    def create_mvatl_model(self):
+        # TODO: Approx number of states
+        self.prepare_lattice()
+        self.model = mvatl_model.MvATLModel(self.no_drones, 1000000, self.lattice)
+        self.add_actions()
+
+    def add_actions(self):
+        actions = ['N', 'E', 'S', 'W', 'Wait']
+        for drone in range(0, self.no_drones):
+            for action in actions:
+                self.model.add_action(drone, action)
 
     def create_map_graph(self, connections):
         """Creates graph from connections between places in the map"""
@@ -243,10 +266,16 @@ class PollutionModel:
             self.graph[con[1]].append(con[0])
 
     def prepare_lattice(self):
-        self.lattice = mvatl_model.QBAlgebra('t', 'f', [('t', 'tg'),
-                                                        ('t', 'td'), ('td', 'Td'), ('tg', 'Tg'),
-                                                        ('Td', 'u'), ('Tg', 'u'), ('u', 'fd'),
-                                                        ('u', 'fg'), ('fd', 'f'), ('fg', 'f')
+        # self.lattice = mvatl_model.QBAlgebra('t', 'f', [('t', 'tg'),
+        #                                                 ('t', 'td'), ('td', 'Td'), ('tg', 'Tg'),
+        #                                                 ('Td', 'u'), ('Tg', 'u'), ('u', 'fd'),
+        #                                                 ('u', 'fg'), ('fd', 'f'), ('fg', 'f')
+        #                                                 ])
+
+        self.lattice = mvatl_model.QBAlgebra('t', 'f', [('tg', 't'),
+                                                        ('td', 't'), ('Td', 'td'), ('Tg', 'tg'),
+                                                        ('u', 'Td'), ('u', 'Tg'), ('fd', 'u'),
+                                                        ('fg', 'u'), ('f', 'fd'), ('f', 'fg')
                                                         ])
 
     def relation_between_places(self, place_id_1, place_id_2):
@@ -301,9 +330,29 @@ class PollutionModel:
                 }
 
                 new_state["prop"] = self.prop_for_state(new_state)
+                new_state["reading"] = self.readings_for_state(new_state)
 
                 new_state_number = self.add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
+
+    def readings_for_state(self, state):
+        readings = []
+        for drone in range(0, self.no_drones):
+            drone_reading = self.drone_rading_for_place(drone, state['place'][drone])
+            prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone]]['PM2.5'])
+            readings.append(prop)
+        return readings
+
+    def drone_rading_for_place(self, drone, place):
+        # TODO: improve
+        return 't'
+        rand = random.randint(0, 2)
+        if rand == 0:
+            return 't'
+        elif rand == 1:
+            return 'f'
+        else:
+            return 'u'
 
     def movement_to_action(self, x, y):
         """Transform movement to drone action"""
@@ -319,8 +368,9 @@ class PollutionModel:
 
     def add_state(self, state):
         new_state_number = self.get_state_number(state)
-        epistemic_state = self.get_epistemic_state(state)
-        self.add_to_epistemic_dictionary(epistemic_state, new_state_number)
+        # epistemic_state = self.get_epistemic_state(state)
+        epistemic_states = self.get_epistemic_states(state)
+        self.add_to_epistemic_dictionary(epistemic_states, new_state_number)
         return new_state_number
 
     def get_state_number(self, state):
@@ -335,21 +385,51 @@ class PollutionModel:
 
         return new_state_number
 
-    def add_to_epistemic_dictionary(self, state, new_state_number):
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.epistemic_states_dictionary:
-            self.epistemic_states_dictionary[state_str] = {new_state_number}
-        else:
-            self.epistemic_states_dictionary[state_str].add(new_state_number)
+    def add_to_epistemic_dictionary(self, states, new_state_number):
+        drone = -1
+        for state in states:
+            drone += 1
+            state_str = ' '.join(str(state[e]) for e in state)
+            if state_str not in self.epistemic_states_dictionary[drone]:
+                self.epistemic_states_dictionary[drone][state_str] = {new_state_number}
+            else:
+                self.epistemic_states_dictionary[drone][state_str].add(new_state_number)
 
     def get_epistemic_state(self, state):
         epistemic_state = {'place': state['place'], 'energy': state['energy'],
                            'visited': state['visited']}
         return epistemic_state
 
+    def get_epistemic_states(self, state):
+        epistemic_states = []
+        for drone in range(0, self.no_drones):
+            drone_place = state['place'][drone]
+            epistemic_state = {'place': state['place'][:], 'energy': state['energy'][:],
+                           'visited': state['visited'][:]}
+            for coal_drone in range(0, self.no_drones):
+                if coal_drone == drone:
+                    continue
+                coal_drone_place = state['place'][coal_drone]
+                if self.is_within_radius(drone_place, coal_drone_place):
+                    continue
+                epistemic_state['place'][coal_drone] = -1
+                epistemic_state['energy'][coal_drone] = -1
+                epistemic_state['visited'][coal_drone] = []
+            epistemic_states.append(epistemic_state)
+        return epistemic_states
+
+    def is_within_radius(self, place1, place2):
+        x1 = self.model_map[place1]['x']
+        y1 = self.model_map[place1]['y']
+        x2 = self.model_map[place2]['x']
+        y2 = self.model_map[place2]['y']
+        distance = (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)
+        return distance <= (self.comm_radius**2)
+
     def prepare_epistemic_relation(self):
-        for state, epistemic_class in self.epistemic_states_dictionary.items():
-            self.model.add_epistemic_class(0, epistemic_class)
+        for drone in range(0, self.no_drones):
+            for state, epistemic_class in self.epistemic_states_dictionary[drone].items():
+                self.model.add_epistemic_class(drone, epistemic_class)
 
     def prop_for_state(self, state):
         p = []
@@ -391,18 +471,33 @@ class PollutionModel:
         print("Properties:", state["prop"])
 
 
-pollution_model = PollutionModel(map, connections, 1, [5])
+pollution_model = PollutionModel(map, connections, 1, [3], 1)
 i = 0
-for state in pollution_model.states:
-    print(i)
-    print(state["place"])
-    print(state["energy"])
-    print(state["visited"])
-    print()
-    i += 1
+# for state in pollution_model.states:
+#     print(i)
+#     print(state["place"])
+#     print(state["energy"])
+#     print(state["visited"])
+#     print()
+#     i += 1
+#
+# pollution_model.model.walk(0, PollutionModel.print_state)
+print('Number of states:', len(pollution_model.states))
 
-pollution_model.model.walk(0, PollutionModel.print_state)
-print(len(pollution_model.states))
+
+props = "reading"
+pollution_model.model.props = [props]
+const = "t Td td Tg tg f fd fg u"
+atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
+txt = "<<0>> F (reading_0 <= Td)"
+# txt = "<<0>> F reading_0"
+
+formula = atlparser.parse(txt)
+
+# txt = "<<1>> F reading_1"
+# txt = "<<1>> F (t <= Reading_1)"
+print("Formula:", formula)
+print(str(pollution_model.model.interpreter(formula, 0)))
 
 
 # Dron widzi tylko swoje najbliższe otoczenie (czy inny dron jest w polu obok)
