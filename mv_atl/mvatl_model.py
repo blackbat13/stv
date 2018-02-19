@@ -243,7 +243,7 @@ class MvATLModel(atl_model.ATLModel):
                         if self.simple_interpreter(formula[3][1], int(formula[1][0]), l, s, state): # Handles only one agent
                             # DEBUG: print(state)
                             winning_states.append(s)
-                    print(winning_states)
+                    # print(winning_states)
                     if P.isAlways(formula[3]):
                         result = self.maximum_formula_one_agent_multiple_states(int(formula[1][0]), winning_states)
                     if P.isEventually(formula[3]):
