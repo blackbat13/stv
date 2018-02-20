@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from atl_model import ATLModel
 import itertools
 from mv_atl import mvatl_model, mvatl_parser
@@ -470,7 +473,29 @@ class PollutionModel:
         print("Properties:", state["prop"])
         print("Pollutions:", state["pollution"])
 
+def generate_formula(no_drones, no_places):
+    coal = ""
+    for d in range(0, no_drones):
+        coal += str(d)
+        if d != no_drones -1:
+            coal += ","
+    txt = ""
+    for l in range(0, no_places):
+        for d in range(0, no_drones):
+            txt += "(!(<<"+str(d)+">>F (p_"+str(d)+",e,"+str(l)+")) | <<"+coal+">> F (p_"+str(d)+",e,"+str(l)+"))"
+            if d != no_drones - 1:
+                txt += "|"
+        txt += "&"
+    for l in range(0, no_places):
+        for d in range(0, no_drones):
+            txt += "(<<"+str(d)+">>F p_"+str(d)+"@"+str(l)+")"
+            if d != no_drones - 1:
+                txt += "|"
+        if l != no_places - 1:
+            txt += "&"
+    return txt
 
+print(generate_formula(2,5))
 pollution_model = PollutionModel(map, connections, 2, [3, 3], 1)
 i = 0
 # for state in pollution_model.states:
