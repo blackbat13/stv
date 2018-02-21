@@ -473,31 +473,47 @@ class PollutionModel:
         print("Properties:", state["prop"])
         print("Pollutions:", state["pollution"])
 
+#Syntax for propositions:
+# Polution prop -> poll the list of size no_drones with (the second) l as the location number
+# In formula -> poll_d with l location and d drone (ex: pol3 = [t,f,t] and pol3_1 = f)
+# Location prop -> locl the list of size no_drones with (the second) l as the location number
+# In formula -> locl_d with l location and d drone (ex: loc3 = [t,f,t] and loc3_1 = f)
 def generate_formula(no_drones, no_places):
+    conj = list()
     coal = ""
     for d in range(0, no_drones):
         coal += str(d)
         if d != no_drones -1:
             coal += ","
-    txt = ""
     for l in range(0, no_places):
+        dis1 = list()
         for d in range(0, no_drones):
-            txt += "(!(<<"+str(d)+">>F (p_"+str(d)+",e,"+str(l)+")) | <<"+coal+">> F (p_"+str(d)+",e,"+str(l)+"))"
-            if d != no_drones - 1:
-                txt += "|"
-        txt += "&"
+            dis1.append("(!<<"+str(d)+">> F pol"+str(l)+"_"+str(d)+" | <<"+coal+">> F pol"+str(l)+"_"+str(d)+")")
+        conj.append(dis1)
     for l in range(0, no_places):
+        dis2 = list()
         for d in range(0, no_drones):
-            txt += "(<<"+str(d)+">>F p_"+str(d)+"@"+str(l)+")"
-            if d != no_drones - 1:
-                txt += "|"
-        if l != no_places - 1:
-            txt += "&"
-    return txt
+            dis2.append("<<"+str(d)+">> F loc"+str(l)+"_"+str(d))
+        conj.append(dis2)
+    return conj
 
-print(generate_formula(2,5))
-pollution_model = PollutionModel(map, connections, 2, [3, 3], 1)
-i = 0
+def dformula2string(disj,i):
+    if i == len(disj) - 1:
+        return disj[i]
+    return "("+disj[i]+" | "+dformula2string(disj,i+1)+")"
+
+def cformula2string(conj,i):
+    if i == len(conj) - 1:
+        return dformula2string(conj[i],0)
+    return "("+dformula2string(conj[i],0)+" & "+cformula2string(conj,i+1)+")"
+                                                          
+
+#(!(<<0>>F (pol0_0)) | <<0>> F (pol0_0))&((!(<<0>>F (pol1_0)) | <<0>> F (pol1_0)))
+
+formula=generate_formula(3,3)
+txt=cformula2string(formula,0)
+#pollution_model = PollutionModel(map, connections, 2, [3, 3], 1)
+#i = 0
 # for state in pollution_model.states:
 #     print(i)
 #     print(state["place"])
@@ -507,15 +523,16 @@ i = 0
 #     i += 1
 #
 # pollution_model.model.walk(0, PollutionModel.print_state)
-print('Number of states:', len(pollution_model.states))
+#print('Number of states:', len(pollution_model.states))
 
-props = "pollution"
-pollution_model.model.props = [props]
+props = ["pol0","pol1","pol2","pol3","pol4","loc0","loc1","loc2","loc3","loc4"]
+#pollution_model.model.props = [props]
 const = "t Td td Tg tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
-txt = "<<0>> F (pollution_0 <= Td)"
-
+#txt = "<<0>> F (pollution_0 <= Td)"
+#
 formula = atlparser.parse(txt)
-
-print("Formula:", formula)
-print(str(pollution_model.model.interpreter(formula, 0)))
+print(formula)
+#
+#print("Formula:", formula)
+#print(str(pollution_model.model.interpreter(formula, 0)))
