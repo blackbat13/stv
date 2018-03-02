@@ -45,7 +45,7 @@ class AlternatingTimeTemporalLogicParser:
         self.unaryFormula = Group(
             self.unaryConnective + self.formula) | \
                             Group(
-            self.left_agents + Group(delimitedList(Word(alphanums), delim=','))
+            self.left_agents + Group(delimitedList(ZeroOrMore(Word(alphanums)), delim=','))
             + self.right_agents + self.formula)
         self.binaryFormula = Group(
             self.left_parenthesis
