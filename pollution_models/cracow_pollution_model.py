@@ -488,7 +488,7 @@ def generate_formula(no_drones, no_places):
     for l in range(0, no_places):
         dis1 = list()
         for d in range(0, no_drones):
-            dis1.append("(!<<"+str(d)+">> F pol"+str(l)+"_"+str(d)+" | <<"+coal+">> F pol"+str(l)+"_"+str(d)+")")
+            dis1.append("(!<<>> G ! pol"+str(l)+"_"+str(d)+" | <<"+coal+">> F pol"+str(l)+"_"+str(d)+")")
         conj.append(dis1)
     for l in range(0, no_places):
         dis2 = list()
@@ -512,6 +512,7 @@ def cformula2string(conj,i):
 
 formula=generate_formula(3,3)
 txt=cformula2string(formula,0)
+print(txt)
 #pollution_model = PollutionModel(map, connections, 2, [3, 3], 1)
 #i = 0
 # for state in pollution_model.states:
