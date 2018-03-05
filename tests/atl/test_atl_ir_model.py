@@ -35,6 +35,9 @@ class TestATLIrModel(unittest.TestCase):
         result = self.atl_Ir_model.minimum_formula_many_agents([0, 1], {1})
         self.assertEqual(len(result), 3)
 
+    def test_minimum_formula_no_agents(self):
+        result = self.atl_Ir_model.minimum_formula_no_agents({1})
+        self.assertEqual(len(result), 1)
 
 if __name__ == '__main__':
     unittest.main()

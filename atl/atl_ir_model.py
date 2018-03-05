@@ -143,6 +143,47 @@ class ATLIrModel:
 
         return result
 
+    def minimum_formula_no_agents(self, winning_states: Set[int]) -> Set[int]:
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        current_states = winning_states.copy()
+        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_no_agents(current_states, is_winning_state)
+            result_states.update(current_states)
+            if result_states_length == len(result_states):
+                break
+
+            result_states_length = len(result_states)
+
+        return result_states
+
+    def basic_formula_no_agents(self, current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+        result_states = set()
+        pre_image = set()
+        for state_number in current_states:
+            pre_image.update(self.pre_states[state_number])
+
+        for state_number in pre_image:
+            if self.is_reachable_in_model(state_number, is_winning_state):
+                result_states.add(state_number)
+                is_winning_state[state_number] = True
+
+        return result_states
+
+    def is_reachable_in_model(self, state_number: int, is_winning_state: List[bool]):
+        result = False
+        for transition in self.transitions[state_number]:
+            result = True
+            if not is_winning_state[transition['next_state']]:
+                return False
+
+        return result
+
 class ATLirModel(ATLIrModel):
     """Class for creating ATL models with imperfect information and imperfect recall"""
     epistemic_class_membership: List[List[int]] = []
