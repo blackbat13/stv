@@ -1,6 +1,7 @@
 from tools.number_tools import NumberTools
 from tools.array_tools import ArrayTools
 from typing import List, Set
+import itertools
 
 class ATLIrModel:
     """Class for creating ATL models with perfect information and imperfect recall"""
@@ -90,6 +91,57 @@ class ATLIrModel:
 
         return result
 
+    def minimum_formula_many_agents(self, agent_numbers: List[int], winning_states: Set[int]) -> Set[int]:
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        current_states = winning_states.copy()
+        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_many_agents(agent_numbers, current_states, is_winning_state)
+            result_states.update(current_states)
+            if result_states_length == len(result_states):
+                break
+
+            result_states_length = len(result_states)
+
+        return result_states
+
+    def basic_formula_many_agents(self, agent_numbers: List[int], current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+        result_states = set()
+        pre_image = set()
+        for state_number in current_states:
+            pre_image.update(self.pre_states[state_number])
+
+        actions = []
+        for agent_number in agent_numbers:
+            actions.append(self.agents_actions[agent_number])
+
+        for state_number in pre_image:
+            for action in itertools.product(*actions):
+                if self.is_reachable_by_agents(agent_numbers, state_number, action, is_winning_state):
+                    result_states.add(state_number)
+                    is_winning_state[state_number] = True
+
+        return result_states
+
+    def is_reachable_by_agents(self, agent_numbers: List[int], state_number: int, actions: List[str], is_winning_state: List[bool]):
+        result = False
+        for transition in self.transitions[state_number]:
+            is_good_transition = True
+            for agent_number, action in zip(agent_numbers, actions):
+                if transition['actions'][agent_number] != action:
+                    is_good_transition = False
+                    break
+            if is_good_transition:
+                result = True
+                if not is_winning_state[transition['next_state']]:
+                    return False
+
+        return result
 
 class ATLirModel(ATLIrModel):
     """Class for creating ATL models with imperfect information and imperfect recall"""
