@@ -9,7 +9,7 @@ class TestArrayTools(unittest.TestCase):
         self.assertEqual(len(array[0]), 0)
 
     def test_create_integer_array_of_size(self):
-        array = ArrayTools.create_integer_array_of_size(10, 1)
+        array = ArrayTools.create_value_array_of_size(10, 1)
         self.assertEqual(len(array), 10)
         self.assertEqual(array[0], 1)
 

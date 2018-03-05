@@ -8,7 +8,7 @@ class ArrayTools:
         return array[:]
 
     @staticmethod
-    def create_integer_array_of_size(size: int, basic_value: int):
+    def create_value_array_of_size(size: int, basic_value):
         array = []
         for i in range(0, size):
             array.append(basic_value)
