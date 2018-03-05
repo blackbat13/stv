@@ -523,12 +523,14 @@ def cformula2string(conj,i):
     return "("+dformula2string(conj[i],0)+" & "+cformula2string(conj,i+1)+")"
                                                           
 
-#(!(<<0>>F (pol0_0)) | <<0>> F (pol0_0))&((!(<<0>>F (pol1_0)) | <<0>> F (pol1_0)))
-
-formula=generate_formula(3,3)
+n_agent = 2
+pollution_model = PollutionModel(map, connections, n_agent, [3, 3], 1)
+formula=generate_formula(n_agent, len(map))
 txt=cformula2string(formula,0)
 print(txt)
-#pollution_model = PollutionModel(map, connections, 2, [3, 3], 1)
+print(len(map))
+
+
 #i = 0
 # for state in pollution_model.states:
 #     print(i)
@@ -540,15 +542,18 @@ print(txt)
 #
 # pollution_model.model.walk(0, PollutionModel.print_state)
 #print('Number of states:', len(pollution_model.states))
-
-props = ["pol0","pol1","pol2","pol3","pol4","loc0","loc1","loc2","loc3","loc4"]
-#pollution_model.model.props = [props]
+props = list()
+for l in range(0,len(map)):
+    props.append("pol"+str(l))
+    props.append("loc"+str(l))
+    
+pollution_model.model.props = [props]
 const = "t Td td Tg tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
 #txt = "<<0>> F (pollution_0 <= Td)"
 #
 formula = atlparser.parse(txt)
-print(formula)
+#print(formula)
 #
-#print("Formula:", formula)
-#print(str(pollution_model.model.interpreter(formula, 0)))
+print("Formula:", formula[0][0][0][1])
+print(str(pollution_model.model.interpreter(formula[0][0][0][1], 0)))
