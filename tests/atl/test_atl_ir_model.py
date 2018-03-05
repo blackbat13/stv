@@ -28,7 +28,7 @@ class TestATLIrModel(unittest.TestCase):
         self.atl_Ir_model.add_transition(2, 2, ['Push', 'Push'])
 
     def test_minimum_formula_one_agent(self):
-        result = self.atl_Ir_model.minimum_formula_one_agent(0, set([1]))
+        result = self.atl_Ir_model.minimum_formula_one_agent(0, {1})
         self.assertEqual(len(result), 1)
 
 
