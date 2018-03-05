@@ -228,16 +228,23 @@ class PollutionModel:
     def create_first_state(self, energies):
         places = []
         visited = []
+        loc0 = []
         for _ in range(0, self.no_drones):
             places.append(0)
             visited.append({0})
+            loc0.append('t')
 
         first_state = {
             "map": self.model_map,
             "place": places,
             "energy": energies,
-            "visited": visited
+            "visited": visited,
+            "loc0": loc0
         }
+        for l in range(1, len(self.model_map)):
+            first_state["loc"+str(l)] = []
+            for _ in range(0, self.no_drones):
+                first_state["loc"+str(l)].append('f')
 
         first_state["prop"] = self.prop_for_state(first_state)
         first_state["pollution"] = self.readings_for_state(first_state)
@@ -327,7 +334,7 @@ class PollutionModel:
             visited[drone_number] = visited[drone_number].copy()
             visited[drone_number].add(next_place)
             actions[drone_number] = self.movement_to_action(d_action[0], d_action[1])
-
+            
         new_state = {
             "map": self.model_map,
             "place": places,
@@ -335,6 +342,14 @@ class PollutionModel:
             "visited": visited
         }
 
+        for l in range(0, len(self.model_map)):
+            loc = ['f']*self.no_drones
+            for a in range(0, self.no_drones):
+                if l == new_state["place"][a]:
+                    loc[a] = 't'
+            new_state["loc"+str(l)] = loc
+
+        
         new_state["prop"] = self.prop_for_state(new_state)
         new_state["pollution"] = self.readings_for_state(new_state)
 
