@@ -8,6 +8,13 @@ class ArrayTools:
         return array[:]
 
     @staticmethod
+    def create_integer_array_of_size(size: int, basic_value: int):
+        array = []
+        for i in range(0, size):
+            array.append(basic_value)
+        return array[:]
+
+    @staticmethod
     def unique(l: list):
         """Removes all duplicates from list"""
         s = set()
