@@ -206,3 +206,15 @@ class ATLirModel(ATLIrModel):
         epistemic_class_number = len(self.imperfect_information[agent_number]) - 1
         for state_number in epistemic_class:
             self.epistemic_class_membership[agent_number][state_number] = epistemic_class_number
+
+    def is_reachable_by_agent(self, agent_number: int, state_number: int, action: str, is_winning_state: List[bool]):
+        result = False
+        epistemic_class = self.imperfect_information[agent_number][self.epistemic_class_membership[agent_number][state_number]]
+        for state_number in epistemic_class:
+            for transition in self.transitions[state_number]:
+                if transition['actions'][agent_number] == action:
+                    result = True
+                    if not is_winning_state[transition['next_state']]:
+                        return False
+
+        return result
