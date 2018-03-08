@@ -1,4 +1,5 @@
-import atl_model
+# import atl_model
+from atl.atl_ir_model import ATLIrModel, ATLirModel
 import copy
 
 from mv_atl import mvatl_parser as P
@@ -111,11 +112,11 @@ class QBAlgebra:
         return ji
 
 
-class MvATLModel(atl_model.ATLModel):
+class MvATLModel(ATLirModel):
     lattice = None
 
     def __init__(self, number_of_agents, number_of_states, lattice):
-        super(MvATLModel, self).__init__(number_of_agents, number_of_states)
+        super(MvATLModel, self).__init__(number_of_agents)
         self.lattice = lattice
 
 
@@ -145,16 +146,16 @@ class MvATLModel(atl_model.ATLModel):
         for i in range(0, len(self.states)):
             states_t.append(self.translate_state(l, i))
         # TODO: Does it requires a copy ?
-        model_t = atl_model.ATLModel(self.number_of_agents, self.number_of_states)
+        model_t = ATLirModel(self.number_of_agents)
         model_t.transitions = self.transitions
         model_t.reverse_transitions = self.reverse_transitions
         model_t.pre_states = self.pre_states
         model_t.imperfect_information = self.imperfect_information
         model_t.agents_actions = self.agents_actions
         model_t.states = states_t
-        model_t.epistemic_class_disjoint = self.epistemic_class_disjoint
+        # model_t.epistemic_class_disjoint = self.epistemic_class_disjoint
         model_t.epistemic_class_membership = self.epistemic_class_membership
-        model_t.can_go_there = self.can_go_there
+        # model_t.can_go_there = self.can_go_there
         return model_t
 
     def get_children(self, state):
@@ -245,9 +246,9 @@ class MvATLModel(atl_model.ATLModel):
                             winning_states.append(s)
                     # print(winning_states)
                     if P.isAlways(formula[3]):
-                        result = self.maximum_formula_one_agent_multiple_states(int(formula[1][0]), winning_states)
+                        result = self.maximum_formula_one_agent(int(formula[1][0]), set(winning_states))
                     if P.isEventually(formula[3]):
-                        result = self.minimum_formula_one_agent_multiple_states(int(formula[1][0]), winning_states)
+                        result = self.minimum_formula_one_agent(int(formula[1][0]), set(winning_states))
                     if len(result) > 0 and initial_state in list(result):
                         valid.append(l)
                 return self.lattice.join_list(valid)
