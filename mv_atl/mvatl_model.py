@@ -93,6 +93,14 @@ class QBAlgebra:
                 m = e
         return m
 
+    def neg(self, l):
+        n = set()
+        for (x, y) in self.diff:
+            if x == l:
+                return y
+            if y == l:
+                return x
+
     def get_different(self):
         lat = self.upward_closure(self.bottom)
         diff = set()
