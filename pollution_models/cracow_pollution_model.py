@@ -543,7 +543,7 @@ def cformula2string(conj,i):
                                                           
 
 n_agent = 1
-pollution_model = PollutionModel(map, connections, n_agent, [1], 1)
+pollution_model = PollutionModel(map, connections, n_agent, [5], 1)
 formula=generate_formula(n_agent, len(map))
 txt=cformula2string(formula,0)
 print(txt)
@@ -563,10 +563,10 @@ print(len(map))
 #print('Number of states:', len(pollution_model.states))
 props = list()
 for l in range(0,len(map)):
-    props.append("pol"+str(l))
-    props.append("loc"+str(l))
-    
-pollution_model.model.props = [props]
+    for a in range(0, n_agent):
+        props.append("pol"+str(l))
+        props.append("loc"+str(l))
+pollution_model.model.props = props
 const = "t Td td Tg tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
 #txt = "<<0>> F (pollution_0 <= Td)"
