@@ -78,6 +78,7 @@ class ATLIrModel:
                 if self.is_reachable_by_agent(agent_number, state_number, action, is_winning_state):
                     result_states.add(state_number)
                     is_winning_state[state_number] = True
+                    break
 
         return result_states
 
@@ -125,6 +126,7 @@ class ATLIrModel:
                 if self.is_reachable_by_agents(agent_numbers, state_number, action, is_winning_state):
                     result_states.add(state_number)
                     is_winning_state[state_number] = True
+                    break
 
         return result_states
 
