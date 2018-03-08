@@ -68,6 +68,31 @@ class ATLIrModel:
 
         return result_states
 
+    def maximum_formula_one_agent(self, agent_number: int, winning_states: Set[int]) -> Set[int]:
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        current_states = winning_states.copy()
+        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_one_agent(agent_number, current_states, is_winning_state)
+            to_remove = set()
+            for state_number in result_states:
+                if state_number not in current_states:
+                    is_winning_state[state_number] = False
+                    to_remove.add(state_number)
+            result_states.difference_update(to_remove)
+
+            if result_states_length == len(result_states):
+                break
+
+            result_states_length = len(result_states)
+
+        return result_states
+
     def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
         result_states = set()
         pre_image = set()
@@ -105,6 +130,30 @@ class ATLIrModel:
         while True:
             current_states = self.basic_formula_many_agents(agent_numbers, current_states, is_winning_state)
             result_states.update(current_states)
+            if result_states_length == len(result_states):
+                break
+
+            result_states_length = len(result_states)
+
+        return result_states
+
+    def maximum_formula_many_agents(self, agent_numbers: List[int], winning_states: Set[int]) -> Set[int]:
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        current_states = winning_states.copy()
+        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_many_agents(agent_numbers, current_states, is_winning_state)
+            to_remove = set()
+            for state_number in result_states:
+                if state_number not in current_states:
+                    is_winning_state[state_number] = False
+                    to_remove.add(state_number)
+            result_states.difference_update(to_remove)
             if result_states_length == len(result_states):
                 break
 
@@ -158,6 +207,30 @@ class ATLIrModel:
         while True:
             current_states = self.basic_formula_no_agents(current_states, is_winning_state)
             result_states.update(current_states)
+            if result_states_length == len(result_states):
+                break
+
+            result_states_length = len(result_states)
+
+        return result_states
+
+    def maximum_formula_no_agents(self, winning_states: Set[int]) -> Set[int]:
+        result_states = set()
+        result_states.update(winning_states)
+        result_states_length = len(result_states)
+        current_states = winning_states.copy()
+        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        while True:
+            current_states = self.basic_formula_no_agents(current_states, is_winning_state)
+            to_remove = set()
+            for state_number in result_states:
+                if state_number not in current_states:
+                    is_winning_state[state_number] = False
+                    to_remove.add(state_number)
+            result_states.difference_update(to_remove)
             if result_states_length == len(result_states):
                 break
 
