@@ -235,19 +235,31 @@ class MvATLModel(atl_model.ATLModel):
             if P.isEventually(formula[3]) or P.isAlways(formula[3]):
                 valid = list()
                 for l in self.lattice.get_join_irreducible():
-                    # DEBUG: print(l)
                     winning_states = list()
                     result = None
+                    agents = list(map(int, formula[1]))
                     for s in range(0, len(self.states)):
                         state = self.translate_state(l, s)
-                        if self.simple_interpreter(formula[3][1], int(formula[1][0]), l, s, state): # Handles only one agent
-                            # DEBUG: print(state)
+                        if self.simple_interpreter(formula[3][1], None, l, s, state):
                             winning_states.append(s)
-                    # print(winning_states)
                     if P.isAlways(formula[3]):
-                        result = self.maximum_formula_one_agent_multiple_states(int(formula[1][0]), winning_states)
+                        if len(formula[1]) == 0: # E \phi
+                            print("maximum_formula_no_agents")
+                            return None
+                            result = self.maximum_formula_no_agents(winning_states)
+                        elif len(formula[1]) == 1: # <<a>> \phi
+                            result = self.maximum_formula_one_agent_multiple_states(agents[0],
+                                                                                    winning_states)
+                        else: # <<C>> \phi
+                            result = self.maximum_formula_many_agents(agents, winning_states)
                     if P.isEventually(formula[3]):
-                        result = self.minimum_formula_one_agent_multiple_states(int(formula[1][0]), winning_states)
+                        if len(formula[1]) == 0: # E \phi  
+                            self.minimum_formula_no_agents(winning_states)
+                        elif len(formula[1]) == 1: # <<a>> \phi
+                            result = self.minimum_formula_one_agent_multiple_states(agents[0],
+                                                                                    winning_states)
+                        else: # <<C>> \phi
+                            result = self.minimum_formula_many_agents(agents, winning_states)
                     if len(result) > 0 and initial_state in list(result):
                         valid.append(l)
                 return self.lattice.join_list(valid)
