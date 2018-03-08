@@ -28,11 +28,14 @@ class QBAlgebra:
     # i.e. b
     bottom = ''
 
-    def __init__(self, top, bottom, order):
+    def __init__(self, top, bottom, order, diff=None):
         self.top = top
         self.bottom = bottom
         self.order = order
-        self.diff = self.get_different()
+        if diff == None:
+            self.diff = self.get_different()
+        else:
+            self.diff = diff
         self.join_irreducible = self.get_join_irreducible()
 
     def upward_closure(self, l):
