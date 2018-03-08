@@ -286,11 +286,17 @@ class PollutionModel:
 
     def prepare_lattice(self):
         self.lattice = mvatl_model.QBAlgebra('t', 'f', [('tg', 't'),
-                                                        ('td', 't'), ('Td', 'td'), ('Tg', 'tg'),
-                                                        ('u', 'Td'), ('u', 'Tg'), ('fd', 'u'),
-                                                        ('fg', 'u'), ('f', 'fd'), ('f', 'fg')
-                                                        ])
-
+                                                        ('td', 't'),
+                                                        ('u','td'),
+                                                        ('u','tg'),
+                                                        ('fd', 'u'),
+                                                        ('fg', 'u'),
+                                                        ('f', 'fd'),
+                                                        ('f', 'fg')],
+                                             {('u','u'),
+                                              ('t','f'),
+                                              ('td','fd'),
+                                              ('tg','fg')})
     def relation_between_places(self, place_id_1, place_id_2):
         """Computes relation between two places on the map as the (+x,+y)"""
         assert (place_id_1 != place_id_2)
@@ -473,11 +479,11 @@ class PollutionModel:
         if v1 == "t" and v2 == "t":
             return "t"
         if v1 == "t" and v2 == "f":
-            return "Td"
+            return "u"
         if v1 == "t" and v2 == "u":
             return "td"
         if v1 == "f" and v2 == "t":
-            return "Tg"
+            return "u"
         if v1 == "f" and v2 == "f":
             return "f"
         if v1 == "f" and v2 == "u":
