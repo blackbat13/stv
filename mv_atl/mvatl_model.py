@@ -216,11 +216,12 @@ class MvATLModel(ATLirModel):
             if P.isEventually(formula):
                 return self.simple_interpreter((self.lattice.top, 'U', formula[1]), agent, l, n_s, state)
         if P.isAbility(formula):    # Not finished, cannot handle embedded ability formula
-            winning_states = list()
-            for s in range(0, len(self.states)):
-                c_s = self.translate_state(l, s)
-                if self.simple_interpreter(formula[3], int(formula[1][0]), l, s, c_s):
-                    winning_states.append(s)
+            return self.interpreter(formula, n_s)
+            #winning_states = list()
+            #for s in range(0, len(self.states)):
+            #    c_s = self.translate_state(l, s)
+            #    if self.simple_interpreter(formula[3], int(formula[1][0]), l, s, c_s):
+            #        winning_states.append(s)
         if isinstance(formula, str): # If is atomic proposition
             if '_' in formula:       # If has a subscript
                 p = formula[:formula.index('_')]
@@ -243,7 +244,9 @@ class MvATLModel(ATLirModel):
     # Can only handle ability formula followed by box or diamond
     # returns true or false
     def interpreter(self, formula, initial_state):
+        #print("Interpreter")
         if P.isAbility(formula):
+            #print("Is Ability")
             if P.isEventually(formula[3]) or P.isAlways(formula[3]):
                 valid = list()
                 for l in self.lattice.get_join_irreducible():
@@ -256,23 +259,37 @@ class MvATLModel(ATLirModel):
                             winning_states.append(s)
                     if P.isAlways(formula[3]):
                         if len(formula[1]) == 0: # E \phi
-                            print("maximum_formula_no_agents")
-                            return None
                             result = self.maximum_formula_no_agents(winning_states)
                         elif len(formula[1]) == 1: # <<a>> \phi
                             result = self.maximum_formula_one_agent(int(agents[0]), set(winning_states))
                         else: # <<C>> \phi
-                            result = self.maximum_formula_many_agents(agents, winning_states)
+                            result = self.maximum_formula_many_agents(map(lambda a: int(a), agents), winning_states)
                     if P.isEventually(formula[3]):
                         if len(formula[1]) == 0: # E \phi  
                             self.minimum_formula_no_agents(winning_states)
                         elif len(formula[1]) == 1: # <<a>> \phi
                             result = self.minimum_formula_one_agent(int(agents[0]), set(winning_states))
                         else: # <<C>> \phi
-                            result = self.minimum_formula_many_agents(agents, winning_states)
+                            result = self.minimum_formula_many_agents(map(lambda
+                                                                 a: int(a), agents), winning_states)
                     if len(result) > 0 and initial_state in list(result):
                         valid.append(l)
                 return self.lattice.join_list(valid)
+        elif P.isAnd(formula):
+            l1 = self.interpreter(formula[0], initial_state)
+            l2 = self.interpreter(formula[2], initial_state)
+            #print(l1,l2)
+            return self.lattice.meet(l1, l2)
+        elif P.isOr(formula):
+            l1 = self.interpreter(formula[0], initial_state)
+            l2 = self.interpreter(formula[2], initial_state)
+            #print(l1,l2)
+            return self.lattice.join(l1,l2)
+        elif P.isNot(formula):
+            l = self.interpreter(formula[1], initial_state)
+            return self.lattice.neg(l)
+            
+                        
 
 
 def print_create_for_state(state_number, state):
