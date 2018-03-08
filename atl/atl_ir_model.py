@@ -209,19 +209,18 @@ class ATLirModel(ATLIrModel):
 
     def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
         result_states = set()
-        pre_image = set()
         for state_number in current_states:
-            pre_image.update(self.epistemic_class_for_state_one_agent(state_number, agent_number))
+            for pre_state in self.pre_states[state_number]:
+                if is_winning_state[pre_state]:
+                    continue
 
-        for state_number in pre_image:
-            for action in self.agents_actions[agent_number]:
-                if self.is_reachable_by_agent(agent_number, state_number, action, is_winning_state):
-                    epistemic_class = self.epistemic_class_for_state_one_agent(state_number, agent_number)
-                    result_states.update(epistemic_class)
-                    pre_image.difference_update(epistemic_class)
-                    for state_number2 in epistemic_class:
-                        is_winning_state[state_number2] = True
-                    epistemic_class.clear()
+                for action in self.agents_actions[agent_number]:
+                    if self.is_reachable_by_agent(agent_number, pre_state, action, is_winning_state):
+                        epistemic_class = self.epistemic_class_for_state_one_agent(pre_state, agent_number)
+                        result_states.update(epistemic_class)
+                        for state_number2 in epistemic_class:
+                            is_winning_state[state_number2] = True
+                        break
 
         return result_states
 
@@ -236,6 +235,52 @@ class ATLirModel(ATLIrModel):
                         return False
 
         return result
+
+    def basic_formula_many_agents(self, agent_numbers: List[int], current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+        result_states = set()
+        actions = []
+        for agent_number in agent_numbers:
+            actions.append(self.agents_actions[agent_number])
+
+        for state_number in current_states:
+            for pre_state in self.pre_states[state_number]:
+                if is_winning_state[pre_state]:
+                    continue
+
+                for action in itertools.product(*actions):
+                    if self.is_reachable_by_agents(agent_numbers, pre_state, action, is_winning_state):
+                        epistemic_class = self.epistemic_class_for_state_multiple_agents(pre_state, agent_numbers)
+                        result_states.update(epistemic_class)
+                        for state_number2 in epistemic_class:
+                            is_winning_state[state_number2] = True
+                        break
+
+        return result_states
+
+    def is_reachable_by_agents(self, agent_numbers: List[int], state_number: int, actions: List[str], is_winning_state: List[bool]):
+        result = False
+        epistemic_class = self.epistemic_class_for_state_multiple_agents(state_number, agent_numbers)
+        for state_number in epistemic_class:
+            for transition in self.transitions[state_number]:
+                is_good_transition = True
+                for agent_number, action in zip(agent_numbers, actions):
+                    if transition['actions'][agent_number] != action:
+                        is_good_transition = False
+                        break
+                if is_good_transition:
+                    result = True
+                    if not is_winning_state[transition['next_state']]:
+                        return False
+
+        return result
+
+    def epistemic_class_for_state_multiple_agents(self, state_number: int, agents_numbers: List[int]) -> Set[int]:
+        """Common Knowledge"""
+        epistemic_class = set()
+        for agent_number in agents_numbers:
+            epistemic_class.update(self.epistemic_class_for_state_one_agent(state_number, agent_number))
+
+        return epistemic_class
 
     def epistemic_class_for_state_one_agent(self, state_number: int, agent_number: int) -> Set[int]:
         epistemic_class_number = self.epistemic_class_membership[agent_number][state_number]

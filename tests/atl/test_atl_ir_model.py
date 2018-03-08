@@ -72,6 +72,10 @@ class TestATLirModel(unittest.TestCase):
         result = self.atl_ir_model.minimum_formula_one_agent(0, {2})
         self.assertEqual(len(result), 1)
 
+    def test_minimum_formula_many_agents(self):
+        result = self.atl_ir_model.minimum_formula_many_agents([0, 1], {0, 2})
+        self.assertEqual(len(result), 3)
+
 
 if __name__ == '__main__':
     unittest.main()
