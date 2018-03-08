@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from atl_model import ATLModel
+from atl.atl_ir_model import ATLIrModel, ATLirModel
 import itertools
 from mv_atl import mvatl_model, mvatl_parser
 from enum import Enum
@@ -536,8 +536,8 @@ def cformula2string(conj,i):
     return "("+dformula2string(conj[i],0)+" & "+cformula2string(conj,i+1)+")"
                                                           
 
-n_agent = 2
-pollution_model = PollutionModel(map, connections, n_agent, [3, 3], 1)
+n_agent = 1
+pollution_model = PollutionModel(map, connections, n_agent, [1], 1)
 formula=generate_formula(n_agent, len(map))
 txt=cformula2string(formula,0)
 print(txt)
@@ -566,7 +566,7 @@ atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
 #txt = "<<0>> F (pollution_0 <= Td)"
 #
 formula = atlparser.parse(txt)
-#print(formula)
+# print(formula)
 #
-print("Formula:", formula[0][0][0][1])
-print(str(pollution_model.model.interpreter(formula[0][0][0][1], 0)))
+print("Formula:", formula)
+print(str(pollution_model.model.interpreter(formula, 0)))

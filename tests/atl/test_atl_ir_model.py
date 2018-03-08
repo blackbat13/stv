@@ -31,13 +31,25 @@ class TestATLIrModel(unittest.TestCase):
         result = self.atl_Ir_model.minimum_formula_one_agent(0, {1})
         self.assertEqual(len(result), 1)
 
+    def test_maximum_formula_one_agent(self):
+        result = self.atl_Ir_model.maximum_formula_one_agent(0, {2})
+        self.assertEqual(len(result), 0)
+
     def test_minimum_formula_many_agents(self):
         result = self.atl_Ir_model.minimum_formula_many_agents([0, 1], {1})
         self.assertEqual(len(result), 3)
 
+    def test_maximum_formula_many_agents(self):
+        result = self.atl_Ir_model.maximum_formula_many_agents([0, 1], {0, 2})
+        self.assertEqual(len(result), 2)
+
     def test_minimum_formula_no_agents(self):
         result = self.atl_Ir_model.minimum_formula_no_agents({1})
         self.assertEqual(len(result), 1)
+
+    def test_maximum_formula_no_agents(self):
+        result = self.atl_Ir_model.maximum_formula_no_agents({0, 1})
+        self.assertEqual(len(result), 0)
 
 
 class TestATLirModel(unittest.TestCase):
@@ -71,6 +83,10 @@ class TestATLirModel(unittest.TestCase):
     def test_minimum_formula_one_agent(self):
         result = self.atl_ir_model.minimum_formula_one_agent(0, {2})
         self.assertEqual(len(result), 1)
+
+    def test_minimum_formula_many_agents(self):
+        result = self.atl_ir_model.minimum_formula_many_agents([0, 1], {0, 2})
+        self.assertEqual(len(result), 3)
 
 
 if __name__ == '__main__':
