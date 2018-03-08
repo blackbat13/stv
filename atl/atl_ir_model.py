@@ -207,9 +207,27 @@ class ATLirModel(ATLIrModel):
         for state_number in epistemic_class:
             self.epistemic_class_membership[agent_number][state_number] = epistemic_class_number
 
+    def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+        result_states = set()
+        pre_image = set()
+        for state_number in current_states:
+            pre_image.update(self.epistemic_class_for_state_one_agent(state_number, agent_number))
+
+        for state_number in pre_image:
+            for action in self.agents_actions[agent_number]:
+                if self.is_reachable_by_agent(agent_number, state_number, action, is_winning_state):
+                    epistemic_class = self.epistemic_class_for_state_one_agent(state_number, agent_number)
+                    result_states.update(epistemic_class)
+                    pre_image.difference_update(epistemic_class)
+                    for state_number2 in epistemic_class:
+                        is_winning_state[state_number2] = True
+                    epistemic_class.clear()
+
+        return result_states
+
     def is_reachable_by_agent(self, agent_number: int, state_number: int, action: str, is_winning_state: List[bool]):
         result = False
-        epistemic_class = self.imperfect_information[agent_number][self.epistemic_class_membership[agent_number][state_number]]
+        epistemic_class = self.epistemic_class_for_state_one_agent(state_number, agent_number)
         for state_number in epistemic_class:
             for transition in self.transitions[state_number]:
                 if transition['actions'][agent_number] == action:
@@ -218,3 +236,11 @@ class ATLirModel(ATLIrModel):
                         return False
 
         return result
+
+    def epistemic_class_for_state_one_agent(self, state_number: int, agent_number: int) -> Set[int]:
+        epistemic_class_number = self.epistemic_class_membership[agent_number][state_number]
+        if epistemic_class_number == -1:
+            return {state_number}
+
+        epistemic_class = self.imperfect_information[agent_number][epistemic_class_number]
+        return epistemic_class
