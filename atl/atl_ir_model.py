@@ -3,6 +3,7 @@ from tools.array_tools import ArrayTools
 from typing import List, Set
 import itertools
 
+
 class ATLIrModel:
     """Class for creating ATL models with perfect information and imperfect recall"""
     number_of_agents: int = 0
@@ -43,7 +44,7 @@ class ATLIrModel:
             self.pre_states.append(set())
 
     def add_transition(self, from_state: int, to_state: int, actions: List[str]):
-        self.enlarge_transitions(to_state + 1) # TODO This is slow. Better idea?
+        self.enlarge_transitions(to_state + 1)  # TODO This is slow. Better idea?
         self.number_of_states = NumberTools.max(self.number_of_states, to_state + 1)
         self.transitions[from_state].append({'next_state': to_state, 'actions': actions})
         self.reverse_transitions[to_state].append({'next_state': from_state, 'actions': actions})
@@ -93,7 +94,8 @@ class ATLIrModel:
 
         return result_states
 
-    def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+    def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], is_winning_state: List[bool]) -> Set[
+        int]:
         result_states = set()
         pre_image = set()
         for state_number in current_states:
@@ -161,7 +163,8 @@ class ATLIrModel:
 
         return result_states
 
-    def basic_formula_many_agents(self, agent_numbers: List[int], current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+    def basic_formula_many_agents(self, agent_numbers: List[int], current_states: Set[int],
+                                  is_winning_state: List[bool]) -> Set[int]:
         result_states = set()
         pre_image = set()
         for state_number in current_states:
@@ -180,7 +183,8 @@ class ATLIrModel:
 
         return result_states
 
-    def is_reachable_by_agents(self, agent_numbers: List[int], state_number: int, actions: List[str], is_winning_state: List[bool]):
+    def is_reachable_by_agents(self, agent_numbers: List[int], state_number: int, actions: List[str],
+                               is_winning_state: List[bool]):
         result = False
         for transition in self.transitions[state_number]:
             is_good_transition = True
@@ -260,6 +264,7 @@ class ATLIrModel:
 
         return result
 
+
 class ATLirModel(ATLIrModel):
     """Class for creating ATL models with imperfect information and imperfect recall"""
     epistemic_class_membership: List[List[int]] = []
@@ -276,7 +281,9 @@ class ATLirModel(ATLIrModel):
         self.imperfect_information = ArrayTools.create_array_of_size(self.number_of_agents, [])
 
     def finish_model(self):
-        self.epistemic_class_membership = ArrayTools.create_array_of_size(self.number_of_agents, ArrayTools.create_value_array_of_size(self.number_of_states, -1))
+        self.epistemic_class_membership = ArrayTools.create_array_of_size(self.number_of_agents,
+                                                                          ArrayTools.create_value_array_of_size(
+                                                                              self.number_of_states, -1))
 
     def add_epistemic_class(self, agent_number: int, epistemic_class: Set[int]):
         """Must be called after creating the whole model"""
@@ -288,7 +295,8 @@ class ATLirModel(ATLIrModel):
         for state_number in epistemic_class:
             self.epistemic_class_membership[agent_number][state_number] = epistemic_class_number
 
-    def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+    def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], is_winning_state: List[bool]) -> Set[
+        int]:
         result_states = set()
         for state_number in current_states:
             for pre_state in self.pre_states[state_number]:
@@ -317,7 +325,8 @@ class ATLirModel(ATLIrModel):
 
         return result
 
-    def basic_formula_many_agents(self, agent_numbers: List[int], current_states: Set[int], is_winning_state: List[bool]) -> Set[int]:
+    def basic_formula_many_agents(self, agent_numbers: List[int], current_states: Set[int],
+                                  is_winning_state: List[bool]) -> Set[int]:
         result_states = set()
         actions = []
         for agent_number in agent_numbers:
@@ -338,7 +347,8 @@ class ATLirModel(ATLIrModel):
 
         return result_states
 
-    def is_reachable_by_agents(self, agent_numbers: List[int], state_number: int, actions: List[str], is_winning_state: List[bool]):
+    def is_reachable_by_agents(self, agent_numbers: List[int], state_number: int, actions: List[str],
+                               is_winning_state: List[bool]):
         result = False
         epistemic_class = self.epistemic_class_for_state_multiple_agents(state_number, agent_numbers)
         for state_number in epistemic_class:

@@ -15,7 +15,7 @@ map.append({
     "id": 0,
     "name": "Vlastimila Hofmana",
     "PM2.5": "f",
-    "d_PM2.5": "f",
+    "d_PM2.5": "t",
     "PM10": 28,
     "temperature": 3,
     "pressure": 1008,
@@ -27,7 +27,7 @@ map.append({
 map.append({
     "id": 1,
     "name": "Leona Wyczółkowskiego",
-    "PM2.5": "f",
+    "PM2.5": "t",
     "d_PM2.5": "f",
     "PM10": 58,
     "temperature": 3,
@@ -54,140 +54,141 @@ map.append({
 
 connections.append([1, 2])
 
-map.append({
-    "id": 3,
-    "name": "Wiedeńska",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 76,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 45,
-    "x": 0,
-    "y": 1
-})
+# map.append({
+#     "id": 3,
+#     "name": "Wiedeńska",
+#     "PM2.5": "t",
+#     "d_PM2.5": "t",
+#     "PM10": 76,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 45,
+#     "x": 0,
+#     "y": 1
+# })
 
-map.append({
-    "id": 4,
-    "name": "Przybyszewskiego 56",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 50,
-    "temperature": 4,
-    "pressure": 1009,
-    "humidity": 59,
-    "x": 1,
-    "y": 1
-})
-
-connections.append([3, 4])
-connections.append([1, 4])
-
-map.append({
-    "id": 5,
-    "name": "Studencka",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 72,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 66,
-    "x": 2,
-    "y": 1
-})
-
-connections.append([2, 5])
-
-map.append({
-    "id": 6,
-    "name": "Na Błonie",
-    "PM2.5": "t",
-    "d_PM2.5": "f",
-    "PM10": 84,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 45,
-    "x": 0,
-    "y": 2
-})
-
-connections.append([3, 5])
-
-map.append({
-    "id": 7,
-    "name": "osiedle Złota Podkowa",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 68,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 69,
-    "x": 1,
-    "y": 2
-})
-
-connections.append([6, 7])
-
-map.append({
-    "id": 8,
-    "name": "aleja Juliusza Słowackiego",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 70,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 66,
-    "x": 2,
-    "y": 2
-})
-
-connections.append([5, 8])
-
-map.append({
-    "id": 9,
-    "name": "aleja Kasztanowa",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 32,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 59,
-    "x": 0,
-    "y": 3
-})
-
-connections.append([6, 9])
-
-map.append({
-    "id": 10,
-    "name": "aleja Jerzego Waszyngtona",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 30,
-    "temperature": 4,
-    "pressure": 1007,
-    "humidity": 45,
-    "x": 1,
-    "y": 3
-})
-
-connections.append([9, 10])
-connections.append([7, 10])
-
-map.append({
-    "id": 11,
-    "name": "Prądnicka",
-    "PM2.5": "t",
-    "d_PM2.5": "f",
-    "PM10": 212,
-    "temperature": "u",
-    "pressure": 1009,
-    "humidity": "u",
-    "x": 2,
-    "y": 3
-})
-
-connections.append([8, 11])
+# map.append({
+#     "id": 4,
+#     "name": "Przybyszewskiego 56",
+#     "PM2.5": "f",
+#     "d_PM2.5": "f",
+#     "PM10": 50,
+#     "temperature": 4,
+#     "pressure": 1009,
+#     "humidity": 59,
+#     "x": 1,
+#     "y": 1
+# })
+#
+# connections.append([3, 4])
+# connections.append([1, 4])
+#
+#
+# map.append({
+#     "id": 5,
+#     "name": "Studencka",
+#     "PM2.5": "f",
+#     "d_PM2.5": "f",
+#     "PM10": 72,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 66,
+#     "x": 2,
+#     "y": 1
+# })
+#
+# connections.append([2, 5])
+#
+# map.append({
+#     "id": 6,
+#     "name": "Na Błonie",
+#     "PM2.5": "t",
+#     "d_PM2.5": "f",
+#     "PM10": 84,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 45,
+#     "x": 0,
+#     "y": 2
+# })
+#
+# connections.append([3, 5])
+#
+# map.append({
+#     "id": 7,
+#     "name": "osiedle Złota Podkowa",
+#     "PM2.5": "f",
+#     "d_PM2.5": "f",
+#     "PM10": 68,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 69,
+#     "x": 1,
+#     "y": 2
+# })
+#
+# connections.append([6, 7])
+#
+# map.append({
+#     "id": 8,
+#     "name": "aleja Juliusza Słowackiego",
+#     "PM2.5": "f",
+#     "d_PM2.5": "f",
+#     "PM10": 70,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 66,
+#     "x": 2,
+#     "y": 2
+# })
+#
+# connections.append([5, 8])
+#
+# map.append({
+#     "id": 9,
+#     "name": "aleja Kasztanowa",
+#     "PM2.5": "f",
+#     "d_PM2.5": "f",
+#     "PM10": 32,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 59,
+#     "x": 0,
+#     "y": 3
+# })
+#
+# connections.append([6, 9])
+#
+# map.append({
+#     "id": 10,
+#     "name": "aleja Jerzego Waszyngtona",
+#     "PM2.5": "f",
+#     "d_PM2.5": "f",
+#     "PM10": 30,
+#     "temperature": 4,
+#     "pressure": 1007,
+#     "humidity": 45,
+#     "x": 1,
+#     "y": 3
+# })
+#
+# connections.append([9, 10])
+# connections.append([7, 10])
+#
+# map.append({
+#     "id": 11,
+#     "name": "Prądnicka",
+#     "PM2.5": "t",
+#     "d_PM2.5": "f",
+#     "PM10": 212,
+#     "temperature": "u",
+#     "pressure": 1009,
+#     "humidity": "u",
+#     "x": 2,
+#     "y": 3
+# })
+#
+# connections.append([8, 11])
 
 
 class DroneAction(Enum):
@@ -241,18 +242,19 @@ class PollutionModel:
             "visited": visited,
             "loc0": loc0
         }
-        for l in range(1, len(self.model_map)):
-            first_state["loc"+str(l)] = []
-            for _ in range(0, self.no_drones):
-                first_state["loc"+str(l)].append('f')
+        # for l in range(1, len(self.model_map)):
+        #     first_state["loc" + str(l)] = []
+        #     for _ in range(0, self.no_drones):
+        #         first_state["loc" + str(l)].append('f')
 
         first_state["prop"] = self.prop_for_state(first_state)
         first_state["pollution"] = self.readings_for_state(first_state)
-        for n in range(0, len(self.model_map)):
-            first_state["pol"+str(n)] = ["f"]*self.no_drones
-            
-        for i in range(0, self.no_drones):
-            first_state["pol"+str(first_state["place"][i])][i]=first_state["pollution"][i]
+        self.add_props_to_state(first_state)
+        # for n in range(0, len(self.model_map)):
+        #     first_state["pol" + str(n)] = ["f"] * self.no_drones
+        #
+        # for i in range(0, self.no_drones):
+        #     first_state["pol" + str(first_state["place"][i])][i] = first_state["pollution"][i]
 
         print(first_state)
         return first_state
@@ -287,16 +289,17 @@ class PollutionModel:
     def prepare_lattice(self):
         self.lattice = mvatl_model.QBAlgebra('t', 'f', [('tg', 't'),
                                                         ('td', 't'),
-                                                        ('u','td'),
-                                                        ('u','tg'),
+                                                        ('u', 'td'),
+                                                        ('u', 'tg'),
                                                         ('fd', 'u'),
                                                         ('fg', 'u'),
                                                         ('f', 'fd'),
                                                         ('f', 'fg')],
-                                             {('u','u'),
-                                              ('t','f'),
-                                              ('td','fd'),
-                                              ('tg','fg')})
+                                             {('u', 'u'),
+                                              ('t', 'f'),
+                                              ('td', 'fd'),
+                                              ('tg', 'fg')})
+
     def relation_between_places(self, place_id_1, place_id_2):
         """Computes relation between two places on the map as the (+x,+y)"""
         assert (place_id_1 != place_id_2)
@@ -347,7 +350,7 @@ class PollutionModel:
             visited[drone_number] = visited[drone_number].copy()
             visited[drone_number].add(next_place)
             actions[drone_number] = self.movement_to_action(d_action[0], d_action[1])
-            
+
         new_state = {
             "map": self.model_map,
             "place": places,
@@ -355,43 +358,37 @@ class PollutionModel:
             "visited": visited
         }
 
-        for l in range(0, len(self.model_map)):
-            loc = ['f']*self.no_drones
-            for a in range(0, self.no_drones):
-                if l == new_state["place"][a]:
-                    loc[a] = 't'
-            new_state["loc"+str(l)] = loc
+        # for l in range(0, len(self.model_map)):
+        #     loc = ['f'] * self.no_drones
+        #     for a in range(0, self.no_drones):
+        #         if l == new_state["place"][a]:
+        #             loc[a] = 't'
+        #     new_state["loc" + str(l)] = loc
 
-        
         new_state["prop"] = self.prop_for_state(new_state)
         new_state["pollution"] = self.readings_for_state(new_state)
 
-        for n in range(0, len(self.model_map)):
-            new_state["pol"+str(n)] = ["f"]*self.no_drones
-            
-        for i in range(0, self.no_drones):
-            new_state["pol"+str(new_state["place"][i])][i]=new_state["pollution"][i]
+        # for n in range(0, len(self.model_map)):
+        #     new_state["pol" + str(n)] = ["f"] * self.no_drones
+        #
+        # for i in range(0, self.no_drones):
+        #     new_state["pol" + str(new_state["place"][i])][i] = new_state["pollution"][i]
+
+        self.add_props_to_state(new_state)
 
         return new_state, actions
 
     def readings_for_state(self, state):
         readings = []
         for drone in range(0, self.no_drones):
-            drone_reading = self.drone_rading_for_place(drone, state['place'][drone])
+            drone_reading = self.drone_reading_for_place(drone, state['place'][drone])
             prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone]]['PM2.5'])
             readings.append(prop)
         return readings
 
-    def drone_rading_for_place(self, drone, place):
+    def drone_reading_for_place(self, drone, place):
         # TODO: improve
-        return 't'
-        rand = random.randint(0, 2)
-        if rand == 0:
-            return 't'
-        elif rand == 1:
-            return 'f'
-        else:
-            return 'u'
+        return self.model_map[place]["d_PM2.5"]
 
     def movement_to_action(self, x, y):
         """Transform movement to drone action"""
@@ -474,6 +471,35 @@ class PollutionModel:
 
         return p
 
+    def add_props_to_state(self, state):
+        for place_number in range(0, len(self.model_map)):
+            prop_name = "pol" + str(place_number)
+            state[prop_name] = self.pol_prop_in_state(state, place_number)
+            prop_name = "loc" + str(place_number)
+            state[prop_name] = self.loc_prop_in_state(state, place_number)
+
+    def pol_prop_in_state(self, state, place_number):
+        pol_prop = []
+        for drone_number in range(0, self.no_drones):
+            if state['place'][drone_number] != place_number:
+                pol_prop.append('f')
+                continue
+            drone_reading = self.drone_reading_for_place(drone_number, state['place'][drone_number])
+            prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone_number]]['PM2.5'])
+            pol_prop.append(prop)
+
+        return pol_prop
+
+    def loc_prop_in_state(self, state, place_number):
+        loc_prop = []
+        for drone_number in range(0, self.no_drones):
+            prop = 'f'
+            if state['place'][drone_number] == place_number:
+                prop = 't'
+            loc_prop.append(prop)
+
+        return loc_prop
+
     @staticmethod
     def value_for_prop(v1, v2):
         if v1 == "t" and v2 == "t":
@@ -507,7 +533,8 @@ class PollutionModel:
         print("Properties:", state["prop"])
         print("Pollutions:", state["pollution"])
 
-#Syntax for propositions:
+
+# Syntax for propositions:
 # Polution prop -> poll the list of size no_drones with (the second) l as the location number
 # In formula -> poll_d with l location and d drone (ex: pol3 = [t,f,t] and pol3_1 = f)
 # Location prop -> locl the list of size no_drones with (the second) l as the location number
@@ -517,62 +544,47 @@ def generate_formula(no_drones, no_places):
     coal = ""
     for d in range(0, no_drones):
         coal += str(d)
-        if d != no_drones -1:
+        if d != no_drones - 1:
             coal += ","
     for l in range(0, no_places):
         dis1 = list()
         for d in range(0, no_drones):
-            dis1.append("(!<<>> G ! pol"+str(l)+"_"+str(d)+" | <<"+coal+">> F pol"+str(l)+"_"+str(d)+")")
+            dis1.append(
+                "(<<>> G ! pol" + str(l) + "_" + str(d) + " | <<" + coal + ">> F pol" + str(l) + "_" + str(d) + ")")
         conj.append(dis1)
     for l in range(0, no_places):
         dis2 = list()
         for d in range(0, no_drones):
-            dis2.append("<<"+str(d)+">> F loc"+str(l)+"_"+str(d))
+            dis2.append("! <<>> G ! loc" + str(l) + "_" + str(d))
         conj.append(dis2)
     return conj
 
-def dformula2string(disj,i):
+
+def dformula2string(disj, i):
     if i == len(disj) - 1:
         return disj[i]
-    return "("+disj[i]+" | "+dformula2string(disj,i+1)+")"
+    return "(" + disj[i] + " | " + dformula2string(disj, i + 1) + ")"
 
-def cformula2string(conj,i):
+
+def cformula2string(conj, i):
     if i == len(conj) - 1:
-        return dformula2string(conj[i],0)
-    return "("+dformula2string(conj[i],0)+" & "+cformula2string(conj,i+1)+")"
-                                                          
+        return dformula2string(conj[i], 0)
+    return "(" + dformula2string(conj[i], 0) + " & " + cformula2string(conj, i + 1) + ")"
 
-n_agent = 1
-pollution_model = PollutionModel(map, connections, n_agent, [5], 1)
-formula=generate_formula(n_agent, len(map))
-txt=cformula2string(formula,0)
+
+n_agent = 2
+pollution_model = PollutionModel(map, connections, n_agent, [3, 3], 1)
+formula = generate_formula(n_agent, len(map))
+txt = cformula2string(formula, 0)
 print(txt)
-print(len(map))
-
-
-#i = 0
-# for state in pollution_model.states:
-#     print(i)
-#     print(state["place"])
-#     print(state["energy"])
-#     print(state["visited"])
-#     print()
-#     i += 1
-#
-# pollution_model.model.walk(0, PollutionModel.print_state)
-#print('Number of states:', len(pollution_model.states))
 props = list()
-for l in range(0,len(map)):
+for l in range(0, len(map)):
     for a in range(0, n_agent):
-        props.append("pol"+str(l))
-        props.append("loc"+str(l))
+        props.append("pol" + str(l))
+        props.append("loc" + str(l))
 pollution_model.model.props = props
 const = "t Td td Tg tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
-#txt = "<<0>> F (pollution_0 <= Td)"
-#
 formula = atlparser.parse(txt)
-# print(formula)
-#
 print("Formula:", formula)
 print(str(pollution_model.model.interpreter(formula, 0)))
