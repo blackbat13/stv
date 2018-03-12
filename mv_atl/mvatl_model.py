@@ -259,19 +259,19 @@ class MvATLModel(ATLirModel):
                             winning_states.append(s)
                     if P.isAlways(formula[3]):
                         if len(formula[1]) == 0: # E \phi
-                            result = self.maximum_formula_no_agents(winning_states)
+                            result = self.maximum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi
                             result = self.maximum_formula_one_agent(int(agents[0]), set(winning_states))
                         else: # <<C>> \phi
-                            result = self.maximum_formula_many_agents(map(lambda a: int(a), agents), winning_states)
+                            result = self.maximum_formula_many_agents(list(map(lambda a: int(a), agents)), set(winning_states))
                     if P.isEventually(formula[3]):
                         if len(formula[1]) == 0: # E \phi  
-                            self.minimum_formula_no_agents(winning_states)
+                            self.minimum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi
                             result = self.minimum_formula_one_agent(int(agents[0]), set(winning_states))
                         else: # <<C>> \phi
-                            result = self.minimum_formula_many_agents(map(lambda
-                                                                 a: int(a), agents), winning_states)
+                            result = self.minimum_formula_many_agents(list(map(lambda
+                                                                 a: int(a), agents)), set(winning_states))
                     if len(result) > 0 and initial_state in list(result):
                         valid.append(l)
                 return self.lattice.join_list(valid)
