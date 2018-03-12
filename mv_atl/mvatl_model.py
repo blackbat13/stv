@@ -89,7 +89,7 @@ class QBAlgebra:
         diff = down_l2.intersection(down_l1)
         m = diff.pop()
         for e in diff:
-            if self.compare(e, m) == -1:
+            if self.compare(e, m) == 1:
                 m = e
         return m
 
