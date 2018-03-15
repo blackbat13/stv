@@ -14,7 +14,7 @@ connections = []
 map.append({
     "id": 0,
     "name": "Vlastimila Hofmana",
-    "PM2.5": "f",
+    "PM2.5": "t",
     "d_PM2.5": "t",
     "PM10": 28,
     "temperature": 3,
@@ -28,7 +28,7 @@ map.append({
     "id": 1,
     "name": "Leona Wyczółkowskiego",
     "PM2.5": "t",
-    "d_PM2.5": "f",
+    "d_PM2.5": "t",
     "PM10": 58,
     "temperature": 3,
     "pressure": 1007,
@@ -43,7 +43,7 @@ map.append({
     "id": 2,
     "name": "Aleje Trzech Wieszczów",
     "PM2.5": "t",
-    "d_PM2.5": "f",
+    "d_PM2.5": "u",
     "PM10": 170,
     "temperature": "u",
     "pressure": "u",
@@ -505,11 +505,11 @@ class PollutionModel:
         if v1 == "t" and v2 == "t":
             return "t"
         if v1 == "t" and v2 == "f":
-            return "u"
+            return "td"
         if v1 == "t" and v2 == "u":
             return "td"
         if v1 == "f" and v2 == "t":
-            return "u"
+            return "tg"
         if v1 == "f" and v2 == "f":
             return "f"
         if v1 == "f" and v2 == "u":
@@ -573,7 +573,8 @@ def cformula2string(conj, i):
 
 
 n_agent = 2
-pollution_model = PollutionModel(map, connections, n_agent, [3, 3], 1)
+energies = [1, 1]
+pollution_model = PollutionModel(map, connections, n_agent, energies, 1)
 formula = generate_formula(n_agent, len(map))
 txt = cformula2string(formula, 0)
 print(txt)
@@ -583,8 +584,21 @@ for l in range(0, len(map)):
         props.append("pol" + str(l))
         props.append("loc" + str(l))
 pollution_model.model.props = props
-const = "t Td td Tg tg f fd fg u"
+const = "t td tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
 formula = atlparser.parse(txt)
 print("Formula:", formula)
-print(str(pollution_model.model.interpreter(formula, 0)))
+result = pollution_model.model.interpreter(formula, 0)
+print(str(result))
+
+file = open("results.txt", "a")
+
+file.write(f"Drones: {n_agent}\n")
+file.write(f"Energies: {energies}\n")
+file.write(f"Map: {map}\n")
+file.write(f"Connections: {connections}\n")
+file.write(f"Formula: {formula}\n")
+file.write(f"Result: {result}\n")
+file.write("\n")
+
+file.close()
