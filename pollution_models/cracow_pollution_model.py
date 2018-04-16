@@ -242,19 +242,10 @@ class PollutionModel:
             "visited": visited,
             "loc0": loc0
         }
-        # for l in range(1, len(self.model_map)):
-        #     first_state["loc" + str(l)] = []
-        #     for _ in range(0, self.no_drones):
-        #         first_state["loc" + str(l)].append('f')
 
         first_state["prop"] = self.prop_for_state(first_state)
         first_state["pollution"] = self.readings_for_state(first_state)
         self.add_props_to_state(first_state)
-        # for n in range(0, len(self.model_map)):
-        #     first_state["pol" + str(n)] = ["f"] * self.no_drones
-        #
-        # for i in range(0, self.no_drones):
-        #     first_state["pol" + str(first_state["place"][i])][i] = first_state["pollution"][i]
 
         print(first_state)
         return first_state
@@ -358,21 +349,8 @@ class PollutionModel:
             "visited": visited
         }
 
-        # for l in range(0, len(self.model_map)):
-        #     loc = ['f'] * self.no_drones
-        #     for a in range(0, self.no_drones):
-        #         if l == new_state["place"][a]:
-        #             loc[a] = 't'
-        #     new_state["loc" + str(l)] = loc
-
         new_state["prop"] = self.prop_for_state(new_state)
         new_state["pollution"] = self.readings_for_state(new_state)
-
-        # for n in range(0, len(self.model_map)):
-        #     new_state["pol" + str(n)] = ["f"] * self.no_drones
-        #
-        # for i in range(0, self.no_drones):
-        #     new_state["pol" + str(new_state["place"][i])][i] = new_state["pollution"][i]
 
         self.add_props_to_state(new_state)
 

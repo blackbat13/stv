@@ -274,23 +274,23 @@ class MvATLModel(ATLirModel):
                                                                  a: int(a), agents)), set(winning_states))
                     if len(result) > 0 and initial_state in list(result):
                         valid.append(l)
-                # print(formula, self.lattice.join_list(valid))
+                print(formula, self.lattice.join_list(valid))
                 return self.lattice.join_list(valid)
         elif P.isAnd(formula):
             l1 = self.interpreter(formula[0], initial_state)
             l2 = self.interpreter(formula[2], initial_state)
             #print(l1,l2)
-            # print(formula, self.lattice.meet(l1, l2))
+            print(formula, self.lattice.meet(l1, l2))
             return self.lattice.meet(l1, l2)
         elif P.isOr(formula):
             l1 = self.interpreter(formula[0], initial_state)
             l2 = self.interpreter(formula[2], initial_state)
             #print(l1,l2)
-            # print(formula, self.lattice.join(l1,l2))
+            print(formula, self.lattice.join(l1,l2))
             return self.lattice.join(l1,l2)
         elif P.isNot(formula):
             l = self.interpreter(formula[1], initial_state)
-            # print(formula, self.lattice.neg(l))
+            print(formula, self.lattice.neg(l))
             return self.lattice.neg(l)
             
                         
