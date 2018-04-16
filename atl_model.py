@@ -67,18 +67,30 @@ class ATLModel:
     def __init__(self, number_of_agents, number_of_states):
         self.number_of_agents = number_of_agents
         self.number_of_states = number_of_states
-        self.transitions = [[] for _ in itertools.repeat(None, number_of_states)]
-        self.reverse_transitions = [[] for _ in itertools.repeat(None, number_of_states)]
-        self.imperfect_information = create_array_of_size(number_of_agents, [])
-        self.pre_states = [set() for _ in itertools.repeat(None, number_of_states)]
-        self.agents_actions = [[] for _ in itertools.repeat(None, number_of_agents)]
-        self.epistemic_class_membership = create_array_of_size(number_of_agents, [])
-        self.epistemic_class_disjoint = [DisjointSet(number_of_states) for _ in
-                                         itertools.repeat(None, number_of_agents)]
+        self.init_transitions()
+        self.init_states()
+        self.init_actions()
+        self.init_epistemic_relation()
         self.can_go_there = [[] for _ in itertools.repeat(None, number_of_agents)]
-        for i in range(0, number_of_agents):
+
+    def init_transitions(self):
+        self.transitions = [[] for _ in itertools.repeat(None, self.number_of_states)]
+        self.reverse_transitions = [[] for _ in itertools.repeat(None, self.number_of_states)]
+
+    def init_states(self):
+        self.pre_states = [set() for _ in itertools.repeat(None, self.number_of_states)]
+
+    def init_actions(self):
+        self.agents_actions = [[] for _ in itertools.repeat(None, self.number_of_agents)]
+
+    def init_epistemic_relation(self):
+        self.epistemic_class_membership = create_array_of_size(self.number_of_agents, [])
+        self.epistemic_class_disjoint = [DisjointSet(self.number_of_states) for _ in
+                                         itertools.repeat(None, self.number_of_agents)]
+        self.imperfect_information = create_array_of_size(self.number_of_agents, [])
+        for i in range(0, self.number_of_agents):
             self.imperfect_information[i] = []
-            self.epistemic_class_membership[i] = [-1 for _ in itertools.repeat(None, number_of_states)]
+            self.epistemic_class_membership[i] = [-1 for _ in itertools.repeat(None, self.number_of_states)]
 
     def add_action(self, agent, action):
         self.agents_actions[agent].append(action)
@@ -742,17 +754,18 @@ class ATLModel:
 
             current_state = self.transitions[current_state][choice]['nextState']
 
-    def walk(self, agent_number):
+    def walk(self, agent_number, print_state):
         print("#####################################################")
         print("Simulation")
         current_state = 0
         while True:
             print()
-            print("Current state:", self.states[current_state])
+            print("Current state:")
+            print_state(self.states[current_state])
             print("Epistemic states:")
             for state in self.imperfect_information[agent_number][
                 self.epistemic_class_membership[agent_number][current_state]]:
-                print(self.states[state])
+                print_state(self.states[state])
 
             if len(self.transitions[current_state]) == 0:
                 print("End")

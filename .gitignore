@@ -1,6 +1,4 @@
 .idea/
 
-*.ispl
-
 output
 __pycache__/
