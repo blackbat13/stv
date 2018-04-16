@@ -6,6 +6,7 @@ import itertools
 from mv_atl import mvatl_model, mvatl_parser
 from enum import Enum
 import random
+import time
 
 map = []
 
@@ -54,101 +55,103 @@ map.append({
 
 connections.append([1, 2])
 
-# map.append({
-#     "id": 3,
-#     "name": "Wiedeńska",
-#     "PM2.5": "t",
-#     "d_PM2.5": "t",
-#     "PM10": 76,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 45,
-#     "x": 0,
-#     "y": 1
-# })
+map.append({
+    "id": 3,
+    "name": "Wiedeńska",
+    "PM2.5": "u",
+    "d_PM2.5": "t",
+    "PM10": 76,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 45,
+    "x": 0,
+    "y": 1
+})
 
-# map.append({
-#     "id": 4,
-#     "name": "Przybyszewskiego 56",
-#     "PM2.5": "f",
-#     "d_PM2.5": "f",
-#     "PM10": 50,
-#     "temperature": 4,
-#     "pressure": 1009,
-#     "humidity": 59,
-#     "x": 1,
-#     "y": 1
-# })
-#
-# connections.append([3, 4])
-# connections.append([1, 4])
-#
-#
-# map.append({
-#     "id": 5,
-#     "name": "Studencka",
-#     "PM2.5": "f",
-#     "d_PM2.5": "f",
-#     "PM10": 72,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 66,
-#     "x": 2,
-#     "y": 1
-# })
-#
-# connections.append([2, 5])
-#
-# map.append({
-#     "id": 6,
-#     "name": "Na Błonie",
-#     "PM2.5": "t",
-#     "d_PM2.5": "f",
-#     "PM10": 84,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 45,
-#     "x": 0,
-#     "y": 2
-# })
-#
-# connections.append([3, 5])
-#
-# map.append({
-#     "id": 7,
-#     "name": "osiedle Złota Podkowa",
-#     "PM2.5": "f",
-#     "d_PM2.5": "f",
-#     "PM10": 68,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 69,
-#     "x": 1,
-#     "y": 2
-# })
-#
-# connections.append([6, 7])
-#
-# map.append({
-#     "id": 8,
-#     "name": "aleja Juliusza Słowackiego",
-#     "PM2.5": "f",
-#     "d_PM2.5": "f",
-#     "PM10": 70,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 66,
-#     "x": 2,
-#     "y": 2
-# })
-#
-# connections.append([5, 8])
-#
+map.append({
+    "id": 4,
+    "name": "Przybyszewskiego 56",
+    "PM2.5": "u",
+    "d_PM2.5": "f",
+    "PM10": 50,
+    "temperature": 4,
+    "pressure": 1009,
+    "humidity": 59,
+    "x": 1,
+    "y": 1
+})
+
+connections.append([3, 4])
+connections.append([1, 4])
+
+
+map.append({
+    "id": 5,
+    "name": "Studencka",
+    "PM2.5": "u",
+    "d_PM2.5": "u",
+    "PM10": 72,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 66,
+    "x": 2,
+    "y": 1
+})
+
+connections.append([2, 5])
+
+map.append({
+    "id": 6,
+    "name": "Na Błonie",
+    "PM2.5": "t",
+    "d_PM2.5": "u",
+    "PM10": 84,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 45,
+    "x": 0,
+    "y": 2
+})
+
+connections.append([3, 5])
+connections.append([5, 6])
+
+map.append({
+    "id": 7,
+    "name": "osiedle Złota Podkowa",
+    "PM2.5": "t",
+    "d_PM2.5": "f",
+    "PM10": 68,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 69,
+    "x": 1,
+    "y": 2
+})
+
+connections.append([6, 7])
+
+map.append({
+    "id": 8,
+    "name": "aleja Juliusza Słowackiego",
+    "PM2.5": "f",
+    "d_PM2.5": "f",
+    "PM10": 70,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 66,
+    "x": 2,
+    "y": 2
+})
+
+connections.append([5, 8])
+connections.append([3, 8])
+
 # map.append({
 #     "id": 9,
 #     "name": "aleja Kasztanowa",
 #     "PM2.5": "f",
-#     "d_PM2.5": "f",
+#     "d_PM2.5": "u",
 #     "PM10": 32,
 #     "temperature": 3,
 #     "pressure": 1008,
@@ -158,12 +161,12 @@ connections.append([1, 2])
 # })
 #
 # connections.append([6, 9])
-#
+
 # map.append({
 #     "id": 10,
 #     "name": "aleja Jerzego Waszyngtona",
 #     "PM2.5": "f",
-#     "d_PM2.5": "f",
+#     "d_PM2.5": "t",
 #     "PM10": 30,
 #     "temperature": 4,
 #     "pressure": 1007,
@@ -174,7 +177,7 @@ connections.append([1, 2])
 #
 # connections.append([9, 10])
 # connections.append([7, 10])
-#
+
 # map.append({
 #     "id": 11,
 #     "name": "Prądnicka",
@@ -550,9 +553,13 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " & " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 2
-energies = [1, 1]
-pollution_model = PollutionModel(map, connections, n_agent, energies, 1)
+n_agent = 3
+energies = [2, 4, 5]
+radius = 1
+start = time.clock()
+pollution_model = PollutionModel(map, connections, n_agent, energies, radius)
+stop = time.clock()
+tgen = stop - start
 formula = generate_formula(n_agent, len(map))
 txt = cformula2string(formula, 0)
 print(txt)
@@ -566,17 +573,25 @@ const = "t td tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
 formula = atlparser.parse(txt)
 print("Formula:", formula)
+start = time.clock()
 result = pollution_model.model.interpreter(formula, 0)
+stop = time.clock()
+tverif = stop - start
 print(str(result))
 
-file = open("results.txt", "a")
+file = open("results-linux.txt", "a")
 
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
 file.write(f"Map: {map}\n")
 file.write(f"Connections: {connections}\n")
+file.write(f'Map size: {len(map)}\n')
+file.write(f'Radius: {radius}\n')
+file.write(f'Number of states: {len(pollution_model.states)}\n')
 file.write(f"Formula: {formula}\n")
 file.write(f"Result: {result}\n")
+file.write(f'Tgen: {tgen}\n')
+file.write(f'Tverif: {tverif}\n')
 file.write("\n")
 
 file.close()
