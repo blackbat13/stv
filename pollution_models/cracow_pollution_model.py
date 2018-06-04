@@ -15,7 +15,7 @@ map.append({
     "id": 0,
     "name": "Vlastimila Hofmana",
     "PM2.5": "t",
-    "d_PM2.5": "t",
+    "d_PM2.5": "f",
     "PM10": 28,
     "temperature": 3,
     "pressure": 1008,
@@ -28,7 +28,7 @@ map.append({
     "id": 1,
     "name": "Leona Wyczółkowskiego",
     "PM2.5": "t",
-    "d_PM2.5": "t",
+    "d_PM2.5": "f",
     "PM10": 58,
     "temperature": 3,
     "pressure": 1007,
@@ -43,7 +43,7 @@ map.append({
     "id": 2,
     "name": "Aleje Trzech Wieszczów",
     "PM2.5": "t",
-    "d_PM2.5": "u",
+    "d_PM2.5": "t",
     "PM10": 170,
     "temperature": "u",
     "pressure": "u",
@@ -53,6 +53,7 @@ map.append({
 })
 
 connections.append([1, 2])
+
 
 # map.append({
 #     "id": 3,
@@ -453,8 +454,14 @@ class PollutionModel:
         for place_number in range(0, len(self.model_map)):
             prop_name = "pol" + str(place_number)
             state[prop_name] = self.pol_prop_in_state(state, place_number)
+            prop_name = "polD" + str(place_number)
+            state[prop_name] = self.pol_propD_in_state(state, place_number)
+            prop_name = "polE" + str(place_number)
+            state[prop_name] = self.pol_propE_in_state(place_number)
             prop_name = "loc" + str(place_number)
             state[prop_name] = self.loc_prop_in_state(state, place_number)
+
+        state['locA'] = self.loc_all_prop_in_state(state)
 
     def pol_prop_in_state(self, state, place_number):
         pol_prop = []
@@ -468,12 +475,54 @@ class PollutionModel:
 
         return pol_prop
 
+    def pol_propD_in_state(self, state, place_number):
+        pol_prop = []
+        return_prop = 'f'
+        for drone_number in range(0, self.no_drones):
+            if state['place'][drone_number] != place_number:
+                continue
+            drone_reading = self.drone_reading_for_place(drone_number, state['place'][drone_number])
+            prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone_number]]['PM2.5'])
+            if prop == 't':
+                return_prop = 't'
+            elif return_prop == 't' or prop == return_prop:
+                continue
+            elif prop[0] == 't' and return_prop[0] != 't':
+                return_prop = prop
+            elif (prop == 'td' and return_prop == 'tg') or (prop == 'tg' and return_prop == 'td'):
+                return_prop = 't'
+            elif return_prop[0] == 't':
+                continue
+            elif prop == 'u':
+                return_prop = 'u'
+            elif (prop == 'fd' and return_prop == 'fg') or (prop == 'fg' and return_prop == 'fd'):
+                return_prop = 'u'
+
+        pol_prop.append(return_prop)
+        return pol_prop
+
+    def pol_propE_in_state(self, place_number):
+        pol_prop = []
+        pol_prop.append(map[place_number]['PM2.5'])
+        return pol_prop
+
     def loc_prop_in_state(self, state, place_number):
         loc_prop = []
         for drone_number in range(0, self.no_drones):
             prop = 'f'
             if state['place'][drone_number] == place_number:
                 prop = 't'
+            loc_prop.append(prop)
+
+        return loc_prop
+
+    def loc_all_prop_in_state(self, state):
+        loc_prop = []
+        for drone_number in range(0, self.no_drones):
+            if len(state['visited'][drone_number]) == len(map):
+                prop = 't'
+            else:
+                prop = 'f'
             loc_prop.append(prop)
 
         return loc_prop
@@ -538,6 +587,47 @@ def generate_formula(no_drones, no_places):
     return conj
 
 
+def generate_formula1(no_places):
+    conj = list()
+    for l in range(0, no_places):
+        dis1 = list()
+        dis1.append("(<<>> G ! polE" + str(l) + "_0 | <<0>> F pol" + str(l) + "_0)")
+        conj.append(dis1)
+    return conj
+
+
+def generate_formula2(no_places):
+    conj = list()
+    for l in range(0, no_places):
+        dis1 = list()
+        dis1.append("<<0>> F loc" + str(l) + "_0")
+        conj.append(dis1)
+    return conj
+
+
+def generate_formula2_prime():
+    conj = list()
+    dis1 = list()
+    dis1.append("<<0>> F locA_0")
+    conj.append(dis1)
+    return conj
+
+
+def generate_formula3(no_drones, no_places):
+    conj = list()
+    coal = ""
+    for d in range(0, no_drones):
+        coal += str(d)
+        if d != no_drones - 1:
+            coal += ","
+    for l in range(0, no_places):
+        dis1 = list()
+        dis1.append(
+            "(<<>> G ! polE" + str(l) + "_0 | <<" + coal + ">> F polD" + str(l) + "_0)")
+        conj.append(dis1)
+    return conj
+
+
 def dformula2string(disj, i):
     if i == len(disj) - 1:
         return disj[i]
@@ -550,18 +640,26 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " & " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 2
-energies = [1, 1]
+n_agent = 1
+energies = [2]
 pollution_model = PollutionModel(map, connections, n_agent, energies, 1)
-formula = generate_formula(n_agent, len(map))
+# formula = generate_formula(n_agent, len(map))
+formula = generate_formula1(len(map))
+# formula = generate_formula2(len(map))
+# formula = generate_formula2_prime()
+# formula = generate_formula3(n_agent, len(map))
 txt = cformula2string(formula, 0)
 print(txt)
 props = list()
 for l in range(0, len(map)):
     for a in range(0, n_agent):
         props.append("pol" + str(l))
+        props.append("polE" + str(l))
         props.append("loc" + str(l))
+        props.append("polD" + str(l))
+props.append('locA')
 pollution_model.model.props = props
+print(props)
 const = "t td tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
 formula = atlparser.parse(txt)
