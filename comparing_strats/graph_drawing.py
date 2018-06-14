@@ -10,23 +10,27 @@ class GraphDrawing:
         self.model = model
 
     def draw(self):
-        graph = networkx.Graph()
+        graph = networkx.DiGraph()
         no_states = len(self.model.states)
-        for i in range(0, no_states):
-            graph.add_node(i)
+        for i, state in enumerate(self.model.states):
+            label = ''
+            for key in state:
+                label += f'{key}:{state[key]}\n'
+            graph.add_node(i, label=label)
 
         for state in range(0, no_states):
             for transition in self.model.graph[state]:
                 next_state = transition['next_state']
                 graph.add_edges_from([(state, next_state)],
-                                     label=transition['actions'])  # {'actions': transition['actions']}
+                                     label=transition['actions'])
 
-        plt.subplot(121)
-        # pos = networkx.graphviz_layout(graph, scale=10)
-        # networkx.draw_kamada_kawai(graph)
-        # pos = networkx.spring_layout(graph, k=1, iterations=20)
+        plt.figure(1, figsize=(50, 10))
+        plt.subplot(111)
         pos = networkx.drawing.nx_agraph.graphviz_layout(graph, prog='dot', root=0)
 
-        networkx.draw(graph, pos=pos, with_labels=True, font_weight='bold')
-        networkx.draw_networkx_edge_labels(graph, pos=pos)
+        labels = networkx.get_edge_attributes(graph, 'label')
+        networkx.draw(graph, pos=pos, with_labels=False, font_weight='bold')
+        networkx.draw_networkx_edge_labels(graph, pos=pos, edge_labels=labels)
+        networkx.draw_networkx_labels(graph, pos=pos, labels=networkx.get_node_attributes(graph, 'label'))
+        plt.autoscale()
         plt.show()
