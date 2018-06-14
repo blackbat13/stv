@@ -52,13 +52,6 @@ class StrategyGenerator:
 
         return self.cut_to_reachable(strategy)
 
-    def count_visited_places_for_state(self, state: dict) -> int:
-        result = 0
-        for vis in state["visited"]:
-            result += len(vis)
-
-        return result
-
     def cut_to_reachable(self, strategy: list) -> list:
         """Removes states from given strategy that are not reachable in it"""
         self.reachable_states = set()
@@ -92,12 +85,20 @@ class StrategyGenerator:
             print()
 
     @staticmethod
+    def count_visited_places_for_state(state: dict) -> int:
+        result = 0
+        for vis in state["visited"]:
+            result += len(vis)
+
+        return result
+
+    @staticmethod
     def count_no_reachable_states(strategy: list, model: SimpleModel = None):
         result = 0
         for i in range(0, len(strategy)):
             if len(strategy[i]) > 0:
                 result += 1
-                if model != None:
+                if model is not None:
                     print(i, model.states[i])
         return result
 

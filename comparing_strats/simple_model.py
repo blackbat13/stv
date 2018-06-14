@@ -1,3 +1,6 @@
+from typing import List, Set
+
+
 class SimpleModel:
     graph = []
     no_states = 0
@@ -63,19 +66,19 @@ class SimpleModel:
             self.epistemic_class_membership[agent_number][state_id_2] = self.epistemic_class_membership[agent_number][
                 state_id_1]
 
-    def add_epistemic_class(self, agent_number: int, epistemic_class):
+    def add_epistemic_class(self, agent_number: int, epistemic_class: Set[int]):
         self.epistemic_classes[agent_number].append(epistemic_class)
         epistemic_class_number = len(self.epistemic_classes[agent_number]) - 1
         for state in epistemic_class:
             self.epistemic_class_membership[agent_number][state] = epistemic_class_number
 
-    def epistemic_class_for_state(self, state_id: int, agent_number: int) -> set:
+    def epistemic_class_for_state(self, state_id: int, agent_number: int) -> Set[int]:
         if self.epistemic_class_membership[agent_number][state_id] == -1:
             return {state_id}
 
         return self.epistemic_classes[agent_number][self.epistemic_class_membership[agent_number][state_id]]
 
-    def epistemic_class_for_state_and_coalition(self, state_id: int, agents_numbers: list) -> set:
+    def epistemic_class_for_state_and_coalition(self, state_id: int, agents_numbers: list) -> Set[int]:
         epistemic_class = set()
         for agent_number in agents_numbers:
             if self.epistemic_class_membership[agent_number][state_id] == -1:
