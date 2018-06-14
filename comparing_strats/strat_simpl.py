@@ -68,16 +68,42 @@ class StrategyComparer:
 
     def sort_strategies(self, state: int, strategies: List) -> List:
         """Bubble sort strategies"""
-        # TODO Change this. Some strategies are not comparable, so this won't work
-        for i in range(1, len(strategies)):
-            for j in range(0, len(strategies) - i):
-                compare_result = self.basic_h(state, strategies[j], strategies[j + 1])
-                if compare_result == 1:
-                    tmp = strategies[j][:]
-                    strategies[j] = strategies[j + 1][:]
-                    strategies[j + 1] = tmp[:]
+        strat_groups = []
+        strat_choosen = []
 
-        return strategies
+        for i in range(0, len(strategies)):
+            strat_choosen.append(False)
+
+        for i in range(0, len(strategies)):
+            if strat_choosen[i]:
+                continue
+
+            strat_groups.append([i])
+            strat_choosen[i] = True
+            for j in range(i+1, len(strategies)):
+                if strat_choosen[j]:
+                    continue
+
+                compare_result = self.basic_h(state, strategies[i], strategies[j])
+                if compare_result != -1:
+                    strat_groups[-1].append(j)
+                    strat_choosen[j] = True
+
+        for k in range(0, len(strat_groups)):
+            for i in range(1, len(strat_groups[k])):
+                for j in range(0, len(strat_groups[k]) - i):
+                    compare_result = self.basic_h(state, strategies[strat_groups[k][j]], strategies[strat_groups[k][j + 1]])
+                    if compare_result == 1:
+                        tmp = strat_groups[k][j]
+                        strat_groups[k][j] = strat_groups[k][j+1]
+                        strat_groups[k][j+1] = tmp
+
+        sorted_strat = []
+        for k in range(0, len(strat_groups)):
+            for i in strat_groups[k]:
+                sorted_strat.append(strategies[i][:])
+
+        return sorted_strat
 
     def simplify_strategy(self, strategy: list, heuristic):
         """

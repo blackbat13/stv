@@ -5,15 +5,15 @@ from comparing_strats.graph_drawing import GraphDrawing
 
 
 DEBUG = True
-no_drones = 1
-energies = [2]
+no_drones = 2
+energies = [3, 3]
 print(no_drones, energies)
 drone_model = DroneModel(no_drones=no_drones, energies=energies, map=CracowMap(), is_random=False)
 no_states = len(drone_model.states)
 print(f"Model have {no_states} states")
 
-graphDrawing = GraphDrawing(drone_model.model)
-graphDrawing.draw()
+# graphDrawing = GraphDrawing(drone_model.model)
+# graphDrawing.draw()
 
 winning_states = []
 max_visited = 0
