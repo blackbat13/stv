@@ -1,1 +1,6 @@
 pyparsing
+networkx
+matplotlib
+scipy
+graphviz
+pygraphviz

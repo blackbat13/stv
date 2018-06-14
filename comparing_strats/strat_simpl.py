@@ -68,7 +68,7 @@ class StrategyComparer:
 
     def sort_strategies(self, state: int, strategies: List) -> List:
         """Bubble sort strategies"""
-
+        # TODO Change this. Some strategies are not comparable, so this won't work
         for i in range(1, len(strategies)):
             for j in range(0, len(strategies) - i):
                 compare_result = self.basic_h(state, strategies[j], strategies[j + 1])
