@@ -109,8 +109,8 @@ map.append({
     "temperature": 3,
     "pressure": 1008,
     "humidity": 45,
-    "x": 0,
-    "y": 2
+    "x": 3,
+    "y": 1
 })
 
 connections.append([3, 5])
@@ -642,17 +642,17 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " & " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 3
-energies = [2, 4, 5]
+n_agent = 1
+energies = [6]
 radius = 1
 start = time.clock()
 pollution_model = PollutionModel(map, connections, n_agent, energies, radius)
 stop = time.clock()
 tgen = stop - start
-formula = generate_formula(n_agent, len(map))
+# formula = generate_formula(n_agent, len(map))
 # formula = generate_formula(n_agent, len(map))
 # formula = generate_formula1(len(map))
-# formula = generate_formula2(len(map))
+formula = generate_formula2(len(map))
 # formula = generate_formula2_prime()
 # formula = generate_formula3(n_agent, len(map))
 txt = cformula2string(formula, 0)
@@ -676,7 +676,7 @@ stop = time.clock()
 tverif = stop - start
 print(str(result))
 
-file = open("results-linux.txt", "a")
+file = open("results.txt", "a")
 
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")

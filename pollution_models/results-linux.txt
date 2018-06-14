@@ -18,7 +18,7 @@ Map size: 9
 Radius: 1
 Number of states: 75
 Formula: [[['<<', [], '>>', ['G', ['!', 'polE0_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol0_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE1_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol1_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE2_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol2_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE3_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol3_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE4_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol4_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE5_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol5_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE6_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol6_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE7_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol7_0']]], '&', [['<<', [], '>>', ['G', ['!', 'polE8_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol8_0']]]]]]]]]]]
-Result: u
+Result: t
 Tgen: 0.017914
 Tverif: 1.911314
 
@@ -30,7 +30,7 @@ Map size: 9
 Radius: 1
 Number of states: 757
 Formula: [[['<<', [], '>>', ['G', ['!', 'polE0_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol0_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE1_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol1_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE2_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol2_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE3_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol3_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE4_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol4_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE5_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol5_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE6_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol6_0']]], '&', [[['<<', [], '>>', ['G', ['!', 'polE7_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol7_0']]], '&', [['<<', [], '>>', ['G', ['!', 'polE8_0']]], '|', ['<<', ['0'], '>>', ['F', 'pol8_0']]]]]]]]]]]
-Result: u
+Result: t
 Tgen: 0.227423
 Tverif: 18.76171
 
@@ -57,126 +57,6 @@ Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 
 Result: f
 Tgen: 0.0017790000000000028
 Tverif: 0.054119
-
-Drones: 1
-Energies: [5]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 75
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.018020000000000008
-Tverif: 0.97211
-
-Drones: 1
-Energies: [6]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 143
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.03524400000000001
-Tverif: 1.813924
-
-Drones: 1
-Energies: [8]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 386
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.101579
-Tverif: 4.879803
-
-Drones: 1
-Energies: [12]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 1195
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.396803
-Tverif: 14.980661
-
-Drones: 1
-Energies: [12]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 1195
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.420589
-Tverif: 14.953687
-
-Drones: 1
-Energies: [12]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 1195
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.38083799999999995
-Tverif: 14.90933
-
-Drones: 1
-Energies: [12]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 1195
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.389509
-Tverif: 15.424369
-
-Drones: 1
-Energies: [6]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 143
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.037397
-Tverif: 1.907235
-
-Drones: 1
-Energies: [6]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 143
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.03428199999999999
-Tverif: 1.87519
-
-Drones: 1
-Energies: [6]
-Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 28, 'temperature': 3, 'pressure': 1008, 'humidity': 59, 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczółkowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'PM10': 58, 'temperature': 3, 'pressure': 1007, 'humidity': 55, 'x': 1, 'y': 0}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 170, 'temperature': 'u', 'pressure': 'u', 'humidity': 'u', 'x': 2, 'y': 0}, {'id': 3, 'name': 'Wiedeńska', 'PM2.5': 'u', 'd_PM2.5': 't', 'PM10': 76, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'PM10': 50, 'temperature': 4, 'pressure': 1009, 'humidity': 59, 'x': 1, 'y': 1}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'PM10': 72, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 1}, {'id': 6, 'name': 'Na Błonie', 'PM2.5': 't', 'd_PM2.5': 'u', 'PM10': 84, 'temperature': 3, 'pressure': 1008, 'humidity': 45, 'x': 0, 'y': 2}, {'id': 7, 'name': 'osiedle Złota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'PM10': 68, 'temperature': 3, 'pressure': 1008, 'humidity': 69, 'x': 1, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Słowackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'PM10': 70, 'temperature': 3, 'pressure': 1008, 'humidity': 66, 'x': 2, 'y': 2}]
-Connections: [[0, 1], [1, 2], [3, 4], [1, 4], [2, 5], [3, 5], [5, 6], [6, 7], [5, 8], [3, 8]]
-Map size: 9
-Radius: 1
-Number of states: 143
-Formula: [['<<', ['0'], '>>', ['F', 'loc0_0']], '&', [['<<', ['0'], '>>', ['F', 'loc1_0']], '&', [['<<', ['0'], '>>', ['F', 'loc2_0']], '&', [['<<', ['0'], '>>', ['F', 'loc3_0']], '&', [['<<', ['0'], '>>', ['F', 'loc4_0']], '&', [['<<', ['0'], '>>', ['F', 'loc5_0']], '&', [['<<', ['0'], '>>', ['F', 'loc6_0']], '&', [['<<', ['0'], '>>', ['F', 'loc7_0']], '&', ['<<', ['0'], '>>', ['F', 'loc8_0']]]]]]]]]]
-Result: f
-Tgen: 0.036401
-Tverif: 1.9517039999999999
 
 Drones: 1
 Energies: [6]
