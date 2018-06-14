@@ -1,12 +1,16 @@
 from comparing_strats.simple_model import SimpleModel
 from comparing_strats.strategy_generator import *
 import itertools
+from typing import List, Set
 
 
 class StrategyComparer:
     model = None
     possible_actions = []
     strategy = []
+    winning_states = []
+    current_heuristic = None
+    winning_strategy = []
 
     def __init__(self, model: SimpleModel, possible_actions: list):
         self.clear_all()
@@ -17,6 +21,63 @@ class StrategyComparer:
         self.model = None
         self.possible_actions = []
         self.strategy = []
+        self.winning_states = []
+        self.current_heuristic = None
+        self.winning_strategy = []
+
+    def generate_strategy_dfs(self, initial_state: int, winning_states: Set[int], heuristic):
+        self.winning_states = winning_states
+        self.strategy = []
+        self.winning_strategy = []
+        for i in range(0, len(self.model.states)):
+            self.strategy.append(None)
+            self.winning_strategy.append(None)
+
+        self.current_heuristic = heuristic
+        return self.strategy_dfs(current_state=initial_state)
+
+    def strategy_dfs(self, current_state: int) -> bool:
+        if current_state in self.winning_states:
+            return True
+
+        if self.strategy[current_state] is not None:
+            return False
+
+        possible_actions = set()
+        for transition in self.model.graph[current_state]:
+            possible_actions.add(tuple(transition['actions']))
+
+        strategies = list(possible_actions)
+        strategies = self.sort_strategies(current_state, strategies)
+        for strategy in strategies:
+            self.strategy[current_state] = list(strategy)
+            next_states = self.get_actions_result(current_state, list(strategy))
+            result = False
+            for state in next_states:
+                result = self.strategy_dfs(state)
+                if not result:
+                    break
+
+            if result:
+                self.winning_strategy[current_state] = list(strategy)
+                self.strategy[current_state] = None
+                return True
+
+        self.strategy[current_state] = None
+        return False
+
+    def sort_strategies(self, state: int, strategies: List) -> List:
+        """Bubble sort strategies"""
+
+        for i in range(1, len(strategies)):
+            for j in range(0, len(strategies) - i):
+                compare_result = self.basic_h(state, strategies[j], strategies[j + 1])
+                if compare_result == 1:
+                    tmp = strategies[j][:]
+                    strategies[j] = strategies[j + 1][:]
+                    strategies[j + 1] = tmp[:]
+
+        return strategies
 
     def simplify_strategy(self, strategy: list, heuristic):
         """
@@ -105,19 +166,19 @@ class StrategyComparer:
         result = 1
 
         for state in strategy2_result:
-            if not(state in strategy1_result):
+            if not (state in strategy1_result):
                 result = -1
                 break
 
         if result == 1:
             if len(strategy2_result) < len(strategy1_result):
-                return 1 # strategy2 is better
+                return 1  # strategy2 is better
             else:
-                return 2 # strategy 2 is equal to strategy1
+                return 2  # strategy 2 is equal to strategy1
 
         for state in strategy1_result:
             if state not in strategy2_result:
-                return -1 # strategies are not comparable
+                return -1  # strategies are not comparable
 
         return 0  # strategy1 is better
 
