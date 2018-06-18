@@ -9,6 +9,7 @@ class StrategyComparer:
     possible_actions = []
     winning_states = []
     current_heuristic = None
+    dfs_visited_states = []
 
     def __init__(self, model: SimpleModel, possible_actions: list):
         self.clear_all()
@@ -20,12 +21,14 @@ class StrategyComparer:
         self.possible_actions = []
         self.winning_states = []
         self.current_heuristic = None
+        self.dfs_visited_states = []
 
     def generate_strategy_dfs(self, initial_state: int, winning_states: Set[int], heuristic):
         self.winning_states = winning_states
         winning_strategy = []
         for i in range(0, len(self.model.states)):
             winning_strategy.append(None)
+            self.dfs_visited_states.append(False)
 
         self.current_heuristic = heuristic
         return self.strategy_dfs(current_state=initial_state, winning_strategy=winning_strategy)
@@ -35,8 +38,10 @@ class StrategyComparer:
         if current_state in self.winning_states:
             return True, winning_strategy
 
-        if winning_strategy[current_state] is not None:
+        if self.dfs_visited_states[current_state]:
             return False, winning_strategy
+
+        self.dfs_visited_states[current_state] = True
 
         possible_actions = set()
         for transition in self.model.graph[current_state]:
@@ -61,8 +66,10 @@ class StrategyComparer:
 
             if result:
                 winning_strategy = new_winning_strategy
+                self.dfs_visited_states[current_state] = False
                 return True, winning_strategy
 
+        self.dfs_visited_states[current_state] = False
         return False, winning_strategy
 
     def check_epistemic_strategy(self, state: int, strategy: List[List]):
