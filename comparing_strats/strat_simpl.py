@@ -1,4 +1,3 @@
-from comparing_strats.simple_model import SimpleModel
 from comparing_strats.strategy_generator import *
 import itertools
 from typing import List, Set
@@ -23,7 +22,7 @@ class StrategyComparer:
         self.current_heuristic = None
         self.dfs_visited_states = []
 
-    def generate_strategy_dfs(self, initial_state: int, winning_states: Set[int], heuristic):
+    def generate_strategy_dfs(self, initial_state: int, winning_states: Set[int], heuristic) -> (bool, List):
         self.winning_states = winning_states
         winning_strategy = []
         for i in range(0, len(self.model.states)):
@@ -34,7 +33,16 @@ class StrategyComparer:
         return self.strategy_dfs(current_state=initial_state, winning_strategy=winning_strategy)
 
     def strategy_dfs(self, current_state: int, winning_strategy: List) -> (bool, List):
-        """Recursive DFS algorithm"""
+        """
+        Recursive DFS algorithm
+
+        Parameters
+        ----------
+        current_state: int
+            Current state to search
+        winning_strategy: List
+            Currently found strategy
+        """
         if current_state in self.winning_states:
             return True, winning_strategy
 
@@ -42,16 +50,12 @@ class StrategyComparer:
             return False, winning_strategy
 
         self.dfs_visited_states[current_state] = True
-
-        possible_actions = set()
-        for transition in self.model.graph[current_state]:
-            possible_actions.add(tuple(transition['actions']))
-
-        strategies = list(possible_actions)
+        strategies = self.model.get_possible_strategies(state_id=current_state)
         strategies = self.sort_strategies(current_state, strategies)
         epistemic_strategy = self.check_epistemic_strategy(current_state, winning_strategy)
         if epistemic_strategy is not None:
             strategies = [epistemic_strategy]
+
         for strategy in strategies:
             next_states = self.get_actions_result(current_state, list(strategy))
             result = False
@@ -94,7 +98,7 @@ class StrategyComparer:
 
             strat_groups.append([i])
             strat_chosen[i] = True
-            for j in range(i+1, len(strategies)):
+            for j in range(i + 1, len(strategies)):
                 if strat_chosen[j]:
                     continue
 
@@ -111,8 +115,8 @@ class StrategyComparer:
                                                             strategies[strat_groups[k][j + 1]])
                     if compare_result == 1:
                         tmp = strat_groups[k][j]
-                        strat_groups[k][j] = strat_groups[k][j+1]
-                        strat_groups[k][j+1] = tmp
+                        strat_groups[k][j] = strat_groups[k][j + 1]
+                        strat_groups[k][j + 1] = tmp
 
         sorted_strat = []
         for k in range(0, len(strat_groups)):

@@ -46,7 +46,7 @@ class SimpleModel:
             while len(self.epistemic_class_membership[agent_number]) <= state_id:
                 self.epistemic_class_membership[agent_number].append(-1)
 
-        self.no_states = max(self.no_states, state_id+1)
+        self.no_states = max(self.no_states, state_id + 1)
 
     def add_epistemic_relation(self, state_id_1: int, state_id_2: int, agent_number: int):
         if self.epistemic_class_membership[agent_number][state_id_1] != -1:
@@ -84,6 +84,14 @@ class SimpleModel:
             if self.epistemic_class_membership[agent_number][state_id] == -1:
                 epistemic_class.add(state_id)
             else:
-                epistemic_class.update(self.epistemic_classes[agent_number][self.epistemic_class_membership[agent_number][state_id]])
+                epistemic_class.update(
+                    self.epistemic_classes[agent_number][self.epistemic_class_membership[agent_number][state_id]])
 
         return epistemic_class
+
+    def get_possible_strategies(self, state_id: int) -> List[tuple]:
+        possible_actions = set()
+        for transition in self.graph[state_id]:
+            possible_actions.add(tuple(transition['actions']))
+
+        return list(possible_actions)
