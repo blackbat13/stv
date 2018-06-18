@@ -38,11 +38,12 @@ if DEBUG:
     print(f'Number of winning states: {len(winning_states)}')
 
 strategy_comparer = StrategyComparer(drone_model.model, ['N', 'S', 'W', 'E', 'Wait'])
-result = strategy_comparer.generate_strategy_dfs(0, set(winning_states), None)
+(result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning_states), strategy_comparer.basic_h)
 print(f'Strategy result: {result}')
-for index, value in enumerate(strategy_comparer.winning_strategy):
+print(strategy)
+for index, value in enumerate(strategy):
     if value is not None:
         print(f"{index}: {value}")
 
-graphDrawing = GraphDrawing(drone_model.model, strategy_comparer.winning_strategy)
+graphDrawing = GraphDrawing(drone_model.model, strategy)
 graphDrawing.draw()
