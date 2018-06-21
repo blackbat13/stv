@@ -16,32 +16,76 @@ class MachineModel:
     map = []
     machine_requirements = []
     items_limit = 0
+    map_size = (0, 0)
+    machine_positions = []
+    robot_positions = []
+    obstacle_positions = []
 
-    def __init__(self, no_robots: int, no_machines: int, map_size: int, items_limit: int):
+    def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
+                 robot_positions: List, machine_positions: List,
+                 obstacle_positions: List, machine_requirements: List):
         self.no_robots = no_robots
         self.no_machines = no_machines
         self.items_limit = items_limit
-        self.map = []
-        for i in range(0, map_size):
-            self.map.append([])
-            for j in range(0, map_size):
-                self.map[i].append(0)
+        self.map_size = map_size
+        self.machine_positions = machine_positions
+        self.robot_positions = robot_positions
+        self.obstacle_positions = obstacle_positions
+        self.machine_requirements = machine_requirements
 
-        for i in range(0, no_robots):
-            self.map[0][i] = 1
+        self.prepare_map()
+        self.print_map()
 
-        for i in range(0, no_machines):
-            self.map[-1][i] = no_machines
-
-        self.machine_requirements.append([0, 1])
-        self.machine_requirements.append([0, 0])
         self.model = SimpleModel(no_robots + no_machines)
         self.generate_model()
-        self.model.states = self.states
+
+    def prepare_map(self):
+        self.create_map()
+        self.add_robots_to_map()
+        self.add_machines_to_map()
+        self.add_obstacles_to_map()
+
+    def create_map(self):
+        self.map = []
+        for i in range(0, self.map_size[1]):
+            self.map.append([])
+            for j in range(0, self.map_size[0]):
+                self.map[i].append(0)
+
+    def add_robots_to_map(self):
+        for i in range(0, self.no_robots):
+            x, y = self.robot_positions[i]
+            self.map[y][x] = i + 1
+
+    def add_machines_to_map(self):
+        for i in range(0, self.no_machines):
+            x, y = self.machine_positions[i]
+            self.map[y][x] = i + self.no_robots + 1
+
+    def add_obstacles_to_map(self):
+        for obstacle_pos in self.obstacle_positions:
+            x, y = obstacle_pos
+            self.map[y][x] = -1
+
+    def print_map(self):
+        map_string = ""
+        for y in range(0, len(self.map)):
+            for x in range(0, len(self.map[y])):
+                if self.map[y][x] == 0:
+                    map_string += '-'
+                elif self.map[y][x] > 0:
+                    if self.map[y][x] <= self.no_robots:
+                        map_string += f'R{self.map[y][x]}'
+                    else:
+                        map_string += f'M{self.map[y][x] - self.no_robots}'
+                else:
+                    map_string += '#'
+            map_string += '\n'
+        print(map_string)
 
     def generate_model(self):
-        first_state = {'r_pos': [(0, 0)],
-                       'm_pos': [(len(self.map) - 1, 0), (len(self.map) - 1, 1)],
+        first_state = {'r_pos': self.robot_positions,
+                       'm_pos': self.machine_positions,
                        'r_items': [-1], 'm_in': [[0, 0], [0, 0]], 'm_out': [0, 0],
                        'it_count': [0, 0]}
 
@@ -67,14 +111,12 @@ class MachineModel:
                     available_actions[-1].append(('Wait', 0))
                     continue
 
-                if robot_position[0] > 0:
-                    available_actions[-1].append(('E', (robot_position[0] - 1, robot_position[1])))
-                if robot_position[0] < len(self.map) - 1:
-                    available_actions[-1].append(('W', (robot_position[0] + 1, robot_position[1])))
-                if robot_position[1] > 0:
-                    available_actions[-1].append(('N', (robot_position[0], robot_position[1] - 1)))
-                if robot_position[1] < len(self.map) - 1:
-                    available_actions[-1].append(('S', (robot_position[0], robot_position[1] + 1)))
+                movement = [('E', (-1, 0)), ('W', (1, 0)), ('N', (0, -1)), ('S', (0, 1))]
+                for move in movement:
+                    x, y = move[1]
+                    label = move[0]
+                    if self.can_move((robot_position[0] + x, robot_position[1] + y)):
+                        available_actions[-1].append((label, (robot_position[0] + x, robot_position[1] + y)))
 
                 machine_number = -1
                 for machine_position in state['m_pos']:
@@ -149,6 +191,12 @@ class MachineModel:
                 new_state_number = self.add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
+        self.model.states = self.states
+
+    def can_move(self, new_position: (int, int)) -> bool:
+        return 0 <= new_position[0] < self.map_size[0] and 0 <= new_position[1] < self.map_size[1] and \
+               self.map[new_position[1]][new_position[0]] != -1
+
     def add_state(self, state: hash) -> int:
         new_state_number = self.get_state_number(state)
         # epistemic_state = self.get_epistemic_state(state)
@@ -168,7 +216,25 @@ class MachineModel:
         return new_state_number
 
 
-machine_model = MachineModel(no_robots=1, no_machines=2, map_size=2, items_limit=1)
+robot_positions = []
+machine_positions = []
+obstacle_positions = []
+
+robot_positions.append((1, 5))
+robot_positions.append((4, 2))
+
+machine_positions.append((1, 3))
+machine_positions.append((4, 1))
+
+obstacle_positions.append((3, 0))
+obstacle_positions.append((3, 1))
+obstacle_positions.append((2, 3))
+
+machine_requirements = [[0, 1], [0, 0]]
+
+machine_model = MachineModel(no_robots=1, no_machines=2, map_size=(6, 6), items_limit=1,
+                             robot_positions=robot_positions, machine_positions=machine_positions,
+                             obstacle_positions=obstacle_positions, machine_requirements=machine_requirements)
 print(f'Number of states: {len(machine_model.states)}')
 strategy = []
 for state in machine_model.states:
