@@ -104,59 +104,26 @@ class MachineModel:
                     break
 
             for i in range(0, self.no_robots):
-                robot_item = state['r_items'][i]
-                robot_position = state['r_pos'][i]
                 available_actions.append([])
                 if is_end_state:
                     available_actions[-1].append(('Wait', 0))
                     continue
 
-                movement = [('E', (-1, 0)), ('W', (1, 0)), ('N', (0, -1)), ('S', (0, 1))]
-                for move in movement:
-                    x, y = move[1]
-                    label = move[0]
-                    if self.can_move((robot_position[0] + x, robot_position[1] + y)):
-                        available_actions[-1].append((label, (robot_position[0] + x, robot_position[1] + y)))
-
-                machine_number = -1
-                for machine_position in state['m_pos']:
-                    machine_number += 1
-                    if robot_position[0] == machine_position[0] and robot_position[1] == machine_position[1]:
-                        if robot_item != -1 and self.machine_requirements[machine_number][robot_item] > 0:
-                            available_actions[-1].append(('leave', machine_number))
-
-                        if robot_item == -1 and state['m_out'][machine_number] > 0:
-                            available_actions[-1].append(('pick', machine_number))
-
-                available_actions[-1].append('wait')
+                available_actions[-1].extend(self.robot_available_actions(robot_no=i, state=state))
 
             for i in range(0, self.no_machines):
                 available_actions.append([])
-                machine_input = state['m_in'][i]
-                met_requirements = True
-                for j in range(0, len(machine_input)):
-                    if machine_input[j] < self.machine_requirements[i][j]:
-                        met_requirements = False
-                        break
-
-                if state['it_count'][i] >= self.items_limit:
-                    met_requirements = False
-
-                if met_requirements:
-                    available_actions[-1].append(('produce', i))
-                else:
-                    available_actions[-1].append(('Wait', 0))
+                available_actions[-1].extend(self.machine_available_actions(machine_no=i, state=state))
 
             for current_actions in itertools.product(*available_actions):
                 robot_positions = state['r_pos'][:]
                 machine_positions = state['m_pos'][:]
                 robot_items = state['r_items'][:]
+                machine_outputs = state['m_out'][:]
+                produced_items_count = state['it_count'][:]
                 machine_inputs = []
                 for i in range(0, self.no_machines):
                     machine_inputs.append(state['m_in'][i][:])
-
-                machine_outputs = state['m_out'][:]
-                produced_items_count = state['it_count'][:]
 
                 actions = []
 
@@ -196,6 +163,47 @@ class MachineModel:
     def can_move(self, new_position: (int, int)) -> bool:
         return 0 <= new_position[0] < self.map_size[0] and 0 <= new_position[1] < self.map_size[1] and \
                self.map[new_position[1]][new_position[0]] != -1
+
+    def robot_available_actions(self, robot_no, state):
+        robot_item = state['r_items'][robot_no]
+        robot_position = state['r_pos'][robot_no]
+        available_actions = []
+
+        movement = [('E', (-1, 0)), ('W', (1, 0)), ('N', (0, -1)), ('S', (0, 1))]
+        for move in movement:
+            x, y = move[1]
+            label = move[0]
+            if self.can_move((robot_position[0] + x, robot_position[1] + y)):
+                available_actions.append((label, (robot_position[0] + x, robot_position[1] + y)))
+
+        machine_number = -1
+        for machine_position in state['m_pos']:
+            machine_number += 1
+            if robot_position[0] == machine_position[0] and robot_position[1] == machine_position[1]:
+                if robot_item != -1 and self.machine_requirements[machine_number][robot_item] > 0:
+                    available_actions.append(('leave', machine_number))
+
+                if robot_item == -1 and state['m_out'][machine_number] > 0:
+                    available_actions.append(('pick', machine_number))
+
+        available_actions.append(('Wait', 0))
+        return available_actions[:]
+
+    def machine_available_actions(self, machine_no, state):
+        machine_input = state['m_in'][machine_no]
+        met_requirements = True
+        for i in range(0, len(machine_input)):
+            if machine_input[i] < self.machine_requirements[machine_no][i]:
+                met_requirements = False
+                break
+
+        if state['it_count'][machine_no] >= self.items_limit:
+            met_requirements = False
+
+        if met_requirements:
+            return [('produce', machine_no)]
+        else:
+            return [('Wait', 0)]
 
     def add_state(self, state: hash) -> int:
         new_state_number = self.get_state_number(state)
@@ -237,9 +245,23 @@ machine_model = MachineModel(no_robots=1, no_machines=2, map_size=(6, 6), items_
                              obstacle_positions=obstacle_positions, machine_requirements=machine_requirements)
 print(f'Number of states: {len(machine_model.states)}')
 strategy = []
+winning_states = set()
+state_id = 0
 for state in machine_model.states:
     print(state)
     strategy.append(None)
+    if state['it_count'][0] == 1 and state['it_count'][1] == 1:
+        winning_states.add(state_id)
 
-graphDrawing = GraphDrawing(machine_model.model, strategy)
-graphDrawing.draw()
+    state_id += 1
+
+# graphDrawing = GraphDrawing(machine_model.model, strategy)
+# graphDrawing.draw()
+
+atl_perfect_model = machine_model.model.to_atl_perfect()
+result = atl_perfect_model.minimum_formula_many_agents([0], winning_states)
+print(result)
+
+
+# Create random factory layouts (bigger) to check what we can generate
+# Add imperfect information

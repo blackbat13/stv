@@ -35,7 +35,7 @@ class GraphDrawing:
                     graph.add_edges_from([(state, next_state)],
                                          label=transition['actions'], color='red')
 
-        plt.figure(1, figsize=(40, 40))
+        plt.figure(1, figsize=(80, 80))
         plt.subplot(111)
         # neato dot fdp sfdp twopi circo
         pos = networkx.drawing.nx_agraph.graphviz_layout(graph, prog='neato', root=0)

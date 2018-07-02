@@ -1,4 +1,5 @@
 from typing import List, Set
+from atl.atl_ir_model import ATLIrModel, ATLirModel
 
 
 class SimpleModel:
@@ -24,7 +25,7 @@ class SimpleModel:
         self.epistemic_class_membership = []
         self.states = []
 
-    def add_transition(self, from_state_id: int, to_state_id: int, actions: list):
+    def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]):
         """
         Adds transition between to states in the model
 
@@ -95,3 +96,24 @@ class SimpleModel:
             possible_actions.add(tuple(transition['actions']))
 
         return list(possible_actions)
+
+    def to_atl_perfect(self) -> ATLIrModel:
+        atl_model = ATLIrModel(self.no_agents)
+        atl_model.add_action(0, 'Wait')
+        atl_model.add_action(0, 'W')
+        atl_model.add_action(0, 'N')
+        atl_model.add_action(0, 'S')
+        atl_model.add_action(0, 'E')
+        atl_model.add_action(0, 'pick')
+        atl_model.add_action(0, 'leave')
+        atl_model.add_action(1, 'Wait')
+        atl_model.add_action(1, 'produce')
+        atl_model.add_action(2, 'Wait')
+        atl_model.add_action(2, 'produce')
+        for state_id in range(0, len(self.graph)):
+            for transition in self.graph[state_id]:
+                print(transition)
+                atl_model.add_transition(state_id, transition['next_state'], transition['actions'])
+
+        atl_model.states = self.states
+        return atl_model
