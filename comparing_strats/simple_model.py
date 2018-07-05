@@ -97,23 +97,29 @@ class SimpleModel:
 
         return list(possible_actions)
 
-    def to_atl_perfect(self) -> ATLIrModel:
+    def to_atl_perfect(self, actions) -> ATLIrModel:
         atl_model = ATLIrModel(self.no_agents)
-        atl_model.add_action(0, 'Wait')
-        atl_model.add_action(0, 'W')
-        atl_model.add_action(0, 'N')
-        atl_model.add_action(0, 'S')
-        atl_model.add_action(0, 'E')
-        atl_model.add_action(0, 'pick')
-        atl_model.add_action(0, 'leave')
-        atl_model.add_action(1, 'Wait')
-        atl_model.add_action(1, 'produce')
-        atl_model.add_action(2, 'Wait')
-        atl_model.add_action(2, 'produce')
+        for i in range(0, len(actions)):
+            for action in actions[i]:
+                atl_model.add_action(i, action)
         for state_id in range(0, len(self.graph)):
             for transition in self.graph[state_id]:
-                print(transition)
                 atl_model.add_transition(state_id, transition['next_state'], transition['actions'])
 
         atl_model.states = self.states
+        return atl_model
+
+    def to_atl_imperfect(self, actions) -> ATLirModel:
+        atl_model = ATLirModel(self.no_agents)
+        for i in range(0, len(actions)):
+            for action in actions[i]:
+                atl_model.add_action(i, action)
+        for state_id in range(0, len(self.graph)):
+            for transition in self.graph[state_id]:
+                atl_model.add_transition(state_id, transition['next_state'], transition['actions'])
+        for i in range(0, len(self.epistemic_classes)):
+            for epistemic_class in self.epistemic_classes[i]:
+                atl_model.add_epistemic_class(i, epistemic_class)
+        atl_model.states = self.states
+        atl_model.finish_model()
         return atl_model

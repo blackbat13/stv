@@ -282,6 +282,18 @@ class MachineModel:
             for state, epistemic_class in self.epistemic_states_dictionaries[i].items():
                 self.model.add_epistemic_class(i, epistemic_class)
 
+    def get_actions(self):
+        actions = []
+        for _ in range(0, self.no_robots):
+            actions.append([])
+            actions[-1].extend(['W', 'N', 'E', 'S', 'Wait', 'pick', 'leave'])
+
+        for _ in range(0, self.no_machines):
+            actions.append([])
+            actions[-1].extend(['Wait', 'produce'])
+
+        return actions
+
 
 robot_positions = []
 machine_positions = []
@@ -299,7 +311,10 @@ obstacle_positions.append((2, 3))
 
 machine_requirements = [[0, 1], [0, 0]]
 
-machine_model = MachineModel(no_robots=2, no_machines=2, map_size=(6, 6), items_limit=1,
+no_robots = len(robot_positions)
+no_machines = len(machine_positions)
+
+machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(6, 6), items_limit=1,
                              robot_positions=robot_positions, machine_positions=machine_positions,
                              obstacle_positions=obstacle_positions, machine_requirements=machine_requirements)
 print(f'Number of states: {len(machine_model.states)}')
@@ -307,7 +322,7 @@ strategy = []
 winning_states = set()
 state_id = 0
 for state in machine_model.states:
-    print(state)
+    # print(state)
     strategy.append(None)
     if state['it_count'][0] == 1 and state['it_count'][1] == 1:
         winning_states.add(state_id)
@@ -317,10 +332,17 @@ for state in machine_model.states:
 # graphDrawing = GraphDrawing(machine_model.model, strategy)
 # graphDrawing.draw()
 
-atl_perfect_model = machine_model.model.to_atl_perfect()
-result = atl_perfect_model.minimum_formula_many_agents([0, 1], winning_states)
+mode = 'perfect'
+
+print(f'{mode} information')
+
+if mode == 'perfect':
+    atl_perfect_model = machine_model.model.to_atl_perfect(machine_model.get_actions())
+    result = atl_perfect_model.minimum_formula_many_agents([0, 1], winning_states)
+else:
+    atl_imperfect_model = machine_model.model.to_atl_imperfect(machine_model.get_actions())
+    result = atl_imperfect_model.minimum_formula_many_agents([0, 1], winning_states)
+
 print(result)
 
-
 # Create random factory layouts (bigger) to check what we can generate
-# Add imperfect information
