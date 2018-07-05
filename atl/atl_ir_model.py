@@ -99,7 +99,7 @@ class ATLIrModel:
         result_states = set()
         pre_image = set()
         for state_number in current_states:
-            pre_image.update(self.pre_states[state_number])
+            pre_image = pre_image.union(self.pre_states[state_number])
 
         for state_number in pre_image:
             for action in self.agents_actions[agent_number]:
@@ -168,7 +168,7 @@ class ATLIrModel:
         result_states = set()
         pre_image = set()
         for state_number in current_states:
-            pre_image.update(self.pre_states[state_number])
+            pre_image = pre_image.union(self.pre_states[state_number])
 
         actions = []
         for agent_number in agent_numbers:
@@ -246,7 +246,7 @@ class ATLIrModel:
         result_states = set()
         pre_image = set()
         for state_number in current_states:
-            pre_image.update(self.pre_states[state_number])
+            pre_image = pre_image.union(self.pre_states[state_number])
 
         for state_number in pre_image:
             if self.is_reachable_in_model(state_number, is_winning_state):
