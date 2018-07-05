@@ -106,7 +106,7 @@ class MachineModel:
         for _ in range(0, self.no_robots):
             self.epistemic_states_dictionaries.append({})
 
-    def generate_model(self):
+    def generate_first_state(self):
         robot_items = []
         for i in range(0, self.no_robots):
             robot_items.append(-1)
@@ -126,6 +126,10 @@ class MachineModel:
                        'm_pos': self.machine_positions,
                        'r_items': robot_items, 'm_in': machine_inputs, 'm_out': machine_outputs,
                        'it_count': items_count}
+        return first_state
+
+    def generate_model(self):
+        first_state = self.generate_first_state()
 
         self.add_state(first_state)
 
@@ -154,49 +158,54 @@ class MachineModel:
                 available_actions[-1].extend(self.machine_available_actions(machine_no=i, state=state))
 
             for current_actions in itertools.product(*available_actions):
-                robot_positions = state['r_pos'][:]
-                machine_positions = state['m_pos'][:]
-                robot_items = state['r_items'][:]
-                machine_outputs = state['m_out'][:]
-                produced_items_count = state['it_count'][:]
-                machine_inputs = []
-                for i in range(0, self.no_machines):
-                    machine_inputs.append(state['m_in'][i][:])
-
-                actions = []
-
-                for robot_number in range(0, self.no_robots):
-                    robot_action = current_actions[robot_number]
-                    actions.append(robot_action[0])
-                    if robot_action[0] in ['N', 'W', 'S', 'E']:
-                        robot_positions[robot_number] = (robot_action[1][0], robot_action[1][1])
-
-                    if robot_action[0] == 'leave':
-                        machine_inputs[robot_action[1]][robot_items[robot_number]] += 1
-                        robot_items[robot_number] = -1
-
-                    if robot_action[0] == 'pick':
-                        machine_outputs[robot_action[1]] -= 1
-                        robot_items[robot_number] = robot_action[1]
-
-                for machine_number in range(0, self.no_machines):
-                    machine_action = current_actions[self.no_robots + machine_number]
-                    actions.append(machine_action[0])
-                    if machine_action[0] == 'produce':
-                        for i in range(0, len(self.machine_requirements[machine_number])):
-                            machine_inputs[machine_number][i] -= self.machine_requirements[machine_number][i]
-
-                        machine_outputs[machine_number] += 1
-                        produced_items_count[machine_number] += 1
-
-                new_state = {'r_pos': robot_positions, 'm_pos': machine_positions,
-                             'r_items': robot_items, 'm_in': machine_inputs,
-                             'm_out': machine_outputs, 'it_count': produced_items_count}
+                new_state, actions = self.new_state_after_action(state, current_actions)
 
                 new_state_number = self.add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
         self.model.states = self.states
+
+    def new_state_after_action(self, state, current_actions):
+        robot_positions = state['r_pos'][:]
+        machine_positions = state['m_pos'][:]
+        robot_items = state['r_items'][:]
+        machine_outputs = state['m_out'][:]
+        produced_items_count = state['it_count'][:]
+        machine_inputs = []
+        for i in range(0, self.no_machines):
+            machine_inputs.append(state['m_in'][i][:])
+
+        actions = []
+
+        for robot_number in range(0, self.no_robots):
+            robot_action = current_actions[robot_number]
+            actions.append(robot_action[0])
+            if robot_action[0] in ['N', 'W', 'S', 'E']:
+                robot_positions[robot_number] = (robot_action[1][0], robot_action[1][1])
+
+            if robot_action[0] == 'leave':
+                machine_inputs[robot_action[1]][robot_items[robot_number]] += 1
+                robot_items[robot_number] = -1
+
+            if robot_action[0] == 'pick':
+                machine_outputs[robot_action[1]] -= 1
+                robot_items[robot_number] = robot_action[1]
+
+        for machine_number in range(0, self.no_machines):
+            machine_action = current_actions[self.no_robots + machine_number]
+            actions.append(machine_action[0])
+            if machine_action[0] == 'produce':
+                for i in range(0, len(self.machine_requirements[machine_number])):
+                    machine_inputs[machine_number][i] -= self.machine_requirements[machine_number][i]
+
+                machine_outputs[machine_number] += 1
+                produced_items_count[machine_number] += 1
+
+        new_state = {'r_pos': robot_positions, 'm_pos': machine_positions,
+                     'r_items': robot_items, 'm_in': machine_inputs,
+                     'm_out': machine_outputs, 'it_count': produced_items_count}
+
+        return new_state, actions
 
     def can_move(self, new_position: (int, int)) -> bool:
         return 0 <= new_position[0] < self.map_size[0] and 0 <= new_position[1] < self.map_size[1] and \
@@ -363,114 +372,70 @@ class MachineModelWithCharging(MachineModel):
             x, y = charging_station_pos
             self.map[y][x] = -2
 
-    def generate_model(self):
-        robot_items = []
+    def generate_first_state(self):
+        first_state = super().generate_first_state()
         robot_charges = []
         for i in range(0, self.no_robots):
-            robot_items.append(-1)
             robot_charges.append(self.max_charge)
 
+        first_state['r_charge'] = robot_charges
+        first_state['c_pos'] = self.charging_stations_positions
+        return first_state
+
+    def new_state_after_action(self, state, current_actions):
+        robot_positions = state['r_pos'][:]
+        machine_positions = state['m_pos'][:]
+        ch_station_positions = state['c_pos'][:]
+        robot_items = state['r_items'][:]
+        robot_charges = state['r_charge'][:]
+        machine_outputs = state['m_out'][:]
+        produced_items_count = state['it_count'][:]
         machine_inputs = []
-        machine_outputs = []
-        items_count = []
+        for i in range(0, self.no_machines):
+            machine_inputs.append(state['m_in'][i][:])
 
-        for _ in range(0, self.no_machines):
-            machine_inputs.append([])
-            machine_outputs.append(0)
-            items_count.append(0)
-            for _ in range(0, self.no_machines):
-                machine_inputs[-1].append(0)
+        actions = []
 
-        first_state = {'r_pos': self.robot_positions,
-                       'r_charge': robot_charges,
-                       'm_pos': self.machine_positions,
-                       'c_pos': self.charging_stations_positions,
-                       'r_items': robot_items, 'm_in': machine_inputs, 'm_out': machine_outputs,
-                       'it_count': items_count}
+        for robot_number in range(0, self.no_robots):
+            robot_action = current_actions[robot_number]
+            actions.append(robot_action[0])
+            if robot_action[0] in ['N', 'W', 'S', 'E']:
+                robot_positions[robot_number] = (robot_action[1][0], robot_action[1][1])
 
-        self.add_state(first_state)
+            if robot_action[0] == 'leave':
+                machine_inputs[robot_action[1]][robot_items[robot_number]] += 1
+                robot_items[robot_number] = -1
 
-        current_state_number = -1
-        for state in self.states:
-            current_state_number += 1
-            available_actions = []
+            if robot_action[0] == 'pick':
+                machine_outputs[robot_action[1]] -= 1
+                robot_items[robot_number] = robot_action[1]
 
-            is_end_state = True
+            if robot_action[0] != 'Wait':
+                robot_charges[robot_number] -= 1
 
-            for i in range(0, self.no_machines):
-                if state['it_count'][i] < self.items_limit:
-                    is_end_state = False
-                    break
+            if robot_action[0] == 'charge':
+                robot_charges[robot_number] = self.max_charge
 
-            for i in range(0, self.no_robots):
-                available_actions.append([])
-                if is_end_state or state['r_charge'][i] == 0:
-                    available_actions[-1].append(('Wait', 0))
-                    continue
+        for machine_number in range(0, self.no_machines):
+            machine_action = current_actions[self.no_robots + machine_number]
+            actions.append(machine_action[0])
+            if machine_action[0] == 'produce':
+                for i in range(0, len(self.machine_requirements[machine_number])):
+                    machine_inputs[machine_number][i] -= self.machine_requirements[machine_number][i]
 
-                available_actions[-1].extend(self.robot_available_actions(robot_no=i, state=state))
+                machine_outputs[machine_number] += 1
+                produced_items_count[machine_number] += 1
 
-            for i in range(0, self.no_machines):
-                available_actions.append([])
-                available_actions[-1].extend(self.machine_available_actions(machine_no=i, state=state))
+        new_state = {'r_pos': robot_positions,
+                     'm_pos': machine_positions,
+                     'c_pos': ch_station_positions,
+                     'r_charge': robot_charges,
+                     'r_items': robot_items,
+                     'm_in': machine_inputs,
+                     'm_out': machine_outputs,
+                     'it_count': produced_items_count}
 
-            for current_actions in itertools.product(*available_actions):
-                robot_positions = state['r_pos'][:]
-                machine_positions = state['m_pos'][:]
-                ch_station_positions = state['c_pos'][:]
-                robot_items = state['r_items'][:]
-                robot_charges = state['r_charge'][:]
-                machine_outputs = state['m_out'][:]
-                produced_items_count = state['it_count'][:]
-                machine_inputs = []
-                for i in range(0, self.no_machines):
-                    machine_inputs.append(state['m_in'][i][:])
-
-                actions = []
-
-                for robot_number in range(0, self.no_robots):
-                    robot_action = current_actions[robot_number]
-                    actions.append(robot_action[0])
-                    if robot_action[0] in ['N', 'W', 'S', 'E']:
-                        robot_positions[robot_number] = (robot_action[1][0], robot_action[1][1])
-
-                    if robot_action[0] == 'leave':
-                        machine_inputs[robot_action[1]][robot_items[robot_number]] += 1
-                        robot_items[robot_number] = -1
-
-                    if robot_action[0] == 'pick':
-                        machine_outputs[robot_action[1]] -= 1
-                        robot_items[robot_number] = robot_action[1]
-
-                    if robot_action[0] != 'Wait':
-                        robot_charges[robot_number] -= 1
-
-                    if robot_action[0] == 'charge':
-                        robot_charges[robot_number] = self.max_charge
-
-                for machine_number in range(0, self.no_machines):
-                    machine_action = current_actions[self.no_robots + machine_number]
-                    actions.append(machine_action[0])
-                    if machine_action[0] == 'produce':
-                        for i in range(0, len(self.machine_requirements[machine_number])):
-                            machine_inputs[machine_number][i] -= self.machine_requirements[machine_number][i]
-
-                        machine_outputs[machine_number] += 1
-                        produced_items_count[machine_number] += 1
-
-                new_state = {'r_pos': robot_positions,
-                             'm_pos': machine_positions,
-                             'c_pos': ch_station_positions,
-                             'r_charge': robot_charges,
-                             'r_items': robot_items,
-                             'm_in': machine_inputs,
-                             'm_out': machine_outputs,
-                             'it_count': produced_items_count}
-
-                new_state_number = self.add_state(new_state)
-                self.model.add_transition(current_state_number, new_state_number, actions)
-
-        self.model.states = self.states
+        return new_state, actions
 
     def get_actions(self):
         actions = []
@@ -485,6 +450,8 @@ class MachineModelWithCharging(MachineModel):
         return actions
 
     def robot_available_actions(self, robot_no, state):
+        if state['r_charge'][robot_no] == 0:
+            return [('Wait', 0)]
         available_actions = super().robot_available_actions(robot_no, state)
         robot_position = state['r_pos'][robot_no]
         for ch_station_position in state['c_pos']:

@@ -4,7 +4,7 @@ import datetime
 from comparing_strats.graph_drawing import GraphDrawing
 
 random_map = False
-imperfect = True
+imperfect = False
 
 now = datetime.datetime.now()
 print(now)
