@@ -383,32 +383,13 @@ class MachineModelWithCharging(MachineModel):
         return first_state
 
     def new_state_after_action(self, state, current_actions):
-        robot_positions = state['r_pos'][:]
-        machine_positions = state['m_pos'][:]
-        ch_station_positions = state['c_pos'][:]
-        robot_items = state['r_items'][:]
-        robot_charges = state['r_charge'][:]
-        machine_outputs = state['m_out'][:]
-        produced_items_count = state['it_count'][:]
-        machine_inputs = []
-        for i in range(0, self.no_machines):
-            machine_inputs.append(state['m_in'][i][:])
+        new_state, actions = super().new_state_after_action(state, current_actions)
 
-        actions = []
+        ch_station_positions = state['c_pos'][:]
+        robot_charges = state['r_charge'][:]
 
         for robot_number in range(0, self.no_robots):
             robot_action = current_actions[robot_number]
-            actions.append(robot_action[0])
-            if robot_action[0] in ['N', 'W', 'S', 'E']:
-                robot_positions[robot_number] = (robot_action[1][0], robot_action[1][1])
-
-            if robot_action[0] == 'leave':
-                machine_inputs[robot_action[1]][robot_items[robot_number]] += 1
-                robot_items[robot_number] = -1
-
-            if robot_action[0] == 'pick':
-                machine_outputs[robot_action[1]] -= 1
-                robot_items[robot_number] = robot_action[1]
 
             if robot_action[0] != 'Wait':
                 robot_charges[robot_number] -= 1
@@ -416,24 +397,8 @@ class MachineModelWithCharging(MachineModel):
             if robot_action[0] == 'charge':
                 robot_charges[robot_number] = self.max_charge
 
-        for machine_number in range(0, self.no_machines):
-            machine_action = current_actions[self.no_robots + machine_number]
-            actions.append(machine_action[0])
-            if machine_action[0] == 'produce':
-                for i in range(0, len(self.machine_requirements[machine_number])):
-                    machine_inputs[machine_number][i] -= self.machine_requirements[machine_number][i]
-
-                machine_outputs[machine_number] += 1
-                produced_items_count[machine_number] += 1
-
-        new_state = {'r_pos': robot_positions,
-                     'm_pos': machine_positions,
-                     'c_pos': ch_station_positions,
-                     'r_charge': robot_charges,
-                     'r_items': robot_items,
-                     'm_in': machine_inputs,
-                     'm_out': machine_outputs,
-                     'it_count': produced_items_count}
+        new_state['c_pos'] = ch_station_positions
+        new_state['r_charge'] = robot_charges
 
         return new_state, actions
 
