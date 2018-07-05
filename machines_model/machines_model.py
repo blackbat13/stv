@@ -1,6 +1,8 @@
 from comparing_strats.simple_model import SimpleModel
 import itertools
 from typing import List
+import time
+import datetime
 from comparing_strats.graph_drawing import GraphDrawing
 
 
@@ -19,10 +21,11 @@ class MachineModel:
     robot_positions = []
     obstacle_positions = []
     epistemic_states_dictionaries = []
+    imperfect = False
 
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
-                 obstacle_positions: List, machine_requirements: List):
+                 obstacle_positions: List, machine_requirements: List, imperfect: bool):
         self.no_robots = no_robots
         self.no_machines = no_machines
         self.items_limit = items_limit
@@ -31,14 +34,17 @@ class MachineModel:
         self.robot_positions = robot_positions
         self.obstacle_positions = obstacle_positions
         self.machine_requirements = machine_requirements
+        self.imperfect = imperfect
 
         self.prepare_map()
         self.print_map()
-        self.prepare_epistemic_dictionaries()
+        if imperfect:
+            self.prepare_epistemic_dictionaries()
 
         self.model = SimpleModel(no_robots + no_machines)
         self.generate_model()
-        self.prepare_epistemic_relation()
+        if imperfect:
+            self.prepare_epistemic_relation()
 
     def prepare_map(self):
         self.create_map()
@@ -228,9 +234,10 @@ class MachineModel:
 
     def add_state(self, state: hash) -> int:
         new_state_number = self.get_state_number(state)
-        for i in range(0, self.no_robots):
-            epistemic_state = self.get_epistemic_state(state, i)
-            self.add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
+        if self.imperfect:
+            for i in range(0, self.no_robots):
+                epistemic_state = self.get_epistemic_state(state, i)
+                self.add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
         return new_state_number
 
     def get_state_number(self, state: hash) -> int:
@@ -266,8 +273,8 @@ class MachineModel:
             machine_inputs.append(state['m_in'][i][:])
 
         epistemic_state = {'r_pos': robot_positions, 'm_pos': machine_positions,
-                     'r_items': robot_items, 'm_in': machine_inputs,
-                     'm_out': machine_outputs, 'it_count': produced_items_count}
+                           'r_items': robot_items, 'm_in': machine_inputs,
+                           'm_out': machine_outputs, 'it_count': produced_items_count}
         return epistemic_state
 
     def add_to_epistemic_dictionary(self, state: hash, new_state_number: int, agent_number: int):
@@ -294,30 +301,70 @@ class MachineModel:
 
         return actions
 
+    @staticmethod
+    def random_factory_layout(size: int, no_robots: int, no_machines: int):
+        robot_positions = []
+        machine_positions = []
+        obstacle_positions = []
+        machine_requirements = []
+        for i in range(0, no_robots):
+            robot_positions.append((i, 0))
+        for i in range(0, no_machines):
+            machine_positions.append((size - 1 - i, size - 1))
+            machine_req = []
+            for j in range(0, no_machines):
+                machine_req.append(0)
 
-robot_positions = []
-machine_positions = []
-obstacle_positions = []
+            if i + 1 < no_machines:
+                machine_req[i + 1] = 1
 
-robot_positions.append((1, 5))
-robot_positions.append((4, 2))
+            machine_requirements.append(machine_req[:])
 
-machine_positions.append((1, 3))
-machine_positions.append((4, 1))
+        return robot_positions, machine_positions, obstacle_positions, machine_requirements
 
-obstacle_positions.append((3, 0))
-obstacle_positions.append((3, 1))
-obstacle_positions.append((2, 3))
 
-machine_requirements = [[0, 1], [0, 0]]
+random_map = False
+imperfect = True
 
-no_robots = len(robot_positions)
-no_machines = len(machine_positions)
+now = datetime.datetime.now()
+print(now)
 
-machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(6, 6), items_limit=1,
+if random_map:
+    no_robots = 3
+    no_machines = 3
+    size = 3
+    robot_positions, machine_positions, obstacle_positions, machine_requirements = MachineModel.random_factory_layout(
+        size, no_robots, no_machines)
+else:
+    robot_positions = []
+    machine_positions = []
+    obstacle_positions = []
+
+    robot_positions.append((1, 5))
+    robot_positions.append((4, 2))
+
+    machine_positions.append((1, 3))
+    machine_positions.append((4, 1))
+
+    obstacle_positions.append((3, 0))
+    obstacle_positions.append((3, 1))
+    obstacle_positions.append((2, 3))
+
+    machine_requirements = [[0, 1], [0, 0]]
+
+    no_robots = len(robot_positions)
+    no_machines = len(machine_positions)
+    size = 6
+
+print(f'({size},{size})')
+start = time.clock()
+machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(size, size), items_limit=1,
                              robot_positions=robot_positions, machine_positions=machine_positions,
-                             obstacle_positions=obstacle_positions, machine_requirements=machine_requirements)
+                             obstacle_positions=obstacle_positions, machine_requirements=machine_requirements,
+                             imperfect=imperfect)
+end = time.clock()
 print(f'Number of states: {len(machine_model.states)}')
+print(f'Model generation time: {end - start} seconds')
 strategy = []
 winning_states = set()
 state_id = 0
@@ -332,17 +379,25 @@ for state in machine_model.states:
 # graphDrawing = GraphDrawing(machine_model.model, strategy)
 # graphDrawing.draw()
 
-mode = 'perfect'
+if imperfect:
+    mode = 'imperfect'
+else:
+    mode = 'perfect'
 
 print(f'{mode} information')
 
-if mode == 'perfect':
+if not imperfect:
     atl_perfect_model = machine_model.model.to_atl_perfect(machine_model.get_actions())
+    start = time.clock()
     result = atl_perfect_model.minimum_formula_many_agents([0, 1], winning_states)
+    end = time.clock()
 else:
     atl_imperfect_model = machine_model.model.to_atl_imperfect(machine_model.get_actions())
+    start = time.clock()
     result = atl_imperfect_model.minimum_formula_many_agents([0, 1], winning_states)
+    end = time.clock()
 
-print(result)
-
-# Create random factory layouts (bigger) to check what we can generate
+print(f'Verification time: {end - start} seconds')
+print(f'Result: {0 in result}')
+print(f'Number of reachable states: {len(result)}')
+# print(result)
