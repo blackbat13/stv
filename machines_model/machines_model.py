@@ -1,7 +1,5 @@
 from comparing_strats.simple_model import SimpleModel
 import itertools
-from disjoint_set import DisjointSet
-from random import randint
 from typing import List
 from comparing_strats.graph_drawing import GraphDrawing
 
@@ -20,6 +18,7 @@ class MachineModel:
     machine_positions = []
     robot_positions = []
     obstacle_positions = []
+    epistemic_states_dictionaries = []
 
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
@@ -35,9 +34,11 @@ class MachineModel:
 
         self.prepare_map()
         self.print_map()
+        self.prepare_epistemic_dictionaries()
 
         self.model = SimpleModel(no_robots + no_machines)
         self.generate_model()
+        self.prepare_epistemic_relation()
 
     def prepare_map(self):
         self.create_map()
@@ -83,11 +84,31 @@ class MachineModel:
             map_string += '\n'
         print(map_string)
 
+    def prepare_epistemic_dictionaries(self):
+        self.epistemic_states_dictionaries.clear()
+        for _ in range(0, self.no_robots):
+            self.epistemic_states_dictionaries.append({})
+
     def generate_model(self):
+        robot_items = []
+        for i in range(0, self.no_robots):
+            robot_items.append(-1)
+
+        machine_inputs = []
+        machine_outputs = []
+        items_count = []
+
+        for _ in range(0, self.no_machines):
+            machine_inputs.append([])
+            machine_outputs.append(0)
+            items_count.append(0)
+            for _ in range(0, self.no_machines):
+                machine_inputs[-1].append(0)
+
         first_state = {'r_pos': self.robot_positions,
                        'm_pos': self.machine_positions,
-                       'r_items': [-1], 'm_in': [[0, 0], [0, 0]], 'm_out': [0, 0],
-                       'it_count': [0, 0]}
+                       'r_items': robot_items, 'm_in': machine_inputs, 'm_out': machine_outputs,
+                       'it_count': items_count}
 
         self.add_state(first_state)
 
@@ -207,8 +228,9 @@ class MachineModel:
 
     def add_state(self, state: hash) -> int:
         new_state_number = self.get_state_number(state)
-        # epistemic_state = self.get_epistemic_state(state)
-        # self.add_to_epistemic_dictionary(epistemic_state, new_state_number)
+        for i in range(0, self.no_robots):
+            epistemic_state = self.get_epistemic_state(state, i)
+            self.add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
         return new_state_number
 
     def get_state_number(self, state: hash) -> int:
@@ -222,6 +244,43 @@ class MachineModel:
             new_state_number = self.states_dictionary[state_str]
 
         return new_state_number
+
+    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+        if agent_number >= self.no_robots:
+            return state
+
+        robot_positions = state['r_pos'][:]
+        robot_items = state['r_items'][:]
+        for i in range(0, self.no_robots):
+            if i == agent_number:
+                continue
+
+            robot_positions[i] = -1
+            robot_items[i] = -1
+
+        machine_positions = state['m_pos'][:]
+        machine_outputs = state['m_out'][:]
+        produced_items_count = state['it_count'][:]
+        machine_inputs = []
+        for i in range(0, self.no_machines):
+            machine_inputs.append(state['m_in'][i][:])
+
+        epistemic_state = {'r_pos': robot_positions, 'm_pos': machine_positions,
+                     'r_items': robot_items, 'm_in': machine_inputs,
+                     'm_out': machine_outputs, 'it_count': produced_items_count}
+        return epistemic_state
+
+    def add_to_epistemic_dictionary(self, state: hash, new_state_number: int, agent_number: int):
+        state_str = ' '.join(str(state[e]) for e in state)
+        if state_str not in self.epistemic_states_dictionaries[agent_number]:
+            self.epistemic_states_dictionaries[agent_number][state_str] = {new_state_number}
+        else:
+            self.epistemic_states_dictionaries[agent_number][state_str].add(new_state_number)
+
+    def prepare_epistemic_relation(self):
+        for i in range(0, self.no_robots):
+            for state, epistemic_class in self.epistemic_states_dictionaries[i].items():
+                self.model.add_epistemic_class(i, epistemic_class)
 
 
 robot_positions = []
@@ -240,7 +299,7 @@ obstacle_positions.append((2, 3))
 
 machine_requirements = [[0, 1], [0, 0]]
 
-machine_model = MachineModel(no_robots=1, no_machines=2, map_size=(6, 6), items_limit=1,
+machine_model = MachineModel(no_robots=2, no_machines=2, map_size=(6, 6), items_limit=1,
                              robot_positions=robot_positions, machine_positions=machine_positions,
                              obstacle_positions=obstacle_positions, machine_requirements=machine_requirements)
 print(f'Number of states: {len(machine_model.states)}')
@@ -259,7 +318,7 @@ for state in machine_model.states:
 # graphDrawing.draw()
 
 atl_perfect_model = machine_model.model.to_atl_perfect()
-result = atl_perfect_model.minimum_formula_many_agents([0], winning_states)
+result = atl_perfect_model.minimum_formula_many_agents([0, 1], winning_states)
 print(result)
 
 
