@@ -1,6 +1,7 @@
 from comparing_strats.simple_model import SimpleModel
 import itertools
 from typing import List
+from enum import Enum
 
 
 class MachineModel:
@@ -19,6 +20,21 @@ class MachineModel:
     obstacle_positions = []
     epistemic_states_dictionaries = []
     imperfect = False
+
+    class RobotAction(Enum):
+        N = 1
+        E = 2
+        S = 3
+        W = 4
+        WAIT = 5
+        PICK = 6
+        LEAVE = 7
+
+    class MapItems(Enum):
+        EMPTY = 0
+        OBSTACLE = -1
+
+    map_item_symbols = {MapItems.EMPTY: '.', MapItems.OBSTACLE: '#'}
 
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
@@ -75,15 +91,13 @@ class MachineModel:
         map_string = ""
         for y in range(0, len(self.map)):
             for x in range(0, len(self.map[y])):
-                if self.map[y][x] == 0:
-                    map_string += '-'
-                elif self.map[y][x] > 0:
+                if self.map[y][x] > 0:
                     if self.map[y][x] <= self.no_robots:
                         map_string += f'R{self.map[y][x]}'
                     else:
                         map_string += f'M{self.map[y][x] - self.no_robots}'
                 else:
-                    map_string += '#'
+                    map_string += self.map_item_symbols[self.MapItems(self.map[y][x])]
             map_string += '\n'
         print(map_string)
 
@@ -323,6 +337,13 @@ class MachineModel:
 class MachineModelWithCharging(MachineModel):
     max_charge = 10
 
+    class MapItems(Enum):
+        EMPTY = 0
+        OBSTACLE = -1
+        CHARGING_STATION = -2
+
+    map_item_symbols = {MapItems.EMPTY: '.', MapItems.OBSTACLE: '#', MapItems.CHARGING_STATION: 'C'}
+
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
                  obstacle_positions: List, charging_stations_positions: List, machine_requirements: List,
@@ -341,24 +362,6 @@ class MachineModelWithCharging(MachineModel):
         for charging_station_pos in self.charging_stations_positions:
             x, y = charging_station_pos
             self.map[y][x] = -2
-
-    def print_map(self):
-        map_string = ""
-        for y in range(0, len(self.map)):
-            for x in range(0, len(self.map[y])):
-                if self.map[y][x] == 0:
-                    map_string += '-'
-                elif self.map[y][x] > 0:
-                    if self.map[y][x] <= self.no_robots:
-                        map_string += f'R{self.map[y][x]}'
-                    else:
-                        map_string += f'M{self.map[y][x] - self.no_robots}'
-                elif self.map[y][x] == -2:
-                    map_string += 'C'
-                else:
-                    map_string += '#'
-            map_string += '\n'
-        print(map_string)
 
     def generate_model(self):
         robot_items = []
