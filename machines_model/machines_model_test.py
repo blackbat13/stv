@@ -1,4 +1,4 @@
-from machines_model.machine_model import MachineModel
+from machines_model.machine_model import MachineModel, MachineModelWithCharging
 import time
 import datetime
 from comparing_strats.graph_drawing import GraphDrawing
@@ -19,6 +19,7 @@ else:
     robot_positions = []
     machine_positions = []
     obstacle_positions = []
+    ch_station_positions = []
 
     robot_positions.append((1, 5))
     robot_positions.append((4, 2))
@@ -30,6 +31,8 @@ else:
     obstacle_positions.append((3, 1))
     obstacle_positions.append((2, 3))
 
+    ch_station_positions.append((0, 0))
+
     machine_requirements = [[0, 1], [0, 0]]
 
     no_robots = len(robot_positions)
@@ -38,10 +41,17 @@ else:
 
 print(f'({size},{size})')
 start = time.clock()
-machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(size, size), items_limit=1,
-                             robot_positions=robot_positions, machine_positions=machine_positions,
-                             obstacle_positions=obstacle_positions, machine_requirements=machine_requirements,
-                             imperfect=imperfect)
+# machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(size, size), items_limit=1,
+#                              robot_positions=robot_positions, machine_positions=machine_positions,
+#                              obstacle_positions=obstacle_positions, machine_requirements=machine_requirements,
+#                              imperfect=imperfect)
+machine_model = MachineModelWithCharging(no_robots=no_robots, no_machines=no_machines, map_size=(size, size),
+                                         items_limit=1,
+                                         robot_positions=robot_positions, machine_positions=machine_positions,
+                                         obstacle_positions=obstacle_positions,
+                                         charging_stations_positions=ch_station_positions,
+                                         machine_requirements=machine_requirements,
+                                         imperfect=imperfect)
 end = time.clock()
 print(f'Number of states: {len(machine_model.states)}')
 print(f'Model generation time: {end - start} seconds')
@@ -80,3 +90,17 @@ else:
 print(f'Verification time: {end - start} seconds')
 print(f'Result: {0 in result}')
 print(f'Number of reachable states: {len(result)}')
+
+# Add storage room
+# Add bad states: where machine is stuck (must wait):
+#   machine can produce new item, but it has space to hold only one produced item
+# Add times for production to each machine
+# Add energy and charging stations for robots (for example 100% at the beginning, and then each action uses 1%)
+# Add collisions for robots
+# Add obstacles to larger maps (maybe prepare some static maps)
+
+# Properties:
+#   Each machine can produce at least n items
+#   Avoid waiting time for machines (when they cannot produce item, due to output capacity)
+#   See if each machine request can be served under n minutes (adding clock to machines)
+#   See if each robot can avoid running out of energy while serving requests

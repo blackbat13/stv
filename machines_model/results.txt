@@ -166,3 +166,23 @@ Imperfect information:
     Model generation time: 3.5107339999999994 seconds
     Verification time: 0.8506660000000004 seconds
     Result: True
+
+
+(6,6)
+C--#--
+---#M2-
+----R2-
+-M1#---
+------
+-R1----
+
+Max energy: 10
+Number of states: 50338
+Perfect information:
+    Model generation time: 19.173365999999998 seconds
+    Verification time: 31.060838999999998 seconds
+    Result: True
+Imperfect information:
+    Model generation time: 40.158039 seconds
+    Verification time: 1.3075429999999955 seconds
+    Result: True
