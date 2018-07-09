@@ -38,7 +38,7 @@ class MachineModel:
 
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
-                 obstacle_positions: List, machine_requirements: List, imperfect: bool):
+                 obstacle_positions: List, machine_requirements: List, production_times: List, imperfect: bool):
         self.no_robots = no_robots
         self.no_machines = no_machines
         self.items_limit = items_limit
@@ -47,6 +47,7 @@ class MachineModel:
         self.robot_positions = robot_positions
         self.obstacle_positions = obstacle_positions
         self.machine_requirements = machine_requirements
+        self.production_times = production_times
         self.imperfect = imperfect
 
         self.prepare_map()
@@ -114,18 +115,20 @@ class MachineModel:
         machine_inputs = []
         machine_outputs = []
         items_count = []
+        machine_clocks = []
 
         for _ in range(0, self.no_machines):
             machine_inputs.append([])
             machine_outputs.append(0)
             items_count.append(0)
+            machine_clocks.append(0)
             for _ in range(0, self.no_machines):
                 machine_inputs[-1].append(0)
 
         first_state = {'r_pos': self.robot_positions,
                        'm_pos': self.machine_positions,
                        'r_items': robot_items, 'm_in': machine_inputs, 'm_out': machine_outputs,
-                       'it_count': items_count}
+                       'it_count': items_count, 'pr_times': self.production_times, 'm_clocks': machine_clocks}
         return first_state
 
     def generate_model(self):
@@ -188,6 +191,8 @@ class MachineModel:
         robot_items = state['r_items'][:]
         machine_outputs = state['m_out'][:]
         produced_items_count = state['it_count'][:]
+        machine_clocks = state['m_clocks'][:]
+        production_times = state['pr_times'][:]
         machine_inputs = []
         for i in range(0, self.no_machines):
             machine_inputs.append(state['m_in'][i][:])
@@ -212,15 +217,20 @@ class MachineModel:
             machine_action = current_actions[self.no_robots + machine_number]
             actions.append(machine_action[0])
             if machine_action[0] == 'produce':
-                for i in range(0, len(self.machine_requirements[machine_number])):
-                    machine_inputs[machine_number][i] -= self.machine_requirements[machine_number][i]
+                if machine_clocks[machine_number] >= production_times[machine_number]:
+                    machine_clocks[machine_number] = 0
+                    for i in range(0, len(self.machine_requirements[machine_number])):
+                        machine_inputs[machine_number][i] -= self.machine_requirements[machine_number][i]
 
-                machine_outputs[machine_number] += 1
-                produced_items_count[machine_number] += 1
+                    machine_outputs[machine_number] += 1
+                    produced_items_count[machine_number] += 1
+                else:
+                    machine_clocks[machine_number] += 1
 
         new_state = {'r_pos': robot_positions, 'm_pos': machine_positions,
                      'r_items': robot_items, 'm_in': machine_inputs,
-                     'm_out': machine_outputs, 'it_count': produced_items_count}
+                     'm_out': machine_outputs, 'it_count': produced_items_count,
+                     'pr_times': production_times, 'm_clocks': machine_clocks}
 
         return new_state, actions
 
@@ -344,10 +354,12 @@ class MachineModel:
         machine_positions = []
         obstacle_positions = []
         machine_requirements = []
+        production_times = []
         for i in range(0, no_robots):
             robot_positions.append((i, 0))
         for i in range(0, no_machines):
             machine_positions.append((size - 1 - i, size - 1))
+            production_times.append(0)
             machine_req = []
             for j in range(0, no_machines):
                 machine_req.append(0)
@@ -357,7 +369,7 @@ class MachineModel:
 
             machine_requirements.append(machine_req[:])
 
-        return robot_positions, machine_positions, obstacle_positions, machine_requirements
+        return robot_positions, machine_positions, obstacle_positions, machine_requirements, production_times
 
 
 class MachineModelWithCharging(MachineModel):
@@ -373,12 +385,12 @@ class MachineModelWithCharging(MachineModel):
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
                  obstacle_positions: List, charging_stations_positions: List, machine_requirements: List,
-                 imperfect: bool):
+                 production_times: List, imperfect: bool):
 
         self.charging_stations_positions = charging_stations_positions
 
         super().__init__(no_robots, no_machines, map_size, items_limit, robot_positions, machine_positions,
-                         obstacle_positions, machine_requirements, imperfect)
+                         obstacle_positions, machine_requirements, production_times, imperfect)
 
     def prepare_map(self):
         super().prepare_map()

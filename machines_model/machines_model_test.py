@@ -13,13 +13,14 @@ if random_map:
     no_robots = 3
     no_machines = 3
     size = 3
-    robot_positions, machine_positions, obstacle_positions, machine_requirements = MachineModel.random_factory_layout(
+    robot_positions, machine_positions, obstacle_positions, machine_requirements, production_times = MachineModel.random_factory_layout(
         size, no_robots, no_machines)
 else:
     robot_positions = []
     machine_positions = []
     obstacle_positions = []
     ch_station_positions = []
+    production_times = []
 
     robot_positions.append((1, 5))
     robot_positions.append((4, 2))
@@ -33,6 +34,9 @@ else:
 
     ch_station_positions.append((0, 0))
 
+    production_times.append(0)
+    production_times.append(0)
+
     machine_requirements = [[0, 1], [0, 0]]
 
     no_robots = len(robot_positions)
@@ -41,17 +45,18 @@ else:
 
 print(f'({size},{size})')
 start = time.clock()
-# machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(size, size), items_limit=1,
-#                              robot_positions=robot_positions, machine_positions=machine_positions,
-#                              obstacle_positions=obstacle_positions, machine_requirements=machine_requirements,
-#                              imperfect=imperfect)
-machine_model = MachineModelWithCharging(no_robots=no_robots, no_machines=no_machines, map_size=(size, size),
-                                         items_limit=1,
-                                         robot_positions=robot_positions, machine_positions=machine_positions,
-                                         obstacle_positions=obstacle_positions,
-                                         charging_stations_positions=ch_station_positions,
-                                         machine_requirements=machine_requirements,
-                                         imperfect=imperfect)
+machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(size, size), items_limit=1,
+                             robot_positions=robot_positions, machine_positions=machine_positions,
+                             obstacle_positions=obstacle_positions, machine_requirements=machine_requirements,
+                             production_times=production_times, imperfect=imperfect)
+# machine_model = MachineModelWithCharging(no_robots=no_robots, no_machines=no_machines, map_size=(size, size),
+#                                          items_limit=1,
+#                                          robot_positions=robot_positions, machine_positions=machine_positions,
+#                                          obstacle_positions=obstacle_positions,
+#                                          charging_stations_positions=ch_station_positions,
+#                                          machine_requirements=machine_requirements,
+#                                          production_times=production_times,
+#                                          imperfect=imperfect)
 end = time.clock()
 print(f'Number of states: {len(machine_model.states)}')
 print(f'Model generation time: {end - start} seconds')
@@ -95,8 +100,8 @@ print(f'Number of reachable states: {len(result)}')
 # Add bad states: where machine is stuck (must wait):
 #   machine can produce new item, but it has space to hold only one produced item
 # Add times for production to each machine
-# Add energy and charging stations for robots (for example 100% at the beginning, and then each action uses 1%)
-# Add collisions for robots
+# Add energy and charging stations for robots (for example 100% at the beginning, and then each action uses 1%) - Done
+# Add collisions for robots - Done
 # Add obstacles to larger maps (maybe prepare some static maps)
 
 # Properties:
