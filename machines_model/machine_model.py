@@ -138,16 +138,16 @@ class MachineModel:
             current_state_number += 1
             available_actions = []
 
-            is_end_state = True
-
-            for i in range(0, self.no_machines):
-                if state['it_count'][i] < self.items_limit:
-                    is_end_state = False
-                    break
+            is_end_state = self.check_if_end_state(state)
 
             for i in range(0, self.no_robots):
                 available_actions.append([])
                 if is_end_state:
+                    available_actions[-1].append(('Wait', 0))
+                    continue
+
+                is_in_collission = self.check_if_in_collision(state, i)
+                if is_in_collission:
                     available_actions[-1].append(('Wait', 0))
                     continue
 
@@ -164,6 +164,23 @@ class MachineModel:
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
         self.model.states = self.states
+
+    def check_if_end_state(self, state) -> bool:
+        for i in range(0, self.no_robots):
+            if state['it_count'][i] < self.items_limit:
+                return False
+
+        return True
+
+    def check_if_in_collision(self, state, robot_index) -> bool:
+        for i in range(0, self.no_robots):
+            if i == robot_index:
+                continue
+            if state['r_pos'][robot_index][0] == state['r_pos'][i][0] and state['r_pos'][robot_index][1] == \
+                    state['r_pos'][i][1]:
+                return True
+
+        return False
 
     def new_state_after_action(self, state, current_actions):
         robot_positions = state['r_pos'][:]

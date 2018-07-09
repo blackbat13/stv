@@ -186,3 +186,37 @@ Imperfect information:
     Model generation time: 40.158039 seconds
     Verification time: 1.3075429999999955 seconds
     Result: True
+
+
+-------With collisions-------------
+(6,6)
+...#..
+...#M2.
+....R2.
+.M1#...
+......
+.R1....
+
+Number of states: 3581
+Model generation time: 1.270167 seconds
+Perfect information:
+    Verification time: 2.6173669999999998 seconds
+    Result: True
+    Number of reachable states: 3482
+
+
+(6,6)
+C..#..
+...#M2.
+....R2.
+.M1#...
+......
+.R1....
+
+Max energy: 10
+Number of states: 48426
+Model generation time: 21.098364 seconds
+Perfect information
+    Verification time: 19.986262999999997 seconds
+    Result: True
+    Number of reachable states: 13140
