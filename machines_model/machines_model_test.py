@@ -99,7 +99,7 @@ print(f'Number of reachable states: {len(result)}')
 # Add storage room
 # Add bad states: where machine is stuck (must wait):
 #   machine can produce new item, but it has space to hold only one produced item
-# Add times for production to each machine
+# Add times for production to each machine - Done
 # Add energy and charging stations for robots (for example 100% at the beginning, and then each action uses 1%) - Done
 # Add collisions for robots - Done
 # Add obstacles to larger maps (maybe prepare some static maps)
