@@ -15,14 +15,15 @@ random_map = False
 imperfect = False
 model_type = ModelType.CLASSIC
 items_limit = 1
+items_to_produce = 1
 
 now = datetime.datetime.now()
 print(now)
 
 if random_map:
-    no_robots = 3
-    no_machines = 3
-    size = 3
+    no_robots = 4
+    no_machines = 2
+    size = 4
     robot_positions, machine_positions, obstacle_positions, machine_requirements, production_times = MachineModel.random_factory_layout(
         size, no_robots, no_machines)
 else:
@@ -94,7 +95,7 @@ state_id = 0
 for state in machine_model.states:
     # print(state)
     strategy.append(None)
-    if state['it_count'][0] == 1 and state['it_count'][1] == 1:
+    if state['it_count'][0] >= items_to_produce and state['it_count'][1] >= items_to_produce:
         winning_states.add(state_id)
 
     state_id += 1
@@ -107,6 +108,7 @@ if imperfect:
 else:
     mode = 'Perfect'
 
+print(f'Formula: <<R>>F produce_{items_to_produce}')
 print(f'{mode} information')
 
 if not imperfect:
