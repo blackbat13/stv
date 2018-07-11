@@ -170,7 +170,7 @@ class MachineModel:
         self.model.states = self.states
 
     def check_if_end_state(self, state) -> bool:
-        for i in range(0, self.no_robots):
+        for i in range(0, self.no_machines):
             if state['it_count'][i] < self.items_limit:
                 return False
 
