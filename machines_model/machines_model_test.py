@@ -11,7 +11,7 @@ class ModelType(Enum):
     STORAGE = 2
 
 
-random_map = False
+random_map = True
 imperfect = False
 model_type = ModelType.CLASSIC
 items_limit = 1

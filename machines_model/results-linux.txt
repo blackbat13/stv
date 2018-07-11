@@ -159,3 +159,21 @@ Imperfect information
     Verification time: 4.035809 seconds
     Result: True
     Number of reachable states: 28524
+
+
+(4,4)
+R1R2R3R4
+....
+....
+..M2M1
+
+Classic Machine Model
+Machine requirements: [[0, 1], [0, 0]]
+Machine production times: [0, 0]
+Items limit: 1
+Number of states: 379566
+Model generation time: 878.849572 seconds
+Formula: <<R>>F produce_1
+Perfect information
+
+Process finished with exit code 137 (interrupted by signal 9: SIGKILL)
