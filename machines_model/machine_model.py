@@ -5,6 +5,7 @@ from enum import Enum
 
 
 class MachineModel:
+    name: str = "Classic Machine Model"
     model = None
     states = []
     states_dictionary = {}
@@ -373,6 +374,7 @@ class MachineModel:
 
 
 class MachineModelWithCharging(MachineModel):
+    name: str = "Machine Model With Charging"
     max_charge = 10
 
     class MapItems(Enum):
@@ -483,4 +485,132 @@ class MachineModelWithCharging(MachineModel):
                            'r_charge': robot_charges,
                            'r_items': robot_items, 'm_in': machine_inputs,
                            'm_out': machine_outputs, 'it_count': produced_items_count}
+        return epistemic_state
+
+
+class MachineModelWithStorage(MachineModel):
+    name: str = "Machine Model With Storage"
+
+    class MapItems(Enum):
+        EMPTY = 0
+        OBSTACLE = -1
+        STORAGE = -2
+
+    map_item_symbols = {MapItems.EMPTY: '.', MapItems.OBSTACLE: '#', MapItems.STORAGE: 'S'}
+
+    def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
+                 robot_positions: List, machine_positions: List,
+                 obstacle_positions: List, storage_positions: List, machine_requirements: List,
+                 production_times: List, imperfect: bool):
+
+        self.storage_positions = storage_positions
+        self.no_storages = len(self.storage_positions)
+
+        super().__init__(no_robots, no_machines, map_size, items_limit, robot_positions, machine_positions,
+                         obstacle_positions, machine_requirements, production_times, imperfect)
+
+    def prepare_map(self):
+        super().prepare_map()
+        self.add_storages_to_map()
+
+    def add_storages_to_map(self):
+        for storage_pos in self.storage_positions:
+            x, y = storage_pos
+            self.map[y][x] = -2
+
+    def generate_first_state(self):
+        first_state = super().generate_first_state()
+        storages = []
+
+        for i in range(0, self.no_storages):
+            storages.append([])
+
+        first_state['s_pos'] = self.storage_positions
+        first_state['storage'] = storages
+        return first_state
+
+    def new_state_after_action(self, state, current_actions):
+        new_state, actions = super().new_state_after_action(state, current_actions)
+        robot_items = new_state['r_items'][:]
+        storage_positions = state['s_pos'][:]
+        storages = []
+        for i in range(0, self.no_storages):
+            storages.append(state['storage'][i][:])
+
+        for robot_number in range(0, self.no_robots):
+            robot_action = current_actions[robot_number]
+
+            for i in range(0, self.no_machines):
+                if robot_action[0] == 'pick' + str(i):
+                    robot_items[robot_number] = i
+                    storages[robot_action[1]].remove(i)
+
+            if robot_action[0] == 'leave_s':
+                storages[robot_action[1]].append(robot_items[robot_number])
+                robot_items[robot_number] = -1
+
+        new_state['s_pos'] = storage_positions
+        new_state['r_items'] = robot_items
+        new_state['storage'] = storages
+
+        return new_state, actions
+
+    def get_actions(self):
+        actions = []
+        for _ in range(0, self.no_robots):
+            actions.append([])
+            actions[-1].extend(['W', 'N', 'E', 'S', 'Wait', 'pick', 'leave', 'leave_s'])
+            for i in range(0, self.no_machines):
+                actions[-1].append('pick' + str(i))
+
+        for _ in range(0, self.no_machines):
+            actions.append([])
+            actions[-1].extend(['Wait', 'produce'])
+
+        return actions
+
+    def robot_available_actions(self, robot_no, state):
+        available_actions = super().robot_available_actions(robot_no, state)
+        robot_position = state['r_pos'][robot_no]
+        storage_index = -1
+        for storage_position in state['s_pos']:
+            storage_index += 1
+            if robot_position[0] == storage_position[0] and robot_position[1] == storage_position[1]:
+                if state['r_items'][robot_no] != -1:
+                    available_actions.append(('leave_s', storage_index))
+                else:
+                    for item in state['storage'][storage_index]:
+                        available_actions.append(('pick' + str(item), storage_index))
+
+        return available_actions[:]
+
+    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+        if agent_number >= self.no_robots:
+            return state
+
+        robot_positions = state['r_pos'][:]
+        robot_items = state['r_items'][:]
+        for i in range(0, self.no_robots):
+            if i == agent_number:
+                continue
+
+            robot_positions[i] = -1
+            robot_items[i] = -1
+
+        machine_positions = state['m_pos'][:]
+        machine_outputs = state['m_out'][:]
+        produced_items_count = state['it_count'][:]
+        storage_positions = state['s_pos'][:]
+        machine_inputs = []
+        for i in range(0, self.no_machines):
+            machine_inputs.append(state['m_in'][i][:])
+        storages = []
+        for i in range(0, self.no_storages):
+            storages.append(state['storage'][i][:])
+
+        epistemic_state = {'r_pos': robot_positions,
+                           'm_pos': machine_positions,
+                           'r_items': robot_items, 'm_in': machine_inputs,
+                           'm_out': machine_outputs, 'it_count': produced_items_count,
+                           'storage': storages, 's_pos': storage_positions}
         return epistemic_state
