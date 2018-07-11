@@ -2,6 +2,7 @@ from comparing_strats.simple_model import SimpleModel
 import itertools
 from disjoint_set import DisjointSet
 from random import randint
+from typing import List
 
 
 class CracowMap:
@@ -145,19 +146,19 @@ class CracowMap:
 
 
 class DroneModel:
-    no_drones = 0
-    energies = []
+    no_drones: int = 0
+    energies: List[int] = []
     map = []
     model = None
     graph = []
     states = []
     states_dictionary = {}
     epistemic_states_dictionary = {}
-    state_number = 0
-    drone_actions = ['N', 'W', 'S', 'E', 'F']
-    is_random = False
+    state_number: int = 0
+    drone_actions: List[str] = ['N', 'W', 'S', 'E', 'F']
+    is_random: bool = False
 
-    def __init__(self, no_drones, energies, map, is_random: bool = False):
+    def __init__(self, no_drones: int, energies: List[int], map, is_random: bool = False):
         self.clear_all()
         self.no_drones = no_drones
         self.energies = energies
@@ -288,13 +289,13 @@ class DroneModel:
                 new_state_number = self.add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
-    def add_state(self, state):
+    def add_state(self, state: hash) -> int:
         new_state_number = self.get_state_number(state)
         epistemic_state = self.get_epistemic_state(state)
         self.add_to_epistemic_dictionary(epistemic_state, new_state_number)
         return new_state_number
 
-    def get_state_number(self, state):
+    def get_state_number(self, state: hash) -> int:
         state_str = ' '.join(str(state[e]) for e in state)
         if state_str not in self.states_dictionary:
             self.states_dictionary[state_str] = self.state_number
@@ -306,14 +307,14 @@ class DroneModel:
 
         return new_state_number
 
-    def add_to_epistemic_dictionary(self, state, new_state_number):
+    def add_to_epistemic_dictionary(self, state: hash, new_state_number: int):
         state_str = ' '.join(str(state[e]) for e in state)
         if state_str not in self.epistemic_states_dictionary:
             self.epistemic_states_dictionary[state_str] = {new_state_number}
         else:
             self.epistemic_states_dictionary[state_str].add(new_state_number)
 
-    def get_epistemic_state(self, state):
+    def get_epistemic_state(self, state: hash) -> hash:
         new_places = state['place'][:]
         for i in range(0, len(new_places)):
             new_places[i] = self.map.disjoint_set.find(new_places[i])
@@ -330,14 +331,15 @@ class DroneModel:
         for state, epistemic_class in self.epistemic_states_dictionary.items():
             self.model.add_epistemic_class(0, epistemic_class)
 
-    def relation_between_places(self, place_id_1, place_id_2):
+    def relation_between_places(self, place_id_1: int, place_id_2: int) -> (int, int):
         """Computes relation between two places on the map as the (+x,+y)"""
         assert (place_id_1 != place_id_2)
         x = self.map.places[place_id_2]["x"] - self.map.places[place_id_1]["x"]
         y = self.map.places[place_id_2]["y"] - self.map.places[place_id_1]["y"]
         return x, y
 
-    def movement_to_action(self, x, y):
+    @staticmethod
+    def movement_to_action(x: int, y: int) -> int:
         """Transform movement to drone action"""
         assert (x != 0 or y != 0)
         if x == 1:
