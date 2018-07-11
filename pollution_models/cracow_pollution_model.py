@@ -109,8 +109,8 @@ map.append({
     "temperature": 3,
     "pressure": 1008,
     "humidity": 45,
-    "x": 0,
-    "y": 2
+    "x": 1,
+    "y": 3
 })
 
 connections.append([3, 5])
@@ -505,7 +505,7 @@ class PollutionModel:
 
     def pol_propE_in_state(self, place_number):
         pol_prop = []
-        pol_prop.append(map[place_number]['PM2.5'])
+        pol_prop.append(self.value_for_prop(map[place_number]['PM2.5'], map[place_number]['d_PM2.5']))
         return pol_prop
 
     def loc_prop_in_state(self, state, place_number):
@@ -649,12 +649,12 @@ start = time.clock()
 pollution_model = PollutionModel(map, connections, n_agent, energies, radius)
 stop = time.clock()
 tgen = stop - start
-formula = generate_formula(n_agent, len(map))
+# formula = generate_formula(n_agent, len(map))
 # formula = generate_formula(n_agent, len(map))
 # formula = generate_formula1(len(map))
 # formula = generate_formula2(len(map))
 # formula = generate_formula2_prime()
-# formula = generate_formula3(n_agent, len(map))
+formula = generate_formula3(n_agent, len(map))
 txt = cformula2string(formula, 0)
 print(txt)
 props = list()
