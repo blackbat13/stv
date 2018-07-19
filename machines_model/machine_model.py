@@ -12,6 +12,7 @@ class MachineModel:
     state_number = 0
     no_robots = 0
     no_machines = 0
+    output_items_limit = 1
     map = []
     machine_requirements = []
     items_limit = 0
@@ -129,7 +130,8 @@ class MachineModel:
         first_state = {'r_pos': self.robot_positions,
                        'm_pos': self.machine_positions,
                        'r_items': robot_items, 'm_in': machine_inputs, 'm_out': machine_outputs,
-                       'it_count': items_count, 'pr_times': self.production_times, 'm_clocks': machine_clocks}
+                       'it_count': items_count, 'pr_times': self.production_times, 'm_clocks': machine_clocks,
+                       'prop_stuck': False}
         return first_state
 
     def generate_model(self):
@@ -194,6 +196,7 @@ class MachineModel:
         produced_items_count = state['it_count'][:]
         machine_clocks = state['m_clocks'][:]
         production_times = state['pr_times'][:]
+        prop_stuck = state['prop_stuck']
         machine_inputs = []
         for i in range(0, self.no_machines):
             machine_inputs.append(state['m_in'][i][:])
@@ -227,11 +230,14 @@ class MachineModel:
                     produced_items_count[machine_number] += 1
                 else:
                     machine_clocks[machine_number] += 1
+            elif machine_action[0] == 'Wait' and machine_action[1]:
+                prop_stuck = True
 
         new_state = {'r_pos': robot_positions, 'm_pos': machine_positions,
                      'r_items': robot_items, 'm_in': machine_inputs,
                      'm_out': machine_outputs, 'it_count': produced_items_count,
-                     'pr_times': production_times, 'm_clocks': machine_clocks}
+                     'pr_times': production_times, 'm_clocks': machine_clocks,
+                     'prop_stuck': prop_stuck}
 
         return new_state, actions
 
@@ -265,20 +271,30 @@ class MachineModel:
         return available_actions[:]
 
     def machine_available_actions(self, machine_no, state):
-        machine_input = state['m_in'][machine_no]
-        met_requirements = True
-        for i in range(0, len(machine_input)):
-            if machine_input[i] < self.machine_requirements[machine_no][i]:
-                met_requirements = False
-                break
+        is_stuck = False
+        met_requirements = self.machine_met_requirements(machine_no, state)
+        if met_requirements and state['m_clocks'][machine_no] >= state['pr_times'][machine_no] and state['m_out'][
+            machine_no] >= self.output_items_limit and state['it_count'][
+            machine_no] < self.items_limit:
+            is_stuck = True
 
-        if state['it_count'][machine_no] >= self.items_limit:
+        if (state['m_clocks'][machine_no] >= state['pr_times'][machine_no] and state['m_out'][
+            machine_no] >= self.output_items_limit) \
+                or state['it_count'][machine_no] >= self.items_limit:
             met_requirements = False
 
         if met_requirements:
             return [('produce', machine_no)]
         else:
-            return [('Wait', 0)]
+            return [('Wait', is_stuck)]
+
+    def machine_met_requirements(self, machine_no, state):
+        machine_input = state['m_in'][machine_no]
+        for i in range(0, len(machine_input)):
+            if machine_input[i] < self.machine_requirements[machine_no][i]:
+                return False
+
+        return True
 
     def add_state(self, state: hash) -> int:
         new_state_number = self.get_state_number(state)

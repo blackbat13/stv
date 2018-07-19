@@ -16,6 +16,7 @@ imperfect = False
 model_type = ModelType.CLASSIC
 items_limit = 1
 items_to_produce = 1
+formula_no = 1
 
 now = datetime.datetime.now()
 print(now)
@@ -92,12 +93,29 @@ print(f'Model generation time: {end - start} seconds')
 strategy = []
 winning_states = set()
 state_id = 0
+
 for state in machine_model.states:
     # print(state)
     strategy.append(None)
-    if state['it_count'][0] >= items_to_produce and state['it_count'][1] >= items_to_produce:
-        winning_states.add(state_id)
-
+    produced_items = True
+    for i in range(0, no_machines):
+        if state['it_count'][i] < items_to_produce:
+            produced_items = False
+            break
+    if formula_no == 1:
+        if produced_items:
+            winning_states.add(state_id)
+    elif formula_no == 2:
+        if (not state['prop_stuck']) and produced_items:
+            winning_states.add(state_id)
+    elif formula_no == 4:
+        charged = True
+        for i in range(0, no_robots):
+            if state['r_charge'][i] <= 0:
+                charged = False
+                break
+        if charged and produced_items:
+            winning_states.add(state_id)
     state_id += 1
 
 # graphDrawing = GraphDrawing(machine_model.model, strategy)
@@ -108,7 +126,15 @@ if imperfect:
 else:
     mode = 'Perfect'
 
-print(f'Formula: <<R>>F produce_{items_to_produce}')
+if formula_no == 1:
+    print(f'Formula: <<R>>F produce_{items_to_produce}')
+elif formula_no == 2:
+    print(f'Formula: <<R>>F (!stuck && produce_{items_to_produce})')
+elif formula_no == 3:
+    print(f'Not implemented')
+elif formula_no == 4:
+    print(f'Formula: <<R>>G (energy>0 && produce_{items_to_produce})')
+
 print(f'{mode} information')
 
 if not imperfect:
@@ -128,7 +154,7 @@ print(f'Number of reachable states: {len(result)}')
 
 # Add storage room - Done
 # Add bad states: where machine is stuck (must wait):
-#   machine can produce new item, but it has space to hold only one produced item
+#   machine can produce new item, but it has space to hold only one produced item - Done (prop_stuck)
 # Add times for production to each machine - Done
 # Add energy and charging stations for robots (for example 100% at the beginning, and then each action uses 1%) - Done
 # Add collisions for robots - Done
