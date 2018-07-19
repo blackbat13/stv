@@ -11,12 +11,12 @@ class ModelType(Enum):
     STORAGE = 2
 
 
-random_map = True
+random_map = False
 imperfect = False
-model_type = ModelType.CLASSIC
-items_limit = 1
-items_to_produce = 1
-formula_no = 1
+model_type = ModelType.STORAGE
+items_limit = 3
+items_to_produce = 3
+formula_no = 2
 
 now = datetime.datetime.now()
 print(now)
@@ -48,11 +48,11 @@ else:
     ch_station_positions.append((0, 0))
 
     production_times.append(0)
-    production_times.append(0)
+    production_times.append(5)
 
     machine_requirements = [[0, 1], [0, 0]]
 
-    storage_positions.append((0, 1))
+    storage_positions.append((2, 2))
 
     no_robots = len(robot_positions)
     no_machines = len(machine_positions)
