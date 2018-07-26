@@ -329,14 +329,13 @@ class MachineModel:
             robot_positions[i] = -1
             robot_items[i] = -1
 
-        machine_positions = state['m_pos'][:]
         machine_outputs = state['m_out'][:]
         produced_items_count = state['it_count'][:]
         machine_inputs = []
         for i in range(0, self.no_machines):
             machine_inputs.append(state['m_in'][i][:])
 
-        epistemic_state = {'r_pos': robot_positions, 'm_pos': machine_positions,
+        epistemic_state = {'r_pos': robot_positions,
                            'r_items': robot_items, 'm_in': machine_inputs,
                            'm_out': machine_outputs, 'it_count': produced_items_count}
         return epistemic_state
@@ -629,4 +628,66 @@ class MachineModelWithStorage(MachineModel):
                            'r_items': robot_items, 'm_in': machine_inputs,
                            'm_out': machine_outputs, 'it_count': produced_items_count,
                            'storage': storages, 's_pos': storage_positions}
+        return epistemic_state
+
+
+class MachineModelWaiting(MachineModel):
+    name: str = "Machine Model With Waiting"
+
+    def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
+                 robot_positions: List, machine_positions: List,
+                 obstacle_positions: List, machine_requirements: List,
+                 production_times: List, imperfect: bool):
+
+        super().__init__(no_robots, no_machines, map_size, items_limit, robot_positions, machine_positions,
+                         obstacle_positions, machine_requirements, production_times, imperfect)
+
+    def generate_first_state(self):
+        first_state = super().generate_first_state()
+        waiting_times = []
+        for _ in range(0, self.no_machines):
+            waiting_times.append(0)
+
+        first_state['m_w_times'] = waiting_times
+        return first_state
+
+    def new_state_after_action(self, state, current_actions):
+        new_state, actions = super().new_state_after_action(state, current_actions)
+
+        waiting_times = state['m_w_times'][:]
+
+        for machine_number in range(0, self.no_machines):
+            machine_action = current_actions[self.no_robots + machine_number]
+
+            if machine_action[0] == 'Produce':
+                waiting_times[machine_number] = 0
+            elif machine_action[0] == 'Wait' and state['it_count'][machine_number] < self.items_limit:
+                waiting_times[machine_number] += 1
+
+        new_state['m_w_times'] = waiting_times
+
+        return new_state, actions
+
+    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+        if agent_number >= self.no_robots:
+            return state
+
+        robot_positions = state['r_pos'][:]
+        robot_items = state['r_items'][:]
+        for i in range(0, self.no_robots):
+            if i == agent_number:
+                continue
+
+            robot_positions[i] = -1
+            robot_items[i] = -1
+
+        machine_outputs = state['m_out'][:]
+        produced_items_count = state['it_count'][:]
+        machine_inputs = []
+        for i in range(0, self.no_machines):
+            machine_inputs.append(state['m_in'][i][:])
+
+        epistemic_state = {'r_pos': robot_positions,
+                           'r_items': robot_items, 'm_in': machine_inputs,
+                           'm_out': machine_outputs, 'it_count': produced_items_count}
         return epistemic_state
