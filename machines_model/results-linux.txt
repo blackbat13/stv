@@ -177,3 +177,115 @@ Formula: <<R>>F produce_1
 Perfect information
 
 Process finished with exit code 137 (interrupted by signal 9: SIGKILL)
+
+
+-------------------------------------
+
+(6,6)
+...#..
+...#M2.
+....R2.
+.M1#...
+......
+.R1....
+
+Classic Machine Model
+Machine requirements: [[0, 1], [0, 0]]
+Machine production times: [0, 0]
+Items limit: 2
+Number of states: 13912
+Model generation time: 3.18465 seconds
+Formula: <<R>>F produce_2
+    Perfect information
+    Verification time: 15.398862000000001 seconds
+    Result: True
+    Number of reachable states: 13511
+Formula: <<R>>F (!stuck && produce_2)
+    Perfect information
+    Verification time: 0.0010360000000000369 seconds
+    Result: False
+    Number of reachable states: 0
+
+
+(6,6)
+...#..
+...#M2.
+....R2.
+.M1#...
+......
+.R1....
+
+Classic Machine Model
+Machine requirements: [[0, 1], [0, 0]]
+Machine production times: [0, 1]
+Items limit: 2
+Number of states: 24511
+Model generation time: 5.423834 seconds
+Formula: <<R>>F (!stuck && produce_2)
+    Perfect information
+    Verification time: 5.146380000000001 seconds
+    Result: True
+    Number of reachable states: 9959
+
+
+(6,6)
+...#..
+...#M2.
+....R2.
+.M1#...
+......
+.R1....
+
+Classic Machine Model
+Machine requirements: [[0, 1], [0, 0]]
+Machine production times: [0, 1]
+Items limit: 3
+Number of states: 26871
+Model generation time: 6.048908000000001 seconds
+Formula: <<R>>F (!stuck && produce_3)
+    Perfect information
+    Verification time: 0.002281000000001754 seconds
+    Result: False
+    Number of reachable states: 0
+
+
+(6,6)
+...#..
+...#M2.
+..S.R2.
+.M1#...
+......
+.R1....
+
+Machine Model With Storage
+Machine requirements: [[0, 1], [0, 0]]
+Machine production times: [0, 1]
+Items limit: 3
+Number of states: 88424
+Model generation time: 27.010439 seconds
+Formula: <<R>>F (!stuck && produce_3)
+    Perfect information
+    Verification time: 0.006160999999998751 seconds
+    Result: False
+    Number of reachable states: 0
+
+
+(6,6)
+...#..
+...#M2.
+..S.R2.
+.M1#...
+......
+.R1....
+
+Machine Model With Storage
+Machine requirements: [[0, 1], [0, 0]]
+Machine production times: [0, 5]
+Items limit: 3
+Number of states: 198762
+Model generation time: 62.460916000000005 seconds
+Formula: <<R>>F (!stuck && produce_3)
+Perfect information
+Verification time: 1152.600841 seconds
+Result: True
+Number of reachable states: 81287
