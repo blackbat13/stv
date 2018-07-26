@@ -133,7 +133,7 @@ elif formula_no == 2:
 elif formula_no == 3:
     print(f'Not implemented')
 elif formula_no == 4:
-    print(f'Formula: <<R>>G (energy>0 && produce_{items_to_produce})')
+    print(f'Formula: <<R>>F (energy>0 && produce_{items_to_produce})')
 
 print(f'{mode} information')
 
@@ -168,3 +168,9 @@ print(f'Number of reachable states: {len(result)}')
 
 
 # Machine clocks are epistemic
+
+# TODO
+# Review section 3 (with figure 2)
+# Updated versions of Figures 6 and 7
+# Divide into "use cases" - formuła i podstawowe wartości (ilość itemów do produkcji, początkowa energia)
+#       Eksperymenty z różnymi modyfikacjami modelu - production times, locations, storages, etc.
