@@ -85,43 +85,31 @@ class StrategyComparer:
         return None
 
     def sort_strategies(self, state: int, strategies: List) -> List:
-        """Bubble sort strategies"""
-        strat_groups = []
+        """Eliminate and sort strategies"""
         strat_chosen = []
+        remaining_strat = []
+        for i in range(0, len(strategies)):
+            strat_chosen.append(True)
 
         for i in range(0, len(strategies)):
-            strat_chosen.append(False)
-
-        for i in range(0, len(strategies)):
-            if strat_chosen[i]:
+            if not strat_chosen[i]:
                 continue
 
-            strat_groups.append([i])
-            strat_chosen[i] = True
-            for j in range(i + 1, len(strategies)):
-                if strat_chosen[j]:
-                    continue
-
+            for j in range(i+1, len(strategies)):
+                # 2 - equal
+                # 1 - 2s better
+                # 0 - 1s better
                 compare_result = self.basic_h(state, strategies[i], strategies[j])
-                if compare_result != -1:
-                    strat_groups[-1].append(j)
-                    strat_chosen[j] = True
+                if compare_result == 2 or compare_result == 0:
+                    strat_chosen[j] = False
+                elif compare_result == 1:
+                    strat_chosen[i] = False
+                    break
 
-        for k in range(0, len(strat_groups)):
-            for i in range(1, len(strat_groups[k])):
-                for j in range(0, len(strat_groups[k]) - i):
-                    # compare_result = self.basic_h(state, strategies[strat_groups[k][j]], strategies[strat_groups[k][j + 1]])
-                    compare_result = self.current_heuristic(state, strategies[strat_groups[k][j]],
-                                                            strategies[strat_groups[k][j + 1]])
-                    if compare_result == 1:
-                        tmp = strat_groups[k][j]
-                        strat_groups[k][j] = strat_groups[k][j + 1]
-                        strat_groups[k][j + 1] = tmp
+            if strat_chosen[i]:
+                remaining_strat.append(strategies[i])
 
-        sorted_strat = []
-        for k in range(0, len(strat_groups)):
-            for i in strat_groups[k]:
-                sorted_strat.append(strategies[i][:])
+        sorted_strat = remaining_strat  # TODO some sorting?
 
         return sorted_strat
 
