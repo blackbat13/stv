@@ -1,8 +1,7 @@
-from machines_model.machine_model import MachineModel, MachineModelWithCharging, MachineModelWithStorage
+from simple_models.machine_model import MachineModel, MachineModelWithCharging, MachineModelWithStorage
 import time
 import datetime
 from enum import Enum
-from comparing_strats.graph_drawing import GraphDrawing
 
 
 class ModelType(Enum):
@@ -173,4 +172,7 @@ print(f'Number of reachable states: {len(result)}')
 # Review section 3 (with figure 2)
 # Updated versions of Figures 6 and 7
 # Divide into "use cases" - formuła i podstawowe wartości (ilość itemów do produkcji, początkowa energia)
-#       Eksperymenty z różnymi modyfikacjami modelu - production times, locations, storages, etc.
+#       Eksperymenty z różnymi mody
+# fikacjami modelu - production times, locations, storages, etc.
+
+# Wypełnić tablekę z rozmiarami różnych wersji modelu

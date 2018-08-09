@@ -1,6 +1,5 @@
-from comparing_strats.drone_model import *
+from simple_models.drone_model import *
 from comparing_strats.strat_simpl import StrategyComparer
-from comparing_strats.strategy_generator import StrategyGenerator
 from comparing_strats.graph_drawing import GraphDrawing
 
 

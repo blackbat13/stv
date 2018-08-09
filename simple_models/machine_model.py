@@ -1,4 +1,4 @@
-from comparing_strats.simple_model import SimpleModel
+from simple_models.simple_model import SimpleModel
 import itertools
 from typing import List
 from enum import Enum
