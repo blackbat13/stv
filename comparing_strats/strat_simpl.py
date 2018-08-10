@@ -37,6 +37,8 @@ class StrategyComparer:
             self.dfs_visited_states.append(False)
 
         self.current_heuristic = heuristic
+        # TODO precompute perfect information strategy for enemy coalition for formula <<A>>G !p
+        # TODO add coalition in formula (function call), not in model (don't remove enemy actions from model)
         return self.strategy_dfs(current_state=initial_state, winning_strategy=winning_strategy)
 
     def strategy_dfs(self, current_state: int, winning_strategy: List) -> (bool, List):

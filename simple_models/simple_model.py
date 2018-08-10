@@ -37,6 +37,7 @@ class SimpleModel:
         """
         self.resize_to_state(max(from_state_id, to_state_id))
 
+        # TODO change transitions from hashes to class objects
         self.graph[from_state_id].append({'next_state': to_state_id, 'actions': actions})
 
     def resize_to_state(self, state_id: int):
