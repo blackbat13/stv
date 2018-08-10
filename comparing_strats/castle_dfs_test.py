@@ -7,7 +7,7 @@ import datetime
 DEBUG = True
 now = datetime.datetime.now()
 print(now)
-castle_model = CastleModel(castle_sizes=[2, 1, 2], castle_lifes=[2, 2, 2])
+castle_model = CastleModel(castle_sizes=[1, 1, 1], castle_lifes=[1, 1, 1])
 no_states = len(castle_model.states)
 print(f"Model have {no_states} states")
 

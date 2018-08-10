@@ -1,6 +1,7 @@
 from comparing_strats.strategy_generator import *
 import itertools
 from typing import List, Set
+from enum import Enum
 
 
 class StrategyComparer:
@@ -9,6 +10,12 @@ class StrategyComparer:
     winning_states = []
     current_heuristic = None
     dfs_visited_states = []
+
+    class CompareResult(Enum):
+        NOT_COMPARABLE = -1
+        EQUAL = 0
+        FIRST_BETTER = 1
+        SECOND_BETTER = 2
 
     def __init__(self, model: SimpleModel, possible_actions: list):
         self.clear_all()
@@ -51,6 +58,7 @@ class StrategyComparer:
 
         self.dfs_visited_states[current_state] = True
         strategies = self.model.get_possible_strategies(state_id=current_state)
+        strategies = self.eliminate_strategies(current_state, strategies)
         strategies = self.sort_strategies(current_state, strategies)
         epistemic_strategy = self.check_epistemic_strategy(current_state, winning_strategy)
         if epistemic_strategy is not None:
@@ -84,8 +92,8 @@ class StrategyComparer:
 
         return None
 
-    def sort_strategies(self, state: int, strategies: List) -> List:
-        """Eliminate and sort strategies"""
+    def eliminate_strategies(self, state: int, strategies: List) -> List:
+        """Eliminates dominated strategies"""
         strat_chosen = []
         remaining_strat = []
         for i in range(0, len(strategies)):
@@ -95,23 +103,26 @@ class StrategyComparer:
             if not strat_chosen[i]:
                 continue
 
-            for j in range(i+1, len(strategies)):
+            for j in range(i + 1, len(strategies)):
                 # 2 - equal
                 # 1 - 2s better
                 # 0 - 1s better
                 compare_result = self.basic_h(state, strategies[i], strategies[j])
-                if compare_result == 2 or compare_result == 0:
+                if compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.FIRST_BETTER:
                     strat_chosen[j] = False
-                elif compare_result == 1:
+                elif compare_result == self.CompareResult.SECOND_BETTER:
                     strat_chosen[i] = False
                     break
 
             if strat_chosen[i]:
                 remaining_strat.append(strategies[i])
 
-        sorted_strat = remaining_strat  # TODO some sorting?
+        return remaining_strat
 
-        return sorted_strat
+    def sort_strategies(self, state: int, strategies: List) -> List:
+        """Sort strategies using some heuristics"""
+        # TODO implement
+        return strategies
 
     def simplify_strategy(self, strategy: list, heuristic):
         """
@@ -150,17 +161,17 @@ class StrategyComparer:
                 # compare_result = self.basic_h(state, current_strategy, actions)
                 compare_result = self.basic_h(state, strategy[state], actions)
 
-                if compare_result == -1:
+                if compare_result == self.CompareResult.NOT_COMPARABLE:
                     continue
 
                 # Do additional heuristics
 
-                if compare_result == 1 and heuristic is not None:
+                if compare_result == self.CompareResult.SECOND_BETTER and heuristic is not None:
                     compare_result = heuristic(state, current_strategy, actions)
-                elif compare_result == 1 and heuristic is None:
+                elif compare_result == self.CompareResult.SECOND_BETTER and heuristic is None:
                     compare_result = self.basic_h(state, current_strategy, actions)
 
-                if compare_result != 1:
+                if compare_result != self.CompareResult.SECOND_BETTER:
                     continue
 
                 current_strategy = actions[:]
@@ -188,12 +199,12 @@ class StrategyComparer:
 
         return sorted(result)
 
-    def basic_h(self, state: int, strategy1: list, strategy2: list) -> int:
+    def basic_h(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
         strategy1_result = self.get_actions_result(state, strategy1)
         strategy2_result = self.get_actions_result(state, strategy2)
 
         if len(strategy1_result) == 0 or len(strategy2_result) == 0:
-            return -1
+            return self.CompareResult.NOT_COMPARABLE
 
         result = 1
 
@@ -204,17 +215,17 @@ class StrategyComparer:
 
         if result == 1:
             if len(strategy2_result) < len(strategy1_result):
-                return 1  # strategy2 is better
+                return self.CompareResult.SECOND_BETTER
             else:
-                return 2  # strategy 2 is equal to strategy1
+                return self.CompareResult.EQUAL
 
         for state in strategy1_result:
             if state not in strategy2_result:
-                return -1  # strategies are not comparable
+                return self.CompareResult.NOT_COMPARABLE
 
-        return 0  # strategy1 is better
+        return self.CompareResult.FIRST_BETTER
 
-    def epistemic_h(self, state: int, strategy1: list, strategy2: list) -> int:
+    def epistemic_h(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
         strategy1_result = self.get_actions_result(state, strategy1)
         strategy2_result = self.get_actions_result(state, strategy2)
         strategy1_epistemic_h = set()
@@ -228,13 +239,13 @@ class StrategyComparer:
         strategy2_epistemic_h = len(strategy2_epistemic_h)
 
         if strategy2_epistemic_h < strategy1_epistemic_h:
-            return 1
+            return self.CompareResult.SECOND_BETTER
         elif strategy2_epistemic_h > strategy1_epistemic_h:
-            return 0
+            return self.CompareResult.FIRST_BETTER
         else:
-            return 2
+            return self.CompareResult.EQUAL
 
-    def control_h(self, state: int, strategy1: list, strategy2: list) -> int:
+    def control_h(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
         strategy1_result = self.get_actions_result(state, strategy1)
         strategy2_result = self.get_actions_result(state, strategy2)
         strategy1_control_h = 0
@@ -246,21 +257,21 @@ class StrategyComparer:
             strategy2_control_h += len(self.get_actions_result(state, self.strategy[state]))
 
         if strategy2_control_h < strategy1_control_h:
-            return 1
+            return self.CompareResult.SECOND_BETTER
         elif strategy2_control_h > strategy1_control_h:
-            return 0
+            return self.CompareResult.FIRST_BETTER
         else:
-            return 2
+            return self.CompareResult.EQUAL
 
-    def visited_states_h(self, state: int, strategy1: list, strategy2: list) -> int:
+    def visited_states_h(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
         strategy1_result = self.get_actions_result(state, strategy1)
         strategy2_result = self.get_actions_result(state, strategy2)
         if len(strategy2_result) < len(strategy1_result):
-            return 1
+            return self.CompareResult.SECOND_BETTER
         elif len(strategy2_result) > len(strategy1_result):
-            return 0
+            return self.CompareResult.FIRST_BETTER
         else:
-            return 2
+            return self.CompareResult.EQUAL
 
     def strategy_statistic_basic_h(self, strategy: list, print: bool = False) -> int:
         if print:
