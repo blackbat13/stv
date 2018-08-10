@@ -3,7 +3,15 @@ from atl.atl_ir_model import ATLIrModel, ATLirModel
 
 
 class SimpleModel:
-    graph = []
+    class Transition:
+        next_state: int = 0
+        actions: List[str] = []
+
+        def __init__(self, next_state: int, actions: List[str]):
+            self.actions = actions[:]
+            self.next_state = next_state
+
+    graph: List[List[Transition]] = []
     no_states = 0
     no_agents = 0
     epistemic_classes = []
@@ -36,9 +44,7 @@ class SimpleModel:
         actions: [String]
         """
         self.resize_to_state(max(from_state_id, to_state_id))
-
-        # TODO change transitions from hashes to class objects
-        self.graph[from_state_id].append({'next_state': to_state_id, 'actions': actions})
+        self.graph[from_state_id].append(self.Transition(to_state_id, actions))
 
     def resize_to_state(self, state_id: int):
         while len(self.graph) <= state_id:
@@ -94,7 +100,7 @@ class SimpleModel:
     def get_possible_strategies(self, state_id: int) -> List[tuple]:
         possible_actions = set()
         for transition in self.graph[state_id]:
-            possible_actions.add(tuple(transition['actions']))
+            possible_actions.add(tuple(transition.actions))
 
         return list(possible_actions)
 
@@ -105,7 +111,7 @@ class SimpleModel:
                 atl_model.add_action(i, action)
         for state_id in range(0, len(self.graph)):
             for transition in self.graph[state_id]:
-                atl_model.add_transition(state_id, transition['next_state'], transition['actions'])
+                atl_model.add_transition(state_id, transition.next_state, transition.actions)
 
         atl_model.states = self.states
         return atl_model
@@ -117,7 +123,7 @@ class SimpleModel:
                 atl_model.add_action(i, action)
         for state_id in range(0, len(self.graph)):
             for transition in self.graph[state_id]:
-                atl_model.add_transition(state_id, transition['next_state'], transition['actions'])
+                atl_model.add_transition(state_id, transition.next_state, transition.actions)
         for i in range(0, len(self.epistemic_classes)):
             for epistemic_class in self.epistemic_classes[i]:
                 atl_model.add_epistemic_class(i, epistemic_class)

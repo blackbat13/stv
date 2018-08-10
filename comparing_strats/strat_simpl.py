@@ -188,16 +188,16 @@ class StrategyComparer:
     def get_action_result(self, state: int, action: str) -> list:
         result = []
         for transition in self.model.graph[state]:
-            if transition["actions"][0] == action:
-                result.append(transition["next_state"])
+            if transition.actions[0] == action:
+                result.append(transition.next_state)
 
         return sorted(result)
 
     def get_actions_result(self, state: int, actions: list) -> list:
         result = []
         for transition in self.model.graph[state]:
-            if transition["actions"] == actions:
-                result.append(transition["next_state"])
+            if transition.actions == actions:
+                result.append(transition.next_state)
 
         return sorted(result)
 
