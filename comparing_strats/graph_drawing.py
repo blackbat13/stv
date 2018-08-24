@@ -27,13 +27,13 @@ class GraphDrawing:
 
         for state in range(0, no_states):
             for transition in self.model.graph[state]:
-                next_state = transition['next_state']
-                if self.strategy[state] == transition['actions']:
+                next_state = transition.next_state
+                if self.strategy[state] == transition.actions:
                     graph.add_edges_from([(state, next_state)],
-                                     label=transition['actions'], color='green')
+                                     label=transition.actions, color='green')
                 else:
                     graph.add_edges_from([(state, next_state)],
-                                         label=transition['actions'], color='red')
+                                         label=transition.actions, color='red')
 
         plt.figure(1, figsize=(80, 80))
         plt.subplot(111)
