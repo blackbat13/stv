@@ -2,6 +2,7 @@ from simple_models.machine_model import MachineModel, MachineModelWithCharging, 
 import time
 import datetime
 from enum import Enum
+from comparing_strats.graph_drawing import GraphDrawing
 
 
 class ModelType(Enum):
@@ -12,10 +13,10 @@ class ModelType(Enum):
 
 random_map = False
 imperfect = False
-model_type = ModelType.STORAGE
-items_limit = 3
-items_to_produce = 3
-formula_no = 2
+model_type = ModelType.CLASSIC
+items_limit = 1
+items_to_produce = 1
+formula_no = 1
 
 now = datetime.datetime.now()
 print(now)
@@ -47,7 +48,7 @@ else:
     ch_station_positions.append((0, 0))
 
     production_times.append(0)
-    production_times.append(5)
+    production_times.append(0)
 
     machine_requirements = [[0, 1], [0, 0]]
 
@@ -117,8 +118,8 @@ for state in machine_model.states:
             winning_states.add(state_id)
     state_id += 1
 
-# graphDrawing = GraphDrawing(machine_model.model, strategy)
-# graphDrawing.draw()
+graphDrawing = GraphDrawing(machine_model.model, strategy)
+graphDrawing.draw()
 
 if imperfect:
     mode = 'Imperfect'

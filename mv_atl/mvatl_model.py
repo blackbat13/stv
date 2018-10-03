@@ -258,6 +258,7 @@ class MvATLModel(ATLirModel):
                         if self.simple_interpreter(formula[3][1], None, l, s, state):
                             winning_states.append(s)
                     if P.isAlways(formula[3]):
+                        self.print_model()
                         if len(formula[1]) == 0: # E \phi
                             result = self.maximum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi
@@ -265,6 +266,7 @@ class MvATLModel(ATLirModel):
                         else: # <<C>> \phi
                             result = self.maximum_formula_many_agents(list(map(lambda a: int(a), agents)), set(winning_states))
                     if P.isEventually(formula[3]):
+                        self.print_model()
                         if len(formula[1]) == 0: # E \phi  
                             self.minimum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi

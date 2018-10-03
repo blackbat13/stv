@@ -264,6 +264,13 @@ class ATLIrModel:
 
         return result
 
+    def print_model(self):
+        print("----MODEL START-----")
+        for state in self.states:
+            print('place:', state['place'], 'polD1:', state['polD1'], 'polD2:', state['polD2'])
+
+        print("----MODEL END-----")
+
 
 class ATLirModel(ATLIrModel):
     """Class for creating ATL models with imperfect information and imperfect recall"""

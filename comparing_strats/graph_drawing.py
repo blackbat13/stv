@@ -14,7 +14,10 @@ class GraphDrawing:
     def draw(self):
         graph = networkx.DiGraph()
         no_states = len(self.model.states)
+        no_states = min(no_states, 50)
         for i, state in enumerate(self.model.states):
+            if i > no_states:
+                break
             label = ''
             for key in state:
                 label += f'{key}:{state[key]}\n'
@@ -28,6 +31,8 @@ class GraphDrawing:
         for state in range(0, no_states):
             for transition in self.model.graph[state]:
                 next_state = transition.next_state
+                if next_state > no_states:
+                    continue
                 if self.strategy[state] == transition.actions:
                     graph.add_edges_from([(state, next_state)],
                                      label=transition.actions, color='green')

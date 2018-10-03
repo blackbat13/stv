@@ -15,8 +15,8 @@ connections = []
 map.append({
     "id": 0,
     "name": "Vlastimila Hofmana",
-    "PM2.5": "t",
-    "d_PM2.5": "t",
+    "PM2.5": "u",
+    "d_PM2.5": "u",
     "PM10": 28,
     "temperature": 3,
     "pressure": 1008,
@@ -34,8 +34,8 @@ map.append({
     "temperature": 3,
     "pressure": 1007,
     "humidity": 55,
-    "x": 1,
-    "y": 0
+    "x": 0,
+    "y": 1
 })
 
 connections.append([0, 1])
@@ -43,109 +43,112 @@ connections.append([0, 1])
 map.append({
     "id": 2,
     "name": "Aleje Trzech Wieszczów",
-    "PM2.5": "t",
-    "d_PM2.5": "u",
+    "PM2.5": "f",
+    "d_PM2.5": "f",
     "PM10": 170,
     "temperature": "u",
     "pressure": "u",
     "humidity": "u",
-    "x": 2,
+    "x": 1,
     "y": 0
 })
 
-connections.append([1, 2])
+connections.append([0, 2])
 
 map.append({
     "id": 3,
     "name": "Wiedeńska",
-    "PM2.5": "u",
+    "PM2.5": "f",
     "d_PM2.5": "t",
     "PM10": 76,
     "temperature": 3,
     "pressure": 1008,
     "humidity": 45,
-    "x": 0,
-    "y": 1
-})
-
-map.append({
-    "id": 4,
-    "name": "Przybyszewskiego 56",
-    "PM2.5": "u",
-    "d_PM2.5": "f",
-    "PM10": 50,
-    "temperature": 4,
-    "pressure": 1009,
-    "humidity": 59,
     "x": 1,
     "y": 1
 })
 
-connections.append([3, 4])
-connections.append([1, 4])
+connections.append([1, 3])
+connections.append([2, 3])
 
-
-map.append({
-    "id": 5,
-    "name": "Studencka",
-    "PM2.5": "u",
-    "d_PM2.5": "u",
-    "PM10": 72,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 66,
-    "x": 2,
-    "y": 1
-})
-
-connections.append([2, 5])
-
-map.append({
-    "id": 6,
-    "name": "Na Błonie",
-    "PM2.5": "t",
-    "d_PM2.5": "u",
-    "PM10": 84,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 45,
-    "x": 1,
-    "y": 3
-})
-
-connections.append([3, 5])
-connections.append([5, 6])
-
-map.append({
-    "id": 7,
-    "name": "osiedle Złota Podkowa",
-    "PM2.5": "t",
-    "d_PM2.5": "f",
-    "PM10": 68,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 69,
-    "x": 1,
-    "y": 2
-})
-
-connections.append([6, 7])
-
-map.append({
-    "id": 8,
-    "name": "aleja Juliusza Słowackiego",
-    "PM2.5": "f",
-    "d_PM2.5": "f",
-    "PM10": 70,
-    "temperature": 3,
-    "pressure": 1008,
-    "humidity": 66,
-    "x": 2,
-    "y": 2
-})
-
-connections.append([5, 8])
-connections.append([3, 8])
+# map.append({
+#     "id": 4,
+#     "name": "Przybyszewskiego 56",
+#     "PM2.5": "u",
+#     "d_PM2.5": "f",
+#     "PM10": 50,
+#     "temperature": 4,
+#     "pressure": 1009,
+#     "humidity": 59,
+#     "x": 1,
+#     "y": 1
+# })
+#
+# connections.append([3, 4])
+# connections.append([1, 4])
+#
+#
+# map.append({
+#     "id": 5,
+#     "name": "Studencka",
+#     "PM2.5": "u",
+#     "d_PM2.5": "u",
+#     "PM10": 72,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 66,
+#     "x": 2,
+#     "y": 1
+# })
+#
+# connections.append([2, 5])
+#
+# map.append({
+#     "id": 6,
+#     "name": "Na Błonie",
+#     "PM2.5": "t",
+#     "d_PM2.5": "u",
+#     "PM10": 84,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 45,
+#     "x": 1,
+#     "y": 3
+# })
+#
+# connections.append([3, 5])
+# connections.append([5, 6])
+#
+# map.append({
+#     "id": 7,
+#     "name": "osiedle Złota Podkowa",
+#     "PM2.5": "t",
+#     "d_PM2.5": "f",
+#     "PM10": 68,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 69,
+#     "x": 1,
+#     "y": 2
+# })
+#
+# connections.append([6, 7])
+#
+# map.append({
+#     "id": 8,
+#     "name": "aleja Juliusza Słowackiego",
+#     "PM2.5": "f",
+#     "d_PM2.5": "f",
+#     "PM10": 70,
+#     "temperature": 3,
+#     "pressure": 1008,
+#     "humidity": 66,
+#     "x": 2,
+#     "y": 2
+# })
+#
+# connections.append([5, 8])
+# connections.append([3, 8])
 
 # map.append({
 #     "id": 9,
@@ -278,7 +281,7 @@ class PollutionModel:
 
         for con in connections:
             self.graph[con[0]].append(con[1])
-            self.graph[con[1]].append(con[0])
+            # self.graph[con[1]].append(con[0]) # Uncomment for undirected graph
 
     def prepare_lattice(self):
         self.lattice = mvatl_model.QBAlgebra('t', 'f', [('tg', 't'),
@@ -315,7 +318,7 @@ class PollutionModel:
         available_actions = []
         for drone_number in range(0, self.no_drones):
             available_actions.append([])
-            available_actions[drone_number].append(-1)  # Wait
+            # available_actions[drone_number].append(-1)  # Wait
             drone_energy = state["energy"][drone_number]
             if drone_energy == 0:
                 continue
@@ -642,8 +645,8 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " & " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 3
-energies = [2, 4, 5]
+n_agent = 2
+energies = [2, 2]
 radius = 1
 start = time.clock()
 pollution_model = PollutionModel(map, connections, n_agent, energies, radius)
@@ -676,7 +679,7 @@ stop = time.clock()
 tverif = stop - start
 print(str(result))
 
-file = open("results-linux.txt", "a")
+file = open("results-mac.txt", "a")
 
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
