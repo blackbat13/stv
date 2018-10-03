@@ -76,66 +76,62 @@ class BridgeModel:
                 if self.count_remaining_cards(state) == 0:
                     break
 
-                for card_index, card in enumerate(state['hands'][state['next']]):
-                    if card == -1:
-                        continue
-
-                    new_state = self.new_state_after_play(state, card_index)
-
-                    agent_number = state['next']
-                    if agent_number == 2:
-                        agent_number = 0
-
-                    action = [-1]
-                    if agent_number == 0:
-                        action[agent_number] = card
-
-                    new_state_number = self.add_state(new_state)
-
-                    self.model.add_transition(current_state_number, new_state_number, action)
+                self.generate_states_beginning_of_turn(current_state_number, state)
             elif state['clock'] == 4:
-                winner = self.get_winner(state['beginning'], state['board'])
-
-                new_lefts = state['lefts'][:]
-                new_lefts[winner % 2] += 1
-                new_next = winner
-                new_clock = 0
-                new_beginning = winner
-                new_suit = -1
-                action = [-1]
-
-                new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': new_next, 'board': [-1, -1, -1, -1],
-                             'beginning': new_beginning, 'history': state['history'], 'clock': new_clock,
-                             'suit': new_suit}
-
-                new_state_number = self.add_state(new_state)
-
-                self.model.add_transition(current_state_number, new_state_number, action)
-
+                self.generate_state_end_of_turn(current_state_number, state)
             else:
-                color = state['board'][state['beginning']] % 10
-                have_color = False
-                for card in state['hands'][state['next']]:
-                    if (card % 10) == color:
-                        have_color = True
-                        break
-                for card_index, card in enumerate(state['hands'][state['next']]):
-                    if not ((not have_color) or (card % 10) == color) or card == -1:
-                        continue
+                self.generate_states_for_play(current_state_number, state)
 
-                    new_state = self.new_state_after_play(state, card_index)
+    def generate_states_beginning_of_turn(self, current_state_number: int, state):
+        for card_index, card in enumerate(state['hands'][state['next']]):
+            if card == -1:
+                continue
 
-                    agent_number = state['next']
-                    if agent_number == 2:
-                        agent_number = 0
+            new_state = self.new_state_after_play(state, card_index)
+            agent_number = state['next']
+            if agent_number == 2:
+                agent_number = 0
 
-                    action = [-1]
-                    if agent_number == 0:
-                        action[agent_number] = card
+            action = [-1]
+            if agent_number == 0:
+                action[0] = card
 
-                    new_state_number = self.add_state(new_state)
+            new_state_number = self.add_state(new_state)
+            self.model.add_transition(current_state_number, new_state_number, action)
 
-                    self.model.add_transition(current_state_number, new_state_number, action)
+    def generate_state_end_of_turn(self, current_state_number: int, state):
+        winner = self.get_winner(state['beginning'], state['board'])
+        new_lefts = state['lefts'][:]
+        new_lefts[winner % 2] += 1
+        new_state = {'hands': state['hands'], 'lefts': new_lefts, 'next': winner, 'board': [-1, -1, -1, -1],
+                     'beginning': winner, 'history': state['history'], 'clock': 0,
+                     'suit': -1}
+        new_state_number = self.add_state(new_state)
+        self.model.add_transition(current_state_number, new_state_number, [-1])
+
+    def generate_states_for_play(self, current_state_number: int, state):
+        color = state['board'][state['beginning']] % 10
+        have_color = False
+        for card in state['hands'][state['next']]:
+            if (card % 10) == color:
+                have_color = True
+                break
+
+        for card_index, card in enumerate(state['hands'][state['next']]):
+            if not ((not have_color) or (card % 10) == color) or card == -1:
+                continue
+
+            new_state = self.new_state_after_play(state, card_index)
+            agent_number = state['next']
+            if agent_number == 2:
+                agent_number = 0
+
+            action = [-1]
+            if agent_number == 0:
+                action[agent_number] = card
+
+            new_state_number = self.add_state(new_state)
+            self.model.add_transition(current_state_number, new_state_number, action)
 
     def add_state(self, state):
         new_state_number = self.get_state_number(state)
@@ -181,23 +177,16 @@ class BridgeModel:
     @staticmethod
     def new_state_after_play(state, card_index):
         card = state['hands'][state['next']][card_index]
-
         new_board = BridgeModel.new_board_after_play(state, card)
-
         new_history = BridgeModel.new_history_after_play(state, card)
-
         new_next = (state['next'] + 1) % 4
         new_clock = state['clock'] + 1
-
         new_hands = BridgeModel.copy_hands(state['hands'])
         new_hands[state['next']][card_index] = -1
-
         new_suit = BridgeModel.new_suit(state, card)
-
         new_state = {'hands': new_hands, 'lefts': state['lefts'], 'next': new_next, 'board': new_board,
                      'beginning': state['beginning'], 'history': new_history, 'clock': new_clock,
                      'suit': new_suit}
-
         return new_state
 
     @staticmethod
