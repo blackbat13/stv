@@ -37,8 +37,12 @@ class ATLIrModel:
     def enlarge_transitions(self, new_size: int):
         if len(self.transitions) >= new_size:
             return
-        diff = new_size - len(self.transitions) + 1
-        for _ in range(0, diff):
+
+        size_diff = new_size - len(self.transitions) + 1
+        self.enlarge_transitions_by(size_diff)
+
+    def enlarge_transitions_by(self, size: int):
+        for _ in range(0, size):
             self.transitions.append([])
             self.reverse_transitions.append([])
             self.pre_states.append(set())
@@ -55,10 +59,7 @@ class ATLIrModel:
         result_states.update(winning_states)
         result_states_length = len(result_states)
         current_states = winning_states.copy()
-        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
-        for state_number in winning_states:
-            is_winning_state[state_number] = True
-
+        is_winning_state = self.marked_winning_states(winning_states)
         while True:
             current_states = self.basic_formula_one_agent(agent_number, current_states, is_winning_state)
             result_states.update(current_states)
@@ -69,22 +70,24 @@ class ATLIrModel:
 
         return result_states
 
+    def marked_winning_states(self, winning_states: Set[int]) -> List[bool]:
+        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
+        for state_number in winning_states:
+            is_winning_state[state_number] = True
+
+        return is_winning_state
+
     def maximum_formula_one_agent(self, agent_number: int, winning_states: Set[int]) -> Set[int]:
         result_states = set()
         result_states.update(winning_states)
         result_states_length = len(result_states)
         current_states = winning_states.copy()
-        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
-        for state_number in winning_states:
-            is_winning_state[state_number] = True
-
+        is_winning_state = self.marked_winning_states(winning_states)
         while True:
             current_states = self.basic_formula_one_agent(agent_number, current_states, is_winning_state)
-            to_remove = set()
-            for state_number in result_states:
-                if state_number not in current_states:
-                    is_winning_state[state_number] = False
-                    to_remove.add(state_number)
+            to_remove = result_states.difference(current_states)
+            for state_number in to_remove:
+                is_winning_state[state_number] = False
             result_states.difference_update(to_remove)
 
             if result_states_length == len(result_states):
@@ -125,10 +128,7 @@ class ATLIrModel:
         result_states.update(winning_states)
         result_states_length = len(result_states)
         current_states = winning_states.copy()
-        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
-        for state_number in winning_states:
-            is_winning_state[state_number] = True
-
+        is_winning_state = self.marked_winning_states(winning_states)
         while True:
             current_states = self.basic_formula_many_agents(agent_numbers, current_states, is_winning_state)
             result_states.update(current_states)
@@ -144,17 +144,12 @@ class ATLIrModel:
         result_states.update(winning_states)
         result_states_length = len(result_states)
         current_states = winning_states.copy()
-        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
-        for state_number in winning_states:
-            is_winning_state[state_number] = True
-
+        is_winning_state = self.marked_winning_states(winning_states)
         while True:
             current_states = self.basic_formula_many_agents(agent_numbers, current_states, is_winning_state)
-            to_remove = set()
-            for state_number in result_states:
-                if state_number not in current_states:
-                    is_winning_state[state_number] = False
-                    to_remove.add(state_number)
+            to_remove = result_states.difference(current_states)
+            for state_number in to_remove:
+                is_winning_state[state_number] = False
             result_states.difference_update(to_remove)
             if result_states_length == len(result_states):
                 break
@@ -204,10 +199,7 @@ class ATLIrModel:
         result_states.update(winning_states)
         result_states_length = len(result_states)
         current_states = winning_states.copy()
-        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
-        for state_number in winning_states:
-            is_winning_state[state_number] = True
-
+        is_winning_state = self.marked_winning_states(winning_states)
         while True:
             current_states = self.basic_formula_no_agents(current_states, is_winning_state)
             result_states.update(current_states)
@@ -223,17 +215,12 @@ class ATLIrModel:
         result_states.update(winning_states)
         result_states_length = len(result_states)
         current_states = winning_states.copy()
-        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
-        for state_number in winning_states:
-            is_winning_state[state_number] = True
-
+        is_winning_state = self.marked_winning_states(winning_states)
         while True:
             current_states = self.basic_formula_no_agents(current_states, is_winning_state)
-            to_remove = set()
-            for state_number in result_states:
-                if state_number not in current_states:
-                    is_winning_state[state_number] = False
-                    to_remove.add(state_number)
+            to_remove = result_states.difference(current_states)
+            for state_number in to_remove:
+                is_winning_state[state_number] = False
             result_states.difference_update(to_remove)
             if result_states_length == len(result_states):
                 break
@@ -269,7 +256,7 @@ class ATLIrModel:
         for state in self.states:
             print('place:', state['place'], 'polD1:', state['polD1'], 'polD2:', state['polD2'])
 
-        print("----MODEL END-----")
+        print("----MODEL END------")
 
 
 class ATLirModel(ATLIrModel):
