@@ -421,10 +421,11 @@ class TmnProtocolIsplGenerator:
         return evolution
 
     def __create_evaluation(self):
-        evaulation = "Evaluation\n"
-
-        evaulation += "end Evaluation\n\n"
-        return evaulation
+        evaluation = "Evaluation\n"
+        evaluation += "\tkeyExchanged if Alice.bobKey=true;\n"
+        evaluation += "\tcompromised if Attacker.aliceKey=true or Attacker.bobKey=true or Attacker.serverKey=true;\n"
+        evaluation += "end Evaluation\n\n"
+        return evaluation
 
     def __create_init_states(self):
         init_states = "InitStates\n"
@@ -467,13 +468,15 @@ class TmnProtocolIsplGenerator:
 
     def __create_groups(self):
         groups = "Groups\n"
-
+        groups += "\ttrusted={Alice, Bob, Server};\n"
+        groups += "\tatk={Attacker};\n"
         groups += "end Groups\n\n"
         return groups
 
     def __create_formulae(self):
         formulae = "Formulae\n"
-
+        formulae += "\t<trusted>F keyExchanged;\n"
+        formulae += "\t<trusted>G !compromised;\n"
         formulae += "end Formulae\n\n"
         return formulae
 
