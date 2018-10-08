@@ -43,7 +43,7 @@ class TmnProtocolIsplGenerator:
         obsvars = "\tObsvars:\n"
 
         for message_no in range(1, self.no_messages + 1):
-            obsvars += f"\t\tmessage{message_no}Key:" + "{"
+            obsvars += f"\t\tmessage{message_no}Key : " + "{"
 
             for agent_name in self.agents:
                 obsvars += f"{agent_name}KeyM, "
@@ -52,13 +52,15 @@ class TmnProtocolIsplGenerator:
             obsvars += "};\n"
 
         for message_no in range(1, self.no_messages + 1):
-            obsvars += f"\t\tmessage{message_no}Content:" + "{"
+            obsvars += f"\t\tmessage{message_no}Content : " + "{"
 
             for agent_name in self.agents:
                 obsvars += f"{agent_name}KeyM, "
 
             obsvars = obsvars.rstrip(" ,")
             obsvars += "};\n"
+
+        obsvars += "\t\tprotocol : boolean;\n"
 
         obsvars += "\tend Obsvars\n"
         return obsvars
@@ -136,7 +138,7 @@ class TmnProtocolIsplGenerator:
             protocol += ": {" + f"decryptMessage{message_no}" + "};\n"
 
         for message_no in range(1, self.no_messages + 1):
-            protocol += f"\t\tmessage{message_no}=plain: " + "{"
+            protocol += f"\t\t(message{message_no}=plain and Environment.protocol=false): " + "{"
 
             for agent_name in self.agents:
                 if agent_name == 'alice':
@@ -146,6 +148,8 @@ class TmnProtocolIsplGenerator:
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
             protocol += "Wait};\n"
+
+        protocol += "\t\t(message1=plain and Environment.protocol=true): {sendMessage1ToServer};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -168,16 +172,17 @@ class TmnProtocolIsplGenerator:
 
         for message_no in range(1, self.no_messages + 1):
             evolution += f"\t\tmessage{message_no}=encrypted if\n"
+            evolution += f"\t\t\tmessage{message_no}=none and (\n"
 
             for agent_name in self.agents:
                 if agent_name == "alice":
                     continue
 
                 agent_name = StringTools.to_first_word(agent_name)
-                evolution += f"\t\t\t({agent_name}.Action=sendMessage{message_no}ToAlice) or\n"
+                evolution += f"\t\t\t{agent_name}.Action=sendMessage{message_no}ToAlice or\n"
 
             evolution = evolution.rstrip("\nro ")
-            evolution += ";\n"
+            evolution += ");\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -235,7 +240,7 @@ class TmnProtocolIsplGenerator:
             protocol += ": {" + f"decryptMessage{message_no}" + "};\n"
 
         for message_no in range(1, self.no_messages + 1):
-            protocol += f"\t\tmessage{message_no}=plain: " + "{"
+            protocol += f"\t\t(message{message_no}=plain and Environment.protocol=false): " + "{"
 
             for agent_name in self.agents:
                 if agent_name == 'bob':
@@ -245,6 +250,8 @@ class TmnProtocolIsplGenerator:
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
             protocol += "Wait};\n"
+
+        protocol += "\t\t(message2=plain and Environment.protocol=true): {sendMessage2ToServer};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -267,16 +274,17 @@ class TmnProtocolIsplGenerator:
 
         for message_no in range(1, self.no_messages + 1):
             evolution += f"\t\tmessage{message_no}=encrypted if\n"
+            evolution += f"\t\t\tmessage{message_no}=none and (\n"
 
             for agent_name in self.agents:
                 if agent_name == "bob":
                     continue
 
                 agent_name = StringTools.to_first_word(agent_name)
-                evolution += f"\t\t\t({agent_name}.Action=sendMessage{message_no}ToBob) or\n"
+                evolution += f"\t\t\t{agent_name}.Action=sendMessage{message_no}ToBob or\n"
 
             evolution = evolution.rstrip("\nro ")
-            evolution += ";\n"
+            evolution += ");\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -334,7 +342,7 @@ class TmnProtocolIsplGenerator:
             protocol += ": {" + f"decryptMessage{message_no}" + "};\n"
 
         for message_no in range(1, self.no_messages + 1):
-            protocol += f"\t\tmessage{message_no}=plain: " + "{"
+            protocol += f"\t\t(message{message_no}=plain and Environment.protocol=false): " + "{"
 
             for agent_name in self.agents:
                 if agent_name == 'server':
@@ -344,6 +352,8 @@ class TmnProtocolIsplGenerator:
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
             protocol += "Wait};\n"
+
+        protocol += "\t\t(message3=plain and Environment.protocol=true): {sendMessage3ToAlice};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -366,16 +376,17 @@ class TmnProtocolIsplGenerator:
 
         for message_no in range(1, self.no_messages + 1):
             evolution += f"\t\tmessage{message_no}=encrypted if\n"
+            evolution += f"\t\t\tmessage{message_no}=none and (\n"
 
             for agent_name in self.agents:
                 if agent_name == "server":
                     continue
 
                 agent_name = StringTools.to_first_word(agent_name)
-                evolution += f"\t\t\t({agent_name}.Action=sendMessage{message_no}ToServer) or\n"
+                evolution += f"\t\t\t{agent_name}.Action=sendMessage{message_no}ToServer or\n"
 
-            evolution = evolution.rstrip("\nro ")
-            evolution += ";\n"
+            evolution = evolution.rstrip("\nro")
+            evolution += ");\n"
 
         for message_no in range(1, self.no_messages + 1):
             evolution += f"\t\tmessage{message_no}=plain if\n"
@@ -486,6 +497,8 @@ class TmnProtocolIsplGenerator:
     def __create_init_states(self):
         init_states = "InitStates\n"
         keys = ["server", "server", "alice"]
+
+        init_states += "\tEnvironment.protocol=false and\n"
 
         for message_no in range(1, self.no_messages + 1):
             init_states += f"\tEnvironment.message{message_no}Key={keys[message_no-1]}KeyM and\n"
