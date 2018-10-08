@@ -1,5 +1,6 @@
 import itertools
 import random
+from tools.string_tools import StringTools
 
 
 class TmnProtocolIsplGenerator:
@@ -41,29 +42,29 @@ class TmnProtocolIsplGenerator:
     def __create_environment_obsvars(self):
         obsvars = "\tObsvars:\n"
 
+        for message_no in range(1, self.no_messages + 1):
+            obsvars += f"\t\tmessage{message_no}Key:" + "{"
+
+            for agent_name in self.agents:
+                obsvars += f"{agent_name}KeyM, "
+
+            obsvars = obsvars.rstrip(" ,")
+            obsvars += "};\n"
+
+        for message_no in range(1, self.no_messages + 1):
+            obsvars += f"\t\tmessage{message_no}Content:" + "{"
+
+            for agent_name in self.agents:
+                obsvars += f"{agent_name}KeyM, "
+
+            obsvars = obsvars.rstrip(" ,")
+            obsvars += "};\n"
+
         obsvars += "\tend Obsvars\n"
         return obsvars
 
     def __create_environment_vars(self):
         vars = "\tVars:\n"
-
-        for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}Key=" + "{"
-
-            for agent_name in self.agents:
-                vars += f"{agent_name}Key, "
-
-            vars = vars.rstrip(" ,")
-            vars += "};\n"
-
-        for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}Content=" + "{"
-
-            for agent_name in self.agents:
-                vars += f"{agent_name}Key, "
-
-            vars = vars.rstrip(" ,")
-            vars += "};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -101,10 +102,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key=boolean;\n"
+            vars += f"\t\t{agent_name}Key:boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}=" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -116,7 +117,9 @@ class TmnProtocolIsplGenerator:
             actions += f"decryptMessage{message_no}, "
 
             for agent_name in self.agents:
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+                if agent_name == 'alice':
+                    continue
+                agent_name = StringTools.to_first_word(agent_name)
                 actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
@@ -127,7 +130,7 @@ class TmnProtocolIsplGenerator:
 
         for message_no in range(1, self.no_messages + 1):
             for agent_name in self.agents:
-                protocol += f"\t\t(message{message_no}=encrypted and {agent_name}Key=true and Environment.message{message_no}Key={agent_name}Key) or\n"
+                protocol += f"\t\t(message{message_no}=encrypted and {agent_name}Key=true and Environment.message{message_no}Key={agent_name}KeyM) or\n"
 
             protocol = protocol.rstrip("\nro ")
             protocol += ": {" + f"decryptMessage{message_no}" + "};\n"
@@ -139,11 +142,10 @@ class TmnProtocolIsplGenerator:
                 if agent_name == 'alice':
                     continue
 
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+                agent_name = StringTools.to_first_word(agent_name)
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
-            protocol = protocol.rstrip(" ,")
-            protocol += "};\n"
+            protocol += "Wait};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -156,7 +158,7 @@ class TmnProtocolIsplGenerator:
             evolution += f"\t\t{agent_name}Key=true if\n"
 
             for message_no in range(1, self.no_messages + 1):
-                evolution += f"\t\t\t(Action=decryptMessage{message_no} and Environment.message{message_no}Content={agent_name}Key) or\n"
+                evolution += f"\t\t\t(Action=decryptMessage{message_no} and Environment.message{message_no}Content={agent_name}KeyM) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -171,7 +173,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == "alice":
                     continue
 
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+                agent_name = StringTools.to_first_word(agent_name)
                 evolution += f"\t\t\t({agent_name}.Action=sendMessage{message_no}ToAlice) or\n"
 
             evolution = evolution.rstrip("\nro ")
@@ -199,10 +201,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key=boolean;\n"
+            vars += f"\t\t{agent_name}Key:boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}=" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -211,8 +213,13 @@ class TmnProtocolIsplGenerator:
         actions = "\tActions = {"
 
         for message_no in range(1, self.no_messages + 1):
-            actions += f"sendMessage{message_no}, "
             actions += f"decryptMessage{message_no}, "
+
+            for agent_name in self.agents:
+                if agent_name == 'bob':
+                    continue
+                agent_name = StringTools.to_first_word(agent_name)
+                actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
         return actions
@@ -222,7 +229,7 @@ class TmnProtocolIsplGenerator:
 
         for message_no in range(1, self.no_messages + 1):
             for agent_name in self.agents:
-                protocol += f"\t\t(message{message_no}=encrypted and {agent_name}Key=true and Environment.message{message_no}Key={agent_name}Key) or\n"
+                protocol += f"\t\t(message{message_no}=encrypted and {agent_name}Key=true and Environment.message{message_no}Key={agent_name}KeyM) or\n"
 
             protocol = protocol.rstrip("\nro ")
             protocol += ": {" + f"decryptMessage{message_no}" + "};\n"
@@ -234,11 +241,10 @@ class TmnProtocolIsplGenerator:
                 if agent_name == 'bob':
                     continue
 
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+                agent_name = StringTools.to_first_word(agent_name)
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
-            protocol = protocol.rstrip(" ,")
-            protocol += "};\n"
+            protocol += "Wait};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -251,7 +257,7 @@ class TmnProtocolIsplGenerator:
             evolution += f"\t\t{agent_name}Key=true if\n"
 
             for message_no in range(1, self.no_messages + 1):
-                evolution += f"\t\t\t(Action=decryptMessage{message_no} and Environment.message{message_no}Content={agent_name}Key) or\n"
+                evolution += f"\t\t\t(Action=decryptMessage{message_no} and Environment.message{message_no}Content={agent_name}KeyM) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -266,7 +272,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == "bob":
                     continue
 
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+                agent_name = StringTools.to_first_word(agent_name)
                 evolution += f"\t\t\t({agent_name}.Action=sendMessage{message_no}ToBob) or\n"
 
             evolution = evolution.rstrip("\nro ")
@@ -294,10 +300,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key=boolean;\n"
+            vars += f"\t\t{agent_name}Key:boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}=" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -306,8 +312,13 @@ class TmnProtocolIsplGenerator:
         actions = "\tActions = {"
 
         for message_no in range(1, self.no_messages + 1):
-            actions += f"sendMessage{message_no}, "
             actions += f"decryptMessage{message_no}, "
+
+            for agent_name in self.agents:
+                if agent_name == 'server':
+                    continue
+                agent_name = StringTools.to_first_word(agent_name)
+                actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
         return actions
@@ -317,7 +328,7 @@ class TmnProtocolIsplGenerator:
 
         for message_no in range(1, self.no_messages + 1):
             for agent_name in self.agents:
-                protocol += f"\t\t(message{message_no}=encrypted and {agent_name}Key=true and Environment.message{message_no}Key={agent_name}Key) or\n"
+                protocol += f"\t\t(message{message_no}=encrypted and {agent_name}Key=true and Environment.message{message_no}Key={agent_name}KeyM) or\n"
 
             protocol = protocol.rstrip("\nro ")
             protocol += ": {" + f"decryptMessage{message_no}" + "};\n"
@@ -329,11 +340,10 @@ class TmnProtocolIsplGenerator:
                 if agent_name == 'server':
                     continue
 
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+                agent_name = StringTools.to_first_word(agent_name)
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
-            protocol = protocol.rstrip(" ,")
-            protocol += "};\n"
+            protocol += "Wait};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -346,7 +356,7 @@ class TmnProtocolIsplGenerator:
             evolution += f"\t\t{agent_name}Key=true if\n"
 
             for message_no in range(1, self.no_messages + 1):
-                evolution += f"\t\t\t(Action=decryptMessage{message_no} and Environment.message{message_no}Content={agent_name}Key) or\n"
+                evolution += f"\t\t\t(Action=decryptMessage{message_no} and Environment.message{message_no}Content={agent_name}KeyM) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -361,8 +371,17 @@ class TmnProtocolIsplGenerator:
                 if agent_name == "server":
                     continue
 
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+                agent_name = StringTools.to_first_word(agent_name)
                 evolution += f"\t\t\t({agent_name}.Action=sendMessage{message_no}ToServer) or\n"
+
+            evolution = evolution.rstrip("\nro ")
+            evolution += ";\n"
+
+        for message_no in range(1, self.no_messages + 1):
+            evolution += f"\t\tmessage{message_no}=plain if\n"
+            for agent_name in self.agents:
+                for key_name in self.agents:
+                    evolution += f"\t\t\t({agent_name}Key=true and Environment.message{message_no}Content={agent_name}KeyM and {key_name}Key=true and Environment.message{message_no}Key={key_name}KeyM) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -389,10 +408,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key=boolean;\n"
+            vars += f"\t\t{agent_name}Key:boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}=" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -401,8 +420,13 @@ class TmnProtocolIsplGenerator:
         actions = "\tActions = {"
 
         for message_no in range(1, self.no_messages + 1):
-            actions += f"sendMessage{message_no}, "
             actions += f"decryptMessage{message_no}, "
+
+            for agent_name in self.agents:
+                if agent_name == 'attacker':
+                    continue
+                agent_name = StringTools.to_first_word(agent_name)
+                actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
         return actions
@@ -410,12 +434,44 @@ class TmnProtocolIsplGenerator:
     def __create_attacker_protocol(self):
         protocol = "\tProtocol:\n"
 
+        for message_no in range(1, self.no_messages + 1):
+            for agent_name in self.agents:
+                protocol += f"\t\t(message{message_no}=encrypted and {agent_name}Key=true and Environment.message{message_no}Key={agent_name}KeyM) or\n"
+
+            protocol = protocol.rstrip("\nro ")
+            protocol += ": {" + f"decryptMessage{message_no}" + "};\n"
+
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
 
     def __create_attacker_evolution(self):
         evolution = "\tEvolution:\n"
+
+        for agent_name in self.agents:
+            evolution += f"\t\t{agent_name}Key=true if\n"
+
+            for message_no in range(1, self.no_messages + 1):
+                evolution += f"\t\t\t(Action=decryptMessage{message_no} and Environment.message{message_no}Content={agent_name}KeyM) or\n"
+
+            evolution = evolution.rstrip("\nro ")
+            evolution += ";\n"
+
+        for message_no in range(1, self.no_messages + 1):
+            evolution += f"\t\tmessage{message_no}=encrypted if\n"
+            evolution += f"\t\t\tmessage{message_no}=none and\n"
+            evolution += "\t\t\t(\n"
+            for agent_name in self.agents:
+                agent_name = StringTools.to_first_word(agent_name)
+                for second_agent in self.agents:
+                    second_agent = StringTools.to_first_word(second_agent)
+                    if agent_name == second_agent:
+                        continue
+
+                    evolution += f"\t\t\t{agent_name}.Action=sendMessage{message_no}To{second_agent} or\n"
+
+            evolution = evolution.rstrip("\nro")
+            evolution += ");\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -432,15 +488,15 @@ class TmnProtocolIsplGenerator:
         keys = ["server", "server", "alice"]
 
         for message_no in range(1, self.no_messages + 1):
-            init_states += f"\tEnvironment.message{message_no}Key={keys[message_no-1]}Key and\n"
+            init_states += f"\tEnvironment.message{message_no}Key={keys[message_no-1]}KeyM and\n"
 
         keys = ["alice", "bob", "bob"]
 
         for message_no in range(1, self.no_messages + 1):
-            init_states += f"\tEnvironment.message{message_no}Content={keys[message_no-1]}Key and\n"
+            init_states += f"\tEnvironment.message{message_no}Content={keys[message_no-1]}KeyM and\n"
 
         for agent_name in self.agents:
-            agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
+            agent_name = StringTools.to_first_word(agent_name)
 
             for message_no in range(1, self.no_messages + 1):
                 msg = "none"
@@ -459,8 +515,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == key_name:
                     know_key = "true"
 
-                agent_name = agent_name.replace(agent_name[0], agent_name[0].upper(), 1)
-                init_states += f"\t{agent_name}.{key_name}Key={know_key} and\n"
+                init_states += f"\t{StringTools.to_first_word(agent_name)}.{key_name}Key={know_key} and\n"
 
         init_states = init_states.rstrip("\ndna ")
         init_states += ";\nend InitStates\n\n"
