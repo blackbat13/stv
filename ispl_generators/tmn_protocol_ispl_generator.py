@@ -76,7 +76,7 @@ class TmnProtocolIsplGenerator:
         return actions
 
     def __create_environment_protocol(self):
-        protocol = "\tProtocol:\n\t\tOther:{none};\n\tend Protocol\n"
+        protocol = "\tProtocol:\n\t\tOther: {none};\n\tend Protocol\n"
         return protocol
 
     def __create_environment_evolution(self):
@@ -104,10 +104,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key:boolean;\n"
+            vars += f"\t\t{agent_name}Key : boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no} : " + "{none, plain, encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -206,10 +206,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key:boolean;\n"
+            vars += f"\t\t{agent_name}Key : boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no} : " + "{none, plain, encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -308,10 +308,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key:boolean;\n"
+            vars += f"\t\t{agent_name}Key : boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no} : " + "{none, plain, encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
@@ -419,10 +419,10 @@ class TmnProtocolIsplGenerator:
         vars = "\tVars:\n"
 
         for agent_name in self.agents:
-            vars += f"\t\t{agent_name}Key:boolean;\n"
+            vars += f"\t\t{agent_name}Key : boolean;\n"
 
         for message_no in range(1, self.no_messages + 1):
-            vars += f"\t\tmessage{message_no}:" + "{none,plain,encrypted};\n"
+            vars += f"\t\tmessage{message_no} : " + "{none, plain, encrypted};\n"
 
         vars += "\tend Vars\n"
         return vars
