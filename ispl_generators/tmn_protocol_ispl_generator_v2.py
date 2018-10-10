@@ -6,6 +6,7 @@ from tools.string_tools import StringTools
 class TmnProtocolIsplGeneratorV2:
     ispl_model = ""
     agents = ["alice", "bob", "server", "attacker"]
+    keys = ["aliceKey", "bobKey", "serverPublicKey", "serverPrivateKey", "attackerKey"]
     no_messages = 3
 
     def __init__(self):
@@ -69,7 +70,7 @@ class TmnProtocolIsplGeneratorV2:
 
         evolution += "\t\tprocessingMessage=true if\n"
 
-        for message_content in self.agents:
+        for message_content in self.keys:
             message_content = StringTools.capitalize_first_letter(message_content)
             for message_source in self.agents:
                 message_source = StringTools.capitalize_first_letter(message_source)
@@ -77,25 +78,25 @@ class TmnProtocolIsplGeneratorV2:
                     message_destination = StringTools.capitalize_first_letter(message_destination)
                     if message_source == message_destination:
                         continue
-                    for message_encryption in self.agents:
+                    for message_encryption in self.keys:
                         message_encryption = StringTools.capitalize_first_letter(message_encryption)
-                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}KeyTo{message_destination}EncryptedWith{message_encryption}Key or \n"
+                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
 
-            evolution = evolution.rstrip("\nro ")
-            evolution += ";\n"
+        evolution = evolution.rstrip("\nro ")
+        evolution += ";\n"
 
         evolution += "\t\tprocessingMessage=false if\n"
 
-        for message_content in self.agents:
+        for message_content in self.keys:
             message_content = StringTools.capitalize_first_letter(message_content)
             for message_destination in self.agents:
                 message_destination = StringTools.capitalize_first_letter(message_destination)
-                for message_encryption in self.agents:
+                for message_encryption in self.keys:
                     message_encryption = StringTools.capitalize_first_letter(message_encryption)
-                    evolution += f"\t\t\tNetwork.Action=Forward{message_content}KeyTo{message_destination}EncryptedWith{message_encryption}Key or \n"
+                    evolution += f"\t\t\tNetwork.Action=Forward{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
 
-            evolution = evolution.rstrip("\nro ")
-            evolution += ";\n"
+        evolution = evolution.rstrip("\nro ")
+        evolution += ";\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -118,13 +119,13 @@ class TmnProtocolIsplGeneratorV2:
     def __create_attacker_vars(self):
         vars = "\tVars:\n"
 
-        for key_name in self.agents:
-            vars += f"\t\t{key_name}Key : " + "{none, plain, encrypted};\n"
+        for key_name in self.keys:
+            vars += f"\t\t{key_name}K : " + "{none, plain, encrypted};\n"
 
-        for key_name in self.agents:
-            vars += f"\t\t{key_name}KeyEncryptionKey : " + "{"
-            for agent_name in self.agents:
-                vars += f"{agent_name}Key, "
+        for key_name in self.keys:
+            vars += f"\t\t{key_name}EncryptionKey : " + "{"
+            for key_name2 in self.keys:
+                vars += f"{key_name2}, "
 
             vars += "none};\n"
 
@@ -134,14 +135,16 @@ class TmnProtocolIsplGeneratorV2:
     def __create_attacker_actions(self):
         actions = "\tActions = {"
 
-        for message_no in range(1, self.no_messages + 1):
-            actions += f"DecryptMessage{message_no}, "
-
+        for key_name in self.keys:
+            key_name = StringTools.capitalize_first_letter(key_name)
+            actions += f"Decrypt{key_name}, "
             for agent_name in self.agents:
-                if agent_name == 'attacker':
-                    continue
                 agent_name = StringTools.capitalize_first_letter(agent_name)
-                actions += f"SendMessage{message_no}To{agent_name}, "
+                if agent_name == "Attacker":
+                    continue
+                for encryption_key in self.keys:
+                    encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                    actions += f"Send{key_name}To{agent_name}EncryptedWith{encryption_key}, "
 
         actions += "Wait};\n"
         return actions
@@ -159,7 +162,7 @@ class TmnProtocolIsplGeneratorV2:
     def __create_attacker_evolution(self):
         evolution = "\tEvolution:\n"
 
-        evolution += "\t\taliceKey=none if aliceKey=none;\n"
+        evolution += "\t\taliceKeyK=none if aliceKeyK=none;\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -174,40 +177,40 @@ class TmnProtocolIsplGeneratorV2:
         agent += "end Agent\n\n"
         return agent
 
-    def __create_agent_actions(self, current_agent_name):
-        actions = "\tActions = {"
-
-        current_agent_name = StringTools.capitalize_first_letter(current_agent_name)
-
-        for key_name in self.agents:
-            key_name = StringTools.capitalize_first_letter(key_name)
-            actions += f"Decrypt{key_name}Key, "
-            for agent_name in self.agents:
-                agent_name = StringTools.capitalize_first_letter(agent_name)
-                if agent_name == current_agent_name:
-                    continue
-                for encryption_key in self.agents:
-                    encryption_key = StringTools.capitalize_first_letter(encryption_key)
-                    actions += f"Send{key_name}KeyTo{agent_name}EncryptedWith{encryption_key}Key, "
-
-        actions += "Wait};\n"
-        return actions
-
     def __create_agent_vars(self):
         vars = "\tVars:\n"
 
-        for key_name in self.agents:
-            vars += f"\t\t{key_name}Key : " + "{none, plain, encrypted};\n"
+        for key_name in self.keys:
+            vars += f"\t\t{key_name}K : " + "{none, plain, encrypted};\n"
 
-        for key_name in self.agents:
-            vars += f"\t\t{key_name}KeyEncryptionKey : " + "{"
-            for agent_name in self.agents:
-                vars += f"{agent_name}Key, "
+        for key_name in self.keys:
+            vars += f"\t\t{key_name}EncryptionKey : " + "{"
+            for key_name2 in self.keys:
+                vars += f"{key_name2}, "
 
             vars += "none};\n"
 
         vars += "\tend Vars\n"
         return vars
+
+    def __create_agent_actions(self, current_agent_name):
+        actions = "\tActions = {"
+
+        current_agent_name = StringTools.capitalize_first_letter(current_agent_name)
+
+        for key_name in self.keys:
+            key_name = StringTools.capitalize_first_letter(key_name)
+            actions += f"Decrypt{key_name}, "
+            for agent_name in self.agents:
+                agent_name = StringTools.capitalize_first_letter(agent_name)
+                if agent_name == current_agent_name:
+                    continue
+                for encryption_key in self.keys:
+                    encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                    actions += f"Send{key_name}To{agent_name}EncryptedWith{encryption_key}, "
+
+        actions += "Wait};\n"
+        return actions
 
     def __create_agent_protocol(self, current_agent_name):
         protocol = "\tProtocol:\n"
@@ -222,13 +225,13 @@ class TmnProtocolIsplGeneratorV2:
     def __create_protocol_decryption(self):
         protocol = ""
 
-        for key_name in self.agents:
-            protocol += f"\t\t{key_name}Key=encrypted and (\n"
-            for agent_name in self.agents:
-                protocol += f"\t\t\t({key_name}KeyEncryptionKey={agent_name}Key and {agent_name}Key=plain) or\n"
+        for key_name in self.keys:
+            protocol += f"\t\t{key_name}K=encrypted and (\n"
+            for key_name2 in self.keys:
+                protocol += f"\t\t\t({key_name}EncryptionKey={key_name2} and {key_name2}K=plain) or\n"
 
             protocol = protocol.rstrip("\nro ")
-            protocol += f"): decrypt{StringTools.capitalize_first_letter(key_name)}Key;\n"
+            protocol += "): {" + f"Decrypt{StringTools.capitalize_first_letter(key_name)}" + "};\n"
 
         return protocol
 
@@ -237,15 +240,15 @@ class TmnProtocolIsplGeneratorV2:
 
         current_agent_name = StringTools.capitalize_first_letter(current_agent_name)
 
-        for content_key in self.agents:
-            for encryption_key in self.agents:
-                protocol += f"\t\t{content_key}Key=plain and {encryption_key}Key=plain and Environment.processingMessage=false: " + "{"
+        for content_key in self.keys:
+            for encryption_key in self.keys:
+                protocol += f"\t\t{content_key}K=plain and {encryption_key}K=plain and Environment.processingMessage=false: " + "{"
                 for agent_name in self.agents:
                     agent_name = StringTools.capitalize_first_letter(agent_name)
                     if agent_name == current_agent_name:
                         continue
 
-                    protocol += f"Send{StringTools.capitalize_first_letter(content_key)}KeyTo{agent_name}EncryptedWith{StringTools.capitalize_first_letter(encryption_key)}Key, "
+                    protocol += f"Send{StringTools.capitalize_first_letter(content_key)}To{agent_name}EncryptedWith{StringTools.capitalize_first_letter(encryption_key)}, "
 
                 protocol += "Wait};\n"
 
@@ -263,12 +266,12 @@ class TmnProtocolIsplGeneratorV2:
     def __create_evolution_key_decryption(self):
         evolution = ""
 
-        for key_name in self.agents:
-            evolution += f"\t\t{key_name}Key=plain if\n"
-            evolution += f"\t\t\t{key_name}Key=encrypted and (\n"
+        for key_name in self.keys:
+            evolution += f"\t\t{key_name}K=plain if\n"
+            evolution += f"\t\t\t{key_name}K=encrypted and (\n"
 
-            for agent_name in self.agents:
-                evolution += f"\t\t\t({key_name}EncryptionKey={agent_name}Key and {agent_name}Key=plain) or\n"
+            for key_name2 in self.keys:
+                evolution += f"\t\t\t({key_name}EncryptionKey={key_name2} and {key_name2}K=plain) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
@@ -279,23 +282,23 @@ class TmnProtocolIsplGeneratorV2:
         evolution = ""
         current_agent_name = StringTools.capitalize_first_letter(current_agent_name)
 
-        for received_key in self.agents:
-            evolution += f"\t\t{received_key}Key=encrypted if\n"
-            evolution += f"\t\t\t{received_key}Key=none and (\n"
+        for received_key in self.keys:
+            evolution += f"\t\t{received_key}K=encrypted if\n"
+            evolution += f"\t\t\t{received_key}K=none and (\n"
             received_key = StringTools.capitalize_first_letter(received_key)
-            for encryption_key in self.agents:
+            for encryption_key in self.keys:
                 encryption_key = StringTools.capitalize_first_letter(encryption_key)
-                evolution += f"\t\t\tNetwork.Action=Forward{received_key}KeyTo{current_agent_name}EncryptedWith{encryption_key}Key or\n"
+                evolution += f"\t\t\tNetwork.Action=Forward{received_key}To{current_agent_name}EncryptedWith{encryption_key} or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
 
-        for received_key in self.agents:
-            for encryption_key in self.agents:
-                evolution += f"\t\t{received_key}EncryptionKey={encryption_key}Key if\n"
+        for received_key in self.keys:
+            for encryption_key in self.keys:
+                evolution += f"\t\t{received_key}EncryptionKey={encryption_key} if\n"
                 evolution += f"\t\t\t{received_key}EncryptionKey=none and\n"
                 encryption_key = StringTools.capitalize_first_letter(encryption_key)
-                evolution += f"\t\t\tNetwork.Action=Forward{StringTools.capitalize_first_letter(received_key)}KeyTo{current_agent_name}EncryptedWith{encryption_key}Key;\n"
+                evolution += f"\t\t\tNetwork.Action=Forward{StringTools.capitalize_first_letter(received_key)}To{current_agent_name}EncryptedWith{encryption_key};\n"
 
         return evolution
 
@@ -305,7 +308,7 @@ class TmnProtocolIsplGeneratorV2:
         agent += self.__create_network_actions()
         agent += self.__create_network_protocol()
         agent += self.__create_network_evolution()
-        agent += "end Network\n\n"
+        agent += "end Agent\n\n"
         return agent
 
     def __create_network_lobsvars(self):
@@ -319,8 +322,8 @@ class TmnProtocolIsplGeneratorV2:
 
         vars += "\t\tmessageContent : {"
 
-        for agent_name in self.agents:
-            vars += f"{agent_name}Key, "
+        for key_name in self.keys:
+            vars += f"{key_name}, "
 
         vars += "none};\n"
 
@@ -340,8 +343,8 @@ class TmnProtocolIsplGeneratorV2:
 
         vars += "\t\tmessageEncryption : {"
 
-        for agent_name in self.agents:
-            vars += f"{agent_name}Key, "
+        for key_name in self.keys:
+            vars += f"{key_name}, "
 
         vars += "none};\n"
 
@@ -351,13 +354,13 @@ class TmnProtocolIsplGeneratorV2:
     def __create_network_actions(self):
         actions = "\tActions = {"
 
-        for key_name in self.agents:
+        for key_name in self.keys:
             key_name = StringTools.capitalize_first_letter(key_name)
             for agent_name in self.agents:
                 agent_name = StringTools.capitalize_first_letter(agent_name)
-                for encryption_key in self.agents:
+                for encryption_key in self.keys:
                     encryption_key = StringTools.capitalize_first_letter(encryption_key)
-                    actions += f"Forward{key_name}KeyTo{agent_name}EncryptedWith{encryption_key}Key, "
+                    actions += f"Forward{key_name}To{agent_name}EncryptedWith{encryption_key}, "
 
         actions += "Wait};\n"
         return actions
@@ -365,11 +368,11 @@ class TmnProtocolIsplGeneratorV2:
     def __create_network_protocol(self):
         protocol = "\tProtocol:\n"
 
-        for message_content in self.agents:
+        for message_content in self.keys:
             for message_destination in self.agents:
-                for message_encryption in self.agents:
-                    protocol += f"\t\tmessageContent={message_content}Key and messageDestination={message_destination} and messageEncryption={message_encryption}Key: " + "{"
-                    protocol += f"Forward{StringTools.capitalize_first_letter(message_content)}KeyTo{StringTools.capitalize_first_letter(message_destination)}EncryptedWith{StringTools.capitalize_first_letter(message_encryption)}Key" + "};\n"
+                for message_encryption in self.keys:
+                    protocol += f"\t\tmessageContent={message_content} and messageDestination={message_destination} and messageEncryption={message_encryption}: " + "{"
+                    protocol += f"Forward{StringTools.capitalize_first_letter(message_content)}To{StringTools.capitalize_first_letter(message_destination)}EncryptedWith{StringTools.capitalize_first_letter(message_encryption)}" + "};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -381,10 +384,20 @@ class TmnProtocolIsplGeneratorV2:
         vars = ["messageContent", "messageDestination", "messageSource", "messageEncryption"]
 
         for var in vars:
-            evolution += f"\t\t{var}=none if Action != Wait;\n"
+            evolution += f"\t\t{var}=none if (\n"
+            for key_name in self.keys:
+                key_name = StringTools.capitalize_first_letter(key_name)
+                for agent_name in self.agents:
+                    agent_name = StringTools.capitalize_first_letter(agent_name)
+                    for encryption_key in self.keys:
+                        encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                        evolution += f"\t\t\tAction=Forward{key_name}To{agent_name}EncryptedWith{encryption_key} or\n"
 
-        for message_content in self.agents:
-            evolution += f"\t\tmessageContent={message_content}Key if (\n"
+            evolution = evolution.rstrip("\nro ")
+            evolution += ");\n"
+
+        for message_content in self.keys:
+            evolution += f"\t\tmessageContent={message_content} if (\n"
             message_content = StringTools.capitalize_first_letter(message_content)
             for message_source in self.agents:
                 message_source = StringTools.capitalize_first_letter(message_source)
@@ -392,9 +405,9 @@ class TmnProtocolIsplGeneratorV2:
                     message_destination = StringTools.capitalize_first_letter(message_destination)
                     if message_source == message_destination:
                         continue
-                    for message_encryption in self.agents:
+                    for message_encryption in self.keys:
                         message_encryption = StringTools.capitalize_first_letter(message_encryption)
-                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}KeyTo{message_destination}EncryptedWith{message_encryption}Key or \n"
+                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
@@ -402,15 +415,15 @@ class TmnProtocolIsplGeneratorV2:
         for message_source in self.agents:
             evolution += f"\t\tmessageSource={message_source} if (\n"
             message_source = StringTools.capitalize_first_letter(message_source)
-            for message_content in self.agents:
+            for message_content in self.keys:
                 message_content = StringTools.capitalize_first_letter(message_content)
                 for message_destination in self.agents:
                     message_destination = StringTools.capitalize_first_letter(message_destination)
                     if message_source == message_destination:
                         continue
-                    for message_encryption in self.agents:
+                    for message_encryption in self.keys:
                         message_encryption = StringTools.capitalize_first_letter(message_encryption)
-                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}KeyTo{message_destination}EncryptedWith{message_encryption}Key or \n"
+                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
@@ -422,17 +435,17 @@ class TmnProtocolIsplGeneratorV2:
                 message_source = StringTools.capitalize_first_letter(message_source)
                 if message_source == message_destination:
                     continue
-                for message_content in self.agents:
+                for message_content in self.keys:
                     message_content = StringTools.capitalize_first_letter(message_content)
-                    for message_encryption in self.agents:
+                    for message_encryption in self.keys:
                         message_encryption = StringTools.capitalize_first_letter(message_encryption)
-                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}KeyTo{message_destination}EncryptedWith{message_encryption}Key or \n"
+                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
 
-        for message_encryption in self.agents:
-            evolution += f"\t\tmessageEncryption={message_encryption}Key if (\n"
+        for message_encryption in self.keys:
+            evolution += f"\t\tmessageEncryption={message_encryption} if (\n"
             message_encryption = StringTools.capitalize_first_letter(message_encryption)
             for message_source in self.agents:
                 message_source = StringTools.capitalize_first_letter(message_source)
@@ -440,9 +453,9 @@ class TmnProtocolIsplGeneratorV2:
                     message_destination = StringTools.capitalize_first_letter(message_destination)
                     if message_source == message_destination:
                         continue
-                    for message_content in self.agents:
+                    for message_content in self.keys:
                         message_content = StringTools.capitalize_first_letter(message_content)
-                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}KeyTo{message_destination}EncryptedWith{message_encryption}Key or \n"
+                        evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
@@ -452,8 +465,8 @@ class TmnProtocolIsplGeneratorV2:
 
     def __create_evaluation(self):
         evaluation = "Evaluation\n"
-        evaluation += "\tkeyExchanged if Alice.bobKey=true;\n"
-        evaluation += "\tcompromised if Attacker.aliceKey=true or Attacker.bobKey=true or Attacker.serverKey=true;\n"
+        evaluation += "\tkeyExchanged if Alice.bobKeyK=plain;\n"
+        evaluation += "\tcompromised if Attacker.aliceKeyK=plain or Attacker.bobKeyK=plain or Attacker.serverPrivateKeyK=plain;\n"
         evaluation += "end Evaluation\n\n"
         return evaluation
 
@@ -465,11 +478,11 @@ class TmnProtocolIsplGeneratorV2:
         init_states += "\tEnvironment.processingMessage=false and\n"
 
         for agent_name in self.agents:
-            for key_name in self.agents:
-                if agent_name == key_name:
-                    init_states += f"\t{StringTools.capitalize_first_letter(agent_name)}.{key_name}Key=plain and\n"
+            for key_name in self.keys:
+                if key_name.find(agent_name) != -1 or key_name.find("PublicKey") != -1:
+                    init_states += f"\t{StringTools.capitalize_first_letter(agent_name)}.{key_name}K=plain and\n"
                 else:
-                    init_states += f"\t{StringTools.capitalize_first_letter(agent_name)}.{key_name}Key=none and\n"
+                    init_states += f"\t{StringTools.capitalize_first_letter(agent_name)}.{key_name}K=none and\n"
 
                 init_states += f"\t{StringTools.capitalize_first_letter(agent_name)}.{key_name}EncryptionKey=none and\n"
 
