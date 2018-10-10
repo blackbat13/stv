@@ -218,6 +218,13 @@ class TmnProtocolIsplGeneratorV2:
         protocol += self.__create_protocol_decryption()
         protocol += self.__create_protocol_communication(current_agent_name)
 
+        if current_agent_name == "Alice":
+            protocol += "\t\tEnvironment.protocol=true: {SendAliceKeyToServerEncryptedWithServerPublicKey, Wait};\n"
+        elif current_agent_name == "Bob":
+            protocol += "\t\tEnvironment.protocol=true: {SendBobKeyToServerEncryptedWithServerPublicKey, Wait};\n"
+        elif current_agent_name == "Server":
+            protocol += "\t\tEnvironment.protocol=true and aliceKeyK=plain and bobKeyK=plain: {SendBobKeyToAliceEncryptedWithAliceKey, Wait};\n"
+
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
@@ -227,8 +234,16 @@ class TmnProtocolIsplGeneratorV2:
 
         for key_name in self.keys:
             protocol += f"\t\t{key_name}K=encrypted and (\n"
+
             for key_name2 in self.keys:
-                protocol += f"\t\t\t({key_name}EncryptionKey={key_name2} and {key_name2}K=plain) or\n"
+                if key_name2.find("Public") != -1:
+                    key_name3 = key_name2.replace("Public", "Private")
+                    protocol += f"\t\t\t({key_name}EncryptionKey={key_name2} and {key_name3}K=plain) or\n"
+                elif key_name2.find("Private") != -1:
+                    key_name3 = key_name2.replace("Private", "Public")
+                    protocol += f"\t\t\t({key_name}EncryptionKey={key_name2} and {key_name3}K=plain) or\n"
+                else:
+                    protocol += f"\t\t\t({key_name}EncryptionKey={key_name2} and {key_name2}K=plain) or\n"
 
             protocol = protocol.rstrip("\nro ")
             protocol += "): {" + f"Decrypt{StringTools.capitalize_first_letter(key_name)}" + "};\n"
@@ -242,7 +257,7 @@ class TmnProtocolIsplGeneratorV2:
 
         for content_key in self.keys:
             for encryption_key in self.keys:
-                protocol += f"\t\t{content_key}K=plain and {encryption_key}K=plain and Environment.processingMessage=false: " + "{"
+                protocol += f"\t\t{content_key}K=plain and {encryption_key}K=plain and Environment.processingMessage=false and Environment.protocol=false: " + "{"
                 for agent_name in self.agents:
                     agent_name = StringTools.capitalize_first_letter(agent_name)
                     if agent_name == current_agent_name:
@@ -268,13 +283,8 @@ class TmnProtocolIsplGeneratorV2:
 
         for key_name in self.keys:
             evolution += f"\t\t{key_name}K=plain if\n"
-            evolution += f"\t\t\t{key_name}K=encrypted and (\n"
-
-            for key_name2 in self.keys:
-                evolution += f"\t\t\t({key_name}EncryptionKey={key_name2} and {key_name2}K=plain) or\n"
-
-            evolution = evolution.rstrip("\nro ")
-            evolution += ");\n"
+            key_name = StringTools.capitalize_first_letter(key_name)
+            evolution += f"\t\t\tAction=Decrypt{key_name};\n"
 
         return evolution
 
@@ -517,6 +527,3 @@ f.write(tmn_protocol_ispl_generator.create_ispl_model())
 f.close()
 
 print("Done. Saved model in tmn_protocol_v2.ispl")
-
-
-# Network agent - zawiera destynacje wszystkich wiadomości (może też
