@@ -121,7 +121,7 @@ class TmnProtocolIsplGenerator:
             for agent_name in self.agents:
                 if agent_name == 'alice':
                     continue
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
@@ -144,7 +144,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == 'alice':
                     continue
 
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
             protocol += "Wait};\n"
@@ -178,7 +178,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == "alice":
                     continue
 
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 evolution += f"\t\t\t{agent_name}.Action=sendMessage{message_no}ToAlice or\n"
 
             evolution = evolution.rstrip("\nro ")
@@ -223,7 +223,7 @@ class TmnProtocolIsplGenerator:
             for agent_name in self.agents:
                 if agent_name == 'bob':
                     continue
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
@@ -246,7 +246,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == 'bob':
                     continue
 
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
             protocol += "Wait};\n"
@@ -280,7 +280,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == "bob":
                     continue
 
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 evolution += f"\t\t\t{agent_name}.Action=sendMessage{message_no}ToBob or\n"
 
             evolution = evolution.rstrip("\nro ")
@@ -325,7 +325,7 @@ class TmnProtocolIsplGenerator:
             for agent_name in self.agents:
                 if agent_name == 'server':
                     continue
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
@@ -348,7 +348,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == 'server':
                     continue
 
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 protocol += f"sendMessage{message_no}To{agent_name}, "
 
             protocol += "Wait};\n"
@@ -382,7 +382,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == "server":
                     continue
 
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 evolution += f"\t\t\t{agent_name}.Action=sendMessage{message_no}ToServer or\n"
 
             evolution = evolution.rstrip("\nro")
@@ -436,7 +436,7 @@ class TmnProtocolIsplGenerator:
             for agent_name in self.agents:
                 if agent_name == 'attacker':
                     continue
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 actions += f"sendMessage{message_no}To{agent_name}, "
 
         actions += "Wait};\n"
@@ -473,9 +473,9 @@ class TmnProtocolIsplGenerator:
             evolution += f"\t\t\tmessage{message_no}=none and\n"
             evolution += "\t\t\t(\n"
             for agent_name in self.agents:
-                agent_name = StringTools.to_first_word(agent_name)
+                agent_name = StringTools.capitalize_first_letter(agent_name)
                 for second_agent in self.agents:
-                    second_agent = StringTools.to_first_word(second_agent)
+                    second_agent = StringTools.capitalize_first_letter(second_agent)
                     if agent_name == second_agent:
                         continue
 
@@ -509,7 +509,7 @@ class TmnProtocolIsplGenerator:
             init_states += f"\tEnvironment.message{message_no}Content={keys[message_no-1]}KeyM and\n"
 
         for agent_name in self.agents:
-            agent_name = StringTools.to_first_word(agent_name)
+            agent_name = StringTools.capitalize_first_letter(agent_name)
 
             for message_no in range(1, self.no_messages + 1):
                 msg = "none"
@@ -528,7 +528,7 @@ class TmnProtocolIsplGenerator:
                 if agent_name == key_name:
                     know_key = "true"
 
-                init_states += f"\t{StringTools.to_first_word(agent_name)}.{key_name}Key={know_key} and\n"
+                init_states += f"\t{StringTools.capitalize_first_letter(agent_name)}.{key_name}Key={know_key} and\n"
 
         init_states = init_states.rstrip("\ndna ")
         init_states += ";\nend InitStates\n\n"
@@ -556,3 +556,6 @@ f.write(tmn_protocol_ispl_generator.create_ispl_model())
 f.close()
 
 print("Done. Created model saved in tmn_protocol.ispl")
+
+
+# Network agent - zawiera destynacje wszystkich wiadomości (może też
