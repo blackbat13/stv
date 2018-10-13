@@ -146,6 +146,17 @@ class TmnProtocolIsplGeneratorV2:
                     encryption_key = StringTools.capitalize_first_letter(encryption_key)
                     actions += f"Send{key_name}To{agent_name}EncryptedWith{encryption_key}, "
 
+        for agent_name in self.agents:
+            agent_name = StringTools.capitalize_first_letter(agent_name)
+            actions += f"RedirectTo{agent_name}, "
+
+        for content_key in self.keys:
+            content_key = StringTools.capitalize_first_letter(content_key)
+            for encryption_key in self.keys:
+                encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                actions += f"ChangeContentTo{content_key}EncryptedWith{encryption_key}, "
+
+        actions += "ForwardMessage, "
         actions += "Wait};\n"
         return actions
 
@@ -155,6 +166,19 @@ class TmnProtocolIsplGeneratorV2:
         protocol += self.__create_protocol_decryption()
         protocol += self.__create_protocol_communication("attacker")
 
+        protocol += "\t\tEnvironment.processingMessage=true : {"
+        for agent_name in self.agents:
+            agent_name = StringTools.capitalize_first_letter(agent_name)
+            protocol += f"RedirectTo{agent_name}, "
+
+        protocol += "ForwardMessage, Wait};\n"
+
+        for content_key in self.keys:
+            for encryption_key in self.keys:
+                protocol += f"\t\t{content_key}K=plain and {encryption_key}K=plain and Environment.processingMessage=true: " + "{"
+                protocol += f"ChangeContentTo{StringTools.capitalize_first_letter(content_key)}EncryptedWith{StringTools.capitalize_first_letter(encryption_key)}, "
+                protocol += "Wait};\n"
+
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
@@ -162,7 +186,8 @@ class TmnProtocolIsplGeneratorV2:
     def __create_attacker_evolution(self):
         evolution = "\tEvolution:\n"
 
-        evolution += "\t\taliceKeyK=none if aliceKeyK=none;\n"
+        evolution += self.__create_evolution_key_decryption()
+        evolution += self.__create_evolution_message_receiving("Attacker")
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -358,6 +383,11 @@ class TmnProtocolIsplGeneratorV2:
 
         vars += "none};\n"
 
+        vars += "\t\tattackerDone : boolean;\n"
+        vars += "\t\tforwardAllToAttacker : boolean;\n"
+        vars += "\t\tforwardedToAttacker : boolean;\n"
+        vars += "\t\twaitForAttacker : boolean;\n"
+
         vars += "\tend Vars\n"
         return vars
 
@@ -381,8 +411,13 @@ class TmnProtocolIsplGeneratorV2:
         for message_content in self.keys:
             for message_destination in self.agents:
                 for message_encryption in self.keys:
-                    protocol += f"\t\tmessageContent={message_content} and messageDestination={message_destination} and messageEncryption={message_encryption}: " + "{"
+                    protocol += f"\t\t((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent={message_content} and messageDestination={message_destination} and messageEncryption={message_encryption}: " + "{"
                     protocol += f"Forward{StringTools.capitalize_first_letter(message_content)}To{StringTools.capitalize_first_letter(message_destination)}EncryptedWith{StringTools.capitalize_first_letter(message_encryption)}" + "};\n"
+
+        for message_content in self.keys:
+            for message_encryption in self.keys:
+                protocol += f"\t\tforwardAllToAttacker=true and forwardedToAttacker=false and messageContent={message_content} and messageEncryption={message_encryption}: " + "{"
+                protocol += f"Forward{StringTools.capitalize_first_letter(message_content)}ToAttackerEncryptedWith{StringTools.capitalize_first_letter(message_encryption)}" + "};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -391,20 +426,12 @@ class TmnProtocolIsplGeneratorV2:
     def __create_network_evolution(self):
         evolution = "\tEvolution:\n"
 
-        vars = ["messageContent", "messageDestination", "messageSource", "messageEncryption"]
+        evolution += "\t\tattackerDone=true if Attacker.Action=ForwardMessage;\n"
 
-        for var in vars:
-            evolution += f"\t\t{var}=none if (\n"
-            for key_name in self.keys:
-                key_name = StringTools.capitalize_first_letter(key_name)
-                for agent_name in self.agents:
-                    agent_name = StringTools.capitalize_first_letter(agent_name)
-                    for encryption_key in self.keys:
-                        encryption_key = StringTools.capitalize_first_letter(encryption_key)
-                        evolution += f"\t\t\tAction=Forward{key_name}To{agent_name}EncryptedWith{encryption_key} or\n"
-
-            evolution = evolution.rstrip("\nro ")
-            evolution += ");\n"
+        evolution += self.__create_network_evolution_forward_to_attacker()
+        evolution += self.__create_network_evolution_clean_vars()
+        evolution += self.__create_network_evolution_redirect()
+        evolution += self.__create_network_evolution_change_content()
 
         for message_content in self.keys:
             evolution += f"\t\tmessageContent={message_content} if (\n"
@@ -473,6 +500,78 @@ class TmnProtocolIsplGeneratorV2:
         evolution += "\tend Evolution\n"
         return evolution
 
+    def __create_network_evolution_forward_to_attacker(self):
+        evolution = "\t\tforwardedToAttacker=true if\n"
+        evolution += "\t\t\tforwardAllToAttacker=true and (\n"
+
+        for key_name in self.keys:
+            key_name = StringTools.capitalize_first_letter(key_name)
+            for encryption_key in self.keys:
+                encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                evolution += f"\t\t\tAction=Forward{key_name}ToAttackerEncryptedWith{encryption_key} or\n"
+
+        evolution = evolution.rstrip("\nro ")
+        evolution += ");\n"
+
+        return evolution
+
+    def __create_network_evolution_clean_vars(self):
+        evolution = ""
+        vars = [["messageContent", "none"], ["messageDestination", "none"], ["messageSource", "none"],
+                ["messageEncryption", "none"], ["forwardedToAttacker", "false"], ["attackerDone", "false"]]
+        for var in vars:
+            evolution += f"\t\t{var[0]}={var[1]} if\n"
+            evolution += f"\t\t\t((forwardedToAttacker=true and forwardAllToAttacker=true) or forwardAllToAttacker=false) and (\n"
+            for key_name in self.keys:
+                key_name = StringTools.capitalize_first_letter(key_name)
+                for agent_name in self.agents:
+                    agent_name = StringTools.capitalize_first_letter(agent_name)
+                    for encryption_key in self.keys:
+                        encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                        evolution += f"\t\t\tAction=Forward{key_name}To{agent_name}EncryptedWith{encryption_key} or\n"
+
+            evolution = evolution.rstrip("\nro ")
+            evolution += ");\n"
+
+        return evolution
+
+    def __create_network_evolution_redirect(self):
+        evolution = ""
+        for agent_name in self.agents:
+            evolution += f"\t\tmessageDestination={agent_name} if\n"
+            evolution += "\t\t\tEnvironment.processingMessage=true and\n"
+            agent_name = StringTools.capitalize_first_letter(agent_name)
+            evolution += f"\t\t\tAttacker.Action=RedirectTo{agent_name};\n"
+
+        return evolution
+
+    def __create_network_evolution_change_content(self):
+        evolution = ""
+
+        for content_key in self.keys:
+            evolution += f"\t\tmessageContent={content_key} if\n"
+            evolution += "\t\t\tEnvironment.processingMessage=true and (\n"
+            content_key = StringTools.capitalize_first_letter(content_key)
+            for encryption_key in self.keys:
+                encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                evolution += f"\t\t\tAttacker.Action=ChangeContentTo{content_key}EncryptedWith{encryption_key} or\n"
+
+            evolution = evolution.rstrip("\nro ")
+            evolution += ");\n"
+
+        for encryption_key in self.keys:
+            evolution += f"\t\tmessageEncryption={encryption_key} if\n"
+            evolution += "\t\t\tEnvironment.processingMessage=true and (\n"
+            encryption_key = StringTools.capitalize_first_letter(encryption_key)
+            for content_key in self.keys:
+                content_key = StringTools.capitalize_first_letter(content_key)
+                evolution += f"\t\t\tAttacker.Action=ChangeContentTo{content_key}EncryptedWith{encryption_key} or\n"
+
+            evolution = evolution.rstrip("\nro ")
+            evolution += ");\n"
+
+        return evolution
+
     def __create_evaluation(self):
         evaluation = "Evaluation\n"
         evaluation += "\tkeyExchanged if Alice.bobKeyK=plain;\n"
@@ -482,7 +581,6 @@ class TmnProtocolIsplGeneratorV2:
 
     def __create_init_states(self):
         init_states = "InitStates\n"
-        keys = ["server", "server", "alice"]
 
         init_states += "\tEnvironment.protocol=false and\n"
         init_states += "\tEnvironment.processingMessage=false and\n"
@@ -501,8 +599,11 @@ class TmnProtocolIsplGeneratorV2:
         for var in vars:
             init_states += f"\tNetwork.{var}=none and\n"
 
-        init_states = init_states.rstrip("\ndna ")
-        init_states += ";\nend InitStates\n\n"
+        init_states += "\tNetwork.attackerDone=false and\n"
+        init_states += "\tNetwork.forwardAllToAttacker=true and\n"
+        init_states += "\tNetwork.waitForAttacker=true and\n"
+        init_states += "\tNetwork.forwardedToAttacker=false;\n"
+        init_states += "end InitStates\n\n"
         return init_states
 
     def __create_groups(self):
