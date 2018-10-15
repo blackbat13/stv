@@ -11,6 +11,9 @@ class SimpleModel:
             self.actions = actions[:]
             self.next_state = next_state
 
+        def to_str(self):
+            return f"Next state: {self.next_state}; Actions: {self.actions}"
+
     graph: List[List[Transition]] = []
     no_states = 0
     no_agents = 0
@@ -130,3 +133,31 @@ class SimpleModel:
         atl_model.states = self.states
         atl_model.finish_model()
         return atl_model
+
+    def simulate(self, agent_number: int):
+        print("----SIMULATION START-----")
+        current_state = 0
+        while True:
+            print()
+            print("Current state:")
+            print(self.states[current_state])
+            print("Epistemic states:")
+            for state in self.epistemic_class_for_state(current_state, agent_number):
+                print(self.states[state])
+
+            if len(self.graph[current_state]) == 0:
+                break
+
+            print('Transitions:')
+            i = 0
+            for transition in self.graph[current_state]:
+                print(str(i) + ":", transition.to_str())
+                i += 1
+
+            choice = int(input("Choose transition="))
+            if choice == -1:
+                break
+
+            current_state = self.graph[current_state][choice].next_state
+
+        print("----SIMULATION END-----")
