@@ -254,7 +254,7 @@ class ATLIrModel:
     def print_model(self):
         print("----MODEL START-----")
         for state in self.states:
-            print('place:', state['place'], 'polD1:', state['polD1'], 'polD2:', state['polD2'])
+            print(state)
 
         print("----MODEL END------")
 
