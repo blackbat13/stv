@@ -502,6 +502,8 @@ class TmnProtocolIsplGeneratorV2:
             evolution += ");\n"
 
         for message_destination in self.agents:
+            if self.follow_protocol and message_destination == "attacker":
+                continue
             evolution += f"\t\tmessageDestination={message_destination} if (\n"
             message_destination = StringTools.capitalize_first_letter(message_destination)
             if not self.follow_protocol:
