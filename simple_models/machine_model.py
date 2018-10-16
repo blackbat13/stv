@@ -365,12 +365,14 @@ class MachineModel:
         return actions
 
     @staticmethod
-    def random_factory_layout(size: int, no_robots: int, no_machines: int):
+    def random_factory_layout(size: int, no_robots: int, no_machines: int, no_charging_stations: int = 0, no_storage: int = 0):
         robot_positions = []
         machine_positions = []
         obstacle_positions = []
         machine_requirements = []
         production_times = []
+        charging_stations = []
+        storages = []
         for i in range(0, no_robots):
             robot_positions.append((i, 0))
         for i in range(0, no_machines):
@@ -385,7 +387,13 @@ class MachineModel:
 
             machine_requirements.append(machine_req[:])
 
-        return robot_positions, machine_positions, obstacle_positions, machine_requirements, production_times
+        for i in range(0, no_charging_stations):
+            charging_stations.append((i, 1))
+
+        for i in range(0, no_storage):
+            storages.append((i, size-2))
+
+        return robot_positions, machine_positions, obstacle_positions, machine_requirements, production_times, charging_stations, storages
 
 
 class MachineModelWithCharging(MachineModel):
