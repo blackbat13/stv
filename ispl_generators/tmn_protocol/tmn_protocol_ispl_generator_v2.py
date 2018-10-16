@@ -8,6 +8,7 @@ class TmnProtocolIsplGeneratorV2:
     agents = ["alice", "bob", "server", "attacker"]
     keys = ["aliceKey", "bobKey", "serverPublicKey", "serverPrivateKey", "attackerKey"]
     no_messages = 3
+    follow_protocol = True
 
     def __init__(self):
         return
@@ -241,14 +242,15 @@ class TmnProtocolIsplGeneratorV2:
         protocol = "\tProtocol:\n"
 
         protocol += self.__create_protocol_decryption()
-        protocol += self.__create_protocol_communication(current_agent_name)
-
-        if current_agent_name == "Alice":
-            protocol += "\t\tEnvironment.protocol=true: {SendAliceKeyToServerEncryptedWithServerPublicKey, Wait};\n"
-        elif current_agent_name == "Bob":
-            protocol += "\t\tEnvironment.protocol=true: {SendBobKeyToServerEncryptedWithServerPublicKey, Wait};\n"
-        elif current_agent_name == "Server":
-            protocol += "\t\tEnvironment.protocol=true and aliceKeyK=plain and bobKeyK=plain: {SendBobKeyToAliceEncryptedWithAliceKey, Wait};\n"
+        if not self.follow_protocol:
+            protocol += self.__create_protocol_communication(current_agent_name)
+        else:
+            if current_agent_name == "Alice":
+                protocol += "\t\tEnvironment.protocol=true and Environment.processingMessage=false: {SendAliceKeyToServerEncryptedWithServerPublicKey, Wait};\n"
+            elif current_agent_name == "Bob":
+                protocol += "\t\tEnvironment.protocol=true and Environment.processingMessage=false: {SendBobKeyToServerEncryptedWithServerPublicKey, Wait};\n"
+            elif current_agent_name == "Server":
+                protocol += "\t\tEnvironment.protocol=true and aliceKeyK=plain and bobKeyK=plain and Environment.processingMessage=false: {SendBobKeyToAliceEncryptedWithAliceKey, Wait};\n"
 
         protocol += "\t\tOther: {Wait};\n"
         protocol += "\tend Protocol\n"
@@ -582,7 +584,7 @@ class TmnProtocolIsplGeneratorV2:
     def __create_init_states(self):
         init_states = "InitStates\n"
 
-        init_states += "\tEnvironment.protocol=false and\n"
+        init_states += "\tEnvironment.protocol=true and\n"
         init_states += "\tEnvironment.processingMessage=false and\n"
 
         for agent_name in self.agents:
