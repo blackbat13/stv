@@ -86,7 +86,7 @@ class TmnProtocolIsplGeneratorV2:
         else:
             evolution += "\t\t\tAlice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey or\n"
             evolution += "\t\t\tBob.Action=SendBobKeyToServerEncryptedWithServerPublicKey or\n"
-            evolution += "\t\t\tServer.Action=SendBobKeyToAliceEncryptedAliceKey or\n"
+            evolution += "\t\t\tServer.Action=SendBobKeyToAliceEncryptedWithAliceKey or\n"
             for message_content in self.keys:
                 message_content = StringTools.capitalize_first_letter(message_content)
                 message_source = "Attacker"
