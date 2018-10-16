@@ -235,13 +235,13 @@ class TmnProtocolIsplGeneratorV2:
                     for encryption_key in self.keys:
                         encryption_key = StringTools.capitalize_first_letter(encryption_key)
                         actions += f"Send{key_name}To{agent_name}EncryptedWith{encryption_key}, "
-            else:
-                if current_agent_name == "Alice":
-                    actions += "SendAliceKeyToServerEncryptedWithServerPublicKey, "
-                elif current_agent_name == "Bob":
-                    actions += "SendBobKeyToServerEncryptedWithServerPublicKey, "
-                elif current_agent_name == "Server":
-                    actions += "SendBobKeyToAliceEncryptedWithAliceKey, "
+        if self.follow_protocol:
+            if current_agent_name == "Alice":
+                actions += "SendAliceKeyToServerEncryptedWithServerPublicKey, "
+            elif current_agent_name == "Bob":
+                actions += "SendBobKeyToServerEncryptedWithServerPublicKey, "
+            elif current_agent_name == "Server":
+                actions += "SendBobKeyToAliceEncryptedWithAliceKey, "
 
         actions += "Wait};\n"
         return actions
