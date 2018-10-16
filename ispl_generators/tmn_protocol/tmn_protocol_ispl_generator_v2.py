@@ -227,13 +227,21 @@ class TmnProtocolIsplGeneratorV2:
         for key_name in self.keys:
             key_name = StringTools.capitalize_first_letter(key_name)
             actions += f"Decrypt{key_name}, "
-            for agent_name in self.agents:
-                agent_name = StringTools.capitalize_first_letter(agent_name)
-                if agent_name == current_agent_name:
-                    continue
-                for encryption_key in self.keys:
-                    encryption_key = StringTools.capitalize_first_letter(encryption_key)
-                    actions += f"Send{key_name}To{agent_name}EncryptedWith{encryption_key}, "
+            if not self.follow_protocol:
+                for agent_name in self.agents:
+                    agent_name = StringTools.capitalize_first_letter(agent_name)
+                    if agent_name == current_agent_name:
+                        continue
+                    for encryption_key in self.keys:
+                        encryption_key = StringTools.capitalize_first_letter(encryption_key)
+                        actions += f"Send{key_name}To{agent_name}EncryptedWith{encryption_key}, "
+            else:
+                if current_agent_name == "Alice":
+                    actions += "SendAliceKeyToServerEncryptedWithServerPublicKey, "
+                elif current_agent_name == "Bob":
+                    actions += "SendBobKeyToServerEncryptedWithServerPublicKey, "
+                elif current_agent_name == "Server":
+                    actions += "SendBobKeyToAliceEncryptedWithAliceKey, "
 
         actions += "Wait};\n"
         return actions
@@ -438,8 +446,18 @@ class TmnProtocolIsplGeneratorV2:
         for message_content in self.keys:
             evolution += f"\t\tmessageContent={message_content} if (\n"
             message_content = StringTools.capitalize_first_letter(message_content)
-            for message_source in self.agents:
-                message_source = StringTools.capitalize_first_letter(message_source)
+            if not self.follow_protocol:
+                for message_source in self.agents:
+                    message_source = StringTools.capitalize_first_letter(message_source)
+                    for message_destination in self.agents:
+                        message_destination = StringTools.capitalize_first_letter(message_destination)
+                        if message_source == message_destination:
+                            continue
+                        for message_encryption in self.keys:
+                            message_encryption = StringTools.capitalize_first_letter(message_encryption)
+                            evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
+            else:
+                message_source = "Attacker"
                 for message_destination in self.agents:
                     message_destination = StringTools.capitalize_first_letter(message_destination)
                     if message_source == message_destination:
@@ -451,9 +469,25 @@ class TmnProtocolIsplGeneratorV2:
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
 
-        for message_source in self.agents:
-            evolution += f"\t\tmessageSource={message_source} if (\n"
-            message_source = StringTools.capitalize_first_letter(message_source)
+        if not self.follow_protocol:
+            for message_source in self.agents:
+                evolution += f"\t\tmessageSource={message_source} if (\n"
+                message_source = StringTools.capitalize_first_letter(message_source)
+                for message_content in self.keys:
+                    message_content = StringTools.capitalize_first_letter(message_content)
+                    for message_destination in self.agents:
+                        message_destination = StringTools.capitalize_first_letter(message_destination)
+                        if message_source == message_destination:
+                            continue
+                        for message_encryption in self.keys:
+                            message_encryption = StringTools.capitalize_first_letter(message_encryption)
+                            evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
+
+            evolution = evolution.rstrip("\nro ")
+            evolution += ");\n"
+        else:
+            evolution += f"\t\tmessageSource=attacker if (\n"
+            message_source = "Attacker"
             for message_content in self.keys:
                 message_content = StringTools.capitalize_first_letter(message_content)
                 for message_destination in self.agents:
@@ -470,8 +504,18 @@ class TmnProtocolIsplGeneratorV2:
         for message_destination in self.agents:
             evolution += f"\t\tmessageDestination={message_destination} if (\n"
             message_destination = StringTools.capitalize_first_letter(message_destination)
-            for message_source in self.agents:
-                message_source = StringTools.capitalize_first_letter(message_source)
+            if not self.follow_protocol:
+                for message_source in self.agents:
+                    message_source = StringTools.capitalize_first_letter(message_source)
+                    if message_source == message_destination:
+                        continue
+                    for message_content in self.keys:
+                        message_content = StringTools.capitalize_first_letter(message_content)
+                        for message_encryption in self.keys:
+                            message_encryption = StringTools.capitalize_first_letter(message_encryption)
+                            evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
+            else:
+                message_source = "Attacker"
                 if message_source == message_destination:
                     continue
                 for message_content in self.keys:
@@ -486,8 +530,18 @@ class TmnProtocolIsplGeneratorV2:
         for message_encryption in self.keys:
             evolution += f"\t\tmessageEncryption={message_encryption} if (\n"
             message_encryption = StringTools.capitalize_first_letter(message_encryption)
-            for message_source in self.agents:
-                message_source = StringTools.capitalize_first_letter(message_source)
+            if not self.follow_protocol:
+                for message_source in self.agents:
+                    message_source = StringTools.capitalize_first_letter(message_source)
+                    for message_destination in self.agents:
+                        message_destination = StringTools.capitalize_first_letter(message_destination)
+                        if message_source == message_destination:
+                            continue
+                        for message_content in self.keys:
+                            message_content = StringTools.capitalize_first_letter(message_content)
+                            evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
+            else:
+                message_source = "Attacker"
                 for message_destination in self.agents:
                     message_destination = StringTools.capitalize_first_letter(message_destination)
                     if message_source == message_destination:
@@ -495,9 +549,25 @@ class TmnProtocolIsplGeneratorV2:
                     for message_content in self.keys:
                         message_content = StringTools.capitalize_first_letter(message_content)
                         evolution += f"\t\t\t{message_source}.Action=Send{message_content}To{message_destination}EncryptedWith{message_encryption} or \n"
-
             evolution = evolution.rstrip("\nro ")
             evolution += ");\n"
+
+        if self.follow_protocol:
+            evolution += "\t\tmessageContent=aliceKey if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageContent=bobKey if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageContent=bobKey if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;\n"
+
+            evolution += "\t\tmessageSource=alice if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageSource=bob if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageSource=server if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;\n"
+
+            evolution += "\t\tmessageDestination=server if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageDestination=server if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageDestination=alice if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;\n"
+
+            evolution += "\t\tmessageEncryption=serverPublicKey if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageEncryption=serverPublicKey if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;\n"
+            evolution += "\t\tmessageEncryption=aliceKey if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -584,7 +654,6 @@ class TmnProtocolIsplGeneratorV2:
     def __create_init_states(self):
         init_states = "InitStates\n"
 
-        init_states += "\tEnvironment.protocol=true and\n"
         init_states += "\tEnvironment.processingMessage=false and\n"
 
         for agent_name in self.agents:
