@@ -1,34 +1,24 @@
 from simple_models.simple_model import SimpleModel
+from simple_models.model_generator import ModelGenerator
 from typing import List
 import itertools
 
 
-class CastleModel:
-    model = None
+class CastleModel(ModelGenerator):
     castle_sizes: List[int] = []
     castle_lifes: List[int] = []
-    states: List[hash] = []
-    states_dictionary = {}
-    state_number: int = 0
-    epistemic_states_dictionaries: List[hash] = []
-    no_agents = 0
 
     def __init__(self, castle_sizes: List[int], castle_lifes: List[int]):
         assert len(castle_sizes) == len(castle_lifes)
+        super().__init__()
         self.castle_sizes = castle_sizes
         self.castle_lifes = castle_lifes
         self.model = SimpleModel(sum(castle_sizes))
         self.no_agents = sum(self.castle_sizes)
-
         self.prepare_epistemic_dictionaries()
         self.generate_model()
         self.prepare_epistemic_relation()
         self.model.states = self.states
-
-    def prepare_epistemic_dictionaries(self):
-        self.epistemic_states_dictionaries.clear()
-        for _ in range(0, self.no_agents):
-            self.epistemic_states_dictionaries.append({})
 
     def generate_first_state(self) -> hash:
         defend = []
@@ -38,25 +28,6 @@ class CastleModel:
                 defend[castle_id].append(False)
         first_state = {'lifes': self.castle_lifes[:], 'defend': defend}
         return first_state
-
-    def add_state(self, state: hash) -> int:
-        new_state_number = self.get_state_number(state)
-        for i in range(0, self.no_agents):
-            epistemic_state = self.get_epistemic_state(state, i)
-            self.add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
-        return new_state_number
-
-    def get_state_number(self, state: hash) -> int:
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.states_dictionary:
-            self.states_dictionary[state_str] = self.state_number
-            new_state_number = self.state_number
-            self.states.append(state)
-            self.state_number += 1
-        else:
-            new_state_number = self.states_dictionary[state_str]
-
-        return new_state_number
 
     def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         castle_id = 0
@@ -76,13 +47,6 @@ class CastleModel:
         epistemic_state = {'life': life, 'defend': defend}
 
         return epistemic_state
-
-    def add_to_epistemic_dictionary(self, state: hash, new_state_number: int, agent_number: int):
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.epistemic_states_dictionaries[agent_number]:
-            self.epistemic_states_dictionaries[agent_number][state_str] = {new_state_number}
-        else:
-            self.epistemic_states_dictionaries[agent_number][state_str].add(new_state_number)
 
     def generate_model(self):
         first_state = self.generate_first_state()
@@ -163,8 +127,3 @@ class CastleModel:
                 possible_actions.append(actions[i])
 
         return possible_actions
-
-    def prepare_epistemic_relation(self):
-        for i in range(0, self.no_agents):
-            for state, epistemic_class in self.epistemic_states_dictionaries[i].items():
-                self.model.add_epistemic_class(i, epistemic_class)
