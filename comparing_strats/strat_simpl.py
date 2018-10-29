@@ -59,13 +59,17 @@ class StrategyComparer:
         if self.dfs_visited_states[current_state]:
             return False, winning_strategy
 
+        if winning_strategy[current_state] is not None:
+            return True, winning_strategy
+
         self.dfs_visited_states[current_state] = True
-        strategies = self.model.get_possible_strategies_for_coalition(current_state, self.current_coalition)
-        strategies = self.eliminate_dominated_strategies(current_state, strategies)
-        strategies = self.sort_strategies(current_state, strategies)
         epistemic_strategy = self.check_epistemic_strategy(current_state, winning_strategy)
         if epistemic_strategy is not None:
             strategies = [epistemic_strategy]
+        else:
+            strategies = self.model.get_possible_strategies_for_coalition(current_state, self.current_coalition)
+            strategies = self.eliminate_dominated_strategies(current_state, strategies)
+            strategies = self.sort_strategies(current_state, strategies)
 
         for strategy in strategies:
             next_states = self.get_coalition_actions_result(current_state, list(strategy))

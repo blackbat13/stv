@@ -1,0 +1,212 @@
+<A>F (castle3defeated & castle1life>0)
+----------------Castles Model----------------
+2018-10-29 15:30:56.142740
+Castles size: [2, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 0.251814 seconds
+Number of states in the model: 63
+Coalition: [0, 1, 2]
+Strategy generation time: 0.518705 seconds
+Strategy found: True
+Number of states where strategy is defined: 1
+Found strategy:
+[['attack 2', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:30:58.035963
+Castles size: [2, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 0.22454800000000003 seconds
+Number of states in the model: 63
+Coalition: [0, 1, 2]
+Strategy generation time: 0.8032950000000001 seconds
+Strategy found: True
+Number of states where strategy is defined: 4
+Found strategy:
+[['idle', 'defend', 'defend'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['defend', 'attack 1', 'attack 2'], ['defend', 'attack 1', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:31:00.077392
+Castles size: [2, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 0.229246 seconds
+Number of states in the model: 63
+Coalition: [0, 1, 2]
+Strategy generation time: 0.46776299999999993 seconds
+Strategy found: True
+Number of states where strategy is defined: 2
+Found strategy:
+[['attack 1', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['defend', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:33:26.112097
+Castles size: [2, 1, 2]
+Castles life: [1, 1, 1]
+Model generated in: 1.804715 seconds
+Number of states in the model: 135
+Coalition: [0, 1, 2]
+Strategy generation time: 42.168358 seconds
+Strategy found: False
+Number of states where strategy is defined: 0
+Found strategy:
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+
+----------------Castles Model----------------
+2018-10-29 15:41:57.918311
+Castles size: [3, 1, 2]
+Castles life: [1, 1, 1]
+Model generated in: 14.807615 seconds
+Number of states in the model: 271
+----------------Castles Model----------------
+2018-10-29 15:45:16.678178
+Castles size: [3, 1, 2]
+Castles life: [1, 1, 1]
+Model generated in: 15.908879 seconds
+Number of states in the model: 271
+----------------Castles Model----------------
+2018-10-29 15:49:37.699175
+Castles size: [3, 1, 2]
+Castles life: [1, 1, 1]
+Model generated in: 15.325007000000001 seconds
+Number of states in the model: 271
+----------------Castles Model----------------
+2018-10-29 15:50:16.800341
+Castles size: [3, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 2.1710649999999996 seconds
+Number of states in the model: 127
+Coalition: [0, 1, 2, 3]
+Strategy generation time: 12.266717 seconds
+Strategy found: True
+Number of states where strategy is defined: 1
+Found strategy:
+[['attack 2', 'defend', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:51:49.570621
+Castles size: [3, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 2.333017 seconds
+Number of states in the model: 127
+Coalition: [0, 1, 2, 3]
+Strategy generation time: 7.928602000000001 seconds
+Strategy found: True
+Number of states where strategy is defined: 3
+Found strategy:
+[['attack 1', 'idle', 'defend', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:52:05.985333
+Castles size: [3, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 2.2542560000000003 seconds
+Number of states in the model: 127
+Coalition: [0, 1, 2, 3]
+Strategy generation time: 6.5093820000000004 seconds
+Strategy found: True
+Number of states where strategy is defined: 1
+Found strategy:
+[['attack 1', 'attack 2', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:52:29.987450
+Castles size: [3, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 2.2638380000000002 seconds
+Number of states in the model: 127
+Coalition: [0, 1, 2, 3]
+Strategy generation time: 14.873974 seconds
+Strategy found: True
+Number of states where strategy is defined: 5
+Found strategy:
+[['idle', 'defend', 'defend', 'defend'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['defend', 'idle', 'attack 1', 'idle'], ['defend', 'idle', 'attack 1', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:55:33.059548
+Castles size: [3, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 2.01083 seconds
+Number of states in the model: 127
+Coalition: [0, 1, 2, 3]
+Strategy generation time: 12.74736 seconds
+Strategy found: True
+Number of states where strategy is defined: 3
+Found strategy:
+[['attack 1', 'defend', 'attack 1', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['defend', 'attack 2', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, ['defend', 'attack 2', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:56:08.333136
+Castles size: [3, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 1.913567 seconds
+Number of states in the model: 127
+Coalition: [0, 1, 2, 3]
+Strategy generation time: 12.714772 seconds
+Strategy found: True
+Number of states where strategy is defined: 1
+Found strategy:
+[['attack 2', 'attack 2', 'defend', 'defend'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:56:36.476799
+Castles size: [2, 1, 1]
+Castles life: [1, 1, 1]
+Model generated in: 0.22918499999999997 seconds
+Number of states in the model: 63
+Coalition: [0, 1, 2]
+Strategy generation time: 0.23202500000000004 seconds
+Strategy found: True
+Number of states where strategy is defined: 4
+Found strategy:
+[['idle', 'defend', 'defend'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['defend', 'attack 1', 'attack 2'], ['defend', 'attack 1', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:56:43.439060
+Castles size: [2, 1, 1]
+Castles life: [1, 1, 2]
+Model generated in: 0.40575500000000003 seconds
+Number of states in the model: 102
+Coalition: [0, 1, 2]
+Strategy generation time: 0.29131399999999996 seconds
+Strategy found: True
+Number of states where strategy is defined: 5
+Found strategy:
+[['idle', 'defend', 'defend'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['defend', 'attack 2', 'attack 2'], ['defend', 'attack 2', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['idle', 'defend', 'defend'], None, None, None, None, None, None, None, None, None, ['defend', 'attack 2', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:56:55.684996
+Castles size: [2, 1, 1]
+Castles life: [1, 1, 3]
+Model generated in: 0.599419 seconds
+Number of states in the model: 141
+Coalition: [0, 1, 2]
+Strategy generation time: 0.5722959999999999 seconds
+Strategy found: False
+Number of states where strategy is defined: 0
+Found strategy:
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:57:19.747798
+Castles size: [2, 1, 1]
+Castles life: [1, 1, 2]
+Model generated in: 0.43529799999999996 seconds
+Number of states in the model: 102
+Coalition: [0, 1, 2]
+Strategy generation time: 0.266076 seconds
+Strategy found: True
+Number of states where strategy is defined: 3
+Found strategy:
+[['defend', 'attack 2', 'defend'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:57:36.744507
+Castles size: [2, 1, 1]
+Castles life: [3, 3, 3]
+Model generated in: 4.011326 seconds
+Number of states in the model: 751
+Coalition: [0, 1, 2]
+Strategy generation time: 2.3270800000000005 seconds
+Strategy found: True
+Number of states where strategy is defined: 5
+Found strategy:
+[['attack 1', 'attack 2', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 1', 'attack 2', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 1', 'attack 2', 'attack 2'], ['attack 1', 'attack 2', 'attack 2'], ['attack 1', 'attack 2', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+----------------Castles Model----------------
+2018-10-29 15:58:09.925139
+Castles size: [3, 1, 1]
+Castles life: [3, 3, 3]
+Model generated in: 33.530855 seconds
+Number of states in the model: 1503
+Coalition: [0, 1, 2, 3]
+Strategy generation time: 25.958218000000002 seconds
+Strategy found: True
+Number of states where strategy is defined: 9
+Found strategy:
+[['defend', 'idle', 'attack 1', 'attack 0'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 1', 'attack 1', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, ['attack 1', 'attack 1', 'defend', 'attack 2'], ['attack 1', 'attack 1', 'defend', 'attack 2'], None, ['attack 1', 'attack 1', 'defend', 'attack 2'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'attack 2', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'attack 2', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'attack 2', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, ['attack 2', 'attack 2', 'attack 2', 'idle'], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
