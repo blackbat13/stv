@@ -1,6 +1,6 @@
 from simple_models.drone_model import *
 from comparing_strats.strat_simpl import StrategyComparer
-from comparing_strats.graph_drawing import GraphDrawing
+# from comparing_strats.graph_drawing import GraphDrawing
 
 
 DEBUG = True
@@ -37,12 +37,12 @@ if DEBUG:
     print(f'Number of winning states: {len(winning_states)}')
 
 strategy_comparer = StrategyComparer(drone_model.model, ['N', 'S', 'W', 'E', 'Wait'])
-(result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning_states), strategy_comparer.basic_h)
+(result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning_states), [0], strategy_comparer.basic_h)
 print(f'Strategy result: {result}')
 print(strategy)
 for index, value in enumerate(strategy):
     if value is not None:
         print(f"{index}: {value}")
 
-graphDrawing = GraphDrawing(drone_model.model, strategy)
-graphDrawing.draw()
+# graphDrawing = GraphDrawing(drone_model.model, strategy)
+# graphDrawing.draw()

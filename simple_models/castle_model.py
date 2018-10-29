@@ -62,7 +62,6 @@ class CastleModel:
         castle_id = 0
         agent_no = 0
         size = 0
-        prev_size = 0
         for i in range(0, len(self.castle_sizes)):
             prev_size = size
             size += self.castle_sizes[i]
@@ -72,7 +71,8 @@ class CastleModel:
                 break
 
         life = state['lifes'][castle_id]
-        defend = state['defend'][castle_id][agent_no]
+        # defend = state['defend'][castle_id][agent_no]
+        defend = state['defend'][castle_id]
         epistemic_state = {'life': life, 'defend': defend}
 
         return epistemic_state

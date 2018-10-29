@@ -1,6 +1,6 @@
 from simple_models.bridge_model import *
 from comparing_strats.strat_simpl import StrategyComparer
-from comparing_strats.graph_drawing import GraphDrawing
+# from comparing_strats.graph_drawing import GraphDrawing
 
 
 DEBUG = True
@@ -27,13 +27,14 @@ if DEBUG:
     print(f'Number of winning states: {len(winning_states)}')
 
 strategy_comparer = StrategyComparer(bridge_model.model, ['N', 'S', 'W', 'E', 'Wait'])
-(result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning_states), strategy_comparer.basic_h)
+(result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning_states), [0], strategy_comparer.basic_h)
 print(f'Strategy result: {result}')
 print(strategy)
+
 for index, value in enumerate(strategy):
     if value is not None:
-        print(f"{index}: {BridgeModel.card_to_readable(value[0])}")
+        print(f"{index}: {BridgeModel.card_to_readable(int(value[0]))}")
         print(f"{BridgeModel.board_to_readable(bridge_model.model.states[index]['board'])}: {BridgeModel.card_to_readable(value[0])}")
 
-graphDrawing = GraphDrawing(bridge_model.model, strategy)
-graphDrawing.draw()
+# graphDrawing = GraphDrawing(bridge_model.model, strategy)
+# graphDrawing.draw()

@@ -20,7 +20,6 @@ class BridgeModel:
         self.no_end_cards = no_end_cards
         self.first_state = first_state
         self.create_atl_model()
-        # self.model.add_action(0, -1)
         self.generate_available_cards()
         print("Starting generating beginning states")
         self.generate_beginning_states()
@@ -52,7 +51,6 @@ class BridgeModel:
         for i in range(0, self.no_cards_available):
             for c in range(1, 5):
                 self.cards_available.append(card_number * 10 + (5 - c))
-                # self.model.add_action(0, card_number * 10 + (5 - c))
             card_number -= 1
 
     def generate_beginning_states(self):
@@ -92,12 +90,11 @@ class BridgeModel:
             if agent_number == 2:
                 agent_number = 0
 
-            action = [-1]
-            if agent_number == 0:
-                action[0] = card
+            actions = [-1, -1, -1, -1]
+            actions[agent_number] = card
 
             new_state_number = self.add_state(new_state)
-            self.model.add_transition(current_state_number, new_state_number, action)
+            self.model.add_transition(current_state_number, new_state_number, actions)
 
     def generate_state_end_of_turn(self, current_state_number: int, state):
         winner = self.get_winner(state['beginning'], state['board'])
@@ -107,7 +104,7 @@ class BridgeModel:
                      'beginning': winner, 'history': state['history'], 'clock': 0,
                      'suit': -1}
         new_state_number = self.add_state(new_state)
-        self.model.add_transition(current_state_number, new_state_number, [-1])
+        self.model.add_transition(current_state_number, new_state_number, [-1, -1, -1, -1])
 
     def generate_states_for_play(self, current_state_number: int, state):
         color = state['board'][state['beginning']] % 10
@@ -126,12 +123,11 @@ class BridgeModel:
             if agent_number == 2:
                 agent_number = 0
 
-            action = [-1]
-            if agent_number == 0:
-                action[agent_number] = card
+            actions = [-1, -1, -1, -1]
+            actions[agent_number] = card
 
             new_state_number = self.add_state(new_state)
-            self.model.add_transition(current_state_number, new_state_number, action)
+            self.model.add_transition(current_state_number, new_state_number, actions)
 
     def add_state(self, state):
         new_state_number = self.get_state_number(state)

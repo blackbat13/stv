@@ -107,6 +107,16 @@ class SimpleModel:
 
         return list(possible_actions)
 
+    def get_possible_strategies_for_coalition(self, state_id: int, coalition: List[int]) -> List[tuple]:
+        possible_actions = set()
+        for transition in self.graph[state_id]:
+            actions = []
+            for agent_id in coalition:
+                actions.append(transition.actions[agent_id])
+            possible_actions.add(tuple(actions))
+
+        return list(possible_actions)
+
     def to_atl_perfect(self, actions) -> ATLIrModel:
         atl_model = ATLIrModel(self.no_agents)
         for i in range(0, len(actions)):
