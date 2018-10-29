@@ -1,17 +1,21 @@
 from simple_models.simple_model import SimpleModel
-from typing import List, Dict
+from typing import List, Dict, Set
 from abc import ABC, abstractmethod
 
 
 class ModelGenerator(ABC):
 
-    def __init__(self):
-        self.model: SimpleModel = None
-        self.states: List[hash] = []
+    def __init__(self, no_agents: int):
+        self.model: SimpleModel = SimpleModel(no_agents)
         self.states_dictionary: Dict[hash, int] = {}
         self.state_number: int = 0
-        self.epistemic_states_dictionaries: List[List[hash]] = []
-        self.no_agents: int = 0
+        self.epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
+        self.no_agents: int = no_agents
+        self.prepare_epistemic_dictionaries()
+
+    @property
+    def states(self) -> List[hash]:
+        return self.model.states
 
     @property
     def model(self) -> SimpleModel:
@@ -20,14 +24,6 @@ class ModelGenerator(ABC):
     @model.setter
     def model(self, value: SimpleModel):
         self.__model = value
-        
-    @property
-    def states(self) -> List[hash]:
-        return self.__states
-    
-    @states.setter
-    def states(self, value: List[hash]):
-        self.__states = value
 
     @property
     def states_dictionary(self) -> Dict[hash, int]:
@@ -46,11 +42,11 @@ class ModelGenerator(ABC):
         self.__state_number = value
 
     @property
-    def epistemic_states_dictionaries(self) -> List[List[hash]]:
+    def epistemic_states_dictionaries(self) -> List[Dict[str, Set[int]]]:
         return self.__epistemic_states_dictionaries
 
     @epistemic_states_dictionaries.setter
-    def epistemic_states_dictionaries(self, value: List[List[hash]]):
+    def epistemic_states_dictionaries(self, value: List[Dict[str, Set[int]]]):
         self.__epistemic_states_dictionaries = value
 
     @property
@@ -78,7 +74,7 @@ class ModelGenerator(ABC):
         if state_str not in self.states_dictionary:
             self.states_dictionary[state_str] = self.state_number
             new_state_number = self.state_number
-            self.states.append(state)
+            self.model.states.append(state)
             self.state_number += 1
         else:
             new_state_number = self.states_dictionary[state_str]

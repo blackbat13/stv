@@ -10,15 +10,13 @@ class CastleModel(ModelGenerator):
 
     def __init__(self, castle_sizes: List[int], castle_lifes: List[int]):
         assert len(castle_sizes) == len(castle_lifes)
-        super().__init__()
+        super().__init__(no_agents=sum(castle_sizes))
         self.castle_sizes = castle_sizes
         self.castle_lifes = castle_lifes
         self.model = SimpleModel(sum(castle_sizes))
-        self.no_agents = sum(self.castle_sizes)
         self.prepare_epistemic_dictionaries()
         self.generate_model()
         self.prepare_epistemic_relation()
-        self.model.states = self.states
 
     def generate_first_state(self) -> hash:
         defend = []
