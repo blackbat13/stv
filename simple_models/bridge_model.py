@@ -1,58 +1,37 @@
-from simple_models.simple_model import SimpleModel
+from simple_models.model_generator import ModelGenerator
 import itertools
 import random
 
 
-class BridgeModel:
-    model = None
-    states_dictionary = {}
-    epistemic_states_dictionary = {}
+class BridgeModel(ModelGenerator):
     no_cards_available = 0
     no_end_cards = 0
     cards_available = []
-    state_number = 0
     first_state = {}
     beginning_states_count = 0
 
     def __init__(self, no_cards_available, no_end_cards, first_state):
-        self.clear_variables()
+        super().__init__(no_agents=4)
         self.no_cards_available = no_cards_available
         self.no_end_cards = no_end_cards
         self.first_state = first_state
-        self.create_atl_model()
-        # self.model.add_action(0, -1)
         self.generate_available_cards()
         print("Starting generating beginning states")
         self.generate_beginning_states()
-        self.beginning_states_count = len(self.model.states)
+        self.beginning_states_count = len(self.states)
         print("Generated", self.beginning_states_count, "beginning states")
         print("Starting generating rest of model")
-        self.generate_rest_of_model()
-        print("Generated model with", len(self.model.states), "states")
+        self.generate_model()
+        print("Generated model with", len(self.states), "states")
         print("Starting preparing epistemic relation")
         self.prepare_epistemic_relation()
         print("Prepared epistemic relation")
-
-    def clear_variables(self):
-        self.model = None
-        self.states_dictionary = {}
-        self.epistemic_states_dictionary = {}
-        self.no_cards_available = 0
-        self.no_end_cards = 0
-        self.cards_available = []
-        self.state_number = 0
-        self.first_state = {}
-        self.beginning_states_count = 0
-
-    def create_atl_model(self):
-        self.model = SimpleModel(3)
 
     def generate_available_cards(self):
         card_number = 14
         for i in range(0, self.no_cards_available):
             for c in range(1, 5):
                 self.cards_available.append(card_number * 10 + (5 - c))
-                # self.model.add_action(0, card_number * 10 + (5 - c))
             card_number -= 1
 
     def generate_beginning_states(self):
@@ -68,9 +47,9 @@ class BridgeModel:
                      'beginning': 0, 'history': self.first_state['history'], 'clock': 0, 'suit': -1}
             self.add_state(state)
 
-    def generate_rest_of_model(self):
+    def generate_model(self):
         current_state_number = -1
-        for state in self.model.states:
+        for state in self.states:
             current_state_number += 1
             if state['next'] == state['beginning'] and state['clock'] == 0:
                 if self.count_remaining_cards(state) == 0:
@@ -92,12 +71,11 @@ class BridgeModel:
             if agent_number == 2:
                 agent_number = 0
 
-            action = [-1]
-            if agent_number == 0:
-                action[0] = card
+            actions = [-1, -1, -1, -1]
+            actions[agent_number] = card
 
             new_state_number = self.add_state(new_state)
-            self.model.add_transition(current_state_number, new_state_number, action)
+            self.model.add_transition(current_state_number, new_state_number, actions)
 
     def generate_state_end_of_turn(self, current_state_number: int, state):
         winner = self.get_winner(state['beginning'], state['board'])
@@ -107,7 +85,7 @@ class BridgeModel:
                      'beginning': winner, 'history': state['history'], 'clock': 0,
                      'suit': -1}
         new_state_number = self.add_state(new_state)
-        self.model.add_transition(current_state_number, new_state_number, [-1])
+        self.model.add_transition(current_state_number, new_state_number, [-1, -1, -1, -1])
 
     def generate_states_for_play(self, current_state_number: int, state):
         color = state['board'][state['beginning']] % 10
@@ -126,39 +104,15 @@ class BridgeModel:
             if agent_number == 2:
                 agent_number = 0
 
-            action = [-1]
-            if agent_number == 0:
-                action[agent_number] = card
+            actions = [-1, -1, -1, -1]
+            actions[agent_number] = card
 
             new_state_number = self.add_state(new_state)
-            self.model.add_transition(current_state_number, new_state_number, action)
+            self.model.add_transition(current_state_number, new_state_number, actions)
 
-    def add_state(self, state):
-        new_state_number = self.get_state_number(state)
-        epistemic_state = self.get_epistemic_state(state)
-        self.add_to_epistemic_dictionary(epistemic_state, new_state_number)
-        return new_state_number
-
-    def get_state_number(self, state):
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.states_dictionary:
-            self.states_dictionary[state_str] = self.state_number
-            new_state_number = self.state_number
-            self.model.states.append(state)
-            self.state_number += 1
-        else:
-            new_state_number = self.states_dictionary[state_str]
-
-        return new_state_number
-
-    def add_to_epistemic_dictionary(self, state, new_state_number):
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.epistemic_states_dictionary:
-            self.epistemic_states_dictionary[state_str] = {new_state_number}
-        else:
-            self.epistemic_states_dictionary[state_str].add(new_state_number)
-
-    def get_epistemic_state(self, state):
+    def get_epistemic_state(self, state, agent_number: int) -> hash:
+        if agent_number != 0:
+            return {}
         epistemic_hands = state['hands'][:]
         epistemic_hands[1] = self.keep_values_in_list(epistemic_hands[1], -1)
         epistemic_hands[3] = self.keep_values_in_list(epistemic_hands[3], -1)
@@ -166,10 +120,6 @@ class BridgeModel:
                            'board': state['board'], 'beginning': state['beginning'], 'history': state['history'],
                            'clock': state['clock'], 'suit': state['suit']}
         return epistemic_state
-
-    def prepare_epistemic_relation(self):
-        for state, epistemic_class in self.epistemic_states_dictionary.items():
-            self.model.add_epistemic_class(0, epistemic_class)
 
     def get_model(self):
         return self.model

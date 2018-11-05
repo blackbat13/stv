@@ -1,0 +1,131 @@
+theory PretaVote
+begin
+
+builtins: symmetric-encryption, asymmetric-encryption, hashing, signing, diffie-hellman
+
+
+// ---------------- RULES ----------------
+
+rule AsymmetricKeySetup:
+    [
+        Fr(~f)
+    ]
+  --[ AsymmetricKeySetup($A, pk(~f), ~f) ]->
+    [
+        !Sk($A, ~f),
+        !Pk($A, pk(~f))
+    ]
+
+rule InitialSetup:
+    [
+    ]
+  --[ InitialSetup($A) ]->
+    [
+        GenerateVotersRule($A),
+        GenerateCandidatesRule($A),
+        GenerateBallotsRule($A),
+        !ElectionAuthority($E)
+    ]
+
+// To change the number of voters just change the output of this rule
+rule GenerateVoters:
+    [
+        GenerateVotersRule(A)
+    ]
+  --[ GenerateVoters() ]->
+    [
+        // n - number of voters
+        // for i in (1..n): append Voter($Vi)
+        Voter($V1),
+        Voter($V2),
+        Voter($V3),
+        Voter($V4)
+    ]
+
+rule GenerateCandidates:
+    [
+        GenerateCandidatesRule(A)
+    ]
+  --[ GenerateCandidates() ]->
+    [
+        !Candidate($C1),
+        !Candidate($C2),
+        !Candidate($C3)
+    ]
+
+rule GenerateBallots:
+    [
+        GenerateBallotsRule(A)
+    ]
+  --[ GenerateBallots() ]->
+    [
+        Ballot($B1),
+        Ballot($B2),
+        Ballot($B3),
+        Ballot($B4)
+    ]
+
+rule GenerateBallotWithOrder:
+    [
+        Ballot(B),
+        !Candidate(C1),
+        !Candidate(C2),
+        !Candidate(C3)
+    ]
+  --[ GenerateBallotWithOrder(B, C1, C2, C3) ]->
+    [
+        BallotWithOrder(B, C1, C2, C3) // order should be random (tamarin will decide, which value assign to C1, C2, ...)
+    ]
+
+rule GenerateBallotOnion:
+    [
+        !ElectionAuthority(E),
+        !Pk(E, pkE),
+        Fr(~d),
+        BallotWithOrder(B, C1, C2, C3)
+    ]
+  --[ GenerateBallotOnion(aenc(<C1, C2, C3, d>, pkE)) ]->
+    [
+        BallotWithOrderAndOnion(B, C1, C2, C3, aenc(<C1, C2, C3, d>, pkE))
+    ]
+
+rule CastVoteForFirst:
+    [
+        Voter($V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote($V, '1', onion) ]->
+    [
+        Vote($V, '1', onion)
+    ]
+
+rule CastVoteForSecond:
+    [
+        Voter($V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote($V, '2', onion) ]->
+    [
+        Vote($V, '2', onion)
+    ]
+
+rule CastVoteForThird:
+    [
+        Voter($V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote($V, '3', onion) ]->
+    [
+        Vote($V, '3', onion)
+    ]
+
+
+// ---------------- RESTRICTIONS ----------------
+
+restriction RunInitialSetupOnce:
+  "All A1 A2 #i1 #i2. InitialSetup(A1) @i1 & InitialSetup(A2) @i2 ==> #i1=#i2 & A1=A2"
+
+
+// ---------------- LEMMAS ----------------
+
+end

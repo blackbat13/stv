@@ -9,6 +9,7 @@ class StrategyComparer:
     possible_actions = []
     winning_states = []
     current_heuristic = None
+    current_coalition: List[int] = []
     dfs_visited_states = []
 
     class CompareResult(Enum):
@@ -29,7 +30,7 @@ class StrategyComparer:
         self.current_heuristic = None
         self.dfs_visited_states = []
 
-    def generate_strategy_dfs(self, initial_state: int, winning_states: Set[int], heuristic) -> (bool, List):
+    def generate_strategy_dfs(self, initial_state: int, winning_states: Set[int], coalition: List[int], heuristic) -> (bool, List):
         self.winning_states = winning_states
         winning_strategy = []
         for i in range(0, len(self.model.states)):
@@ -37,9 +38,9 @@ class StrategyComparer:
             self.dfs_visited_states.append(False)
 
         self.current_heuristic = heuristic
+        self.current_coalition = coalition
         # TODO precompute perfect information strategy for enemy coalition for formula <<A>>G !p
-        # TODO add coalition in formula (function call), not in model (don't remove enemy actions from model)
-        return self.strategy_dfs(current_state=initial_state, winning_strategy=winning_strategy)
+        return self.strategy_dfs(initial_state, winning_strategy)
 
     def strategy_dfs(self, current_state: int, winning_strategy: List) -> (bool, List):
         """
@@ -58,16 +59,20 @@ class StrategyComparer:
         if self.dfs_visited_states[current_state]:
             return False, winning_strategy
 
+        if winning_strategy[current_state] is not None:
+            return True, winning_strategy
+
         self.dfs_visited_states[current_state] = True
-        strategies = self.model.get_possible_strategies(state_id=current_state)
-        strategies = self.eliminate_strategies(current_state, strategies)
-        strategies = self.sort_strategies(current_state, strategies)
         epistemic_strategy = self.check_epistemic_strategy(current_state, winning_strategy)
         if epistemic_strategy is not None:
             strategies = [epistemic_strategy]
+        else:
+            strategies = self.model.get_possible_strategies_for_coalition(current_state, self.current_coalition)
+            strategies = self.eliminate_dominated_strategies(current_state, strategies)
+            strategies = self.sort_strategies(current_state, strategies)
 
         for strategy in strategies:
-            next_states = self.get_actions_result(current_state, list(strategy))
+            next_states = self.get_coalition_actions_result(current_state, list(strategy))
             result = False
             new_winning_strategy = self.copy_strategy(winning_strategy)
             new_winning_strategy[current_state] = list(strategy)
@@ -87,14 +92,14 @@ class StrategyComparer:
         return False, winning_strategy
 
     def check_epistemic_strategy(self, state: int, strategy: List[List]):
-        epistemic_class = self.model.epistemic_class_for_state(state, 0)
+        epistemic_class = self.model.epistemic_class_for_state_and_coalition(state, self.current_coalition)
         for epistemic_state in epistemic_class:
             if strategy[epistemic_state] is not None:
                 return strategy[epistemic_state]
 
         return None
 
-    def eliminate_strategies(self, state: int, strategies: List) -> List:
+    def eliminate_dominated_strategies(self, state: int, strategies: List) -> List:
         """Eliminates dominated strategies"""
         strat_chosen = []
         remaining_strat = []
@@ -106,9 +111,6 @@ class StrategyComparer:
                 continue
 
             for j in range(i + 1, len(strategies)):
-                # 2 - equal
-                # 1 - 2s better
-                # 0 - 1s better
                 compare_result = self.basic_h(state, strategies[i], strategies[j])
                 if compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.FIRST_BETTER:
                     strat_chosen[j] = False
@@ -123,7 +125,11 @@ class StrategyComparer:
 
     def sort_strategies(self, state: int, strategies: List) -> List:
         """Sort strategies using some heuristics"""
-        # TODO implement
+        for i in range(0, len(strategies)):
+            for j in range(i, len(strategies) - 1):
+                compare_result = self.current_heuristic(state, strategies[j], strategies[j+1])
+                if compare_result == self.CompareResult.SECOND_BETTER:
+                    strategies[j], strategies[j+1] = strategies[j+1], strategies[j]
         return strategies
 
     def simplify_strategy(self, strategy: list, heuristic):
@@ -197,6 +203,23 @@ class StrategyComparer:
         result = []
         for transition in self.model.graph[state]:
             if transition.actions == actions:
+                result.append(transition.next_state)
+
+        return sorted(result)
+
+    def get_coalition_actions_result(self, state: int, actions: List[str]) -> list:
+        result = []
+        for transition in self.model.graph[state]:
+            is_ok = True
+            i = 0
+            for agent_id in self.current_coalition:
+                if actions[i] != transition.actions[agent_id]:
+                    is_ok = False
+                    break
+
+                i += 1
+
+            if is_ok:
                 result.append(transition.next_state)
 
         return sorted(result)
