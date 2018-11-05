@@ -1,7 +1,7 @@
 theory PretaVote
 begin
 
-builtins: symmetric-encryption, asymmetric-encryption, hashing, signing, diffie-hellman
+builtins: multiset, symmetric-encryption, asymmetric-encryption, hashing, signing, diffie-hellman
 
 
 // ---------------- RULES ----------------
@@ -24,6 +24,7 @@ rule InitialSetup:
         GenerateVotersRule($A),
         GenerateCandidatesRule($A),
         GenerateBallotsRule($A),
+        GenerateCountersRule($A),
         !ElectionAuthority($E)
     ]
 
@@ -48,10 +49,23 @@ rule GenerateCandidates:
     ]
   --[ GenerateCandidates() ]->
     [
-        !Candidate($C1),
-        !Candidate($C2),
-        !Candidate($C3)
+        !Candidate('C1'),
+        !Candidate('C2'),
+        !Candidate('C3')
     ]
+
+rule GenerateCounters:
+    [
+        GenerateCountersRule(A)
+    ]
+  --[ GenerateCounters() ]->
+    [
+        Counter('C1', '0'),
+        Counter('C2', '0'),
+        Counter('C3', '0')
+    ]
+
+// --- BALLOT GENERATION ---
 
 rule GenerateBallots:
     [
@@ -78,45 +92,88 @@ rule GenerateBallotWithOrder:
     ]
 
 rule GenerateBallotOnion:
+    let
+        onion = aenc(<C1, C2, C3, ~d>, pkE)
+    in
     [
         !ElectionAuthority(E),
         !Pk(E, pkE),
         Fr(~d),
         BallotWithOrder(B, C1, C2, C3)
     ]
-  --[ GenerateBallotOnion(aenc(<C1, C2, C3, d>, pkE)) ]->
+  --[ GenerateBallotOnion(onion) ]->
     [
-        BallotWithOrderAndOnion(B, C1, C2, C3, aenc(<C1, C2, C3, d>, pkE))
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
+
+// --- VOTE CASTING ---
 
 rule CastVoteForFirst:
     [
-        Voter($V),
+        Voter(V),
         BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
-  --[ CastVote($V, '1', onion) ]->
+  --[ CastVote(V, '1', onion) ]->
     [
-        Vote($V, '1', onion)
+        Vote(V, '1', onion)
     ]
 
 rule CastVoteForSecond:
     [
-        Voter($V),
+        Voter(V),
         BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
-  --[ CastVote($V, '2', onion) ]->
+  --[ CastVote(V, '2', onion) ]->
     [
-        Vote($V, '2', onion)
+        Vote(V, '2', onion)
     ]
 
 rule CastVoteForThird:
     [
-        Voter($V),
+        Voter(V),
         BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
-  --[ CastVote($V, '3', onion) ]->
+  --[ CastVote(V, '3', onion) ]->
     [
-        Vote($V, '3', onion)
+        Vote(V, '3', onion)
+    ]
+
+// --- VOTE COUNTING ---
+
+rule CountVoteForFirst:
+    [
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        Vote(V, '1', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C1, x)
+    ]
+  --[ CountVote(C1) ]->
+    [
+        Counter(C1, x + '1')
+    ]
+
+rule CountVoteForSecond:
+    [
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        Vote(V, '2', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C2, x)
+    ]
+  --[ CountVote(C2) ]->
+    [
+        Counter(C2, x + '1')
+    ]
+
+rule CountVoteForThird:
+    [
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        Vote(V, '3', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C3, x)
+    ]
+  --[ CountVote(C3) ]->
+    [
+        Counter(C3, x + '1')
     ]
 
 
@@ -125,7 +182,18 @@ rule CastVoteForThird:
 restriction RunInitialSetupOnce:
   "All A1 A2 #i1 #i2. InitialSetup(A1) @i1 & InitialSetup(A2) @i2 ==> #i1=#i2 & A1=A2"
 
+restriction Unique:
+  "All B C1 C2 C3 #i. GenerateBallotWithOrder(B, C1, C2, C3) @i ==> not(C1=C2 | C1=C3 | C2=C3)"
 
 // ---------------- LEMMAS ----------------
+
+lemma AllForC3:
+  exists-trace
+  " Ex #i1 #i2 #i3 #i4.
+        CountVote('C3') @ #i1
+      & CountVote('C3') @ #i2
+      & CountVote('C3') @ #i3
+      & CountVote('C3') @ #i4
+  "
 
 end
