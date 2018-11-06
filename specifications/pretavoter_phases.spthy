@@ -1,9 +1,18 @@
 theory PretaVoterWithPhases
 begin
 
-builtins: multiset, asymmetric-encryption
+builtins: multiset, asymmetric-encryption, xor
 
 // Note: Every Out rule is used only for adversary
+
+// ---------------- FUNCTIONS ----------------
+
+functions: select/2, s/1
+
+equations:
+    select(s(zero), <x.1, x.2, x.3>) = x.1,
+    select(s(s(zero)), <x.1, x.2, x.3>) = x.2,
+    select(s(s(s(zero))), <x.1, x.2, x.3>) = x.3
 
 // ---------------- RULES ----------------
 
@@ -20,12 +29,13 @@ rule AsymmetricKeySetup:
 rule InitialSetup:
     [
     ]
-  --[ InitialSetup($A) ]->
+  --[ InitialSetup($A), RunOnce() ]->
     [
         GenerateVotersRule($A),
         GenerateCandidatesRule($A),
         GenerateBallotsRule($A),
         GenerateCountersRule($A),
+        GenerateChoicesRule($A),
         !ElectionAuthority($E),
         PhaseGeneration($A)
     ]
@@ -68,9 +78,23 @@ rule GenerateCounters:
   --[ GenerateCounters() ]->
     [
         PhaseGeneration(A),
-        Counter('C1', '0'),
-        Counter('C2', '0'),
-        Counter('C3', '0')
+        Counter('C1', '1'),
+        Counter('C2', '1'),
+        Counter('C3', '1')
+    ]
+
+rule GenerateChoices:
+    [
+        PhaseGeneration(A),
+        GenerateChoicesRule(A)
+    ]
+  --[ GenerateChoices() ]->
+    [
+        PhaseGeneration(A),
+        // Possible choices for selecting candidate from the list
+        !Choice(s(zero)),
+        !Choice(s(s(zero))),
+        !Choice(s(s(s(zero))))
     ]
 
 // --- BALLOT GENERATION ---
@@ -122,40 +146,17 @@ rule GenerateBallotOnion:
 
 // --- VOTE CASTING ---
 
-rule CastVoteForFirst:
+rule CastVote:
     [
         PhaseCasting(A),
+        !Choice(c), // Chose candidate: first, second or third
         Voter(V),
         BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
-  --[ CastVote(V, '1', onion) ]->
+  --[ CastVote(V, c, onion) ]->
     [
         PhaseCasting(A),
-        Vote('1', onion)
-    ]
-
-rule CastVoteForSecond:
-    [
-        PhaseCasting(A),
-        Voter(V),
-        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
-    ]
-  --[ CastVote(V, '2', onion) ]->
-    [
-        PhaseCasting(A),
-        Vote('2', onion)
-    ]
-
-rule CastVoteForThird:
-    [
-        PhaseCasting(A),
-        Voter(V),
-        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
-    ]
-  --[ CastVote(V, '3', onion) ]->
-    [
-        PhaseCasting(A),
-        Vote('3', onion)
+        Vote(c, onion)
     ]
 
 // --- VOTE PUBLISHING ---
@@ -176,46 +177,22 @@ rule PublishVote:
 
 // --- VOTE COUNTING ---
 
-rule CountVoteForFirst:
+rule CountVote:
+    let
+        // Get selected candidate from the onion order
+        chosen = select(selection, <C1, C2, C3>)
+    in
     [
         PhaseCounting(A),
         !ElectionAuthority(E),
         !Sk(E, skE),
-        VoteToCount('1', aenc(<C1, C2, C3, d>, pk(skE))),
-        Counter(C1, x)
+        VoteToCount(selection, aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(chosen, x)
     ]
-  --[ CountVote(C1) ]->
+  --[ CountVote(chosen) ]->
     [
         PhaseCounting(A),
-        Counter(C1, x + '1')
-    ]
-
-rule CountVoteForSecond:
-    [
-        PhaseCounting(A),
-        !ElectionAuthority(E),
-        !Sk(E, skE),
-        VoteToCount('2', aenc(<C1, C2, C3, d>, pk(skE))),
-        Counter(C2, x)
-    ]
-  --[ CountVote(C2) ]->
-    [
-        PhaseCounting(A),
-        Counter(C2, x + '1')
-    ]
-
-rule CountVoteForThird:
-    [
-        PhaseCounting(A),
-        !ElectionAuthority(E),
-        !Sk(E, skE),
-        VoteToCount('3', aenc(<C1, C2, C3, d>, pk(skE))),
-        Counter(C3, x)
-    ]
-  --[ CountVote(C3) ]->
-    [
-        PhaseCounting(A),
-        Counter(C3, x + '1')
+        Counter(chosen, x + '1')
     ]
 
 // --- RESULT PUBLISHING ---
@@ -274,7 +251,7 @@ rule MoveToResults:
 // ---------------- RESTRICTIONS ----------------
 
 restriction RunInitialSetupOnce:
-  "All A1 A2 #i1 #i2. InitialSetup(A1) @i1 & InitialSetup(A2) @i2 ==> #i1=#i2 & A1=A2"
+  "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
 
 restriction Unique:
   "All B C1 C2 C3 #i. GenerateBallotWithOrder(B, C1, C2, C3) @i ==> not(C1=C2 | C1=C3 | C2=C3)"
