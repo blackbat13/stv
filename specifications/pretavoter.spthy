@@ -1,8 +1,9 @@
-theory PretaVote
+theory PretaVoter
 begin
 
-builtins: multiset, symmetric-encryption, asymmetric-encryption, hashing, signing, diffie-hellman
+builtins: multiset, asymmetric-encryption
 
+// Note: Every Out rule is used only for adversary
 
 // ---------------- RULES ----------------
 
@@ -28,7 +29,7 @@ rule InitialSetup:
         !ElectionAuthority($E)
     ]
 
-// To change the number of voters just change the output of this rule
+// To change the number of voters change the output of this rule and rules for vote counting and publishing
 rule GenerateVoters:
     [
         GenerateVotersRule(A)
@@ -47,7 +48,7 @@ rule GenerateCandidates:
     [
         GenerateCandidatesRule(A)
     ]
-  --[ GenerateCandidates() ]->
+  --[ GenerateCandidates(A) ]->
     [
         !Candidate('C1'),
         !Candidate('C2'),
@@ -60,6 +61,8 @@ rule GenerateCounters:
     ]
   --[ GenerateCounters() ]->
     [
+        VotesCasted('0'),
+        VotesCounted('0'),
         Counter('C1', '0'),
         Counter('C2', '0'),
         Counter('C3', '0')
@@ -110,71 +113,117 @@ rule GenerateBallotOnion:
 
 rule CastVoteForFirst:
     [
+        VotesCasted(x),
         Voter(V),
         BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
   --[ CastVote(V, '1', onion) ]->
     [
-        Vote(V, '1', onion)
+        VotesCasted(x + '1'),
+        Vote('1', onion)
     ]
 
 rule CastVoteForSecond:
     [
+        VotesCasted(x),
         Voter(V),
         BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
   --[ CastVote(V, '2', onion) ]->
     [
-        Vote(V, '2', onion)
+        VotesCasted(x + '1'),
+        Vote('2', onion)
     ]
 
 rule CastVoteForThird:
     [
+        VotesCasted(x),
         Voter(V),
         BallotWithOrderAndOnion(B, C1, C2, C3, onion)
     ]
   --[ CastVote(V, '3', onion) ]->
     [
-        Vote(V, '3', onion)
+        VotesCasted(x + '1'),
+        Vote('3', onion)
+    ]
+
+// --- VOTE PUBLISHING ---
+
+rule PublishVote:
+    [
+        // if all votes are casted
+        VotesCasted(('0' + '1' + '1' + '1' + '1')),
+        Vote(selection, onion)
+    ]
+  --[ PublishVote(selection, onion) ]->
+    [
+        VotesCasted(('0' + '1' + '1' + '1' + '1')),
+        !Board(selection, onion),
+        // We need non persistent facts for votes to count
+        // in order to count every vote only once
+        VoteToCount(selection, onion)
+        //Out(<selection, onion>)
     ]
 
 // --- VOTE COUNTING ---
 
 rule CountVoteForFirst:
     [
+        VotesCounted(x),
         !ElectionAuthority(E),
         !Sk(E, skE),
-        Vote(V, '1', aenc(<C1, C2, C3, d>, pk(skE))),
+        VoteToCount('1', aenc(<C1, C2, C3, d>, pk(skE))),
         Counter(C1, x)
     ]
   --[ CountVote(C1) ]->
     [
+        VotesCounted(x + '1'),
         Counter(C1, x + '1')
     ]
 
 rule CountVoteForSecond:
     [
+        VotesCounted(x),
         !ElectionAuthority(E),
         !Sk(E, skE),
-        Vote(V, '2', aenc(<C1, C2, C3, d>, pk(skE))),
+        VoteToCount('2', aenc(<C1, C2, C3, d>, pk(skE))),
         Counter(C2, x)
     ]
   --[ CountVote(C2) ]->
     [
+        VotesCounted(x + '1'),
         Counter(C2, x + '1')
     ]
 
 rule CountVoteForThird:
     [
+        VotesCounted(x),
         !ElectionAuthority(E),
         !Sk(E, skE),
-        Vote(V, '3', aenc(<C1, C2, C3, d>, pk(skE))),
+        VoteToCount('3', aenc(<C1, C2, C3, d>, pk(skE))),
         Counter(C3, x)
     ]
   --[ CountVote(C3) ]->
     [
+        VotesCounted(x + '1'),
         Counter(C3, x + '1')
     ]
+
+// --- RESULT PUBLISHING ---
+
+rule PublishResults:
+    [
+        // Only when all votes were counted results can be published
+        VotesCounted(('0' + '1' + '1' + '1' + '1')),
+        Counter(C, x)
+    ]
+  --[ PublishResult(C, x) ]->
+    [
+        VotesCounted(('0' + '1' + '1' + '1' + '1')),
+        !Result(C, x),
+        Out(<C, x>)
+    ]
+
 
 
 // ---------------- RESTRICTIONS ----------------
@@ -187,13 +236,10 @@ restriction Unique:
 
 // ---------------- LEMMAS ----------------
 
-lemma AllForC3:
+lemma ResultsPublished:
   exists-trace
-  " Ex #i1 #i2 #i3 #i4.
-        CountVote('C3') @ #i1
-      & CountVote('C3') @ #i2
-      & CountVote('C3') @ #i3
-      & CountVote('C3') @ #i4
+  " Ex x1 #i1.
+        PublishResult('C1', x1) @ #i1
   "
 
 end

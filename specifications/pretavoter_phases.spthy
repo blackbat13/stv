@@ -1,0 +1,290 @@
+theory PretaVoterWithPhases
+begin
+
+builtins: multiset, asymmetric-encryption
+
+// Note: Every Out rule is used only for adversary
+
+// ---------------- RULES ----------------
+
+rule AsymmetricKeySetup:
+    [
+        Fr(~f)
+    ]
+  --[ AsymmetricKeySetup($A, pk(~f), ~f) ]->
+    [
+        !Sk($A, ~f),
+        !Pk($A, pk(~f))
+    ]
+
+rule InitialSetup:
+    [
+    ]
+  --[ InitialSetup($A) ]->
+    [
+        GenerateVotersRule($A),
+        GenerateCandidatesRule($A),
+        GenerateBallotsRule($A),
+        GenerateCountersRule($A),
+        !ElectionAuthority($E),
+        PhaseGeneration($A)
+    ]
+
+// To change the number of voters change the output of this rule and rules for vote counting and publishing
+rule GenerateVoters:
+    [
+        PhaseGeneration(A),
+        GenerateVotersRule(A)
+    ]
+  --[ GenerateVoters() ]->
+    [
+        PhaseGeneration(A),
+        // n - number of voters
+        // for i in (1..n): append Voter($Vi)
+        Voter($V1),
+        Voter($V2),
+        Voter($V3),
+        Voter($V4)
+    ]
+
+rule GenerateCandidates:
+    [
+        PhaseGeneration(A),
+        GenerateCandidatesRule(A)
+    ]
+  --[ GenerateCandidates(A) ]->
+    [
+        PhaseGeneration(A),
+        !Candidate('C1'),
+        !Candidate('C2'),
+        !Candidate('C3')
+    ]
+
+rule GenerateCounters:
+    [
+        PhaseGeneration(A),
+        GenerateCountersRule(A)
+    ]
+  --[ GenerateCounters() ]->
+    [
+        PhaseGeneration(A),
+        Counter('C1', '0'),
+        Counter('C2', '0'),
+        Counter('C3', '0')
+    ]
+
+// --- BALLOT GENERATION ---
+
+rule GenerateBallots:
+    [
+        PhaseGeneration(A),
+        GenerateBallotsRule(A)
+    ]
+  --[ GenerateBallots() ]->
+    [
+        PhaseGeneration(A),
+        Ballot($B1),
+        Ballot($B2),
+        Ballot($B3),
+        Ballot($B4)
+    ]
+
+rule GenerateBallotWithOrder:
+    [
+        PhaseGeneration(A),
+        Ballot(B),
+        !Candidate(C1),
+        !Candidate(C2),
+        !Candidate(C3)
+    ]
+  --[ GenerateBallotWithOrder(B, C1, C2, C3) ]->
+    [
+        PhaseGeneration(A),
+        BallotWithOrder(B, C1, C2, C3) // order should be random (tamarin will decide, which value assign to C1, C2, ...)
+    ]
+
+rule GenerateBallotOnion:
+    let
+        onion = aenc(<C1, C2, C3, ~d>, pkE)
+    in
+    [
+        PhaseGeneration(A),
+        !ElectionAuthority(E),
+        !Pk(E, pkE),
+        Fr(~d),
+        BallotWithOrder(B, C1, C2, C3)
+    ]
+  --[ GenerateBallotOnion(onion) ]->
+    [
+        PhaseGeneration(A),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+
+// --- VOTE CASTING ---
+
+rule CastVoteForFirst:
+    [
+        PhaseCasting(A),
+        Voter(V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote(V, '1', onion) ]->
+    [
+        PhaseCasting(A),
+        Vote('1', onion)
+    ]
+
+rule CastVoteForSecond:
+    [
+        PhaseCasting(A),
+        Voter(V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote(V, '2', onion) ]->
+    [
+        PhaseCasting(A),
+        Vote('2', onion)
+    ]
+
+rule CastVoteForThird:
+    [
+        PhaseCasting(A),
+        Voter(V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote(V, '3', onion) ]->
+    [
+        PhaseCasting(A),
+        Vote('3', onion)
+    ]
+
+// --- VOTE PUBLISHING ---
+
+rule PublishVote:
+    [
+        PhasePublishing(A),
+        Vote(selection, onion)
+    ]
+  --[ PublishVote(selection, onion) ]->
+    [
+        PhasePublishing(A),
+        !Board(selection, onion),
+        // We need non persistent facts for votes to count
+        // in order to count every vote only once
+        VoteToCount(selection, onion)
+    ]
+
+// --- VOTE COUNTING ---
+
+rule CountVoteForFirst:
+    [
+        PhaseCounting(A),
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        VoteToCount('1', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C1, x)
+    ]
+  --[ CountVote(C1) ]->
+    [
+        PhaseCounting(A),
+        Counter(C1, x + '1')
+    ]
+
+rule CountVoteForSecond:
+    [
+        PhaseCounting(A),
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        VoteToCount('2', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C2, x)
+    ]
+  --[ CountVote(C2) ]->
+    [
+        PhaseCounting(A),
+        Counter(C2, x + '1')
+    ]
+
+rule CountVoteForThird:
+    [
+        PhaseCounting(A),
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        VoteToCount('3', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C3, x)
+    ]
+  --[ CountVote(C3) ]->
+    [
+        PhaseCounting(A),
+        Counter(C3, x + '1')
+    ]
+
+// --- RESULT PUBLISHING ---
+
+rule PublishResults:
+    [
+        PhaseResults(A),
+        Counter(C, x)
+    ]
+  --[ PublishResult(C, x) ]->
+    [
+        PhaseResults(A),
+        !Result(C, x)
+    ]
+
+// --- PHASE CHANGING ---
+
+rule MoveToCasting:
+    [
+        PhaseGeneration(A)
+    ]
+  --[ MoveToCasting() ]->
+    [
+        PhaseCasting(A)
+    ]
+
+rule MoveToPublishing:
+    [
+        PhaseCasting(A)
+    ]
+  --[ MoveToPublishing() ]->
+    [
+        PhasePublishing(A)
+    ]
+
+rule MoveToCounting:
+    [
+        PhasePublishing(A)
+    ]
+  --[ MoveToCounting() ]->
+    [
+        PhaseCounting(A)
+    ]
+
+rule MoveToResults:
+    [
+        PhaseCounting(A)
+    ]
+  --[ MoveToResults() ]->
+    [
+        PhaseResults(A)
+    ]
+
+
+
+// ---------------- RESTRICTIONS ----------------
+
+restriction RunInitialSetupOnce:
+  "All A1 A2 #i1 #i2. InitialSetup(A1) @i1 & InitialSetup(A2) @i2 ==> #i1=#i2 & A1=A2"
+
+restriction Unique:
+  "All B C1 C2 C3 #i. GenerateBallotWithOrder(B, C1, C2, C3) @i ==> not(C1=C2 | C1=C3 | C2=C3)"
+
+// ---------------- LEMMAS ----------------
+
+lemma ResultsPublished:
+  exists-trace
+  " Ex x1 #i1.
+        PublishResult('C1', x1) @ #i1
+  "
+
+end
