@@ -1,0 +1,40 @@
+theory ChoseTest
+begin
+
+builtins: xor
+
+functions: select/2, s/1
+
+equations:
+    select(s(zero), <x.1, x.2, x.3>) = x.1,
+    select(s(s(zero)), <x.1, x.2, x.3>) = x.2,
+    select(s(s(s(zero))), <x.1, x.2, x.3>) = x.3
+
+rule InitialSetup:
+    [
+
+    ]
+  --[ InitialSetup($A), RunOnce() ]->
+    [
+        Choice(s(s(zero)))
+    ]
+
+rule Increment:
+    [
+        Choice(x)
+    ]
+  --[ Choice(select(x, <'1', '2', '3'>)) ]->
+    [
+
+    ]
+
+restriction RunInitialSetupOnce:
+  "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
+
+lemma Increment:
+  exists-trace
+  " Ex #i1.
+        Choice('1') @ #i1
+  "
+
+end

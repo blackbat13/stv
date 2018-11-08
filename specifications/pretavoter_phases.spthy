@@ -1,0 +1,267 @@
+theory PretaVoterWithPhases
+begin
+
+builtins: multiset, asymmetric-encryption, xor
+
+// Note: Every Out rule is used only for adversary
+
+// ---------------- FUNCTIONS ----------------
+
+functions: select/2, s/1
+
+equations:
+    select(s(zero), <x.1, x.2, x.3>) = x.1,
+    select(s(s(zero)), <x.1, x.2, x.3>) = x.2,
+    select(s(s(s(zero))), <x.1, x.2, x.3>) = x.3
+
+// ---------------- RULES ----------------
+
+rule AsymmetricKeySetup:
+    [
+        Fr(~f)
+    ]
+  --[ AsymmetricKeySetup($A, pk(~f), ~f) ]->
+    [
+        !Sk($A, ~f),
+        !Pk($A, pk(~f))
+    ]
+
+rule InitialSetup:
+    [
+    ]
+  --[ InitialSetup($A), RunOnce() ]->
+    [
+        GenerateVotersRule($A),
+        GenerateCandidatesRule($A),
+        GenerateBallotsRule($A),
+        GenerateCountersRule($A),
+        GenerateChoicesRule($A),
+        !ElectionAuthority($E),
+        PhaseGeneration($A)
+    ]
+
+// To change the number of voters change the output of this rule and rules for vote counting and publishing
+rule GenerateVoters:
+    [
+        PhaseGeneration(A),
+        GenerateVotersRule(A)
+    ]
+  --[ GenerateVoters() ]->
+    [
+        PhaseGeneration(A),
+        // n - number of voters
+        // for i in (1..n): append Voter($Vi)
+        Voter($V1),
+        Voter($V2),
+        Voter($V3),
+        Voter($V4)
+    ]
+
+rule GenerateCandidates:
+    [
+        PhaseGeneration(A),
+        GenerateCandidatesRule(A)
+    ]
+  --[ GenerateCandidates(A) ]->
+    [
+        PhaseGeneration(A),
+        !Candidate('C1'),
+        !Candidate('C2'),
+        !Candidate('C3')
+    ]
+
+rule GenerateCounters:
+    [
+        PhaseGeneration(A),
+        GenerateCountersRule(A)
+    ]
+  --[ GenerateCounters() ]->
+    [
+        PhaseGeneration(A),
+        Counter('C1', '1'),
+        Counter('C2', '1'),
+        Counter('C3', '1')
+    ]
+
+rule GenerateChoices:
+    [
+        PhaseGeneration(A),
+        GenerateChoicesRule(A)
+    ]
+  --[ GenerateChoices() ]->
+    [
+        PhaseGeneration(A),
+        // Possible choices for selecting candidate from the list
+        !Choice(s(zero)),
+        !Choice(s(s(zero))),
+        !Choice(s(s(s(zero))))
+    ]
+
+// --- BALLOT GENERATION ---
+
+rule GenerateBallots:
+    [
+        PhaseGeneration(A),
+        GenerateBallotsRule(A)
+    ]
+  --[ GenerateBallots() ]->
+    [
+        PhaseGeneration(A),
+        Ballot($B1),
+        Ballot($B2),
+        Ballot($B3),
+        Ballot($B4)
+    ]
+
+rule GenerateBallotWithOrder:
+    [
+        PhaseGeneration(A),
+        Ballot(B),
+        !Candidate(C1),
+        !Candidate(C2),
+        !Candidate(C3)
+    ]
+  --[ GenerateBallotWithOrder(B, C1, C2, C3) ]->
+    [
+        PhaseGeneration(A),
+        BallotWithOrder(B, C1, C2, C3) // order should be random (tamarin will decide, which value assign to C1, C2, ...)
+    ]
+
+rule GenerateBallotOnion:
+    let
+        onion = aenc(<C1, C2, C3, ~d>, pkE)
+    in
+    [
+        PhaseGeneration(A),
+        !ElectionAuthority(E),
+        !Pk(E, pkE),
+        Fr(~d),
+        BallotWithOrder(B, C1, C2, C3)
+    ]
+  --[ GenerateBallotOnion(onion) ]->
+    [
+        PhaseGeneration(A),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+
+// --- VOTE CASTING ---
+
+rule CastVote:
+    [
+        PhaseCasting(A),
+        !Choice(c), // Chose candidate: first, second or third
+        Voter(V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote(V, c, onion) ]->
+    [
+        PhaseCasting(A),
+        Vote(c, onion)
+    ]
+
+// --- VOTE PUBLISHING ---
+
+rule PublishVote:
+    [
+        PhasePublishing(A),
+        Vote(selection, onion)
+    ]
+  --[ PublishVote(selection, onion) ]->
+    [
+        PhasePublishing(A),
+        !Board(selection, onion),
+        // We need non persistent facts for votes to count
+        // in order to count every vote only once
+        VoteToCount(selection, onion)
+    ]
+
+// --- VOTE COUNTING ---
+
+rule CountVote:
+    let
+        // Get selected candidate from the onion order
+        chosen = select(selection, <C1, C2, C3>)
+    in
+    [
+        PhaseCounting(A),
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        VoteToCount(selection, aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(chosen, x)
+    ]
+  --[ CountVote(chosen) ]->
+    [
+        PhaseCounting(A),
+        Counter(chosen, x + '1')
+    ]
+
+// --- RESULT PUBLISHING ---
+
+rule PublishResults:
+    [
+        PhaseResults(A),
+        Counter(C, x)
+    ]
+  --[ PublishResult(C, x) ]->
+    [
+        PhaseResults(A),
+        !Result(C, x)
+    ]
+
+// --- PHASE CHANGING ---
+
+rule MoveToCasting:
+    [
+        PhaseGeneration(A)
+    ]
+  --[ MoveToCasting() ]->
+    [
+        PhaseCasting(A)
+    ]
+
+rule MoveToPublishing:
+    [
+        PhaseCasting(A)
+    ]
+  --[ MoveToPublishing() ]->
+    [
+        PhasePublishing(A)
+    ]
+
+rule MoveToCounting:
+    [
+        PhasePublishing(A)
+    ]
+  --[ MoveToCounting() ]->
+    [
+        PhaseCounting(A)
+    ]
+
+rule MoveToResults:
+    [
+        PhaseCounting(A)
+    ]
+  --[ MoveToResults() ]->
+    [
+        PhaseResults(A)
+    ]
+
+
+
+// ---------------- RESTRICTIONS ----------------
+
+restriction RunInitialSetupOnce:
+  "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
+
+restriction Unique:
+  "All B C1 C2 C3 #i. GenerateBallotWithOrder(B, C1, C2, C3) @i ==> not(C1=C2 | C1=C3 | C2=C3)"
+
+// ---------------- LEMMAS ----------------
+
+lemma ResultsPublished:
+  exists-trace
+  " Ex x1 #i1.
+        PublishResult('C1', x1) @ #i1
+  "
+
+end

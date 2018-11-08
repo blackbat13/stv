@@ -1,0 +1,33 @@
+theory IncrementTest
+begin
+
+functions: s/1
+
+rule InitialSetup:
+    [
+        Fr(~x)
+    ]
+  --[ InitialSetup($A), RunOnce() ]->
+    [
+        Inc(~x)
+    ]
+
+rule Increment:
+    [
+        Inc(x)
+    ]
+  --[ Increment(x) ]->
+    [
+        Inc(s(x))
+    ]
+
+restriction RunInitialSetupOnce:
+  "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
+
+lemma Increment:
+  exists-trace
+  " Ex x #i1.
+        Increment(s(s(x))) @ #i1
+  "
+
+end
