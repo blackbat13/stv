@@ -61,21 +61,33 @@ class CastlesIsplGeneratorSubjective:
         return vars
 
     def __create_environment_actions(self):
-        actions = "\tActions = {none};\n"
+        actions = "\tActions = {"
+        for life in range(0, self.castles_life[2] + 1):
+            actions += f"decideHP{life}, "
+
+        actions += "wait};\n"
         return actions
 
     def __create_environment_protocol(self):
-        protocol = "\tProtocol:\n\t\tOther: {none};\n\tend Protocol\n"
+        protocol = "\tProtocol:\n"
+        protocol += "\t\tdecide=true: {"
+        for life in range(0, self.castles_life[2] + 1):
+            protocol += f"decideHP{life}, "
+
+        protocol = protocol.rstrip(" ,")
+        protocol += "};\n"
+        protocol += "\t\tOther: {wait};\n"
+        protocol += "\tend Protocol\n"
         return protocol
 
     def __create_environment_evolution(self):
         evolution = "\tEvolution:\n"
 
         evolution += "\t\tdecide=false if decide=true;\n"
-        for life in range(0, self.castles_life[2]):
-            evolution += f"\t\tcastle3HP={life} if decide=true;\n"
+        for life in range(0, self.castles_life[2] + 1):
+            evolution += f"\t\tcastle3HP={life} if Action=decideHP{life};\n"
 
-        evolution += "\t\tcastle3Defeated=true if castle3HP=0;\n"
+        evolution += "\t\tcastle3Defeated=true if Action=decideHP0;\n"
 
         actions = []
 
@@ -162,13 +174,18 @@ class CastlesIsplGeneratorSubjective:
                 continue
             actions += f"attack{castle_id+1}, "
         actions += "defend, "
+        if worker_castle_id == 2:
+            actions += "decideTrue, decideFalse, "
         actions += "wait};\n"
         return actions
 
     def __create_worker_protocol(self, worker_id: int):
         protocol = "\tProtocol:\n"
-        protocol += "\t\tEnvironment.decide=true: " + "{wait};\n"
         worker_castle_id = self.get_castle_id(worker_id)
+        if worker_castle_id == 2:
+            protocol += "\t\tEnvironment.decide=true: " + "{decideTrue, decideFalse};\n"
+        else:
+            protocol += "\t\tEnvironment.decide=true: " + "{wait};\n"
         protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=true and Environment.decide=false: " + "{wait};\n"
         protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=true and Environment.decide=false: " + "{defend, "
         for castle_id in range(0, self.no_castles):
@@ -191,8 +208,8 @@ class CastlesIsplGeneratorSubjective:
         evolution += "\t\tcanDefend=false if Action=defend;\n"
         evolution += "\t\tcanDefend=true if canDefend=false;\n"
         if worker_castle_id == 2:
-            evolution += "\t\tcanDefend=true if Environment.decide=true;\n"
-            evolution += "\t\tcanDefend=false if Environment.decide=true;\n"
+            evolution += "\t\tcanDefend=true if Action=decideTrue;\n"
+            evolution += "\t\tcanDefend=false if Action=decideFalse;\n"
         evolution += "\tend Evolution\n"
         return evolution
 
