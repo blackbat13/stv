@@ -137,7 +137,7 @@ class CastlesIsplGenerator:
 
     def __create_worker(self, worker_id: int):
         agent = f"Agent Worker{worker_id+1}\n"
-        agent += self.__create_worker_lobsvars(worker_id)
+        # agent += self.__create_worker_lobsvars(worker_id)
         agent += self.__create_worker_vars(worker_id)
         agent += self.__create_worker_actions(worker_id)
         agent += self.__create_worker_protocol(worker_id)
