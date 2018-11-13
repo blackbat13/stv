@@ -65,7 +65,7 @@ class CastleDfsTest:
     def generate_winning_states(self):
         self.winning_states = []
         for i, state in enumerate(self.castle_model.model.states):
-            if state['lifes'][2] == 0:
+            if state['defeated'][2]:
                 if self.DEBUG:
                     print(f'Winning state: {state}')
                 self.winning_states.append(i)
