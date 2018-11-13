@@ -21,6 +21,7 @@ class CastlesIsplGeneratorSubjective:
         self.ispl_model += self.__create_environment()
         for worker_id in range(0, self.no_workers):
             self.ispl_model += self.__create_worker(worker_id)
+        self.ispl_model += self.__create_decider()
         self.ispl_model += self.__create_evaluation()
         self.ispl_model += self.__create_init_states()
         self.ispl_model += self.__create_groups()
@@ -62,20 +63,11 @@ class CastlesIsplGeneratorSubjective:
 
     def __create_environment_actions(self):
         actions = "\tActions = {"
-        for life in range(0, self.castles_life[2] + 1):
-            actions += f"decideHP{life}, "
-
         actions += "wait};\n"
         return actions
 
     def __create_environment_protocol(self):
         protocol = "\tProtocol:\n"
-        protocol += "\t\tdecide=true: {"
-        for life in range(0, self.castles_life[2] + 1):
-            protocol += f"decideHP{life}, "
-
-        protocol = protocol.rstrip(" ,")
-        protocol += "};\n"
         protocol += "\t\tOther: {wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
@@ -85,9 +77,9 @@ class CastlesIsplGeneratorSubjective:
 
         evolution += "\t\tdecide=false if decide=true;\n"
         for life in range(0, self.castles_life[2] + 1):
-            evolution += f"\t\tcastle3HP={life} if Action=decideHP{life};\n"
+            evolution += f"\t\tcastle3HP={life} if Decider.Action=decideHP{life};\n"
 
-        evolution += "\t\tcastle3Defeated=true if Action=decideHP0;\n"
+        evolution += "\t\tcastle3Defeated=true if Decider.Action=decideHP0;\n"
 
         actions = []
 
@@ -216,6 +208,46 @@ class CastlesIsplGeneratorSubjective:
         evolution += "\tend Evolution\n"
         return evolution
 
+    def __create_decider(self):
+        agent = f"Agent Decider\n"
+        agent += self.__create_decider_vars()
+        agent += self.__create_decider_actions()
+        agent += self.__create_decider_protocol()
+        agent += self.__create_decider_evolution()
+        agent += "end Agent\n\n"
+        return agent
+
+    def __create_decider_vars(self):
+        vars = "\tVars:\n"
+        vars += "\t\tdecide: boolean;\n"
+        vars += "\tend Vars\n"
+        return vars
+
+    def __create_decider_actions(self):
+        actions = "\tActions = {"
+        for life in range(0, self.castles_life[2] + 1):
+            actions += f"decideHP{life}, "
+        actions += "wait};\n"
+        return actions
+
+    def __create_decider_protocol(self):
+        protocol = "\tProtocol:\n"
+        protocol += "\t\tdecide=true: {"
+        for life in range(0, self.castles_life[2] + 1):
+            protocol += f"decideHP{life}, "
+
+        protocol = protocol.rstrip(" ,")
+        protocol += "};\n"
+        protocol += "\t\tOther: {wait};\n"
+        protocol += "\tend Protocol\n"
+        return protocol
+
+    def __create_decider_evolution(self):
+        evolution = "\tEvolution:\n"
+        evolution += "\t\tdecide=false if decide=true;\n"
+        evolution += "\tend Evolution\n"
+        return evolution
+
     def __create_evaluation(self):
         evaluation = "Evaluation\n"
         evaluation += "\tcastle3Defeated if Environment.castle3Defeated = true;\n"
@@ -231,7 +263,7 @@ class CastlesIsplGeneratorSubjective:
         for worker_id in range(0, self.no_workers):
             init_states += f"\tWorker{worker_id + 1}.canDefend=true and\n"
 
-        init_states += "\tEnvironment.decide=true;\n"
+        init_states += "\tEnvironment.decide=true and Decider.decide=true;\n"
         init_states += "end InitStates\n\n"
         return init_states
 
@@ -266,7 +298,7 @@ class CastlesIsplGeneratorSubjective:
 
 
 castles_ispl_generator = CastlesIsplGeneratorSubjective()
-workers = [1, 1, 2]
+workers = [1, 1, 1]
 f = open(f"castles{workers[0]}{workers[1]}{workers[2]}subjective.ispl", "w")
 f.write(castles_ispl_generator.create_ispl_model(workers))
 f.close()
