@@ -40,9 +40,9 @@ class StrategyComparer:
         self.current_heuristic = heuristic
         self.current_coalition = coalition
         # TODO precompute perfect information strategy for enemy coalition for formula <<A>>G !p
-        return self.strategy_dfs(initial_state, winning_strategy)
+        return self.strategy_dfs(initial_state, [], winning_strategy)
 
-    def strategy_dfs(self, current_state: int, winning_strategy: List) -> (bool, List):
+    def strategy_dfs(self, current_state: int, epistemic_class: List[int], winning_strategy: List) -> (bool, List):
         """
         Recursive DFS algorithm
 
@@ -54,13 +54,31 @@ class StrategyComparer:
             Currently found strategy
         """
         if current_state in self.winning_states:
-            return True, winning_strategy
+            ok = True
+            for state in epistemic_class:
+                if state not in self.winning_states:
+                    ok = False
+                    break
+            if ok:
+                return True, winning_strategy
 
         if self.dfs_visited_states[current_state]:
             return False, winning_strategy
+        else:
+            for state in epistemic_class:
+                if self.dfs_visited_states[state]:
+                    return False, winning_strategy
 
         if winning_strategy[current_state] is not None:
-            return True, winning_strategy
+            ok = True
+            for i in range(0, len(epistemic_class)):
+                state = epistemic_class[i]
+                if winning_strategy[state] is not None:
+                    ok = False
+                    current_state, epistemic_class[i] = epistemic_class[i], current_state
+                    break
+            if ok:
+                return True, winning_strategy
 
         self.dfs_visited_states[current_state] = True
         epistemic_strategy = self.check_epistemic_strategy(current_state, winning_strategy)
@@ -72,16 +90,31 @@ class StrategyComparer:
             strategies = self.sort_strategies(current_state, strategies)
 
         for strategy in strategies:
-            next_states = self.get_coalition_actions_result(current_state, list(strategy))
             result = False
             new_winning_strategy = self.copy_strategy(winning_strategy)
             new_winning_strategy[current_state] = list(strategy)
-            for state in next_states:
-                (result, next_winning_strategy) = self.strategy_dfs(state, self.copy_strategy(new_winning_strategy))
+            ok = True
+
+            for state in epistemic_class:
+                (result, next_winning_strategy) = self.strategy_dfs(state, [],
+                                                                    self.copy_strategy(new_winning_strategy))
                 if not result:
+                    ok = False
                     break
                 else:
                     self.join_strategies(new_winning_strategy, next_winning_strategy)
+
+            if ok:
+                next_states = self.get_coalition_actions_result(current_state, list(strategy))
+                next_states_grouped = self.group_by_coalition(next_states)
+                for i in range(0, len(next_states_grouped)):
+                    state = next_states_grouped[i][0]
+                    state_epistemic_class = next_states_grouped[i][1]
+                    (result, next_winning_strategy) = self.strategy_dfs(state, state_epistemic_class, self.copy_strategy(new_winning_strategy))
+                    if not result:
+                        break
+                    else:
+                        self.join_strategies(new_winning_strategy, next_winning_strategy)
 
             if result:
                 winning_strategy = new_winning_strategy
@@ -223,6 +256,25 @@ class StrategyComparer:
                 result.append(transition.next_state)
 
         return sorted(result)
+
+    def group_by_coalition(self, states: List[int]):
+        new_states = []
+        added = []
+        for _ in range(0, len(states)):
+            added.append(False)
+        for i in range(0, len(states)):
+            if added[i]:
+                continue
+            state_id = states[i]
+            new_states.append([state_id, []])
+            added[i] = True
+            epistemic_class = self.model.epistemic_class_for_state_and_coalition(state_id, self.current_coalition)
+            for j in range(i+1, len(states)):
+                if not added[j] and states[j] in epistemic_class:
+                    new_states[-1][1].append(states[j])
+                    added[j] = True
+
+        return new_states
 
     def basic_h(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
         strategy1_result = self.get_actions_result(state, strategy1)
