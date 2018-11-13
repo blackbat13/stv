@@ -112,7 +112,10 @@ class CastlesIsplGenerator:
                 for worker_id in range(0, self.no_workers):
                     evolution += f"\t\t\tWorker{worker_id + 1}.Action={round[worker_id]} and\n"
 
-                evolution += f"\t\t\tcastle{castle_id}HP < {castle_lifes[castle_id-1] * -1 + 1};\n"
+                life_req = castle_lifes[castle_id-1] * (-1)
+                if life_req > 3:
+                    life_req = 3
+                evolution += f"\t\t\tcastle{castle_id}HP <= {life_req};\n"
 
             for castle_id in range(1, self.no_castles + 1):
                 if castle_lifes[castle_id - 1] == 0:
@@ -233,7 +236,7 @@ class CastlesIsplGenerator:
 
 
 castles_ispl_generator = CastlesIsplGenerator()
-workers = [1, 1, 1]
+workers = [1, 1, 2]
 f = open(f"castles{workers[0]}{workers[1]}{workers[2]}.ispl", "w")
 f.write(castles_ispl_generator.create_ispl_model(workers))
 f.close()
