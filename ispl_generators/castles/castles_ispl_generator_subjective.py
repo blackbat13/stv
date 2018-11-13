@@ -148,12 +148,22 @@ class CastlesIsplGeneratorSubjective:
 
     def __create_worker(self, worker_id: int):
         agent = f"Agent Worker{worker_id+1}\n"
+        agent += self.__create_worker_lobsvars(worker_id)
         agent += self.__create_worker_vars(worker_id)
         agent += self.__create_worker_actions(worker_id)
         agent += self.__create_worker_protocol(worker_id)
         agent += self.__create_worker_evolution(worker_id)
         agent += "end Agent\n\n"
         return agent
+
+    def __create_worker_lobsvars(self, worker_id: int):
+        lobsvars = "\tLobsvars = {"
+
+        worker_castle_id = self.get_castle_id(worker_id) + 1
+        lobsvars += f"castle{worker_castle_id}HP"
+
+        lobsvars += "};\n"
+        return lobsvars
 
     def __create_worker_vars(self, worker_id: int):
         vars = "\tVars:\n"
