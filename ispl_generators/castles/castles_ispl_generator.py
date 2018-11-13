@@ -121,7 +121,7 @@ class CastlesIsplGenerator:
                 if castle_lifes[castle_id - 1] == 0:
                     continue
 
-                for life in range(0, self.castles_life[castle_id - 1] + 1):
+                for life in range(1, self.castles_life[castle_id - 1] + 1):
                     new_life = life + castle_lifes[castle_id - 1]
                     if new_life < 0:
                         new_life = 0
