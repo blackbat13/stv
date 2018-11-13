@@ -124,7 +124,7 @@ class CastlesIsplGenerator:
                 for life in range(0, self.castles_life[castle_id - 1] + 1):
                     new_life = life + castle_lifes[castle_id - 1]
                     if new_life < 0:
-                        continue
+                        new_life = 0
 
                     evolution += f"\t\tcastle{castle_id}HP={new_life} if\n"
                     for worker_id in range(0, self.no_workers):
@@ -137,12 +137,22 @@ class CastlesIsplGenerator:
 
     def __create_worker(self, worker_id: int):
         agent = f"Agent Worker{worker_id+1}\n"
+        agent += self.__create_worker_lobsvars(worker_id)
         agent += self.__create_worker_vars(worker_id)
         agent += self.__create_worker_actions(worker_id)
         agent += self.__create_worker_protocol(worker_id)
         agent += self.__create_worker_evolution(worker_id)
         agent += "end Agent\n\n"
         return agent
+
+    def __create_worker_lobsvars(self, worker_id: int):
+        lobsvars = "\tLobsvars = {"
+
+        worker_castle_id = self.get_castle_id(worker_id) + 1
+        lobsvars += f"castle{worker_castle_id}HP"
+
+        lobsvars += "};\n"
+        return lobsvars
 
     def __create_worker_vars(self, worker_id: int):
         vars = "\tVars:\n"
