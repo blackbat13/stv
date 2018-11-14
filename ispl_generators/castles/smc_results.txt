@@ -1,0 +1,83 @@
+blackbat@blackbat-Lenovo-ideapad-Y700-17ISK:~/Pobrane/smc$ java -jar smc.jar < examples/castles211.ispl
+SMC - reading from standard input...
+
+
+SMC:
+
+Attempting to synthetise a strategy satysfying the following formula:
+<<Worker1, Worker2, Worker3>>F(castle3Defeated)
+
+
+Strategy FOUND after 11312 miliseconds.
+
+
+First stage took 242 miliseconds.
+
+
+Second stage took 11068 miliseconds.
+
+
+Strategy FOUND after 204.201171875MB peak memory and 4 attempts.
+Agent Worker1 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Worker1.canDefend = true): {defend}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Worker1.canDefend = false): {wait}
+
+Agent Worker2 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Worker2.canDefend = true): {defend}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Worker2.canDefend = false): {wait}
+
+Agent Worker3 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Worker3.canDefend = true): {attack3}
+
+blackbat@blackbat-Lenovo-ideapad-Y700-17ISK:~/Pobrane/smc$ java -jar smc.jar < examples/castles211subjective.ispl
+SMC - reading from standard input...
+
+
+SMC:
+
+Attempting to synthetise a strategy satysfying the following formula:
+<<Worker1, Worker2, Worker3>>F(castle3Defeated)
+
+
+Strategy FOUND after 183627 miliseconds.
+
+
+First stage took 452 miliseconds.
+
+
+Second stage took 183173 miliseconds.
+
+
+Strategy FOUND after 445.1767578125MB peak memory and 45 attempts.
+Agent Worker1 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker1.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker1.canDefend = true): {attack3}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker1.canDefend = true): {wait}
+
+Agent Worker2 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker2.canDefend = true): {attack3}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker2.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker2.canDefend = true): {wait}
+
+Agent Worker3 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker3.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker3.canDefend = true): {attack3}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker3.canDefend = true): {wait}
+
+blackbat@blackbat-Lenovo-ideapad-Y700-17ISK:~/Pobrane/smc$ java -jar smc.jar < examples/castles112subjective.ispl
+SMC - reading from standard input...
+
+
+SMC:
+
+Attempting to synthetise a strategy satysfying the following formula:
+<<Worker1, Worker2>>F(castle3Defeated)
+
+
+NO strategy found after 466.013671875MB peak memory and 257 attempts.
+
+Total time: 806513 miliseconds.
+
+First stage took 934 miliseconds.
+
+Second stage took 805574 miliseconds.
