@@ -20,11 +20,13 @@ class CastleModel(ModelGenerator):
 
     def generate_first_state(self) -> hash:
         defend = []
+        defeated = []
         for castle_id in range(0, len(self.castle_sizes)):
+            defeated.append(False)
             defend.append([])
             for i in range(0, self.castle_sizes[castle_id]):
                 defend[castle_id].append(False)
-        first_state = {'lifes': self.castle_lifes[:], 'defend': defend}
+        first_state = {'lifes': self.castle_lifes[:], 'defend': defend, 'defeated': defeated}
         return first_state
 
     def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
@@ -39,10 +41,8 @@ class CastleModel(ModelGenerator):
                 agent_no = agent_number - prev_size
                 break
 
-        life = state['lifes'][castle_id]
-        # defend = state['defend'][castle_id][agent_no]
-        defend = state['defend'][castle_id]
-        epistemic_state = {'life': life, 'defend': defend}
+        defend = state['defend'][castle_id][agent_no]
+        epistemic_state = {'defend': defend, 'defeated': state['defeated']}
 
         return epistemic_state
 
@@ -62,7 +62,7 @@ class CastleModel(ModelGenerator):
                 for i in range(0, len(self.castle_sizes)):
                     defend.append(state['defend'][i][:])
                 new_state = {'lifes': state['lifes'][:],
-                             'defend': defend}
+                             'defend': defend, 'defeated': state['defeated'][:]}
                 lifes_result = []
                 for i in range(0, len(self.castle_sizes)):
                     lifes_result.append(0)
@@ -100,11 +100,13 @@ class CastleModel(ModelGenerator):
                         new_state['lifes'][i] += lifes_result[i]
                         if new_state['lifes'][i] < 0:
                             new_state['lifes'][i] = 0
+                        if new_state['lifes'][i] == 0:
+                            new_state['defeated'][i] = True
 
                 new_state_number = self.add_state(new_state)
 
                 actions = []
-                for i in range(0, self.no_agents - self.castle_sizes[-1]):
+                for i in range(0, self.no_agents):
                     actions.append(action[i])
 
                 self.model.add_transition(current_state_number, new_state_number, actions)

@@ -52,6 +52,7 @@ class CastleDfsTest:
     def generate_model(self):
         start = time.process_time()
         self.castle_model = CastleModel(castle_sizes=self.castle_sizes, castle_lifes=self.castle_lifes)
+        self.castle_model.model.to_subjective(self.coalition)
         end = time.process_time()
         self.results_file.write(f'Model generated in: {end - start} seconds\n')
         no_states = len(self.castle_model.states)
@@ -65,7 +66,7 @@ class CastleDfsTest:
     def generate_winning_states(self):
         self.winning_states = []
         for i, state in enumerate(self.castle_model.model.states):
-            if state['lifes'][2] == 0:
+            if state['defeated'][2]:
                 if self.DEBUG:
                     print(f'Winning state: {state}')
                 self.winning_states.append(i)
@@ -75,7 +76,7 @@ class CastleDfsTest:
 
     def generate_strategy(self):
         start = time.process_time()
-        (self.result, self.strategy) = self.strategy_comparer.generate_strategy_dfs(0, set(self.winning_states),
+        (self.result, self.strategy) = self.strategy_comparer.generate_strategy_dfs(self.castle_model.model.first_state_no, set(self.winning_states),
                                                                                     self.coalition,
                                                                                     self.strategy_comparer.visited_states_h)
         end = time.process_time()
@@ -90,5 +91,5 @@ class CastleDfsTest:
         return strategy_defined_count
 
 
-castle_dfs_test = CastleDfsTest(castle_sizes=[1, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
+castle_dfs_test = CastleDfsTest(castle_sizes=[2, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
 castle_dfs_test.run_test()
