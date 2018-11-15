@@ -16,8 +16,6 @@ class CastleModel(ModelGenerator):
         self.castle_sizes = castle_sizes
         self.castle_lifes = castle_lifes
         self.castles_no = len(castle_lifes)
-        self.model = SimpleModel(sum(castle_sizes))
-        self.prepare_epistemic_dictionaries()
         self.generate_model()
         self.prepare_epistemic_relation()
 
