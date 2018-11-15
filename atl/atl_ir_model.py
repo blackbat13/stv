@@ -9,12 +9,25 @@ import copy
 class ATLIrModel:
     """Class for creating ATL models with perfect information and imperfect recall"""
     class Transition:
-        next_state: int = 0
-        actions: List[str] = []
-
         def __init__(self, next_state: int, actions: List[str]):
             self.actions = actions[:]
             self.next_state = next_state
+
+        @property
+        def next_state(self) -> int:
+            return self.__next_state
+
+        @next_state.setter
+        def next_state(self, value: int):
+            self.__next_state = value
+
+        @property
+        def actions(self) -> List[str]:
+            return self.__actions
+
+        @actions.setter
+        def actions(self, value: List[str]):
+            self.__actions = value
 
         def to_str(self):
             return f"Next state: {self.next_state}; Actions: {self.actions}"
