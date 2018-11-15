@@ -32,25 +32,6 @@ def and_operator(a, b):
     return c
 
 
-def or_operator(a, b):
-    c = []
-    c += a
-    for item in b:
-        if item not in c:
-            c.append(item)
-
-    return c
-
-
-def not_operator(a, number_of_states):
-    c = []
-    for i in range(0, number_of_states):
-        if i not in a:
-            c.append(i)
-
-    return c
-
-
 class ATLModel:
     number_of_agents = 0
     number_of_states = 0

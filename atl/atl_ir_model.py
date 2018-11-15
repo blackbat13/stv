@@ -1,7 +1,9 @@
 from tools.number_tools import NumberTools
 from tools.array_tools import ArrayTools
 from typing import List, Set
+from tools.disjoint_set import DisjointSet
 import itertools
+import copy
 
 
 class ATLIrModel:
@@ -271,7 +273,6 @@ class ATLirModel(ATLIrModel):
         self.finish_model_called = False
 
     def init_epistemic_relation(self):
-        self.epistemic_class_membership = ArrayTools.create_array_of_size(self.number_of_agents, [])
         self.imperfect_information = ArrayTools.create_array_of_size(self.number_of_agents, [])
 
     def finish_model(self):
@@ -356,6 +357,176 @@ class ATLirModel(ATLIrModel):
                     result = True
                     if not is_winning_state[transition['next_state']]:
                         return False
+
+        return result
+
+    def epistemic_class_for_state_multiple_agents(self, state_number: int, agents_numbers: List[int]) -> Set[int]:
+        """Common Knowledge"""
+        epistemic_class = set()
+        for agent_number in agents_numbers:
+            epistemic_class.update(self.epistemic_class_for_state_one_agent(state_number, agent_number))
+
+        return epistemic_class
+
+    def epistemic_class_for_state_one_agent(self, state_number: int, agent_number: int) -> Set[int]:
+        epistemic_class_number = self.epistemic_class_membership[agent_number][state_number]
+        if epistemic_class_number == -1:
+            return {state_number}
+
+        epistemic_class = self.imperfect_information[agent_number][epistemic_class_number]
+        return epistemic_class
+
+
+class ATLirModelDisjoint(ATLIrModel):
+    """Class for creating ATL models with imperfect information and imperfect recall using disjoint-union structure"""
+    epistemic_class_membership: List[List[int]] = []
+    epistemic_class_disjoint: List[DisjointSet] = []
+    imperfect_information: List[List] = []
+    can_go_there: List[List[dict]] = []
+    finish_model_called = False
+
+    def __init__(self, number_of_agents):
+        super().__init__(number_of_agents)
+        self.init_epistemic_relation()
+        self.finish_model_called = False
+
+    def init_epistemic_relation(self):
+        self.imperfect_information = ArrayTools.create_array_of_size(self.number_of_agents, [])
+        self.epistemic_class_disjoint = [DisjointSet(self.number_of_states) for _ in
+                                         itertools.repeat(None, self.number_of_agents)]
+        self.can_go_there = ArrayTools.create_array_of_size(self.number_of_agents, [])
+
+    def finish_model(self):
+        self.epistemic_class_membership = ArrayTools.create_array_of_size(self.number_of_agents,
+                                                                          ArrayTools.create_value_array_of_size(
+                                                                              self.number_of_states, -1))
+
+    def add_epistemic_class(self, agent_number: int, epistemic_class: Set[int]):
+        """Must be called after creating the whole model"""
+        if not self.finish_model_called:
+            self.finish_model()
+            self.finish_model_called = True
+        self.imperfect_information[agent_number].append(epistemic_class)
+        epistemic_class_number = len(self.imperfect_information[agent_number]) - 1
+        first_state = next(iter(epistemic_class))
+        for state_number in epistemic_class:
+            self.epistemic_class_membership[agent_number][state_number] = epistemic_class_number
+            self.epistemic_class_disjoint[agent_number].union(first_state, state_number)
+
+    def find_where_can_go(self, epistemic_class, epistemic_class_number, agent_number):
+        if len(self.can_go_there[agent_number]) == 0:
+            self.can_go_there[agent_number] = [{} for _ in itertools.repeat(None, self.number_of_states)]
+
+        for action in self.agents_actions[agent_number]:
+            can_go_temp = set()
+            is_first = True
+            for state in epistemic_class:
+                can_go_state_temp = set()
+                for transition in self.transitions[state]:
+                    if transition['actions'][agent_number] == action:
+                        can_go_state_temp.add(transition['next_state'])
+
+                if is_first:
+                    is_first = False
+                    can_go_temp = set(can_go_state_temp)
+                else:
+                    can_go_temp |= can_go_state_temp
+
+                if len(can_go_state_temp) == 0:
+                    can_go_temp = set()
+                    break
+
+            self.can_go_there[agent_number][epistemic_class_number][action] = can_go_temp
+
+    def minimum_formula_one_agent(self, agent_number: int, winning_states: Set[int]) -> Set[int]:
+        result_states = set()
+        result_states.update(winning_states)
+        current_states = winning_states.copy()
+        winning_states_disjoint = DisjointSet(0)
+        winning_states_disjoint.subsets = copy.deepcopy(self.epistemic_class_disjoint[agent_number].subsets)
+        first_winning = winning_states_disjoint.find(iter(next(winning_states)))
+        epistemic_class_numbers = set()
+        for state_number in winning_states:
+            epistemic_class_number = self.epistemic_class_membership[agent_number][state_number]
+            epistemic_class_numbers.add(epistemic_class_number)
+
+        for epistemic_class_number in epistemic_class_numbers:
+            epistemic_states = self.imperfect_information[agent_number][epistemic_class_number]
+            is_ok = True
+            for epistemic_state in epistemic_states:
+                state_number = epistemic_state
+                if epistemic_state not in winning_states:
+                    is_ok = False
+                    break
+            if is_ok:
+                winning_states_disjoint.union(first_winning, state_number)
+
+        custom_can_go_there = self.can_go_there[agent_number][:]
+
+        while True:
+            current_states, modified = self.basic_formula_one_agent(agent_number, current_states, first_winning,
+                                                                                   winning_states_disjoint,
+                                                                                   custom_can_go_there)
+            result_states.update(current_states)
+            if not modified:
+                break
+
+        return result_states
+
+    def basic_formula_one_agent(self, agent_number: int, current_states: Set[int], first_winning_state_id: int, winning_states: DisjointSet, custom_can_go_there: List[dict]) -> (Set[
+        int], bool):
+        result_states = set()
+        first_winning_state_id = winning_states.find(first_winning_state_id)
+        preimage = set()
+        actions = self.agents_actions[agent_number]
+        for winning_state in current_states:
+            for pre_state in self.pre_states[winning_state]:
+                preimage.add(self.epistemic_class_membership[agent_number][pre_state])
+
+        for state_epistemic_class in preimage:
+            state = next(iter(self.imperfect_information[agent_number][state_epistemic_class]))
+            state = winning_states.find(state)
+            if state == first_winning_state_id:
+                continue
+
+            same_states = self.imperfect_information[agent_number][state_epistemic_class]
+
+            for action in actions:
+                states_can_go = custom_can_go_there[state_epistemic_class][action]
+
+                if len(states_can_go) == 0:
+                    continue
+
+                is_ok = True
+                new_states_can_go = set()
+
+                for state_can in states_can_go:
+                    new_state_can = winning_states.find(state_can)
+
+                    if first_winning_state_id != new_state_can:
+                        is_ok = False
+
+                    new_states_can_go.add(new_state_can)
+
+                custom_can_go_there[state_epistemic_class][action] = new_states_can_go
+
+                if is_ok:
+                    result_states.update(same_states)
+                    winning_states.union(first_winning_state_id, state)
+                    first_winning_state_id = winning_states.find(first_winning_state_id)
+                    modified = True
+                    break
+
+        return result_states, modified
+
+    def is_reachable_by_agent(self, agent_number: int, state_number: int, action: str, first_winning_state_id: int, winning_states: DisjointSet):
+        result = False
+
+        for transition in self.transitions[state_number]:
+            if transition['actions'][agent_number] == action:
+                result = True
+                if not winning_states.is_same(first_winning_state_id, transition['next_state']):
+                    return False
 
         return result
 
