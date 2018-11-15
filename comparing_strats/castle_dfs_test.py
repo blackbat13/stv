@@ -91,5 +91,5 @@ class CastleDfsTest:
         return strategy_defined_count
 
 
-castle_dfs_test = CastleDfsTest(castle_sizes=[2, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
+castle_dfs_test = CastleDfsTest(castle_sizes=[3, 3, 2], castle_lifes=[3, 3, 3], DEBUG=False)
 castle_dfs_test.run_test()

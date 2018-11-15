@@ -8,7 +8,7 @@ DEBUG = True
 results_file = open("strat_dfs_bridge_results.txt", "a")
 results_file.write(f'----------------Bridge Model----------------\n')
 results_file.write(f'{datetime.datetime.now()}\n')
-n = 3
+n = 1
 hands = BridgeModel.generate_random_hands(n, n)
 print(BridgeModel.hands_to_readable_hands(hands))
 results_file.write(f'Number of cards: {n}\nInitial hands: {BridgeModel.hands_to_readable_hands(hands)}\n')
@@ -44,6 +44,13 @@ print(f'Strategy result: {result}')
 results_file.write(f'Strategy found: {result}\n')
 print(strategy)
 results_file.write(f'Found strategy:\n{strategy}\n')
+
+strategy_defined_count = 0
+for str in strategy:
+    if str is not None:
+        strategy_defined_count += 1
+
+results_file.write(f'Number of states where strategy is defined: {strategy_defined_count}\n')
 
 for index, value in enumerate(strategy):
     if value is not None:

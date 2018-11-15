@@ -246,7 +246,7 @@ class CastlesIsplGenerator:
 
 
 castles_ispl_generator = CastlesIsplGenerator()
-workers = [1, 1, 2]
+workers = [2, 1, 1]
 f = open(f"castles{workers[0]}{workers[1]}{workers[2]}.ispl", "w")
 f.write(castles_ispl_generator.create_ispl_model(workers))
 f.close()

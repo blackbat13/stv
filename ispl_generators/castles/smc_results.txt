@@ -81,3 +81,24 @@ Total time: 806513 miliseconds.
 First stage took 934 miliseconds.
 
 Second stage took 805574 miliseconds.
+
+
+
+blackbat@blackbat-Lenovo-ideapad-Y700-17ISK:~/Pobrane/smc$ java -jar smc.jar < examples/castles111subjective.ispl
+SMC - reading from standard input...
+
+
+SMC:
+
+Attempting to synthetise a strategy satysfying the following formula:
+<<Worker1, Worker2>>F(castle3Defeated)
+
+
+NO strategy found after 528.017578125MB peak memory and 290 attempts.
+
+Total time: 62701 miliseconds.
+
+First stage took 117 miliseconds.
+
+Second stage took 62576 miliseconds.
+
