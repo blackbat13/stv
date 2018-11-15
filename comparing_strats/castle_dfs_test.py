@@ -76,7 +76,7 @@ class CastleDfsTest:
 
     def generate_strategy(self):
         start = time.process_time()
-        (self.result, self.strategy) = self.strategy_comparer.generate_strategy_dfs(self.castle_model.model.first_state_no, set(self.winning_states),
+        (self.result, self.strategy) = self.strategy_comparer.generate_strategy_dfs(self.castle_model.model.first_state_id, set(self.winning_states),
                                                                                     self.coalition,
                                                                                     self.strategy_comparer.visited_states_h)
         end = time.process_time()
@@ -91,5 +91,5 @@ class CastleDfsTest:
         return strategy_defined_count
 
 
-castle_dfs_test = CastleDfsTest(castle_sizes=[3, 3, 2], castle_lifes=[3, 3, 3], DEBUG=False)
+castle_dfs_test = CastleDfsTest(castle_sizes=[1, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
 castle_dfs_test.run_test()

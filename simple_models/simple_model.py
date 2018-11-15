@@ -20,7 +20,7 @@ class SimpleModel:
     epistemic_classes = []
     epistemic_class_membership = []
     states = []
-    first_state_no = 0
+    first_state_id = 0
 
     def __init__(self, no_agents: int):
         self.clear_all()
@@ -145,7 +145,13 @@ class SimpleModel:
         atl_model.finish_model()
         return atl_model
 
-    def to_subjective(self, coalition: List[int]):
+    def to_subjective(self, coalition: List[int]) -> None:
+        """
+        Converts model to subjective semantics for ATLir
+        Adds one more state to the model and marks it as the initial state
+        :param coalition: list of agent ids for which model should be converted
+        :return: None
+        """
         first_state_epistemic_class = self.epistemic_class_for_state_and_coalition(0, coalition)
         state_id = len(self.states)
         actions = []
@@ -154,10 +160,10 @@ class SimpleModel:
         for epistemic_state_id in first_state_epistemic_class:
             self.add_transition(state_id, epistemic_state_id, actions)
 
-        self.first_state_no = state_id
+        self.first_state_id = state_id
         self.states.append(self.states[0])
 
-    def simulate(self, agent_number: int):
+    def simulate(self, agent_number: int) -> None:
         print("----SIMULATION START-----")
         current_state = 0
         while True:
