@@ -8,9 +8,20 @@ import copy
 
 class ATLIrModel:
     """Class for creating ATL models with perfect information and imperfect recall"""
+    class Transition:
+        next_state: int = 0
+        actions: List[str] = []
+
+        def __init__(self, next_state: int, actions: List[str]):
+            self.actions = actions[:]
+            self.next_state = next_state
+
+        def to_str(self):
+            return f"Next state: {self.next_state}; Actions: {self.actions}"
+
     number_of_agents: int = 0
-    transitions: List[List] = []
-    reverse_transitions: List[List] = []
+    transitions: List[List[Transition]] = []
+    reverse_transitions: List[List[Transition]] = []
     agents_actions: List[Set] = []
     pre_states: List[Set] = []
     number_of_states: int = 0
@@ -52,8 +63,8 @@ class ATLIrModel:
     def add_transition(self, from_state: int, to_state: int, actions: List[str]):
         self.enlarge_transitions(to_state + 1)  # TODO This is slow. Better idea?
         self.number_of_states = NumberTools.max(self.number_of_states, to_state + 1)
-        self.transitions[from_state].append({'next_state': to_state, 'actions': actions})
-        self.reverse_transitions[to_state].append({'next_state': from_state, 'actions': actions})
+        self.transitions[from_state].append(self.Transition(next_state=to_state, actions=actions))
+        self.reverse_transitions[to_state].append(self.Transition(next_state=from_state, actions=actions))
         self.pre_states[to_state].add(from_state)
 
     def minimum_formula_one_agent(self, agent_id: int, winning_states: Set[int]) -> Set[int]:
@@ -118,9 +129,9 @@ class ATLIrModel:
     def is_reachable_by_agent(self, agent_id: int, state_id: int, action: str, is_winning_state: List[bool]):
         result = False
         for transition in self.transitions[state_id]:
-            if transition['actions'][agent_id] == action:
+            if transition.actions[agent_id] == action:
                 result = True
-                if not is_winning_state[transition['next_state']]:
+                if not is_winning_state[transition.next_state]:
                     return False
 
         return result
@@ -186,12 +197,12 @@ class ATLIrModel:
         for transition in self.transitions[state_id]:
             is_good_transition = True
             for agent_id, action in zip(agent_ids, actions):
-                if transition['actions'][agent_id] != action:
+                if transition.actions[agent_id] != action:
                     is_good_transition = False
                     break
             if is_good_transition:
                 result = True
-                if not is_winning_state[transition['next_state']]:
+                if not is_winning_state[transition.next_state]:
                     return False
 
         return result
@@ -248,7 +259,7 @@ class ATLIrModel:
         result = False
         for transition in self.transitions[state_id]:
             result = True
-            if not is_winning_state[transition['next_state']]:
+            if not is_winning_state[transition.next_state]:
                 return False
 
         return result
@@ -313,9 +324,9 @@ class ATLirModel(ATLIrModel):
         epistemic_class = self.epistemic_class_for_state_one_agent(state_id, agent_id)
         for state_id in epistemic_class:
             for transition in self.transitions[state_id]:
-                if transition['actions'][agent_id] == action:
+                if transition.actions[agent_id] == action:
                     result = True
-                    if not is_winning_state[transition['next_state']]:
+                    if not is_winning_state[transition.next_state]:
                         return False
 
         return result
@@ -350,12 +361,12 @@ class ATLirModel(ATLIrModel):
             for transition in self.transitions[state_id]:
                 is_good_transition = True
                 for agent_id, action in zip(agent_ids, actions):
-                    if transition['actions'][agent_id] != action:
+                    if transition.actions[agent_id] != action:
                         is_good_transition = False
                         break
                 if is_good_transition:
                     result = True
-                    if not is_winning_state[transition['next_state']]:
+                    if not is_winning_state[transition.next_state]:
                         return False
 
         return result
@@ -423,8 +434,8 @@ class ATLirModelDisjoint(ATLIrModel):
             for state in epistemic_class:
                 can_go_state_temp = set()
                 for transition in self.transitions[state]:
-                    if transition['actions'][agent_id] == action:
-                        can_go_state_temp.add(transition['next_state'])
+                    if transition.actions[agent_id] == action:
+                        can_go_state_temp.add(transition.next_state)
 
                 if is_first:
                     is_first = False
@@ -525,9 +536,9 @@ class ATLirModelDisjoint(ATLIrModel):
         result = False
 
         for transition in self.transitions[state_id]:
-            if transition['actions'][agent_id] == action:
+            if transition.actions[agent_id] == action:
                 result = True
-                if not winning_states.is_same(first_winning_state_id, transition['next_state']):
+                if not winning_states.is_same(first_winning_state_id, transition.next_state):
                     return False
 
         return result
