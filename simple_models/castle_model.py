@@ -1,4 +1,3 @@
-from simple_models.simple_model import SimpleModel
 from simple_models.model_generator import ModelGenerator
 from typing import List
 from tools.array_tools import ArrayTools
