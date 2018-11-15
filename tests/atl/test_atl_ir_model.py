@@ -77,8 +77,8 @@ class TestATLirModel(unittest.TestCase):
         self.atl_ir_model.add_transition(1, 1, ['Push', 'Push'])
         self.atl_ir_model.add_transition(2, 2, ['Push', 'Push'])
         self.atl_ir_model.finish_model()
-        self.atl_ir_model.add_epistemic_class(agent_number=0, epistemic_class={0, 1})
-        self.atl_ir_model.add_epistemic_class(agent_number=1, epistemic_class={0, 2})
+        self.atl_ir_model.add_epistemic_class(agent_id=0, epistemic_class={0, 1})
+        self.atl_ir_model.add_epistemic_class(agent_id=1, epistemic_class={0, 2})
 
     def test_minimum_formula_one_agent(self):
         result = self.atl_ir_model.minimum_formula_one_agent(0, {2})
