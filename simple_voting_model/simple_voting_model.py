@@ -1,9 +1,7 @@
-from atl_model import *
+from atl.atl_model import *
 import time
-import pickle
-import gc
+
 # import resource
-import random
 
 __author__ = 'blackbat'
 

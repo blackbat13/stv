@@ -1,6 +1,6 @@
 import itertools
 import copy
-from disjoint_set import *
+from tools.disjoint_set import *
 
 __author__ = 'blackbat'
 
