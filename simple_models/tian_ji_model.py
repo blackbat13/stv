@@ -1,22 +1,15 @@
-from simple_models.simple_model import SimpleModel
-from typing import List
+from simple_models.model_generator import ModelGenerator
 from tools.array_tools import ArrayTools
 
 
-class TianJiModel:
-    model = None
-    states: List[hash] = []
-    states_dictionary = {}
-    state_number: int = 0
-    epistemic_states_dictionary: dict = dict()
+class TianJiModel(ModelGenerator):
     no_horses = 0
 
     def __init__(self, no_horses: int):
+        super().__init__(no_agents=2)
         self.no_horses = no_horses
-        self.model = SimpleModel(2)
         self.generate_model()
         self.prepare_epistemic_relation()
-        self.model.states = self.states
 
     def generate_first_state(self) -> hash:
         king_horses = list(range(0, self.no_horses))
@@ -26,35 +19,10 @@ class TianJiModel:
                        'results': ArrayTools.create_value_array_of_size(self.no_horses, 0), 'king_choice': -1}
         return first_state
 
-    def add_state(self, state: hash) -> int:
-        new_state_number = self.get_state_number(state)
-        epistemic_state = self.get_epistemic_state(state)
-        self.add_to_epistemic_dictionary(epistemic_state, new_state_number)
-        return new_state_number
-
-    def get_state_number(self, state: hash) -> int:
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.states_dictionary:
-            self.states_dictionary[state_str] = self.state_number
-            new_state_number = self.state_number
-            self.states.append(state)
-            self.state_number += 1
-        else:
-            new_state_number = self.states_dictionary[state_str]
-
-        return new_state_number
-
-    def get_epistemic_state(self, state: hash) -> hash:
+    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         epistemic_state = {'king_score': state['king_score'], 'tian_ji_score': state['tian_ji_score'],
                            'tian_ji_horses': state['tian_ji_horses'], 'king_choice': state['king_choice']}
         return epistemic_state
-
-    def add_to_epistemic_dictionary(self, state: hash, new_state_number: int):
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.epistemic_states_dictionary:
-            self.epistemic_states_dictionary[state_str] = {new_state_number}
-        else:
-            self.epistemic_states_dictionary[state_str].add(new_state_number)
 
     def generate_model(self):
         first_state = self.generate_first_state()
@@ -98,6 +66,3 @@ class TianJiModel:
                     new_state_number = self.add_state(new_state)
                     self.model.add_transition(new_king_state_number, new_state_number, actions)
 
-    def prepare_epistemic_relation(self):
-        for state, epistemic_class in self.epistemic_states_dictionary.items():
-            self.model.add_epistemic_class(0, epistemic_class)
