@@ -1,0 +1,234 @@
+/*
+	TMN Protocol
+
+	A->S: B, {Ka}PK(S)
+	S->B: A
+	B->S: A, {Kb}PK(S)
+	S->A: B, {Kb}Ka
+*/
+
+
+theory TMNProtocol
+begin
+
+builtins: symmetric-encryption, asymmetric-encryption
+
+rule Server_register_pk:
+    [ 
+      Fr( ~sk ) 
+    ]
+  -->
+    [ 
+      !Sk( $S, ~sk ),
+      !Pk( $S, pk( ~sk ) )
+    ]
+
+rule Server_publish_pubkey:
+    [ 
+      !Pk( S, pubkey )
+    ]
+  -->
+    [ 
+      Public_server_pubkey( pubkey )
+    ]
+
+rule Server_reveal_sk:
+    [ 
+      !Sk( S, sk )
+    ]
+  --[ SkReveal( S ) ]->
+    [ 
+      Out( sk ) 
+    ]
+
+rule Alice_get_server_pubkey:
+    [
+      Public_server_pubkey( pubkey )
+    ]
+  -->
+    [
+      !Alice_server_pubkey( pubkey )
+    ]
+
+rule Alice_send_key_to_server:
+    [ 
+      Fr( ~kA ),
+      !Alice_server_pubkey( pkS )
+    ]
+  --[]->
+    [ 
+      !Alice_alice_key( ~kA ),
+      Server_message_alice_key( <$B, aenc( ~kA, pkS )> )
+    ]
+
+rule Server_receive_alice_key:
+    [ 
+      !Sk( $S, ~skS ),
+      Server_message_alice_key( <$B, request> )
+    ]
+  --[]->
+    [ 
+      Server_alice_key( adec( request, ~skS ) ),
+      Server_bob_id( $B )
+    ]
+
+rule Server_send_message_to_bob:
+    [ 
+      Server_bob_id( $B )
+    ]
+  --[]->
+    [ 
+      Bob_message_alice_id( $A )
+    ]
+
+rule Bob_generate_key:
+    [
+      Fr( ~kB )
+    ]
+  --[ Bob_generate_key( ~kB ) ]->
+    [
+      !Bob_bob_key( ~kB )
+    ]
+
+rule Bob_receive_server_pubkey:
+    [
+      Public_server_pubkey( pubkey )
+    ]
+  --[]->
+    [
+      !Bob_server_pubkey( pubkey )
+    ]
+
+rule Bob_receive_alice_id:
+    [
+      Bob_message_alice_id( $A )
+    ]
+  --[]->
+    [
+      Bob_alice_id( $A )
+    ]
+
+rule Bob_send_key_to_server:
+    [
+      !Bob_bob_key( kB ),
+      !Bob_server_pubkey( pkS ),
+      Bob_alice_id( A )
+    ]
+  --[]->
+    [
+      Server_message_bob_key( <A, aenc( kB, pkS )> )
+    ]
+
+rule Server_receive_bob_key:
+    [ 
+      !Sk( S, skS ),
+      Server_message_bob_key( <A, message> )
+    ]
+  --[]->
+    [ 
+      Server_bob_key( adec( message, skS ) )
+    ]
+
+rule Server_send_bob_key_to_alice:
+    [
+      Server_alice_key( kA ),
+      Server_bob_key( kB )
+    ]
+  --[ Send_bob_key_to_alice( kB ) ]->
+    [
+      Alice_message_bob_key( <$B, senc( kB, kA )> )
+    ]
+
+rule Alice_receive_bob_key:
+    [
+      !Alice_alice_key( kA ),
+      Alice_message_bob_key( <$B, message> )
+    ]
+  --[ ]->
+    [
+      !Alice_bob_key( $B, sdec( message, kA ) )
+    ]
+
+rule Alice_establish_session_key:
+    [
+      !Alice_bob_key( B, kB )
+    ]
+  --[ SessKey( B, kB ) ]->
+    [
+    ]
+
+rule Attacker_intercept_alice_message_bob_key:
+    [
+      Alice_message_bob_key( <$B, message> )
+    ]
+  --[ ]->
+    [
+      Alice_message_bob_key( <$B, message> ),
+      Attacker_encrypted_bob_key( message )
+    ]
+
+rule Attacker_intercept_server_message_bob_key:
+    [
+      Server_message_bob_key( <A, message> )
+    ]
+  --[ ]->
+    [
+      Server_message_bob_key( <A, message> ),
+      Attacker_encrypted_bob_key( message )
+    ]
+
+rule Attacker_replace_server_message_bob_key:
+    [
+      !Attacker_server_pubkey( pkS ),
+      !Attacker_attacker_key( kAt ),
+      Server_message_bob_key( <A, message> )
+    ]
+  --[ ]->
+    [
+      Server_message_bob_key( <A, aenc( kAt, pkS ) > )
+    ]
+
+rule Attacker_generate_key:
+    [
+      Fr( ~kAt )
+    ]
+  --[ Attacker_generate_key( ~kAt ) ]->
+    [
+      !Attacker_attacker_key( ~kAt )
+    ]
+
+rule Attacker_get_server_pubkey:
+    [
+      Public_server_pubkey( pubkey )
+    ]
+  -->
+    [
+      !Attacker_server_pubkey( pubkey )
+    ]
+
+
+lemma Attacker_session_key_established:
+  exists-trace
+  " Ex B k #i1 #i2.
+        Attacker_generate_key( k ) @ #i1
+      & SessKey(B, k) @ #i2
+      & not(Ex S #r. SkReveal(S) @ r)
+  "
+
+lemma Client_session_key_honest_setup:
+  exists-trace
+  " Ex B k #i1 #i2 #i3.
+        Bob_generate_key( k ) @ #i1
+      & Send_bob_key_to_alice( k ) @ #i2
+      & SessKey(B, k) @ #i3
+      & not(Ex S #r. SkReveal(S) @ r)
+  "
+
+lemma Client_session_key_honest_setup_simpler:
+  exists-trace
+  " Ex B k #i.
+        SessKey(B, k) @ #i
+      & not(Ex S #r. SkReveal(S) @ r)
+  "
+
+end

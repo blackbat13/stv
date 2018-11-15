@@ -265,3 +265,19 @@ lemma ResultsPublished:
   "
 
 end
+
+
+// Create voter that interacts with the intruder
+// Intruder sends request to the voter, and voter ignores that
+// Indisdinguishable: when voter choice is the same and different form the intruder request
+// use diff?
+
+// Add interaction with intruder
+
+// Add rule for verifiability
+
+// Publishing votes: missing some kind of signature
+
+// Search for lemma where votes publishing can be altered
+
+// What is non secure communication channel in this protocol

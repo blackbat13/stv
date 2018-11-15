@@ -1,0 +1,2194 @@
+Semantics=SingleAssignment;
+
+Agent Environment
+	Obsvars:
+		processingMessage : boolean;
+		protocol : boolean;
+	end Obsvars
+	Vars:
+	end Vars
+	Actions = {none};
+	Protocol:
+		Other: {none};
+	end Protocol
+	Evolution:
+		processingMessage=true if
+			Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey or
+			Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey or
+			Server.Action=SendBobKeyToAliceEncryptedWithAliceKey or
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAttackerKey;
+		processingMessage=false if
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or 
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithBobKey or 
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey or 
+			Network.Action=ForwardAliceKeyToBobEncryptedWithAliceKey or 
+			Network.Action=ForwardAliceKeyToBobEncryptedWithBobKey or 
+			Network.Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAliceKeyToBobEncryptedWithAttackerKey or 
+			Network.Action=ForwardAliceKeyToServerEncryptedWithAliceKey or 
+			Network.Action=ForwardAliceKeyToServerEncryptedWithBobKey or 
+			Network.Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAliceKeyToServerEncryptedWithAttackerKey or 
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or 
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or 
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or 
+			Network.Action=ForwardBobKeyToAliceEncryptedWithAliceKey or 
+			Network.Action=ForwardBobKeyToAliceEncryptedWithBobKey or 
+			Network.Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or 
+			Network.Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardBobKeyToAliceEncryptedWithAttackerKey or 
+			Network.Action=ForwardBobKeyToBobEncryptedWithAliceKey or 
+			Network.Action=ForwardBobKeyToBobEncryptedWithBobKey or 
+			Network.Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or 
+			Network.Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardBobKeyToBobEncryptedWithAttackerKey or 
+			Network.Action=ForwardBobKeyToServerEncryptedWithAliceKey or 
+			Network.Action=ForwardBobKeyToServerEncryptedWithBobKey or 
+			Network.Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardBobKeyToServerEncryptedWithAttackerKey or 
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or 
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithBobKey or 
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or 
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or 
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or 
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or 
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or 
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or 
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or 
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey or 
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or 
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or 
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or 
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or 
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or 
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey or 
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or 
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithBobKey or 
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey or 
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or 
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithBobKey or 
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey or 
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or 
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or 
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or 
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or 
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey;
+	end Evolution
+end Agent
+
+Agent Alice
+	Vars:
+		aliceKeyK : {none, plain, encrypted};
+		bobKeyK : {none, plain, encrypted};
+		serverPublicKeyK : {none, plain, encrypted};
+		serverPrivateKeyK : {none, plain, encrypted};
+		attackerKeyK : {none, plain, encrypted};
+		aliceKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		bobKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPublicKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPrivateKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		attackerKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+	end Vars
+	Actions = {DecryptAliceKey, DecryptBobKey, DecryptServerPublicKey, DecryptServerPrivateKey, DecryptAttackerKey, SendAliceKeyToServerEncryptedWithServerPublicKey, Wait};
+	Protocol:
+		aliceKeyK=encrypted and (
+			(aliceKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(aliceKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(aliceKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAliceKey};
+		bobKeyK=encrypted and (
+			(bobKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(bobKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(bobKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(bobKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(bobKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptBobKey};
+		serverPublicKeyK=encrypted and (
+			(serverPublicKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPublicKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPublicKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPublicKey};
+		serverPrivateKeyK=encrypted and (
+			(serverPrivateKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPrivateKey};
+		attackerKeyK=encrypted and (
+			(attackerKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(attackerKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(attackerKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAttackerKey};
+		Environment.protocol=true and Environment.processingMessage=false: {SendAliceKeyToServerEncryptedWithServerPublicKey, Wait};
+		Other: {Wait};
+	end Protocol
+	Evolution:
+		aliceKeyK=plain if
+			Action=DecryptAliceKey;
+		bobKeyK=plain if
+			Action=DecryptBobKey;
+		serverPublicKeyK=plain if
+			Action=DecryptServerPublicKey;
+		serverPrivateKeyK=plain if
+			Action=DecryptServerPrivateKey;
+		attackerKeyK=plain if
+			Action=DecryptAttackerKey;
+		aliceKeyK=encrypted if
+			aliceKeyK=none and (
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithBobKey or
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey);
+		bobKeyK=encrypted if
+			bobKeyK=none and (
+			Network.Action=ForwardBobKeyToAliceEncryptedWithAliceKey or
+			Network.Action=ForwardBobKeyToAliceEncryptedWithBobKey or
+			Network.Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or
+			Network.Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or
+			Network.Action=ForwardBobKeyToAliceEncryptedWithAttackerKey);
+		serverPublicKeyK=encrypted if
+			serverPublicKeyK=none and (
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey);
+		serverPrivateKeyK=encrypted if
+			serverPrivateKeyK=none and (
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey);
+		attackerKeyK=encrypted if
+			attackerKeyK=none and (
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey);
+		aliceKeyEncryptionKey=aliceKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithAliceKey;
+		aliceKeyEncryptionKey=bobKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithBobKey;
+		aliceKeyEncryptionKey=serverPublicKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey;
+		aliceKeyEncryptionKey=serverPrivateKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey;
+		aliceKeyEncryptionKey=attackerKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey;
+		bobKeyEncryptionKey=aliceKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAliceEncryptedWithAliceKey;
+		bobKeyEncryptionKey=bobKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAliceEncryptedWithBobKey;
+		bobKeyEncryptionKey=serverPublicKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey;
+		bobKeyEncryptionKey=serverPrivateKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey;
+		bobKeyEncryptionKey=attackerKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAliceEncryptedWithAttackerKey;
+		serverPublicKeyEncryptionKey=aliceKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey;
+		serverPublicKeyEncryptionKey=bobKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey;
+		serverPublicKeyEncryptionKey=serverPublicKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey;
+		serverPublicKeyEncryptionKey=serverPrivateKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey;
+		serverPublicKeyEncryptionKey=attackerKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey;
+		serverPrivateKeyEncryptionKey=aliceKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey;
+		serverPrivateKeyEncryptionKey=bobKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey;
+		serverPrivateKeyEncryptionKey=serverPublicKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey;
+		serverPrivateKeyEncryptionKey=serverPrivateKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey;
+		serverPrivateKeyEncryptionKey=attackerKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey;
+		attackerKeyEncryptionKey=aliceKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey;
+		attackerKeyEncryptionKey=bobKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithBobKey;
+		attackerKeyEncryptionKey=serverPublicKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey;
+		attackerKeyEncryptionKey=serverPrivateKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey;
+		attackerKeyEncryptionKey=attackerKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey;
+	end Evolution
+end Agent
+
+Agent Bob
+	Vars:
+		aliceKeyK : {none, plain, encrypted};
+		bobKeyK : {none, plain, encrypted};
+		serverPublicKeyK : {none, plain, encrypted};
+		serverPrivateKeyK : {none, plain, encrypted};
+		attackerKeyK : {none, plain, encrypted};
+		aliceKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		bobKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPublicKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPrivateKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		attackerKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+	end Vars
+	Actions = {DecryptAliceKey, DecryptBobKey, DecryptServerPublicKey, DecryptServerPrivateKey, DecryptAttackerKey, SendBobKeyToServerEncryptedWithServerPublicKey, Wait};
+	Protocol:
+		aliceKeyK=encrypted and (
+			(aliceKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(aliceKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(aliceKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAliceKey};
+		bobKeyK=encrypted and (
+			(bobKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(bobKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(bobKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(bobKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(bobKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptBobKey};
+		serverPublicKeyK=encrypted and (
+			(serverPublicKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPublicKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPublicKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPublicKey};
+		serverPrivateKeyK=encrypted and (
+			(serverPrivateKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPrivateKey};
+		attackerKeyK=encrypted and (
+			(attackerKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(attackerKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(attackerKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAttackerKey};
+		Environment.protocol=true and Environment.processingMessage=false: {SendBobKeyToServerEncryptedWithServerPublicKey, Wait};
+		Other: {Wait};
+	end Protocol
+	Evolution:
+		aliceKeyK=plain if
+			Action=DecryptAliceKey;
+		bobKeyK=plain if
+			Action=DecryptBobKey;
+		serverPublicKeyK=plain if
+			Action=DecryptServerPublicKey;
+		serverPrivateKeyK=plain if
+			Action=DecryptServerPrivateKey;
+		attackerKeyK=plain if
+			Action=DecryptAttackerKey;
+		aliceKeyK=encrypted if
+			aliceKeyK=none and (
+			Network.Action=ForwardAliceKeyToBobEncryptedWithAliceKey or
+			Network.Action=ForwardAliceKeyToBobEncryptedWithBobKey or
+			Network.Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or
+			Network.Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAliceKeyToBobEncryptedWithAttackerKey);
+		bobKeyK=encrypted if
+			bobKeyK=none and (
+			Network.Action=ForwardBobKeyToBobEncryptedWithAliceKey or
+			Network.Action=ForwardBobKeyToBobEncryptedWithBobKey or
+			Network.Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or
+			Network.Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or
+			Network.Action=ForwardBobKeyToBobEncryptedWithAttackerKey);
+		serverPublicKeyK=encrypted if
+			serverPublicKeyK=none and (
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey);
+		serverPrivateKeyK=encrypted if
+			serverPrivateKeyK=none and (
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey);
+		attackerKeyK=encrypted if
+			attackerKeyK=none and (
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithBobKey or
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey);
+		aliceKeyEncryptionKey=aliceKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToBobEncryptedWithAliceKey;
+		aliceKeyEncryptionKey=bobKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToBobEncryptedWithBobKey;
+		aliceKeyEncryptionKey=serverPublicKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey;
+		aliceKeyEncryptionKey=serverPrivateKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey;
+		aliceKeyEncryptionKey=attackerKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToBobEncryptedWithAttackerKey;
+		bobKeyEncryptionKey=aliceKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToBobEncryptedWithAliceKey;
+		bobKeyEncryptionKey=bobKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToBobEncryptedWithBobKey;
+		bobKeyEncryptionKey=serverPublicKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToBobEncryptedWithServerPublicKey;
+		bobKeyEncryptionKey=serverPrivateKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey;
+		bobKeyEncryptionKey=attackerKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToBobEncryptedWithAttackerKey;
+		serverPublicKeyEncryptionKey=aliceKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey;
+		serverPublicKeyEncryptionKey=bobKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithBobKey;
+		serverPublicKeyEncryptionKey=serverPublicKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey;
+		serverPublicKeyEncryptionKey=serverPrivateKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey;
+		serverPublicKeyEncryptionKey=attackerKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey;
+		serverPrivateKeyEncryptionKey=aliceKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey;
+		serverPrivateKeyEncryptionKey=bobKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey;
+		serverPrivateKeyEncryptionKey=serverPublicKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey;
+		serverPrivateKeyEncryptionKey=serverPrivateKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey;
+		serverPrivateKeyEncryptionKey=attackerKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey;
+		attackerKeyEncryptionKey=aliceKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithAliceKey;
+		attackerKeyEncryptionKey=bobKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithBobKey;
+		attackerKeyEncryptionKey=serverPublicKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey;
+		attackerKeyEncryptionKey=serverPrivateKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey;
+		attackerKeyEncryptionKey=attackerKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey;
+	end Evolution
+end Agent
+
+Agent Server
+	Vars:
+		aliceKeyK : {none, plain, encrypted};
+		bobKeyK : {none, plain, encrypted};
+		serverPublicKeyK : {none, plain, encrypted};
+		serverPrivateKeyK : {none, plain, encrypted};
+		attackerKeyK : {none, plain, encrypted};
+		aliceKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		bobKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPublicKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPrivateKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		attackerKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+	end Vars
+	Actions = {DecryptAliceKey, DecryptBobKey, DecryptServerPublicKey, DecryptServerPrivateKey, DecryptAttackerKey, SendBobKeyToAliceEncryptedWithAliceKey, Wait};
+	Protocol:
+		aliceKeyK=encrypted and (
+			(aliceKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(aliceKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(aliceKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAliceKey};
+		bobKeyK=encrypted and (
+			(bobKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(bobKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(bobKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(bobKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(bobKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptBobKey};
+		serverPublicKeyK=encrypted and (
+			(serverPublicKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPublicKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPublicKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPublicKey};
+		serverPrivateKeyK=encrypted and (
+			(serverPrivateKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPrivateKey};
+		attackerKeyK=encrypted and (
+			(attackerKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(attackerKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(attackerKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAttackerKey};
+		Environment.protocol=true and aliceKeyK=plain and bobKeyK=plain and Environment.processingMessage=false: {SendBobKeyToAliceEncryptedWithAliceKey, Wait};
+		Other: {Wait};
+	end Protocol
+	Evolution:
+		aliceKeyK=plain if
+			Action=DecryptAliceKey;
+		bobKeyK=plain if
+			Action=DecryptBobKey;
+		serverPublicKeyK=plain if
+			Action=DecryptServerPublicKey;
+		serverPrivateKeyK=plain if
+			Action=DecryptServerPrivateKey;
+		attackerKeyK=plain if
+			Action=DecryptAttackerKey;
+		aliceKeyK=encrypted if
+			aliceKeyK=none and (
+			Network.Action=ForwardAliceKeyToServerEncryptedWithAliceKey or
+			Network.Action=ForwardAliceKeyToServerEncryptedWithBobKey or
+			Network.Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or
+			Network.Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAliceKeyToServerEncryptedWithAttackerKey);
+		bobKeyK=encrypted if
+			bobKeyK=none and (
+			Network.Action=ForwardBobKeyToServerEncryptedWithAliceKey or
+			Network.Action=ForwardBobKeyToServerEncryptedWithBobKey or
+			Network.Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or
+			Network.Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardBobKeyToServerEncryptedWithAttackerKey);
+		serverPublicKeyK=encrypted if
+			serverPublicKeyK=none and (
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey);
+		serverPrivateKeyK=encrypted if
+			serverPrivateKeyK=none and (
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey);
+		attackerKeyK=encrypted if
+			attackerKeyK=none and (
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithBobKey or
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey);
+		aliceKeyEncryptionKey=aliceKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToServerEncryptedWithAliceKey;
+		aliceKeyEncryptionKey=bobKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToServerEncryptedWithBobKey;
+		aliceKeyEncryptionKey=serverPublicKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey;
+		aliceKeyEncryptionKey=serverPrivateKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey;
+		aliceKeyEncryptionKey=attackerKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToServerEncryptedWithAttackerKey;
+		bobKeyEncryptionKey=aliceKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToServerEncryptedWithAliceKey;
+		bobKeyEncryptionKey=bobKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToServerEncryptedWithBobKey;
+		bobKeyEncryptionKey=serverPublicKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToServerEncryptedWithServerPublicKey;
+		bobKeyEncryptionKey=serverPrivateKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey;
+		bobKeyEncryptionKey=attackerKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToServerEncryptedWithAttackerKey;
+		serverPublicKeyEncryptionKey=aliceKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey;
+		serverPublicKeyEncryptionKey=bobKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithBobKey;
+		serverPublicKeyEncryptionKey=serverPublicKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey;
+		serverPublicKeyEncryptionKey=serverPrivateKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey;
+		serverPublicKeyEncryptionKey=attackerKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey;
+		serverPrivateKeyEncryptionKey=aliceKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey;
+		serverPrivateKeyEncryptionKey=bobKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey;
+		serverPrivateKeyEncryptionKey=serverPublicKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey;
+		serverPrivateKeyEncryptionKey=serverPrivateKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey;
+		serverPrivateKeyEncryptionKey=attackerKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey;
+		attackerKeyEncryptionKey=aliceKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithAliceKey;
+		attackerKeyEncryptionKey=bobKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithBobKey;
+		attackerKeyEncryptionKey=serverPublicKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey;
+		attackerKeyEncryptionKey=serverPrivateKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey;
+		attackerKeyEncryptionKey=attackerKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey;
+	end Evolution
+end Agent
+
+Agent Attacker
+	Vars:
+		aliceKeyK : {none, plain, encrypted};
+		bobKeyK : {none, plain, encrypted};
+		serverPublicKeyK : {none, plain, encrypted};
+		serverPrivateKeyK : {none, plain, encrypted};
+		attackerKeyK : {none, plain, encrypted};
+		aliceKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		bobKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPublicKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		serverPrivateKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		attackerKeyEncryptionKey : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+	end Vars
+	Actions = {DecryptAliceKey, SendAliceKeyToAliceEncryptedWithAliceKey, SendAliceKeyToAliceEncryptedWithBobKey, SendAliceKeyToAliceEncryptedWithServerPublicKey, SendAliceKeyToAliceEncryptedWithServerPrivateKey, SendAliceKeyToAliceEncryptedWithAttackerKey, SendAliceKeyToBobEncryptedWithAliceKey, SendAliceKeyToBobEncryptedWithBobKey, SendAliceKeyToBobEncryptedWithServerPublicKey, SendAliceKeyToBobEncryptedWithServerPrivateKey, SendAliceKeyToBobEncryptedWithAttackerKey, SendAliceKeyToServerEncryptedWithAliceKey, SendAliceKeyToServerEncryptedWithBobKey, SendAliceKeyToServerEncryptedWithServerPublicKey, SendAliceKeyToServerEncryptedWithServerPrivateKey, SendAliceKeyToServerEncryptedWithAttackerKey, DecryptBobKey, SendBobKeyToAliceEncryptedWithAliceKey, SendBobKeyToAliceEncryptedWithBobKey, SendBobKeyToAliceEncryptedWithServerPublicKey, SendBobKeyToAliceEncryptedWithServerPrivateKey, SendBobKeyToAliceEncryptedWithAttackerKey, SendBobKeyToBobEncryptedWithAliceKey, SendBobKeyToBobEncryptedWithBobKey, SendBobKeyToBobEncryptedWithServerPublicKey, SendBobKeyToBobEncryptedWithServerPrivateKey, SendBobKeyToBobEncryptedWithAttackerKey, SendBobKeyToServerEncryptedWithAliceKey, SendBobKeyToServerEncryptedWithBobKey, SendBobKeyToServerEncryptedWithServerPublicKey, SendBobKeyToServerEncryptedWithServerPrivateKey, SendBobKeyToServerEncryptedWithAttackerKey, DecryptServerPublicKey, SendServerPublicKeyToAliceEncryptedWithAliceKey, SendServerPublicKeyToAliceEncryptedWithBobKey, SendServerPublicKeyToAliceEncryptedWithServerPublicKey, SendServerPublicKeyToAliceEncryptedWithServerPrivateKey, SendServerPublicKeyToAliceEncryptedWithAttackerKey, SendServerPublicKeyToBobEncryptedWithAliceKey, SendServerPublicKeyToBobEncryptedWithBobKey, SendServerPublicKeyToBobEncryptedWithServerPublicKey, SendServerPublicKeyToBobEncryptedWithServerPrivateKey, SendServerPublicKeyToBobEncryptedWithAttackerKey, SendServerPublicKeyToServerEncryptedWithAliceKey, SendServerPublicKeyToServerEncryptedWithBobKey, SendServerPublicKeyToServerEncryptedWithServerPublicKey, SendServerPublicKeyToServerEncryptedWithServerPrivateKey, SendServerPublicKeyToServerEncryptedWithAttackerKey, DecryptServerPrivateKey, SendServerPrivateKeyToAliceEncryptedWithAliceKey, SendServerPrivateKeyToAliceEncryptedWithBobKey, SendServerPrivateKeyToAliceEncryptedWithServerPublicKey, SendServerPrivateKeyToAliceEncryptedWithServerPrivateKey, SendServerPrivateKeyToAliceEncryptedWithAttackerKey, SendServerPrivateKeyToBobEncryptedWithAliceKey, SendServerPrivateKeyToBobEncryptedWithBobKey, SendServerPrivateKeyToBobEncryptedWithServerPublicKey, SendServerPrivateKeyToBobEncryptedWithServerPrivateKey, SendServerPrivateKeyToBobEncryptedWithAttackerKey, SendServerPrivateKeyToServerEncryptedWithAliceKey, SendServerPrivateKeyToServerEncryptedWithBobKey, SendServerPrivateKeyToServerEncryptedWithServerPublicKey, SendServerPrivateKeyToServerEncryptedWithServerPrivateKey, SendServerPrivateKeyToServerEncryptedWithAttackerKey, DecryptAttackerKey, SendAttackerKeyToAliceEncryptedWithAliceKey, SendAttackerKeyToAliceEncryptedWithBobKey, SendAttackerKeyToAliceEncryptedWithServerPublicKey, SendAttackerKeyToAliceEncryptedWithServerPrivateKey, SendAttackerKeyToAliceEncryptedWithAttackerKey, SendAttackerKeyToBobEncryptedWithAliceKey, SendAttackerKeyToBobEncryptedWithBobKey, SendAttackerKeyToBobEncryptedWithServerPublicKey, SendAttackerKeyToBobEncryptedWithServerPrivateKey, SendAttackerKeyToBobEncryptedWithAttackerKey, SendAttackerKeyToServerEncryptedWithAliceKey, SendAttackerKeyToServerEncryptedWithBobKey, SendAttackerKeyToServerEncryptedWithServerPublicKey, SendAttackerKeyToServerEncryptedWithServerPrivateKey, SendAttackerKeyToServerEncryptedWithAttackerKey, RedirectToAlice, RedirectToBob, RedirectToServer, RedirectToAttacker, ChangeContentToAliceKeyEncryptedWithAliceKey, ChangeContentToAliceKeyEncryptedWithBobKey, ChangeContentToAliceKeyEncryptedWithServerPublicKey, ChangeContentToAliceKeyEncryptedWithServerPrivateKey, ChangeContentToAliceKeyEncryptedWithAttackerKey, ChangeContentToBobKeyEncryptedWithAliceKey, ChangeContentToBobKeyEncryptedWithBobKey, ChangeContentToBobKeyEncryptedWithServerPublicKey, ChangeContentToBobKeyEncryptedWithServerPrivateKey, ChangeContentToBobKeyEncryptedWithAttackerKey, ChangeContentToServerPublicKeyEncryptedWithAliceKey, ChangeContentToServerPublicKeyEncryptedWithBobKey, ChangeContentToServerPublicKeyEncryptedWithServerPublicKey, ChangeContentToServerPublicKeyEncryptedWithServerPrivateKey, ChangeContentToServerPublicKeyEncryptedWithAttackerKey, ChangeContentToServerPrivateKeyEncryptedWithAliceKey, ChangeContentToServerPrivateKeyEncryptedWithBobKey, ChangeContentToServerPrivateKeyEncryptedWithServerPublicKey, ChangeContentToServerPrivateKeyEncryptedWithServerPrivateKey, ChangeContentToServerPrivateKeyEncryptedWithAttackerKey, ChangeContentToAttackerKeyEncryptedWithAliceKey, ChangeContentToAttackerKeyEncryptedWithBobKey, ChangeContentToAttackerKeyEncryptedWithServerPublicKey, ChangeContentToAttackerKeyEncryptedWithServerPrivateKey, ChangeContentToAttackerKeyEncryptedWithAttackerKey, ForwardMessage, Wait};
+	Protocol:
+		aliceKeyK=encrypted and (
+			(aliceKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(aliceKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(aliceKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(aliceKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAliceKey};
+		bobKeyK=encrypted and (
+			(bobKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(bobKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(bobKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(bobKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(bobKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptBobKey};
+		serverPublicKeyK=encrypted and (
+			(serverPublicKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPublicKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPublicKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPublicKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPublicKey};
+		serverPrivateKeyK=encrypted and (
+			(serverPrivateKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(serverPrivateKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptServerPrivateKey};
+		attackerKeyK=encrypted and (
+			(attackerKeyEncryptionKey=aliceKey and aliceKeyK=plain) or
+			(attackerKeyEncryptionKey=bobKey and bobKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPublicKey and serverPrivateKeyK=plain) or
+			(attackerKeyEncryptionKey=serverPrivateKey and serverPublicKeyK=plain) or
+			(attackerKeyEncryptionKey=attackerKey and attackerKeyK=plain)): {DecryptAttackerKey};
+		aliceKeyK=plain and aliceKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAliceKeyToAliceEncryptedWithAliceKey, SendAliceKeyToBobEncryptedWithAliceKey, SendAliceKeyToServerEncryptedWithAliceKey, Wait};
+		aliceKeyK=plain and bobKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAliceKeyToAliceEncryptedWithBobKey, SendAliceKeyToBobEncryptedWithBobKey, SendAliceKeyToServerEncryptedWithBobKey, Wait};
+		aliceKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAliceKeyToAliceEncryptedWithServerPublicKey, SendAliceKeyToBobEncryptedWithServerPublicKey, SendAliceKeyToServerEncryptedWithServerPublicKey, Wait};
+		aliceKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAliceKeyToAliceEncryptedWithServerPrivateKey, SendAliceKeyToBobEncryptedWithServerPrivateKey, SendAliceKeyToServerEncryptedWithServerPrivateKey, Wait};
+		aliceKeyK=plain and attackerKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAliceKeyToAliceEncryptedWithAttackerKey, SendAliceKeyToBobEncryptedWithAttackerKey, SendAliceKeyToServerEncryptedWithAttackerKey, Wait};
+		bobKeyK=plain and aliceKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendBobKeyToAliceEncryptedWithAliceKey, SendBobKeyToBobEncryptedWithAliceKey, SendBobKeyToServerEncryptedWithAliceKey, Wait};
+		bobKeyK=plain and bobKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendBobKeyToAliceEncryptedWithBobKey, SendBobKeyToBobEncryptedWithBobKey, SendBobKeyToServerEncryptedWithBobKey, Wait};
+		bobKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendBobKeyToAliceEncryptedWithServerPublicKey, SendBobKeyToBobEncryptedWithServerPublicKey, SendBobKeyToServerEncryptedWithServerPublicKey, Wait};
+		bobKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendBobKeyToAliceEncryptedWithServerPrivateKey, SendBobKeyToBobEncryptedWithServerPrivateKey, SendBobKeyToServerEncryptedWithServerPrivateKey, Wait};
+		bobKeyK=plain and attackerKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendBobKeyToAliceEncryptedWithAttackerKey, SendBobKeyToBobEncryptedWithAttackerKey, SendBobKeyToServerEncryptedWithAttackerKey, Wait};
+		serverPublicKeyK=plain and aliceKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPublicKeyToAliceEncryptedWithAliceKey, SendServerPublicKeyToBobEncryptedWithAliceKey, SendServerPublicKeyToServerEncryptedWithAliceKey, Wait};
+		serverPublicKeyK=plain and bobKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPublicKeyToAliceEncryptedWithBobKey, SendServerPublicKeyToBobEncryptedWithBobKey, SendServerPublicKeyToServerEncryptedWithBobKey, Wait};
+		serverPublicKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPublicKeyToAliceEncryptedWithServerPublicKey, SendServerPublicKeyToBobEncryptedWithServerPublicKey, SendServerPublicKeyToServerEncryptedWithServerPublicKey, Wait};
+		serverPublicKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPublicKeyToAliceEncryptedWithServerPrivateKey, SendServerPublicKeyToBobEncryptedWithServerPrivateKey, SendServerPublicKeyToServerEncryptedWithServerPrivateKey, Wait};
+		serverPublicKeyK=plain and attackerKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPublicKeyToAliceEncryptedWithAttackerKey, SendServerPublicKeyToBobEncryptedWithAttackerKey, SendServerPublicKeyToServerEncryptedWithAttackerKey, Wait};
+		serverPrivateKeyK=plain and aliceKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPrivateKeyToAliceEncryptedWithAliceKey, SendServerPrivateKeyToBobEncryptedWithAliceKey, SendServerPrivateKeyToServerEncryptedWithAliceKey, Wait};
+		serverPrivateKeyK=plain and bobKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPrivateKeyToAliceEncryptedWithBobKey, SendServerPrivateKeyToBobEncryptedWithBobKey, SendServerPrivateKeyToServerEncryptedWithBobKey, Wait};
+		serverPrivateKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPrivateKeyToAliceEncryptedWithServerPublicKey, SendServerPrivateKeyToBobEncryptedWithServerPublicKey, SendServerPrivateKeyToServerEncryptedWithServerPublicKey, Wait};
+		serverPrivateKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPrivateKeyToAliceEncryptedWithServerPrivateKey, SendServerPrivateKeyToBobEncryptedWithServerPrivateKey, SendServerPrivateKeyToServerEncryptedWithServerPrivateKey, Wait};
+		serverPrivateKeyK=plain and attackerKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendServerPrivateKeyToAliceEncryptedWithAttackerKey, SendServerPrivateKeyToBobEncryptedWithAttackerKey, SendServerPrivateKeyToServerEncryptedWithAttackerKey, Wait};
+		attackerKeyK=plain and aliceKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAttackerKeyToAliceEncryptedWithAliceKey, SendAttackerKeyToBobEncryptedWithAliceKey, SendAttackerKeyToServerEncryptedWithAliceKey, Wait};
+		attackerKeyK=plain and bobKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAttackerKeyToAliceEncryptedWithBobKey, SendAttackerKeyToBobEncryptedWithBobKey, SendAttackerKeyToServerEncryptedWithBobKey, Wait};
+		attackerKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAttackerKeyToAliceEncryptedWithServerPublicKey, SendAttackerKeyToBobEncryptedWithServerPublicKey, SendAttackerKeyToServerEncryptedWithServerPublicKey, Wait};
+		attackerKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAttackerKeyToAliceEncryptedWithServerPrivateKey, SendAttackerKeyToBobEncryptedWithServerPrivateKey, SendAttackerKeyToServerEncryptedWithServerPrivateKey, Wait};
+		attackerKeyK=plain and attackerKeyK=plain and Environment.processingMessage=false and Environment.protocol=false: {SendAttackerKeyToAliceEncryptedWithAttackerKey, SendAttackerKeyToBobEncryptedWithAttackerKey, SendAttackerKeyToServerEncryptedWithAttackerKey, Wait};
+		Environment.processingMessage=true : {RedirectToAlice, RedirectToBob, RedirectToServer, RedirectToAttacker, ForwardMessage, Wait};
+		aliceKeyK=plain and aliceKeyK=plain and Environment.processingMessage=true: {ChangeContentToAliceKeyEncryptedWithAliceKey, Wait};
+		aliceKeyK=plain and bobKeyK=plain and Environment.processingMessage=true: {ChangeContentToAliceKeyEncryptedWithBobKey, Wait};
+		aliceKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=true: {ChangeContentToAliceKeyEncryptedWithServerPublicKey, Wait};
+		aliceKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=true: {ChangeContentToAliceKeyEncryptedWithServerPrivateKey, Wait};
+		aliceKeyK=plain and attackerKeyK=plain and Environment.processingMessage=true: {ChangeContentToAliceKeyEncryptedWithAttackerKey, Wait};
+		bobKeyK=plain and aliceKeyK=plain and Environment.processingMessage=true: {ChangeContentToBobKeyEncryptedWithAliceKey, Wait};
+		bobKeyK=plain and bobKeyK=plain and Environment.processingMessage=true: {ChangeContentToBobKeyEncryptedWithBobKey, Wait};
+		bobKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=true: {ChangeContentToBobKeyEncryptedWithServerPublicKey, Wait};
+		bobKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=true: {ChangeContentToBobKeyEncryptedWithServerPrivateKey, Wait};
+		bobKeyK=plain and attackerKeyK=plain and Environment.processingMessage=true: {ChangeContentToBobKeyEncryptedWithAttackerKey, Wait};
+		serverPublicKeyK=plain and aliceKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPublicKeyEncryptedWithAliceKey, Wait};
+		serverPublicKeyK=plain and bobKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPublicKeyEncryptedWithBobKey, Wait};
+		serverPublicKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPublicKeyEncryptedWithServerPublicKey, Wait};
+		serverPublicKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPublicKeyEncryptedWithServerPrivateKey, Wait};
+		serverPublicKeyK=plain and attackerKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPublicKeyEncryptedWithAttackerKey, Wait};
+		serverPrivateKeyK=plain and aliceKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPrivateKeyEncryptedWithAliceKey, Wait};
+		serverPrivateKeyK=plain and bobKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPrivateKeyEncryptedWithBobKey, Wait};
+		serverPrivateKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPrivateKeyEncryptedWithServerPublicKey, Wait};
+		serverPrivateKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPrivateKeyEncryptedWithServerPrivateKey, Wait};
+		serverPrivateKeyK=plain and attackerKeyK=plain and Environment.processingMessage=true: {ChangeContentToServerPrivateKeyEncryptedWithAttackerKey, Wait};
+		attackerKeyK=plain and aliceKeyK=plain and Environment.processingMessage=true: {ChangeContentToAttackerKeyEncryptedWithAliceKey, Wait};
+		attackerKeyK=plain and bobKeyK=plain and Environment.processingMessage=true: {ChangeContentToAttackerKeyEncryptedWithBobKey, Wait};
+		attackerKeyK=plain and serverPublicKeyK=plain and Environment.processingMessage=true: {ChangeContentToAttackerKeyEncryptedWithServerPublicKey, Wait};
+		attackerKeyK=plain and serverPrivateKeyK=plain and Environment.processingMessage=true: {ChangeContentToAttackerKeyEncryptedWithServerPrivateKey, Wait};
+		attackerKeyK=plain and attackerKeyK=plain and Environment.processingMessage=true: {ChangeContentToAttackerKeyEncryptedWithAttackerKey, Wait};
+		Other: {Wait};
+	end Protocol
+	Evolution:
+		aliceKeyK=plain if
+			Action=DecryptAliceKey;
+		bobKeyK=plain if
+			Action=DecryptBobKey;
+		serverPublicKeyK=plain if
+			Action=DecryptServerPublicKey;
+		serverPrivateKeyK=plain if
+			Action=DecryptServerPrivateKey;
+		attackerKeyK=plain if
+			Action=DecryptAttackerKey;
+		aliceKeyK=encrypted if
+			aliceKeyK=none and (
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey);
+		bobKeyK=encrypted if
+			bobKeyK=none and (
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey);
+		serverPublicKeyK=encrypted if
+			serverPublicKeyK=none and (
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey);
+		serverPrivateKeyK=encrypted if
+			serverPrivateKeyK=none and (
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey);
+		attackerKeyK=encrypted if
+			attackerKeyK=none and (
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		aliceKeyEncryptionKey=aliceKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey;
+		aliceKeyEncryptionKey=bobKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithBobKey;
+		aliceKeyEncryptionKey=serverPublicKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey;
+		aliceKeyEncryptionKey=serverPrivateKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey;
+		aliceKeyEncryptionKey=attackerKey if
+			aliceKeyEncryptionKey=none and
+			Network.Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey;
+		bobKeyEncryptionKey=aliceKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithAliceKey;
+		bobKeyEncryptionKey=bobKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithBobKey;
+		bobKeyEncryptionKey=serverPublicKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey;
+		bobKeyEncryptionKey=serverPrivateKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey;
+		bobKeyEncryptionKey=attackerKey if
+			bobKeyEncryptionKey=none and
+			Network.Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey;
+		serverPublicKeyEncryptionKey=aliceKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey;
+		serverPublicKeyEncryptionKey=bobKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey;
+		serverPublicKeyEncryptionKey=serverPublicKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey;
+		serverPublicKeyEncryptionKey=serverPrivateKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey;
+		serverPublicKeyEncryptionKey=attackerKey if
+			serverPublicKeyEncryptionKey=none and
+			Network.Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey;
+		serverPrivateKeyEncryptionKey=aliceKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey;
+		serverPrivateKeyEncryptionKey=bobKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey;
+		serverPrivateKeyEncryptionKey=serverPublicKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey;
+		serverPrivateKeyEncryptionKey=serverPrivateKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey;
+		serverPrivateKeyEncryptionKey=attackerKey if
+			serverPrivateKeyEncryptionKey=none and
+			Network.Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey;
+		attackerKeyEncryptionKey=aliceKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey;
+		attackerKeyEncryptionKey=bobKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey;
+		attackerKeyEncryptionKey=serverPublicKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey;
+		attackerKeyEncryptionKey=serverPrivateKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey;
+		attackerKeyEncryptionKey=attackerKey if
+			attackerKeyEncryptionKey=none and
+			Network.Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey;
+	end Evolution
+end Agent
+
+Agent Network
+	Vars:
+		messageContent : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		messageDestination: {alice, bob, server, attacker, none};
+		messageSource: {alice, bob, server, attacker, none};
+		messageEncryption : {aliceKey, bobKey, serverPublicKey, serverPrivateKey, attackerKey, none};
+		attackerDone : boolean;
+		forwardAllToAttacker : boolean;
+		forwardedToAttacker : boolean;
+		waitForAttacker : boolean;
+	end Vars
+	Actions = {ForwardAliceKeyToAliceEncryptedWithAliceKey, ForwardAliceKeyToAliceEncryptedWithBobKey, ForwardAliceKeyToAliceEncryptedWithServerPublicKey, ForwardAliceKeyToAliceEncryptedWithServerPrivateKey, ForwardAliceKeyToAliceEncryptedWithAttackerKey, ForwardAliceKeyToBobEncryptedWithAliceKey, ForwardAliceKeyToBobEncryptedWithBobKey, ForwardAliceKeyToBobEncryptedWithServerPublicKey, ForwardAliceKeyToBobEncryptedWithServerPrivateKey, ForwardAliceKeyToBobEncryptedWithAttackerKey, ForwardAliceKeyToServerEncryptedWithAliceKey, ForwardAliceKeyToServerEncryptedWithBobKey, ForwardAliceKeyToServerEncryptedWithServerPublicKey, ForwardAliceKeyToServerEncryptedWithServerPrivateKey, ForwardAliceKeyToServerEncryptedWithAttackerKey, ForwardAliceKeyToAttackerEncryptedWithAliceKey, ForwardAliceKeyToAttackerEncryptedWithBobKey, ForwardAliceKeyToAttackerEncryptedWithServerPublicKey, ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey, ForwardAliceKeyToAttackerEncryptedWithAttackerKey, ForwardBobKeyToAliceEncryptedWithAliceKey, ForwardBobKeyToAliceEncryptedWithBobKey, ForwardBobKeyToAliceEncryptedWithServerPublicKey, ForwardBobKeyToAliceEncryptedWithServerPrivateKey, ForwardBobKeyToAliceEncryptedWithAttackerKey, ForwardBobKeyToBobEncryptedWithAliceKey, ForwardBobKeyToBobEncryptedWithBobKey, ForwardBobKeyToBobEncryptedWithServerPublicKey, ForwardBobKeyToBobEncryptedWithServerPrivateKey, ForwardBobKeyToBobEncryptedWithAttackerKey, ForwardBobKeyToServerEncryptedWithAliceKey, ForwardBobKeyToServerEncryptedWithBobKey, ForwardBobKeyToServerEncryptedWithServerPublicKey, ForwardBobKeyToServerEncryptedWithServerPrivateKey, ForwardBobKeyToServerEncryptedWithAttackerKey, ForwardBobKeyToAttackerEncryptedWithAliceKey, ForwardBobKeyToAttackerEncryptedWithBobKey, ForwardBobKeyToAttackerEncryptedWithServerPublicKey, ForwardBobKeyToAttackerEncryptedWithServerPrivateKey, ForwardBobKeyToAttackerEncryptedWithAttackerKey, ForwardServerPublicKeyToAliceEncryptedWithAliceKey, ForwardServerPublicKeyToAliceEncryptedWithBobKey, ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey, ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey, ForwardServerPublicKeyToAliceEncryptedWithAttackerKey, ForwardServerPublicKeyToBobEncryptedWithAliceKey, ForwardServerPublicKeyToBobEncryptedWithBobKey, ForwardServerPublicKeyToBobEncryptedWithServerPublicKey, ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey, ForwardServerPublicKeyToBobEncryptedWithAttackerKey, ForwardServerPublicKeyToServerEncryptedWithAliceKey, ForwardServerPublicKeyToServerEncryptedWithBobKey, ForwardServerPublicKeyToServerEncryptedWithServerPublicKey, ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey, ForwardServerPublicKeyToServerEncryptedWithAttackerKey, ForwardServerPublicKeyToAttackerEncryptedWithAliceKey, ForwardServerPublicKeyToAttackerEncryptedWithBobKey, ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey, ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey, ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey, ForwardServerPrivateKeyToAliceEncryptedWithAliceKey, ForwardServerPrivateKeyToAliceEncryptedWithBobKey, ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey, ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey, ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey, ForwardServerPrivateKeyToBobEncryptedWithAliceKey, ForwardServerPrivateKeyToBobEncryptedWithBobKey, ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey, ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey, ForwardServerPrivateKeyToBobEncryptedWithAttackerKey, ForwardServerPrivateKeyToServerEncryptedWithAliceKey, ForwardServerPrivateKeyToServerEncryptedWithBobKey, ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey, ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey, ForwardServerPrivateKeyToServerEncryptedWithAttackerKey, ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey, ForwardServerPrivateKeyToAttackerEncryptedWithBobKey, ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey, ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey, ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey, ForwardAttackerKeyToAliceEncryptedWithAliceKey, ForwardAttackerKeyToAliceEncryptedWithBobKey, ForwardAttackerKeyToAliceEncryptedWithServerPublicKey, ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey, ForwardAttackerKeyToAliceEncryptedWithAttackerKey, ForwardAttackerKeyToBobEncryptedWithAliceKey, ForwardAttackerKeyToBobEncryptedWithBobKey, ForwardAttackerKeyToBobEncryptedWithServerPublicKey, ForwardAttackerKeyToBobEncryptedWithServerPrivateKey, ForwardAttackerKeyToBobEncryptedWithAttackerKey, ForwardAttackerKeyToServerEncryptedWithAliceKey, ForwardAttackerKeyToServerEncryptedWithBobKey, ForwardAttackerKeyToServerEncryptedWithServerPublicKey, ForwardAttackerKeyToServerEncryptedWithServerPrivateKey, ForwardAttackerKeyToServerEncryptedWithAttackerKey, ForwardAttackerKeyToAttackerEncryptedWithAliceKey, ForwardAttackerKeyToAttackerEncryptedWithBobKey, ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey, ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey, ForwardAttackerKeyToAttackerEncryptedWithAttackerKey, Wait};
+	Protocol:
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=alice and messageEncryption=aliceKey: {ForwardAliceKeyToAliceEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=alice and messageEncryption=bobKey: {ForwardAliceKeyToAliceEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=alice and messageEncryption=serverPublicKey: {ForwardAliceKeyToAliceEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=alice and messageEncryption=serverPrivateKey: {ForwardAliceKeyToAliceEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=alice and messageEncryption=attackerKey: {ForwardAliceKeyToAliceEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=bob and messageEncryption=aliceKey: {ForwardAliceKeyToBobEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=bob and messageEncryption=bobKey: {ForwardAliceKeyToBobEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=bob and messageEncryption=serverPublicKey: {ForwardAliceKeyToBobEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=bob and messageEncryption=serverPrivateKey: {ForwardAliceKeyToBobEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=bob and messageEncryption=attackerKey: {ForwardAliceKeyToBobEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=server and messageEncryption=aliceKey: {ForwardAliceKeyToServerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=server and messageEncryption=bobKey: {ForwardAliceKeyToServerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=server and messageEncryption=serverPublicKey: {ForwardAliceKeyToServerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=server and messageEncryption=serverPrivateKey: {ForwardAliceKeyToServerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=server and messageEncryption=attackerKey: {ForwardAliceKeyToServerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=attacker and messageEncryption=aliceKey: {ForwardAliceKeyToAttackerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=attacker and messageEncryption=bobKey: {ForwardAliceKeyToAttackerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=attacker and messageEncryption=serverPublicKey: {ForwardAliceKeyToAttackerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=attacker and messageEncryption=serverPrivateKey: {ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=aliceKey and messageDestination=attacker and messageEncryption=attackerKey: {ForwardAliceKeyToAttackerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=alice and messageEncryption=aliceKey: {ForwardBobKeyToAliceEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=alice and messageEncryption=bobKey: {ForwardBobKeyToAliceEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=alice and messageEncryption=serverPublicKey: {ForwardBobKeyToAliceEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=alice and messageEncryption=serverPrivateKey: {ForwardBobKeyToAliceEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=alice and messageEncryption=attackerKey: {ForwardBobKeyToAliceEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=bob and messageEncryption=aliceKey: {ForwardBobKeyToBobEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=bob and messageEncryption=bobKey: {ForwardBobKeyToBobEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=bob and messageEncryption=serverPublicKey: {ForwardBobKeyToBobEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=bob and messageEncryption=serverPrivateKey: {ForwardBobKeyToBobEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=bob and messageEncryption=attackerKey: {ForwardBobKeyToBobEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=server and messageEncryption=aliceKey: {ForwardBobKeyToServerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=server and messageEncryption=bobKey: {ForwardBobKeyToServerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=server and messageEncryption=serverPublicKey: {ForwardBobKeyToServerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=server and messageEncryption=serverPrivateKey: {ForwardBobKeyToServerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=server and messageEncryption=attackerKey: {ForwardBobKeyToServerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=attacker and messageEncryption=aliceKey: {ForwardBobKeyToAttackerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=attacker and messageEncryption=bobKey: {ForwardBobKeyToAttackerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=attacker and messageEncryption=serverPublicKey: {ForwardBobKeyToAttackerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=attacker and messageEncryption=serverPrivateKey: {ForwardBobKeyToAttackerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=bobKey and messageDestination=attacker and messageEncryption=attackerKey: {ForwardBobKeyToAttackerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=alice and messageEncryption=aliceKey: {ForwardServerPublicKeyToAliceEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=alice and messageEncryption=bobKey: {ForwardServerPublicKeyToAliceEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=alice and messageEncryption=serverPublicKey: {ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=alice and messageEncryption=serverPrivateKey: {ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=alice and messageEncryption=attackerKey: {ForwardServerPublicKeyToAliceEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=bob and messageEncryption=aliceKey: {ForwardServerPublicKeyToBobEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=bob and messageEncryption=bobKey: {ForwardServerPublicKeyToBobEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=bob and messageEncryption=serverPublicKey: {ForwardServerPublicKeyToBobEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=bob and messageEncryption=serverPrivateKey: {ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=bob and messageEncryption=attackerKey: {ForwardServerPublicKeyToBobEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=server and messageEncryption=aliceKey: {ForwardServerPublicKeyToServerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=server and messageEncryption=bobKey: {ForwardServerPublicKeyToServerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=server and messageEncryption=serverPublicKey: {ForwardServerPublicKeyToServerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=server and messageEncryption=serverPrivateKey: {ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=server and messageEncryption=attackerKey: {ForwardServerPublicKeyToServerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=attacker and messageEncryption=aliceKey: {ForwardServerPublicKeyToAttackerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=attacker and messageEncryption=bobKey: {ForwardServerPublicKeyToAttackerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=attacker and messageEncryption=serverPublicKey: {ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=attacker and messageEncryption=serverPrivateKey: {ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPublicKey and messageDestination=attacker and messageEncryption=attackerKey: {ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=alice and messageEncryption=aliceKey: {ForwardServerPrivateKeyToAliceEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=alice and messageEncryption=bobKey: {ForwardServerPrivateKeyToAliceEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=alice and messageEncryption=serverPublicKey: {ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=alice and messageEncryption=serverPrivateKey: {ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=alice and messageEncryption=attackerKey: {ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=bob and messageEncryption=aliceKey: {ForwardServerPrivateKeyToBobEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=bob and messageEncryption=bobKey: {ForwardServerPrivateKeyToBobEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=bob and messageEncryption=serverPublicKey: {ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=bob and messageEncryption=serverPrivateKey: {ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=bob and messageEncryption=attackerKey: {ForwardServerPrivateKeyToBobEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=server and messageEncryption=aliceKey: {ForwardServerPrivateKeyToServerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=server and messageEncryption=bobKey: {ForwardServerPrivateKeyToServerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=server and messageEncryption=serverPublicKey: {ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=server and messageEncryption=serverPrivateKey: {ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=server and messageEncryption=attackerKey: {ForwardServerPrivateKeyToServerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=attacker and messageEncryption=aliceKey: {ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=attacker and messageEncryption=bobKey: {ForwardServerPrivateKeyToAttackerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=attacker and messageEncryption=serverPublicKey: {ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=attacker and messageEncryption=serverPrivateKey: {ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=serverPrivateKey and messageDestination=attacker and messageEncryption=attackerKey: {ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=alice and messageEncryption=aliceKey: {ForwardAttackerKeyToAliceEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=alice and messageEncryption=bobKey: {ForwardAttackerKeyToAliceEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=alice and messageEncryption=serverPublicKey: {ForwardAttackerKeyToAliceEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=alice and messageEncryption=serverPrivateKey: {ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=alice and messageEncryption=attackerKey: {ForwardAttackerKeyToAliceEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=bob and messageEncryption=aliceKey: {ForwardAttackerKeyToBobEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=bob and messageEncryption=bobKey: {ForwardAttackerKeyToBobEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=bob and messageEncryption=serverPublicKey: {ForwardAttackerKeyToBobEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=bob and messageEncryption=serverPrivateKey: {ForwardAttackerKeyToBobEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=bob and messageEncryption=attackerKey: {ForwardAttackerKeyToBobEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=server and messageEncryption=aliceKey: {ForwardAttackerKeyToServerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=server and messageEncryption=bobKey: {ForwardAttackerKeyToServerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=server and messageEncryption=serverPublicKey: {ForwardAttackerKeyToServerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=server and messageEncryption=serverPrivateKey: {ForwardAttackerKeyToServerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=server and messageEncryption=attackerKey: {ForwardAttackerKeyToServerEncryptedWithAttackerKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=attacker and messageEncryption=aliceKey: {ForwardAttackerKeyToAttackerEncryptedWithAliceKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=attacker and messageEncryption=bobKey: {ForwardAttackerKeyToAttackerEncryptedWithBobKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=attacker and messageEncryption=serverPublicKey: {ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=attacker and messageEncryption=serverPrivateKey: {ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey};
+		((attackerDone=true and waitForAttacker=true) or waitForAttacker=false) and ((forwardAllToAttacker=true and forwardedToAttacker=true) or forwardAllToAttacker=false) and messageContent=attackerKey and messageDestination=attacker and messageEncryption=attackerKey: {ForwardAttackerKeyToAttackerEncryptedWithAttackerKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=aliceKey and messageEncryption=aliceKey: {ForwardAliceKeyToAttackerEncryptedWithAliceKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=aliceKey and messageEncryption=bobKey: {ForwardAliceKeyToAttackerEncryptedWithBobKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=aliceKey and messageEncryption=serverPublicKey: {ForwardAliceKeyToAttackerEncryptedWithServerPublicKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=aliceKey and messageEncryption=serverPrivateKey: {ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=aliceKey and messageEncryption=attackerKey: {ForwardAliceKeyToAttackerEncryptedWithAttackerKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=bobKey and messageEncryption=aliceKey: {ForwardBobKeyToAttackerEncryptedWithAliceKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=bobKey and messageEncryption=bobKey: {ForwardBobKeyToAttackerEncryptedWithBobKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=bobKey and messageEncryption=serverPublicKey: {ForwardBobKeyToAttackerEncryptedWithServerPublicKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=bobKey and messageEncryption=serverPrivateKey: {ForwardBobKeyToAttackerEncryptedWithServerPrivateKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=bobKey and messageEncryption=attackerKey: {ForwardBobKeyToAttackerEncryptedWithAttackerKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPublicKey and messageEncryption=aliceKey: {ForwardServerPublicKeyToAttackerEncryptedWithAliceKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPublicKey and messageEncryption=bobKey: {ForwardServerPublicKeyToAttackerEncryptedWithBobKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPublicKey and messageEncryption=serverPublicKey: {ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPublicKey and messageEncryption=serverPrivateKey: {ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPublicKey and messageEncryption=attackerKey: {ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPrivateKey and messageEncryption=aliceKey: {ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPrivateKey and messageEncryption=bobKey: {ForwardServerPrivateKeyToAttackerEncryptedWithBobKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPrivateKey and messageEncryption=serverPublicKey: {ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPrivateKey and messageEncryption=serverPrivateKey: {ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=serverPrivateKey and messageEncryption=attackerKey: {ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=attackerKey and messageEncryption=aliceKey: {ForwardAttackerKeyToAttackerEncryptedWithAliceKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=attackerKey and messageEncryption=bobKey: {ForwardAttackerKeyToAttackerEncryptedWithBobKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=attackerKey and messageEncryption=serverPublicKey: {ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=attackerKey and messageEncryption=serverPrivateKey: {ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey};
+		forwardAllToAttacker=true and forwardedToAttacker=false and messageContent=attackerKey and messageEncryption=attackerKey: {ForwardAttackerKeyToAttackerEncryptedWithAttackerKey};
+		Other: {Wait};
+	end Protocol
+	Evolution:
+		attackerDone=true if Attacker.Action=ForwardMessage;
+		forwardedToAttacker=true if
+			forwardAllToAttacker=true and (
+			Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		messageContent=none if
+			((forwardedToAttacker=true and forwardAllToAttacker=true) or forwardAllToAttacker=false) and (
+			Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToBobEncryptedWithBobKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToServerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAliceEncryptedWithBobKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToBobEncryptedWithAliceKey or
+			Action=ForwardBobKeyToBobEncryptedWithBobKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToServerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToServerEncryptedWithBobKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		messageDestination=none if
+			((forwardedToAttacker=true and forwardAllToAttacker=true) or forwardAllToAttacker=false) and (
+			Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToBobEncryptedWithBobKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToServerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAliceEncryptedWithBobKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToBobEncryptedWithAliceKey or
+			Action=ForwardBobKeyToBobEncryptedWithBobKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToServerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToServerEncryptedWithBobKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		messageSource=none if
+			((forwardedToAttacker=true and forwardAllToAttacker=true) or forwardAllToAttacker=false) and (
+			Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToBobEncryptedWithBobKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToServerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAliceEncryptedWithBobKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToBobEncryptedWithAliceKey or
+			Action=ForwardBobKeyToBobEncryptedWithBobKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToServerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToServerEncryptedWithBobKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		messageEncryption=none if
+			((forwardedToAttacker=true and forwardAllToAttacker=true) or forwardAllToAttacker=false) and (
+			Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToBobEncryptedWithBobKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToServerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAliceEncryptedWithBobKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToBobEncryptedWithAliceKey or
+			Action=ForwardBobKeyToBobEncryptedWithBobKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToServerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToServerEncryptedWithBobKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		forwardedToAttacker=false if
+			((forwardedToAttacker=true and forwardAllToAttacker=true) or forwardAllToAttacker=false) and (
+			Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToBobEncryptedWithBobKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToServerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAliceEncryptedWithBobKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToBobEncryptedWithAliceKey or
+			Action=ForwardBobKeyToBobEncryptedWithBobKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToServerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToServerEncryptedWithBobKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		attackerDone=false if
+			((forwardedToAttacker=true and forwardAllToAttacker=true) or forwardAllToAttacker=false) and (
+			Action=ForwardAliceKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToBobEncryptedWithBobKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToServerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAliceKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAliceEncryptedWithBobKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToBobEncryptedWithAliceKey or
+			Action=ForwardBobKeyToBobEncryptedWithBobKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToServerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToServerEncryptedWithBobKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardBobKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPublicKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardServerPrivateKeyToAttackerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAliceEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToBobEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToServerEncryptedWithAttackerKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAliceKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithBobKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPublicKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithServerPrivateKey or
+			Action=ForwardAttackerKeyToAttackerEncryptedWithAttackerKey);
+		messageDestination=alice if
+			Environment.processingMessage=true and
+			Attacker.Action=RedirectToAlice;
+		messageDestination=bob if
+			Environment.processingMessage=true and
+			Attacker.Action=RedirectToBob;
+		messageDestination=server if
+			Environment.processingMessage=true and
+			Attacker.Action=RedirectToServer;
+		messageDestination=attacker if
+			Environment.processingMessage=true and
+			Attacker.Action=RedirectToAttacker;
+		messageContent=aliceKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithAttackerKey);
+		messageContent=bobKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithAttackerKey);
+		messageContent=serverPublicKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithAttackerKey);
+		messageContent=serverPrivateKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithAttackerKey);
+		messageContent=attackerKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithAttackerKey);
+		messageEncryption=aliceKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithAliceKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithAliceKey);
+		messageEncryption=bobKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithBobKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithBobKey);
+		messageEncryption=serverPublicKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithServerPublicKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithServerPublicKey);
+		messageEncryption=serverPrivateKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithServerPrivateKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithServerPrivateKey);
+		messageEncryption=attackerKey if
+			Environment.processingMessage=true and (
+			Attacker.Action=ChangeContentToAliceKeyEncryptedWithAttackerKey or
+			Attacker.Action=ChangeContentToBobKeyEncryptedWithAttackerKey or
+			Attacker.Action=ChangeContentToServerPublicKeyEncryptedWithAttackerKey or
+			Attacker.Action=ChangeContentToServerPrivateKeyEncryptedWithAttackerKey or
+			Attacker.Action=ChangeContentToAttackerKeyEncryptedWithAttackerKey);
+		messageContent=aliceKey if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAttackerKey);
+		messageContent=bobKey if (
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAttackerKey);
+		messageContent=serverPublicKey if (
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAttackerKey);
+		messageContent=serverPrivateKey if (
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAttackerKey);
+		messageContent=attackerKey if (
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAttackerKey);
+		messageSource=attacker if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAttackerKey);
+		messageDestination=alice if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAttackerKey);
+		messageDestination=bob if (
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAttackerKey);
+		messageDestination=server if (
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAttackerKey);
+		messageEncryption=aliceKey if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAliceKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAliceKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAliceKey);
+		messageEncryption=bobKey if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithBobKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithBobKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithBobKey);
+		messageEncryption=serverPublicKey if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPublicKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPublicKey);
+		messageEncryption=serverPrivateKey if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithServerPrivateKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithServerPrivateKey);
+		messageEncryption=attackerKey if (
+			Attacker.Action=SendAliceKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToAliceEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToBobEncryptedWithAttackerKey or 
+			Attacker.Action=SendAliceKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendBobKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPublicKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendServerPrivateKeyToServerEncryptedWithAttackerKey or 
+			Attacker.Action=SendAttackerKeyToServerEncryptedWithAttackerKey);
+		messageContent=aliceKey if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;
+		messageContent=bobKey if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;
+		messageContent=bobKey if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;
+		messageSource=alice if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;
+		messageSource=bob if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;
+		messageSource=server if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;
+		messageDestination=server if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;
+		messageDestination=server if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;
+		messageDestination=alice if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;
+		messageEncryption=serverPublicKey if Alice.Action=SendAliceKeyToServerEncryptedWithServerPublicKey;
+		messageEncryption=serverPublicKey if Bob.Action=SendBobKeyToServerEncryptedWithServerPublicKey;
+		messageEncryption=aliceKey if Server.Action=SendBobKeyToAliceEncryptedWithAliceKey;
+	end Evolution
+end Agent
+
+Evaluation
+	keyExchanged if Alice.bobKeyK=plain;
+	compromised if Attacker.aliceKeyK=plain or Attacker.bobKeyK=plain or Attacker.serverPrivateKeyK=plain;
+end Evaluation
+
+InitStates
+	Environment.processingMessage=false and
+	Alice.aliceKeyK=plain and
+	Alice.aliceKeyEncryptionKey=none and
+	Alice.bobKeyK=none and
+	Alice.bobKeyEncryptionKey=none and
+	Alice.serverPublicKeyK=plain and
+	Alice.serverPublicKeyEncryptionKey=none and
+	Alice.serverPrivateKeyK=none and
+	Alice.serverPrivateKeyEncryptionKey=none and
+	Alice.attackerKeyK=none and
+	Alice.attackerKeyEncryptionKey=none and
+	Bob.aliceKeyK=none and
+	Bob.aliceKeyEncryptionKey=none and
+	Bob.bobKeyK=plain and
+	Bob.bobKeyEncryptionKey=none and
+	Bob.serverPublicKeyK=plain and
+	Bob.serverPublicKeyEncryptionKey=none and
+	Bob.serverPrivateKeyK=none and
+	Bob.serverPrivateKeyEncryptionKey=none and
+	Bob.attackerKeyK=none and
+	Bob.attackerKeyEncryptionKey=none and
+	Server.aliceKeyK=none and
+	Server.aliceKeyEncryptionKey=none and
+	Server.bobKeyK=none and
+	Server.bobKeyEncryptionKey=none and
+	Server.serverPublicKeyK=plain and
+	Server.serverPublicKeyEncryptionKey=none and
+	Server.serverPrivateKeyK=plain and
+	Server.serverPrivateKeyEncryptionKey=none and
+	Server.attackerKeyK=none and
+	Server.attackerKeyEncryptionKey=none and
+	Attacker.aliceKeyK=none and
+	Attacker.aliceKeyEncryptionKey=none and
+	Attacker.bobKeyK=none and
+	Attacker.bobKeyEncryptionKey=none and
+	Attacker.serverPublicKeyK=plain and
+	Attacker.serverPublicKeyEncryptionKey=none and
+	Attacker.serverPrivateKeyK=none and
+	Attacker.serverPrivateKeyEncryptionKey=none and
+	Attacker.attackerKeyK=plain and
+	Attacker.attackerKeyEncryptionKey=none and
+	Network.messageContent=none and
+	Network.messageDestination=none and
+	Network.messageSource=none and
+	Network.messageEncryption=none and
+	Network.attackerDone=false and
+	Network.forwardAllToAttacker=true and
+	Network.waitForAttacker=true and
+	Network.forwardedToAttacker=false;
+end InitStates
+
+Groups
+	trusted={Alice, Bob, Server};
+	atk={Attacker, Network};
+end Groups
+
+Formulae
+	<trusted>F keyExchanged;
+	<trusted>G !compromised;
+end Formulae
+
