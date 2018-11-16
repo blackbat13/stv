@@ -102,3 +102,86 @@ First stage took 117 miliseconds.
 
 Second stage took 62576 miliseconds.
 
+
+ples/castles311subjective.ispl
+SMC - reading from standard input...
+
+
+SMC:
+
+Attempting to synthetise a strategy satysfying the following formula:
+<<Worker1, Worker2, Worker3, Worker4>>F(castle3Defeated)
+
+
+Strategy FOUND after 6731530 miliseconds.
+
+
+First stage took 8958 miliseconds.
+
+
+Second stage took 6722570 miliseconds.
+
+
+Strategy FOUND after 619.65234375MB peak memory and 43 attempts.
+Agent Worker1 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker1.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker1.canDefend = true): {defend}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker1.canDefend = false): {wait}
+
+Agent Worker2 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker2.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker2.canDefend = true): {attack3}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker2.canDefend = true): {wait}
+
+Agent Worker3 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker3.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker3.canDefend = true): {attack3}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker3.canDefend = true): {wait}
+
+Agent Worker4 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker4.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker4.canDefend = true): {defend}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker4.canDefend = false): {wait}
+
+
+blackbat@blackbat-Lenovo-ideapad-Y700-17ISK:~/Pobrane/smc$ java -jar smc.jar < examples/castles221subjective.ispl
+SMC - reading from standard input...
+
+
+SMC:
+
+Attempting to synthetise a strategy satysfying the following formula:
+<<Worker1, Worker2, Worker3, Worker4>>F(castle3Defeated)
+
+
+Strategy FOUND after 4923736 miliseconds.
+
+
+First stage took 5192 miliseconds.
+
+
+Second stage took 4918542 miliseconds.
+
+
+Strategy FOUND after 603.5048828125MB peak memory and 37 attempts.
+Agent Worker1 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker1.canDefend = true): {defend}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker1.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker1.canDefend = false): {wait}
+
+Agent Worker2 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker2.canDefend = true): {attack3}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker2.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker2.canDefend = true): {wait}
+
+Agent Worker3 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker3.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker3.canDefend = true): {defend}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker3.canDefend = false): {wait}
+
+Agent Worker4 - Generated strategy:
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = true, Worker4.canDefend = true): {wait}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = false, Environment.decide = false, Worker4.canDefend = true): {attack3}
+AND(Environment.castle1Defeated = false, Environment.castle2Defeated = false, Environment.castle3Defeated = true, Environment.decide = false, Worker4.canDefend = true): {wait}
+
+
