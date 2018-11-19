@@ -1,18 +1,18 @@
 theory PretaVoterCompactIntruder
 begin
 
-builtins: asymmetric-encryption, xor
+builtins: asymmetric-encryption
 
 // Note: Every Out rule is used only for adversary
 
 // ---------------- FUNCTIONS ----------------
 
-functions: select/2, s/1
+functions: select/2, s/1, z/0
 
 equations:
-    select(s(zero), <x.1, x.2, x.3>) = x.1,
-    select(s(s(zero)), <x.1, x.2, x.3>) = x.2,
-    select(s(s(s(zero))), <x.1, x.2, x.3>) = x.3
+    select(s(z), <x.1, x.2, x.3>) = x.1,
+    select(s(s(z)), <x.1, x.2, x.3>) = x.2,
+    select(s(s(s(z))), <x.1, x.2, x.3>) = x.3
 
 // ---------------- RULES ----------------
 
@@ -36,14 +36,14 @@ rule InitialSetup:
         !Candidate('C3'),
 
         // -- Generate Counters --
-        Counter('C1', zero), // Create counter for each candidate and assign zero to it
-        Counter('C2', zero), // Counters are used for computing the result
-        Counter('C3', zero),
+        Counter('C1', z), // Create counter for each candidate and assign zero to it
+        Counter('C2', z), // Counters are used for computing the result
+        Counter('C3', z),
 
         // -- Generate Choices --
-        !Choice(s(zero)),
-        !Choice(s(s(zero))),
-        !Choice(s(s(s(zero)))),
+        !Choice(s(z)),
+        !Choice(s(s(z))),
+        !Choice(s(s(s(z)))),
 
         // -- Generate Ballots --
         Ballot($B1), // Ballot template used to generate actual ballot for casting
@@ -207,6 +207,13 @@ lemma ResultsPublished:
 lemma VoteSecrecy:
   "All V C #i. (
     Voted(V, C) @ #i ==>
+        not(Ex #j. IHowVoted(V, C) @ #j)
+    )
+  "
+
+lemma VoteSecrecyWithoutPkReveal:
+  "All V C #i. (
+    (Voted(V, C) @ #i & not(Ex #i2. LearnPrivateKey() @ i2))  ==>
         not(Ex #j. IHowVoted(V, C) @ #j)
     )
   "
