@@ -1,0 +1,81 @@
+///--- These are the special intruder rules that are always included ---
+
+rule coerce:
+    [
+        KD( x )
+    ]
+  --[ KU( x ) ]->
+    [
+        KU( x )
+    ]
+
+rule pub:
+    [
+    ]
+  --[ KU( $x ) ]->
+    [
+        KU( $x )
+    ]
+
+rule gen_fresh:
+    [
+        Fr( ~x )
+    ]
+  --[ KU( ~x ) ]->
+    [
+        KU( ~x )
+    ]
+
+rule isend:
+    [
+        KU( x)
+    ]
+  --[ K( x ) ]->
+    [
+        In( x )
+    ]
+
+rule irecv:
+    [
+        Out( x)
+    ]
+  --[]->
+    [
+        KD( x )
+    ]
+
+rule iequality:
+    [
+        KU( x ),
+        KD( x )
+    ]
+  --[]->
+    [
+    ]
+
+
+//--- Common Restrictions ---
+
+restriction unique:
+    "All x #i #j. UniqueFact(x) @#i & UniqueFact(x) @#j ==> #i = #j"
+
+restriction Equality:
+    "All x y #i. Eq(x,y) @#i ==> x = y"
+
+restriction Inequality:
+    "All x #i. Neq(x,x) @ #i ==> F"
+
+restriction OnlyOnce:
+    "All #i #j. OnlyOnce()@#i & OnlyOnce()@#j ==> #i = #j"
+
+restriction OnlyOnceV:
+    "All #i #j x. OnlyOnceV(x)@#i & OnlyOnceV(x)@#j ==> #i = #j"
+
+// With multiset
+
+restriction LessThan:
+    "All x y #i. LessThan(x,y)@#i ==> Ex z. x + z = y"
+
+restriction GreaterThan:
+    "All x y #i. GreaterThan(x,y)@#i ==> Ex z. x = y + z"
+

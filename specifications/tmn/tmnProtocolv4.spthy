@@ -18,7 +18,8 @@ rule Generate_server:
     ]
   --[ GenerateServer( $S ) ]->
     [
-        !ServerID( $S )
+        !ServerID( $S ),
+        Out($S)
     ]
 
 rule Generate_key_pair:
@@ -137,8 +138,8 @@ restriction OneServer:
 restriction OnePublicKey:
   "All S1 S2 #i1 #i2. GenerateKeyPair(S1) @i1 & GenerateKeyPair(S2) @i2 ==> #i1 = #i2 & S1=S2"
 
-restriction OneAlice:
-  "All A1 A2 k1 k2 #i1 #i2. AliceSendKeyToServer(A1, k1) @i1 & AliceSendKeyToServer(A2, k2) @i2 ==> #i1 = #i2 & A1=A2 & k1=k2"
+//restriction OneAlice:
+//  "All A1 A2 k1 k2 #i1 #i2. AliceSendKeyToServer(A1, k1) @i1 & AliceSendKeyToServer(A2, k2) @i2 ==> #i1 = #i2 & A1=A2 & k1=k2"
 
 /*
 
@@ -213,9 +214,22 @@ lemma Key_generated_and_secret:
   all-traces
   " not(
      Ex B kB #i1 #i2.
-         SendKeyToServer( B, kB ) @ i1
+         ReceiveKeyFromClient( B, kB ) @ i1
        & K( kB ) @ i2
    )
   "
 
+lemma Key_established_and_not_secret:
+  exists-trace
+  " Ex B kB #i1 #i2.
+        SessionKeyEstablished(B, kB) @i1
+      &  K(kB) @i2
+  "
+
+lemma Key_generated_and_not_secret:
+  exists-trace
+  " Ex B kB #i1 #i2.
+        ReceiveKeyFromClient(B, kB) @i1
+      &  K(kB) @i2
+  "
 end
