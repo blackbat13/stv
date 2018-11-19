@@ -243,3 +243,11 @@ lemma ResultsPublished:
   "
 
 end
+
+// Add interaction with intruder
+
+// Publishing votes: missing some kind of signature
+
+// Search for lemma where votes publishing can be altered
+
+// What is non secure communication channel in this protocol
