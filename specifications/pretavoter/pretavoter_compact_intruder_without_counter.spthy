@@ -1,4 +1,4 @@
-theory PretaVoterCompactIntruder
+theory PretaVoterCompactIntruderWithoutCounter
 begin
 
 builtins: asymmetric-encryption
@@ -34,11 +34,6 @@ rule InitialSetup:
         !Candidate('C1'),
         !Candidate('C2'),
         !Candidate('C3'),
-
-        // -- Generate Counters --
-        Counter('C1', z), // Create counter for each candidate and assign zero to it
-        Counter('C2', z), // Counters are used for computing the result
-        Counter('C3', z),
 
         // -- Generate Choices --
         !Choice(s(z)),
@@ -97,13 +92,13 @@ rule CastVoteI:
         //ch = ch1
     in
     [
-        //ICoerce(ic), // Intruder candidate - instruction from the intruder for the voter
+        ICoerce(ic), // Intruder candidate - instruction from the intruder for the voter
         !Choice(ch1), // Choice for voting freely
         !Choice(ch2), // Choice for voting as intruder commands
         VoterI(V), // Voter working with the intruder
         BallotWithOrderAndOnion(B, C1, C2, C3, onion) // Ballot given to the voter
     ]
-  --[ CastVote(V, ch, onion), Voted(V, select(ch, <C1, C2, C3>))]->//, Eq(select(ch2, <C1, C2, C3>), ic) ]->
+  --[ CastVote(V, ch, onion), Voted(V, select(ch, <C1, C2, C3>)), Eq(select(ch2, <C1, C2, C3>), ic) ]->
     [
         Vote(ch, onion), // Actual vote, used for publishing and counting
         Receipt(V, ch, onion), // A receipt for voter to verify that his vote was casted properly
@@ -120,24 +115,11 @@ rule PublishAndCountVote:
     [
         !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
         !Sk(E, skE), // Private key of the election authority
-        Vote(selection, onion), // Casted vote
-        Counter(chosen, x) // Counter for the candidate chosen in the counted vote
+        Vote(selection, onion) // Casted vote
     ]
   --[ PublishVote(selection, onion), CountVote(chosen) ]->
     [
-        !Board(selection, onion), // Publish vote on the bulletin board
-        Counter(chosen, s(x))
-    ]
-
-// --- RESULT PUBLISHING ---
-
-rule PublishResults:
-    [
-        Counter(C, x) // Get counter for the candidate
-    ]
-  --[ PublishResult(C, x) ]->
-    [
-        !Result(C, x) // Published result
+        !Board(selection, onion) // Publish vote on the bulletin board
     ]
 
 // --- VERIFYING VOTES ---

@@ -1,4 +1,4 @@
-theory PretaVoterCompactIntruder
+theory PretaVoterCompactIntruderOut
 begin
 
 builtins: asymmetric-encryption
@@ -97,13 +97,13 @@ rule CastVoteI:
         //ch = ch1
     in
     [
-        //ICoerce(ic), // Intruder candidate - instruction from the intruder for the voter
+        ICoerce(ic), // Intruder candidate - instruction from the intruder for the voter
         !Choice(ch1), // Choice for voting freely
         !Choice(ch2), // Choice for voting as intruder commands
         VoterI(V), // Voter working with the intruder
         BallotWithOrderAndOnion(B, C1, C2, C3, onion) // Ballot given to the voter
     ]
-  --[ CastVote(V, ch, onion), Voted(V, select(ch, <C1, C2, C3>))]->//, Eq(select(ch2, <C1, C2, C3>), ic) ]->
+  --[ CastVote(V, ch, onion), Voted(V, select(ch, <C1, C2, C3>)), Eq(select(ch2, <C1, C2, C3>), ic) ]->
     [
         Vote(ch, onion), // Actual vote, used for publishing and counting
         Receipt(V, ch, onion), // A receipt for voter to verify that his vote was casted properly
@@ -138,6 +138,23 @@ rule PublishResults:
   --[ PublishResult(C, x) ]->
     [
         !Result(C, x) // Published result
+    ]
+
+rule FinalRule:
+    [
+        !Board(selection1, onion1),
+        !Board(selection2, onion2),
+        !Board(selection3, onion3),
+        !Board(selection4, onion4),
+        !Result(C1, x1),
+        !Result(C2, x2),
+        !Result(C3, x3)
+        // After counting all the votes...
+    ]
+  --[ FinalRule() ]->
+    [
+        //... send results to the Intruder
+        Out(<C1, x1, C2, x2, C3, x3>)
     ]
 
 // --- VERIFYING VOTES ---
