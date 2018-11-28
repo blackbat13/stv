@@ -1,0 +1,111 @@
+theory PretaVoterCompactSimpleWithoutCounterOut
+begin
+
+builtins: asymmetric-encryption
+
+// Note: Every Out rule is used only for adversary
+
+// ---------------- FUNCTIONS ----------------
+
+functions: select/2, iselect/2, s/1, z/0
+
+equations:
+    select(s(z), <x.1, x.2>) = x.1,
+    select(s(s(z)), <x.1, x.2>) = x.2,
+    iselect(<x.1, x.2>, x.1) = s(z),
+    iselect(<x.1, x.2>, x.2) = s(s(z))
+
+// ---------------- RULES ----------------
+
+// --- INITIAL GENERATION ---
+
+rule InitialSetup:
+    [
+        Fr(~f),
+        Fr(~d1),
+        Fr(~d2)
+    ]
+  --[ InitialSetup(), RunOnce() ]->
+    [
+        // -- Generate Voters --
+        Voter('v1', diff('c1', 'c2')),
+        Voter('v2', diff('c2', 'c1')),
+
+        !ElectionAuthority($E),
+        !Sk($E, ~f),
+        !Pk($E, pk(~f)),
+
+        // -- Generate Ballots --
+        BallotWithOrderAndOnion(diff('c1', 'c2'), diff('c2', 'c1'), aenc(<diff('c1', 'c2'), diff('c2', 'c1'), ~d1>, pk(~f))),
+        BallotWithOrderAndOnion(diff('c2', 'c1'), diff('c1', 'c2'), aenc(<diff('c2', 'c1'), diff('c1', 'c2'), ~d2>, pk(~f)))
+    ]
+
+// --- VOTE CASTING ---
+
+rule CastVote:
+    let
+        selection = iselect(<C1,C2>, ch)
+    in
+    [
+        Voter(V, ch),
+        BallotWithOrderAndOnion(C1, C2, onion)
+    ]
+  --[ CastVote(selection, onion) ]->
+    [
+        Vote(selection, onion),
+        Receipt(V, selection, onion)
+    ]
+
+// --- VOTE PUBLISHING AND COUNTING ---
+
+rule PublishVote:
+    [
+        Vote(selection, onion)
+    ]
+  --[ PublishVote(selection, onion) ]->
+    [
+        !Board(selection, onion), // Publish vote on the bulletin board
+        ResultBoard(selection, onion),
+        Out(<selection, onion>)
+    ]
+
+rule PublishResults:
+    let
+        chosen1 = select(selection1, <C1.1, C2.1>)
+        chosen2 = select(selection2, <C1.2, C2.2>)
+        onion1 = aenc(<C1.1, C2.1, d.1>, pk(skE))
+        onion2 = aenc(<C1.2, C2.2, d.2>, pk(skE))
+    in
+    [
+        ResultBoard(selection1, onion1),
+        ResultBoard(selection2, onion2),
+        !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
+        !Sk(E, skE) // Private key of the election authority
+    ]
+  --[ PublishResults(chosen1, chosen2) ]->
+    [
+        !PublicBoard(chosen1),
+        !PublicBoard(chosen2),
+        Out(<chosen1, chosen2>) // Results in an attack
+    ]
+
+// --- VERIFYING VOTES ---
+/*
+rule VerifyVote:
+    [
+        Receipt(V, selection, onion), // Receipt form the casting phase
+        !Board(selection, onion) // Information published on the bulletin board
+    ]
+  --[ VerifyVote(V, selection, onion) ]->
+    [
+    ]
+*/
+
+// ---------------- RESTRICTIONS ----------------
+
+restriction RunInitialSetupOnce:
+  "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
+
+// ---------------- LEMMAS ----------------
+
+end

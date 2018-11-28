@@ -1,7 +1,7 @@
-theory PretaVoterCompactSimpleWithoutCounter
+theory PretaVoterCompactSimpleWithoutCounterOutT
 begin
 
-builtins: asymmetric-encryption
+builtins: asymmetric-encryption, multiset
 
 // Note: Every Out rule is used only for adversary
 
@@ -58,20 +58,35 @@ rule CastVote:
 
 // --- VOTE PUBLISHING AND COUNTING ---
 
-rule PublishAndCountVote:
-    let
-        chosen = select(selection, <C1, C2>) // Get selected candidate from the onion order
-        onion = aenc(<C1, C2, d>, pk(skE))
-    in
+rule PublishVote:
     [
-        !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
-        !Sk(E, skE), // Private key of the election authority
         Vote(selection, onion)
     ]
-  --[ PublishVote(selection, onion), CountVote(chosen) ]->
+  --[ PublishVote(selection, onion) ]->
     [
         !Board(selection, onion), // Publish vote on the bulletin board
+        ResultBoard(selection, onion),
         Out(<selection, onion>)
+    ]
+
+rule PublishResults:
+    let
+        chosen1 = select(selection1, <C1.1, C2.1>)
+        chosen2 = select(selection2, <C1.2, C2.2>)
+        onion1 = aenc(<C1.1, C2.1, d.1>, pk(skE))
+        onion2 = aenc(<C1.2, C2.2, d.2>, pk(skE))
+    in
+    [
+        ResultBoard(selection1, onion1),
+        ResultBoard(selection2, onion2),
+        !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
+        !Sk(E, skE) // Private key of the election authority
+    ]
+  --[ PublishResults(chosen1, chosen2) ]->
+    [
+        !PublicBoard(chosen1),
+        !PublicBoard(chosen2),
+        Out(chosen1 + chosen2) // Results in an attack
     ]
 
 // --- VERIFYING VOTES ---

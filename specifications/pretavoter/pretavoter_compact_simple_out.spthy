@@ -1,4 +1,4 @@
-theory PretaVoterCompactSimple
+theory PretaVoterCompactSimpleOut
 begin
 
 builtins: asymmetric-encryption
@@ -115,6 +115,8 @@ rule PublishAndCountVotes:
     [
         !Board(selection1, onion1),
         !Board(selection2, onion2), // Publish vote on the bulletin board
+        Out(<selection1, onion1>),
+        Out(<selection2, onion2>),
         Counter(chosen1, s(x1)),
         Counter(chosen2, s(x2))
     ]
@@ -159,3 +161,5 @@ end
 # Utworzyć różne permutacje zasady liczenia głosów (osobny dla każdej permutacji) - za pomocą skryptu
 # Sprawdzić dla 2v, 2k, a potem dla 3v,3k (i innych układów)
 # Najpierw bez Out
+
+# Spróbować także za pomocą jednej zasady: wykorzystać +, Out(c1 + c2 + c3 + ...)

@@ -1,7 +1,7 @@
-theory PretaVoterCompactIntruder
+theory PretaVoterCompactIntruderCounterSmallOutPlus
 begin
 
-builtins: asymmetric-encryption
+builtins: asymmetric-encryption, multiset
 
 // Note: Every Out rule is used only for adversary
 
@@ -10,9 +10,8 @@ builtins: asymmetric-encryption
 functions: select/2, s/1, z/0
 
 equations:
-    select(s(z), <x.1, x.2, x.3>) = x.1,
-    select(s(s(z)), <x.1, x.2, x.3>) = x.2,
-    select(s(s(s(z))), <x.1, x.2, x.3>) = x.3
+    select(s(z), <x.1, x.2>) = x.1,
+    select(s(s(z)), <x.1, x.2>) = x.2
 
 // ---------------- RULES ----------------
 
@@ -26,30 +25,21 @@ rule InitialSetup:
     [
         // -- Generate Voters --
         Voter($V1),
-        Voter($V2),
-        Voter($V3),
-        VoterI($V4), // Voter that interacts with the intruder
+        VoterI($V2), // Voter that interacts with the intruder
 
         // -- Generate Candidates --
         !Candidate('C1'),
         !Candidate('C2'),
-        !Candidate('C3'),
-
-        // -- Generate Counters --
-        Counter('C1', z), // Create counter for each candidate and assign zero to it
-        Counter('C2', z), // Counters are used for computing the result
-        Counter('C3', z),
 
         // -- Generate Choices --
         !Choice(s(z)),
         !Choice(s(s(z))),
-        !Choice(s(s(s(z)))),
 
         // -- Generate Ballots --
         Ballot($B1), // Ballot template used to generate actual ballot for casting
         Ballot($B2), // Generate as many ballot templates as voters
-        Ballot($B3),
-        Ballot($B4),
+
+        PublicBoardCounter(z),
 
         !ElectionAuthority($E),
         !Sk($E, ~f),
@@ -60,21 +50,20 @@ rule InitialSetup:
 
 rule GenerateBallot:
     let
-        onion = aenc(<C1, C2, C3, ~d>, pkE)
+        onion = aenc(<C1, C2, ~d>, pkE)
     in
     [
         Ballot(B), // Get ballot template
         !Candidate(C1), // Get each candidate
         !Candidate(C2),
-        !Candidate(C3),
         !ElectionAuthority(E),
         !Pk(E, pkE), // Public key of the election authority
         Fr(~d) // New fresh value used for encryption
     ]
-  --[ GenerateBallot(B, C1, C2, C3, onion), GenerateBallotR() ]->
+  --[ GenerateBallot(B, C1, C2, onion), GenerateBallotR() ]->
     [
-        BallotWithOrderAndOnion(B, C1, C2, C3, onion) // Add onion to the ballot
-        // Order should be random, because tamarin will decide, which value assign to C1, C2, C3
+        BallotWithOrderAndOnion(B, C1, C2, onion) // Add onion to the ballot
+        // Order should be random, because tamarin will decide, which value assign to C1, C2
     ]
 
 // --- VOTE CASTING ---
@@ -83,7 +72,7 @@ rule CastVote:
     [
         !Choice(c), // Chose candidate: first, second or third
         Voter(V), // Voter casting his vote
-        BallotWithOrderAndOnion(B, C1, C2, C3, onion) // Ballot given to the voter
+        BallotWithOrderAndOnion(B, C1, C2, onion) // Ballot given to the voter
     ]
   --[ CastVote(V, c, onion) ]->
     [
@@ -101,9 +90,9 @@ rule CastVoteI:
         !Choice(ch1), // Choice for voting freely
         !Choice(ch2), // Choice for voting as intruder commands
         VoterI(V), // Voter working with the intruder
-        BallotWithOrderAndOnion(B, C1, C2, C3, onion) // Ballot given to the voter
+        BallotWithOrderAndOnion(B, C1, C2, onion) // Ballot given to the voter
     ]
-  --[ CastVote(V, ch, onion), Voted(V, select(ch, <C1, C2, C3>)), Eq(select(ch2, <C1, C2, C3>), ic) ]->
+  --[ CastVote(V, ch, onion), Voted(V, select(ch, <C1, C2>)), Eq(select(ch2, <C1, C2>), ic) ]->
     [
         Vote(ch, onion), // Actual vote, used for publishing and counting
         Receipt(V, ch, onion), // A receipt for voter to verify that his vote was casted properly
@@ -112,32 +101,26 @@ rule CastVoteI:
 
 // --- VOTE PUBLISHING AND COUNTING ---
 
-rule PublishAndCountVote:
+rule PublishAndCountVotes:
     let
-        chosen = select(selection, <C1, C2, C3>) // Get selected candidate from the onion order
-        onion = aenc(<C1, C2, C3, d>, pk(skE))
+        chosen1 = select(selection1, <C1.1, C2.1>) // Get selected candidate from the onion order
+        onion1 = aenc(<C1.1, C2.1, d.1>, pk(skE))
+        chosen2 = select(selection2, <C1.2, C2.2>) // Get selected candidate from the onion order
+        onion2 = aenc(<C1.2, C2.2, d.2>, pk(skE))
     in
     [
         !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
         !Sk(E, skE), // Private key of the election authority
-        Vote(selection, onion), // Casted vote
-        Counter(chosen, x) // Counter for the candidate chosen in the counted vote
+        Vote(selection1, onion1), // Casted vote
+        Vote(selection2, onion2) // Casted vote
     ]
-  --[ PublishVote(selection, onion), CountVote(chosen) ]->
+  --[ PublishVote(selection1, onion1), CountVote(chosen1), PublishVote(selection2, onion2), CountVote(chosen2) ]->
     [
-        !Board(selection, onion), // Publish vote on the bulletin board
-        Counter(chosen, s(x))
-    ]
-
-// --- RESULT PUBLISHING ---
-
-rule PublishResults:
-    [
-        Counter(C, x) // Get counter for the candidate
-    ]
-  --[ PublishResult(C, x) ]->
-    [
-        !Result(C, x) // Published result
+        !Board(selection1, onion1), // Publish vote on the bulletin board
+        !Board(selection2, onion2), // Publish vote on the bulletin board
+        DecVote(chosen1),
+        DecVote(chosen2),
+        Out(chosen1+chosen2) // Attack
     ]
 
 // --- VERIFYING VOTES ---
@@ -174,15 +157,15 @@ rule ChooseCandidate:
 
 rule DecryptVote:
     let
-        onion = aenc(<C1, C2, C3, d>, pk(skE))
+        onion = aenc(<C1, C2, d>, pk(skE))
     in
     [
         IVote(V, ch, onion),
         !ISk(E, skE)
     ]
-  --[ DecryptVote(), IHowVoted(V, select(ch, <C1,C2,C3>)) ]->
+  --[ DecryptVote(), IHowVoted(V, select(ch, <C1,C2>)) ]->
     [
-        IHowVoted(V, select(ch, <C1,C2,C3>)) // Information how voter V voted
+        IHowVoted(V, select(ch, <C1,C2>)) // Information how voter V voted
     ]
 
 // ---------------- RESTRICTIONS ----------------
@@ -191,7 +174,7 @@ restriction RunInitialSetupOnce:
   "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
 
 restriction Unique:
-  "All B C1 C2 C3 onion #i. GenerateBallot(B, C1, C2, C3, onion) @i ==> not(C1=C2 | C1=C3 | C2=C3)"
+  "All B C1 C2 onion #i. GenerateBallot(B, C1, C2, onion) @i ==> not(C1=C2)"
 
 restriction Equality:
   "All x y #i. Eq(x,y) @i ==> x = y"

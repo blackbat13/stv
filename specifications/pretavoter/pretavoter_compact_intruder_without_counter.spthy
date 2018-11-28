@@ -46,6 +46,8 @@ rule InitialSetup:
         Ballot($B3),
         Ballot($B4),
 
+        PublicBoardCounter(z),
+
         !ElectionAuthority($E),
         !Sk($E, ~f),
         !Pk($E, pk(~f))
@@ -115,11 +117,14 @@ rule PublishAndCountVote:
     [
         !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
         !Sk(E, skE), // Private key of the election authority
-        Vote(selection, onion) // Casted vote
+        Vote(selection, onion), // Casted vote
+        PublicBoardCounter(x)
     ]
   --[ PublishVote(selection, onion), CountVote(chosen) ]->
     [
-        !Board(selection, onion) // Publish vote on the bulletin board
+        !Board(selection, onion), // Publish vote on the bulletin board
+        PublicBoardCounter(s(x)),
+        PublicBoard(x, chosen)
     ]
 
 // --- VERIFYING VOTES ---
