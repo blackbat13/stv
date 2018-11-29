@@ -39,8 +39,6 @@ rule InitialSetup:
         Ballot($B1), // Ballot template used to generate actual ballot for casting
         Ballot($B2), // Generate as many ballot templates as voters
 
-        PublicBoardCounter(z),
-
         !ElectionAuthority($E),
         !Sk($E, ~f),
         !Pk($E, pk(~f))
