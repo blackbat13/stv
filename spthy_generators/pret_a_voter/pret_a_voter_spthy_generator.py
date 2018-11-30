@@ -1,15 +1,11 @@
-import itertools
-import random
-from tools.string_tools import StringTools
-
-
 class PretAVoterSpthyGenerator:
     spthy_model = ""
 
-    def __init__(self, no_voters, no_candidates, single=True):
+    def __init__(self, no_voters, no_candidates, single=True, intruder_candidate_id=0):
         self.no_voters = no_voters
         self.no_candidates = no_candidates
         self.single = single
+        self.intruder_candidate_id = intruder_candidate_id
         return
 
     def create_spthy_model(self):
@@ -42,7 +38,6 @@ class PretAVoterSpthyGenerator:
     def __define_equations(self):
         equations = "equations:\n"
         candidate_list = self.__generate_candidate_list()
-        candidate_list = candidate_list.rstrip(" ,")
         choice = "z"
         for candidate_id in range(1, self.no_candidates + 1):
             choice = f"s({choice})"
@@ -58,15 +53,25 @@ class PretAVoterSpthyGenerator:
         rules += self.__define_ballot_generation_rule()
         rules += self.__define_vote_intruder_casting_rule()
         if self.single:
-            rules += self.__define_single_vote_casting_rule()
-            rules += self.__define_single_vote_publishing_rule()
-            rules += self.__define_single_vote_counting_rule()
+            rules += self.__define_single_rules()
         else:
-            rules += self.__define_votes_casting_rule()
-            rules += self.__define_votes_publishing_rule()
-            rules += self.__define_votes_counting_rule()
+            rules += self.__define_multi_rules()
         rules += self.__define_vote_verifying_rule()
 
+        return rules
+
+    def __define_single_rules(self):
+        rules = ""
+        rules += self.__define_single_vote_casting_rule()
+        rules += self.__define_single_vote_publishing_rule()
+        rules += self.__define_single_vote_counting_rule()
+        return rules
+
+    def __define_multi_rules(self):
+        rules = ""
+        rules += self.__define_votes_casting_rule()
+        rules += self.__define_votes_publishing_rule()
+        rules += self.__define_votes_counting_rule()
         return rules
 
     def __define_setup_rules(self):
@@ -76,10 +81,8 @@ class PretAVoterSpthyGenerator:
 
     def __define_initial_setup_rule(self):
         rule = "rule InitialSetup:\n"
-        rule += '\t[\n'
-        rule += '\t\tFr(~f)\n'
-        rule += '\t]\n'
-        rule += '  --[ InitialSetup(), RunOnce() ]->\n'
+        rule += self.__embed_facts(['Fr(~f)'])
+        rule += self.__embed_actions(['InitialSetup()', 'RunOnce()'])
         rule += '\t[\n'
 
         rule += self.__generate_initial_voters()
@@ -91,6 +94,22 @@ class PretAVoterSpthyGenerator:
         rule += '\t]\n'
         rule += '\n'
         return rule
+
+    def __embed_facts(self, facts: [str]):
+        embed = "\t[\n"
+        for fact in facts:
+            embed += f"\t\t{fact},\n"
+        embed = embed.rstrip("\n,")
+        embed += "\n\t]\n"
+        return embed
+
+    def __embed_actions(self, actions: [str]):
+        embed = "  --[ "
+        for action in actions:
+            embed += f"{action}, "
+        embed = embed.rstrip(" ,")
+        embed += " ]->\n"
+        return embed
 
     def __generate_initial_voters(self):
         facts = ""
@@ -207,13 +226,17 @@ class PretAVoterSpthyGenerator:
         rule += f"\tin\n"
         rule += '\t[\n'
         rule += "\t\t// Candidate selected by Intruder\n"
-        rule += "\t\tIn(ic),\n"
+        if self.intruder_candidate_id == 0:
+            rule += "\t\tIn(ic),\n"
         rule += '\t\t!Choice(ch1),\n'
         rule += '\t\t!Choice(ch2),\n'
         rule += '\t\tVoterI(V),\n'
         rule += f"\t\tBallotWithOrderAndOnion(B, {candidate_list}, onion)\n"
         rule += '\t]\n'
-        rule += f'  --[ CastVote(V, ch, onion), Eq(select(ch2, <{candidate_list}>), ic), IntruderCandidate(ic), Vote(V, select(ch, <{candidate_list}>)) ]->\n'
+        if self.intruder_candidate_id == 0:
+            rule += f'  --[ CastVote(V, ch, onion), Eq(select(ch2, <{candidate_list}>), ic), IntruderCandidate(ic), Vote(V, select(ch, <{candidate_list}>)) ]->\n'
+        else:
+            rule += f"  --[ CastVote(V, ch, onion), Eq(select(ch2, <{candidate_list}>), 'C{self.intruder_candidate_id}'), IntruderCandidate('C{self.intruder_candidate_id}'), Vote(V, select(ch, <{candidate_list}>)) ]->\n"
         rule += '\t[\n'
         rule += "\t\tVote(ch, onion),\n"
         rule += "\t\tReceipt(V, ch, onion),\n"
@@ -336,6 +359,14 @@ class PretAVoterSpthyGenerator:
 
     def __define_lemmas(self):
         lemmas = ""
+        if self.intruder_candidate_id > 0:
+            lemmas += f"lemma IntruderStrategy:\n"
+            lemmas += f'\t"All V C #i.\n'
+            lemmas += f"\t\tVote(V, C) @ #i ==>\n"
+            lemmas += f'\t\t\tEx #j. K(<V, C>) @ #j\n'
+            lemmas += '\t"\n\n'
+            return lemmas
+
         for candidate_id in range(1, self.no_candidates + 1):
             lemmas += f"lemma IntruderStrategyC{candidate_id}:\n"
             lemmas += f'\t"All V C #i1 #i2.\n'
@@ -356,3 +387,12 @@ f.write(pret_a_voter_spthy_generator.create_spthy_model())
 f.close()
 
 print(f"Done. Created model saved in {file_name}")
+
+for candidate_id in range(1, candidates_no + 1):
+    pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False, candidate_id)
+    file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}_ic{candidate_id}.spthy"
+    f = open(file_name, "w")
+    f.write(pret_a_voter_spthy_generator.create_spthy_model())
+    f.close()
+
+    print(f"Done. Created model saved in {file_name}")
