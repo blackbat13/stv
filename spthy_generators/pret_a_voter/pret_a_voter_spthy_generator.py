@@ -54,17 +54,18 @@ class PretAVoterSpthyGenerator:
 
         rules += self.__define_setup_rules()
         rules += self.__define_ballot_generation_rule()
-        rules += self.__define_vote_casting_rule()
+        rules += self.__define_vote_intruder_casting_rule()
         if self.single:
+            rules += self.__define_single_vote_casting_rule()
             rules += self.__define_single_vote_publishing_rule()
             rules += self.__define_single_vote_counting_rule()
         else:
+            rules += self.__define_votes_casting_rule()
             rules += self.__define_votes_publishing_rule()
             rules += self.__define_votes_counting_rule()
         rules += self.__define_vote_verifying_rule()
 
         return rules
-
 
     def __define_setup_rules(self):
         setup = ""
@@ -91,8 +92,9 @@ class PretAVoterSpthyGenerator:
 
     def __generate_initial_voters(self):
         facts = ""
-        for voter_id in range(1, self.no_voters + 1):
+        for voter_id in range(1, self.no_voters):
             facts += f"\t\tVoter($V{voter_id}),\n"
+        facts += f"\t\tVoterI($V{self.no_voters}),\n"
         return facts
 
     def __generate_initial_candidates(self):
@@ -126,43 +128,92 @@ class PretAVoterSpthyGenerator:
         rule = "rule GenerateBallot:\n"
         candidate_list = self.__generate_candidate_list()
         rule += "\tlet\n"
-        rule += f"\t\tonion = aenc(<{candidate_list} ~d>, pkE)\n"
+        rule += f"\t\tonion = aenc(<{candidate_list}, ~d>, pkE)\n"
         rule += f"\tin\n"
         rule += '\t[\n'
         rule += '\t\tBallot(B),\n'
-        rule += self.__generate_initial_candidates()
+        rule += self.__generate_candidates_facts()
         rule += '\t\t!ElectionAuthority(E),\n'
         rule += "\t\t!Pk(E, pkE),\n"
         rule += "\t\tFr(~d)\n"
         rule += '\t]\n'
-        rule += f'  --[ GenerateBallot(B, {candidate_list} onion), GenerateBallotR() ]->\n'
+        rule += f'  --[ GenerateBallot(B, {candidate_list}, onion), GenerateBallotR() ]->\n'
         rule += '\t[\n'
-        rule += f"\t\tBallotWithOrderAndOnion(B, {candidate_list} onion)\n"
+        rule += f"\t\tBallotWithOrderAndOnion(B, {candidate_list}, onion)\n"
         rule += '\t]\n'
         rule += '\n'
         return rule
 
-    def __generate_candidate_list(self, voter_id = 0):
+    def __generate_candidates_facts(self):
+        facts = ""
+        for candidate_id in range(1, self.no_candidates + 1):
+            facts += f"\t\t!Candidate(C{candidate_id}),\n"
+        return facts
+
+    def __generate_candidate_list(self, voter_id=0):
         candidate_list = ""
         for candidate_id in range(1, self.no_candidates + 1):
             if voter_id == 0:
                 candidate_list += f"C{candidate_id}, "
             else:
                 candidate_list += f"C{candidate_id}.{voter_id}, "
-        return candidate_list.rstrip(" ")
+        return candidate_list.rstrip(" ,")
 
-    def __define_vote_casting_rule(self):
+    def __define_single_vote_casting_rule(self):
         rule = "rule CastVote:\n"
         candidate_list = self.__generate_candidate_list()
         rule += '\t[\n'
         rule += '\t\t!Choice(c),\n'
         rule += '\t\tVoter(V),\n'
-        rule += f"\t\tBallotWithOrderAndOnion(B, {candidate_list} onion)\n"
+        rule += f"\t\tBallotWithOrderAndOnion(B, {candidate_list}, onion)\n"
         rule += '\t]\n'
         rule += f'  --[ CastVote(V, c, onion) ]->\n'
         rule += '\t[\n'
         rule += "\t\tVote(c, onion),\n"
         rule += "\t\tReceipt(V, c, onion)\n"
+        rule += '\t]\n'
+        rule += '\n'
+        return rule
+
+    def __define_votes_casting_rule(self):
+        rule = "rule CastVotes:\n"
+
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters):
+            candidate_list = self.__generate_candidate_list(voter_id)
+            rule += f'\t\t\\\\--Voter {voter_id}--\n'
+            rule += f'\t\t!Choice(c{voter_id}),\n'
+            rule += f'\t\tVoter(V{voter_id}),\n'
+            rule += f"\t\tBallotWithOrderAndOnion(B{voter_id}, {candidate_list}, onion{voter_id})\n"
+        rule += '\t]\n'
+        rule += f'  --[ CastVotes() ]->\n'
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters):
+            rule += f'\t\t\\\\--Voter {voter_id}--\n'
+            rule += f"\t\tVote(c{voter_id}, onion{voter_id}),\n"
+            rule += f"\t\tReceipt(V{voter_id}, c{voter_id}, onion{voter_id})\n"
+        rule += '\t]\n'
+        rule += '\n'
+        return rule
+
+    def __define_vote_intruder_casting_rule(self):
+        rule = "rule CastVoteI:\n"
+        candidate_list = self.__generate_candidate_list()
+        rule += "\tlet\n"
+        rule += f"\t\tch = diff(ch1, ch2)\n"
+        rule += f"\tin\n"
+        rule += '\t[\n'
+        rule += "\t\tIn(ic),\n"
+        rule += '\t\t!Choice(ch1),\n'
+        rule += '\t\t!Choice(ch2),\n'
+        rule += '\t\tVoterI(V),\n'
+        rule += f"\t\tBallotWithOrderAndOnion(B, {candidate_list}, onion)\n"
+        rule += '\t]\n'
+        rule += f'  --[ CastVote(V, c, onion), Eq(select(ch2, <{candidate_list}>), ic), IntruderCandidate(ic) ]->\n'
+        rule += '\t[\n'
+        rule += "\t\tVote(c, onion),\n"
+        rule += "\t\tReceipt(V, c, onion),\n"
+        rule += "\t\tOut(<V, c, onion>)\n"
         rule += '\t]\n'
         rule += '\n'
         return rule
@@ -206,13 +257,13 @@ class PretAVoterSpthyGenerator:
         rule = "rule CountVote:\n"
         candidate_list = self.__generate_candidate_list()
         rule += "\tlet\n"
-        rule += f"\t\tonion = aenc(<{candidate_list} ~d>, pkE)\n"
-        rule += f"\t\tchosen = select(selection, <{candidate_list.rstrip(' ,')}>)\n"
+        rule += f"\t\tonion = aenc(<{candidate_list}, ~d>, pkE)\n"
+        rule += f"\t\tchosen = select(selection, <{candidate_list}>)\n"
         rule += f"\tin\n"
         rule += '\t[\n'
         rule += "\t\t!ElectionAuthority(E),\n"
         rule += "\t\t!Sk(E, skE),\n"
-        rule += "\t\tVote(selection, onion)\n"
+        rule += "\t\tVoteToCount(selection, onion)\n"
         rule += '\t]\n'
         rule += f'  --[ CountVote(chosen) ]->\n'
         rule += '\t[\n'
@@ -226,12 +277,12 @@ class PretAVoterSpthyGenerator:
         rule += "\tlet\n"
         for voter_id in range(1, self.no_voters + 1):
             candidate_list = self.__generate_candidate_list(voter_id)
-            rule += f"\t\tonion{voter_id} = aenc(<{candidate_list} ~d.{voter_id}>, pkE)\n"
-            rule += f"\t\tchosen{voter_id} = select(selection{voter_id}, <{candidate_list.rstrip(' ,')}>)\n"
+            rule += f"\t\tonion{voter_id} = aenc(<{candidate_list}, ~d.{voter_id}>, pkE)\n"
+            rule += f"\t\tchosen{voter_id} = select(selection{voter_id}, <{candidate_list}>)\n"
         rule += f"\tin\n"
         rule += '\t[\n'
         for voter_id in range(1, self.no_voters + 1):
-            rule += f"\t\tVote(selection{voter_id}, onion{voter_id}),\n"
+            rule += f"\t\tVoteToCount(selection{voter_id}, onion{voter_id}),\n"
         rule += "\t\t!ElectionAuthority(E),\n"
         rule += "\t\t!Sk(E, skE)\n"
         rule += '\t]\n'
@@ -265,7 +316,15 @@ class PretAVoterSpthyGenerator:
         restrictions += "restriction RunInitialSetupOnce:\n"
         restrictions += '\t"All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"\n\n'
         restrictions += 'restriction Unique:\n'
-        restrictions += '\t"All B C1 C2 onion #i. GenerateBallot(B, C1, C2, onion) @i ==> not(C1=C2)"\n\n'
+        cand_list = ""
+        for candidate_id in range(1, self.no_candidates + 1):
+            cand_list += f"C{candidate_id} "
+        eq = ""
+        for candidate_id_1 in range(1, self.no_candidates):
+            for candidate_id_2 in range(candidate_id_1 + 1, self.no_candidates + 1):
+                eq += f"not(C{candidate_id_1}=C{candidate_id_2}) & "
+        eq = eq.rstrip(" &")
+        restrictions += f'\t"All B {cand_list}onion #i. GenerateBallot(B, {self.__generate_candidate_list()}, onion) @i ==> ({eq})"\n\n'
         restrictions += 'restriction Equality:\n'
         restrictions += '\t"All x y #i. Eq(x,y) @i ==> x = y"\n\n'
         return restrictions
