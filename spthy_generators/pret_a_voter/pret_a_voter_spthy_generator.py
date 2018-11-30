@@ -20,6 +20,7 @@ class PretAVoterSpthyGenerator:
         self.spthy_model += self.__define_equations()
         self.spthy_model += self.__define_rules()
         self.spthy_model += self.__define_restrictions()
+        self.spthy_model += self.__define_lemmas()
 
         self.spthy_model += "end\n"
         return self.spthy_model
@@ -305,7 +306,7 @@ class PretAVoterSpthyGenerator:
     def __define_vote_verifying_rule(self):
         rule = "rule VerifyVote:\n"
         rule += '\t[\n'
-        rule += '\t\tReceipt(V, selection, onion),,\n'
+        rule += '\t\tReceipt(V, selection, onion),\n'
         rule += '\t\t!Board(selection, onion),\n'
         rule += '\t]\n'
         rule += f'  --[ VerifyVote(V, selection, onion) ]->\n'
@@ -331,6 +332,17 @@ class PretAVoterSpthyGenerator:
         restrictions += 'restriction Equality:\n'
         restrictions += '\t"All x y #i. Eq(x,y) @i ==> x = y"\n\n'
         return restrictions
+
+    def __define_lemmas(self):
+        lemmas = ""
+        for candidate_id in range(1, self.no_candidates + 1):
+            lemmas += f"lemma IntruderStrategyC{candidate_id}:\n"
+            lemmas += f'\t"All V C #i.\n'
+            lemmas += f"\t\tIntruderCandidate('C{candidate_id}') @ #i ==>\n"
+            lemmas += f'\t\t\tK(<V, C>)\n'
+            lemmas += '\t"\n\n'
+
+        return lemmas
 
 
 pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(4, 3, False)
