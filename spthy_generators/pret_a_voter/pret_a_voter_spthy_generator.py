@@ -46,8 +46,9 @@ class PretAVoterSpthyGenerator:
         choice = "z"
         for candidate_id in range(1, self.no_candidates + 1):
             choice = f"s({choice})"
-            equations += f"\tselect({choice}, <{candidate_list}>) = C{candidate_id}\n"
-        equations += "\n"
+            equations += f"\tselect({choice}, <{candidate_list}>) = C{candidate_id},\n"
+        equations = equations.rstrip("\n,")
+        equations += "\n\n"
         return equations
 
     def __define_rules(self):
@@ -182,7 +183,7 @@ class PretAVoterSpthyGenerator:
         rule += '\t[\n'
         for voter_id in range(1, self.no_voters):
             candidate_list = self.__generate_candidate_list(voter_id)
-            rule += f'\t\t\\\\--Voter {voter_id}--\n'
+            rule += f'\t\t//--Voter {voter_id}--\n'
             rule += f'\t\t!Choice(c{voter_id}),\n'
             rule += f'\t\tVoter(V{voter_id}),\n'
             rule += f"\t\tBallotWithOrderAndOnion(B{voter_id}, {candidate_list}, onion{voter_id})\n"
@@ -190,7 +191,7 @@ class PretAVoterSpthyGenerator:
         rule += f'  --[ CastVotes() ]->\n'
         rule += '\t[\n'
         for voter_id in range(1, self.no_voters):
-            rule += f'\t\t\\\\--Voter {voter_id}--\n'
+            rule += f'\t\t//--Voter {voter_id}--\n'
             rule += f"\t\tVote(c{voter_id}, onion{voter_id}),\n"
             rule += f"\t\tReceipt(V{voter_id}, c{voter_id}, onion{voter_id})\n"
         rule += '\t]\n'
@@ -198,26 +199,26 @@ class PretAVoterSpthyGenerator:
         return rule
 
     def __define_vote_intruder_casting_rule(self):
-        rule = "\\\\ Vote casted by coerced voter\n"
+        rule = "// Vote casted by coerced voter\n"
         rule += "rule CastVoteI:\n"
         candidate_list = self.__generate_candidate_list()
         rule += "\tlet\n"
         rule += f"\t\tch = diff(ch1, ch2)\n"
         rule += f"\tin\n"
         rule += '\t[\n'
-        rule += "\t\t\\\\ Candidate selected by Intruder\n"
+        rule += "\t\t// Candidate selected by Intruder\n"
         rule += "\t\tIn(ic),\n"
         rule += '\t\t!Choice(ch1),\n'
         rule += '\t\t!Choice(ch2),\n'
         rule += '\t\tVoterI(V),\n'
         rule += f"\t\tBallotWithOrderAndOnion(B, {candidate_list}, onion)\n"
         rule += '\t]\n'
-        rule += f'  --[ CastVote(V, c, onion), Eq(select(ch2, <{candidate_list}>), ic), IntruderCandidate(ic) ]->\n'
+        rule += f'  --[ CastVote(V, ch, onion), Eq(select(ch2, <{candidate_list}>), ic), IntruderCandidate(ic), Vote(V, select(ch, <{candidate_list}>)) ]->\n'
         rule += '\t[\n'
-        rule += "\t\tVote(c, onion),\n"
-        rule += "\t\tReceipt(V, c, onion),\n"
-        rule += "\t\t\\\\ Share vote receipt with Intruder\n"
-        rule += "\t\tOut(<V, c, onion>)\n"
+        rule += "\t\tVote(ch, onion),\n"
+        rule += "\t\tReceipt(V, ch, onion),\n"
+        rule += "\t\t// Share vote receipt with Intruder\n"
+        rule += "\t\tOut(<V, ch, onion>)\n"
         rule += '\t]\n'
         rule += '\n'
         return rule
@@ -307,7 +308,7 @@ class PretAVoterSpthyGenerator:
         rule = "rule VerifyVote:\n"
         rule += '\t[\n'
         rule += '\t\tReceipt(V, selection, onion),\n'
-        rule += '\t\t!Board(selection, onion),\n'
+        rule += '\t\t!Board(selection, onion)\n'
         rule += '\t]\n'
         rule += f'  --[ VerifyVote(V, selection, onion) ]->\n'
         rule += '\t[\n'
@@ -337,16 +338,17 @@ class PretAVoterSpthyGenerator:
         lemmas = ""
         for candidate_id in range(1, self.no_candidates + 1):
             lemmas += f"lemma IntruderStrategyC{candidate_id}:\n"
-            lemmas += f'\t"All V C #i.\n'
-            lemmas += f"\t\tIntruderCandidate('C{candidate_id}') @ #i ==>\n"
+            lemmas += f'\t"All V C #i1 #i2.\n'
+            lemmas += f"\t\t(IntruderCandidate('C{candidate_id}') @ #i1 &\n"
+            lemmas += f"\t\tVote(V, C) @ #i2) ==>\n"
             lemmas += f'\t\t\tEx #j. K(<V, C>) @ #j\n'
             lemmas += '\t"\n\n'
 
         return lemmas
 
 
-voters_no = 4
-candidates_no = 3
+voters_no = 2
+candidates_no = 2
 pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
 file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
 f = open(file_name, "w")
