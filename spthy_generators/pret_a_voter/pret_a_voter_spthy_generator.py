@@ -339,7 +339,7 @@ class PretAVoterSpthyGenerator:
             lemmas += f"lemma IntruderStrategyC{candidate_id}:\n"
             lemmas += f'\t"All V C #i.\n'
             lemmas += f"\t\tIntruderCandidate('C{candidate_id}') @ #i ==>\n"
-            lemmas += f'\t\t\tK(<V, C>)\n'
+            lemmas += f'\t\t\tEx #j. K(<V, C>) @ #j\n'
             lemmas += '\t"\n\n'
 
         return lemmas
