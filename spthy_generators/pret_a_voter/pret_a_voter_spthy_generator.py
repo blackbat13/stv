@@ -197,12 +197,14 @@ class PretAVoterSpthyGenerator:
         return rule
 
     def __define_vote_intruder_casting_rule(self):
-        rule = "rule CastVoteI:\n"
+        rule = "\\\\ Vote casted by coerced voter\n"
+        rule += "rule CastVoteI:\n"
         candidate_list = self.__generate_candidate_list()
         rule += "\tlet\n"
         rule += f"\t\tch = diff(ch1, ch2)\n"
         rule += f"\tin\n"
         rule += '\t[\n'
+        rule += "\t\t\\\\ Candidate selected by Intruder\n"
         rule += "\t\tIn(ic),\n"
         rule += '\t\t!Choice(ch1),\n'
         rule += '\t\t!Choice(ch2),\n'
@@ -213,6 +215,7 @@ class PretAVoterSpthyGenerator:
         rule += '\t[\n'
         rule += "\t\tVote(c, onion),\n"
         rule += "\t\tReceipt(V, c, onion),\n"
+        rule += "\t\t\\\\ Share vote receipt with Intruder\n"
         rule += "\t\tOut(<V, c, onion>)\n"
         rule += '\t]\n'
         rule += '\n'
