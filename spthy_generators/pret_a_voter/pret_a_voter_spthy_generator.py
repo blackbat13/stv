@@ -13,7 +13,7 @@ class PretAVoterSpthyGenerator:
         return
 
     def create_spthy_model(self):
-        self.spthy_model += "theory PretAVoter\n"
+        self.spthy_model += f"theory PretAVoterV{self.no_voters}C{self.no_candidates}\n"
         self.spthy_model += "begin\n\n"
         self.spthy_model += self.__define_builtins()
         self.spthy_model += self.__define_functions()
@@ -345,8 +345,10 @@ class PretAVoterSpthyGenerator:
         return lemmas
 
 
-pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(4, 3, False)
-file_name = "pret_a_voter.spthy"
+voters_no = 4
+candidates_no = 3
+pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
+file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
 f = open(file_name, "w")
 f.write(pret_a_voter_spthy_generator.create_spthy_model())
 f.close()
