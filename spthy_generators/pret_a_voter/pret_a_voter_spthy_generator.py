@@ -16,7 +16,7 @@ class PretAVoterSpthyGenerator:
         self.spthy_model += self.__define_equations()
         self.spthy_model += self.__define_rules()
         self.spthy_model += self.__define_restrictions()
-        self.spthy_model += self.__define_lemmas()
+        #self.spthy_model += self.__define_lemmas()
 
         self.spthy_model += "end\n"
         return self.spthy_model
@@ -50,8 +50,8 @@ class PretAVoterSpthyGenerator:
         rules = ""
 
         rules += self.__define_setup_rules()
-        rules += self.__define_ballot_generation_rule()
-        rules += self.__define_vote_intruder_casting_rule()
+        #rules += self.__define_ballot_generation_rule()
+        #rules += self.__define_vote_intruder_casting_rule()
         if self.single:
             rules += self.__define_single_rules()
         else:
@@ -62,6 +62,7 @@ class PretAVoterSpthyGenerator:
 
     def __define_single_rules(self):
         rules = ""
+        rules += self.__define_ballot_generation_rule()
         rules += self.__define_single_vote_casting_rule()
         rules += self.__define_single_vote_publishing_rule()
         rules += self.__define_single_vote_counting_rule()
@@ -69,9 +70,12 @@ class PretAVoterSpthyGenerator:
 
     def __define_multi_rules(self):
         rules = ""
-        rules += self.__define_votes_casting_rule()
-        rules += self.__define_votes_publishing_rule()
-        rules += self.__define_votes_counting_rule()
+        #rules += self.__define_votes_casting_rule()
+        rules += self.__define_all_ballots_generation_rule()
+        rules += self.__define_all_votes_casting_rule()
+        #rules += self.__define_votes_publishing_rule()
+        #rules += self.__define_votes_counting_rule()
+        rules += self.__define_votes_publishing_and_counting_rule()
         return rules
 
     def __define_setup_rules(self):
@@ -165,10 +169,44 @@ class PretAVoterSpthyGenerator:
         rule += '\n'
         return rule
 
-    def __generate_candidates_facts(self):
+    def __define_all_ballots_generation_rule(self):
+        rule = "rule GenerateAllBallots:\n"
+        rule += "\tlet\n"
+        for voter_id in range(1, self.no_voters + 1):
+            candidate_list = self.__generate_candidate_list(voter_id)
+            rule += f"\t\tonion.{voter_id} = aenc(<{candidate_list}, ~d.{voter_id}>, pkE)\n"
+        rule += f"\tin\n"
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters + 1):
+            rule += f'\t\tBallot(B.{voter_id}),\n'
+            rule += self.__generate_candidates_facts(voter_id)
+            rule += f"\t\tFr(~d.{voter_id}),\n"
+        rule += '\t\t!ElectionAuthority(E),\n'
+        rule += "\t\t!Pk(E, pkE)\n"
+        rule += '\t]\n'
+        rule += f'  --[ '
+        for voter_id in range(1, self.no_voters + 1):
+            candidate_list = self.__generate_candidate_list(voter_id)
+            rule += f"GenerateBallot(B.{voter_id}, {candidate_list}, onion.{voter_id}), "
+        rule = rule.rstrip(" ,")
+        rule += f' ]->\n'
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters + 1):
+            candidate_list = self.__generate_candidate_list(voter_id)
+            rule += f"\t\tBallotWithOrderAndOnion(B.{voter_id}, {candidate_list}, onion.{voter_id}),\n"
+        rule = rule.rstrip("\n,")
+        rule += '\n\t]\n'
+        rule += '\n'
+        return rule
+
+    def __generate_candidates_facts(self, voter_id = 0):
         facts = ""
-        for candidate_id in range(1, self.no_candidates + 1):
-            facts += f"\t\t!Candidate(C{candidate_id}),\n"
+        if voter_id == 0:
+            for candidate_id in range(1, self.no_candidates + 1):
+                facts += f"\t\t!Candidate(C{candidate_id}),\n"
+        else:
+            for candidate_id in range(1, self.no_candidates + 1):
+                facts += f"\t\t!Candidate(C{candidate_id}.{voter_id}),\n"
         return facts
 
     def __generate_candidate_list(self, voter_id=0):
@@ -213,6 +251,41 @@ class PretAVoterSpthyGenerator:
             rule += f'\t\t//--Voter {voter_id}--\n'
             rule += f"\t\tVote(c{voter_id}, onion{voter_id}),\n"
             rule += f"\t\tReceipt(V{voter_id}, c{voter_id}, onion{voter_id})\n"
+        rule += '\t]\n'
+        rule += '\n'
+        return rule
+
+    def __define_all_votes_casting_rule(self):
+        rule = "rule CastAllVotes:\n"
+        rule += "\tlet\n"
+        rule += f"\t\tchI = diff(ch1, ch2)\n"
+        rule += f"\tin\n"
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters):
+            candidate_list = self.__generate_candidate_list(voter_id)
+            rule += f'\t\t//--Voter {voter_id}--\n'
+            rule += f'\t\t!Choice(c{voter_id}),\n'
+            rule += f'\t\tVoter(V{voter_id}),\n'
+            rule += f"\t\tBallotWithOrderAndOnion(B{voter_id}, {candidate_list}, onion{voter_id}),\n"
+        rule += f'\t\t//--Coerced Voter--\n'
+        rule += '\t\t!Choice(ch1),\n'
+        rule += '\t\t!Choice(ch2),\n'
+        rule += '\t\tVoterI(VI),\n'
+        candidate_list = self.__generate_candidate_list(self.no_voters)
+        rule += f"\t\tBallotWithOrderAndOnion(BI, {candidate_list}, onionI)\n"
+        rule += '\t]\n'
+        rule += f"  --[ CastVotes(), Eq(select(ch2, <{candidate_list}>), 'C{self.intruder_candidate_id}'), IntruderCandidate('C{self.intruder_candidate_id}'), Vote(VI, select(chI, <{candidate_list}>)) ]->\n"
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters):
+            rule += f'\t\t//--Voter {voter_id}--\n'
+            rule += f"\t\tVote(c{voter_id}, onion{voter_id}),\n"
+            rule += f"\t\tReceipt(V{voter_id}, c{voter_id}, onion{voter_id}),\n"
+
+        rule += f'\t\t//--Coerced Voter--\n'
+        rule += "\t\tVote(chI, onionI),\n"
+        rule += "\t\tReceipt(VI, chI, onionI),\n"
+        rule += "\t\t// Share vote receipt with Intruder\n"
+        rule += "\t\tOut(<VI, chI, onionI>)\n"
         rule += '\t]\n'
         rule += '\n'
         return rule
@@ -327,6 +400,34 @@ class PretAVoterSpthyGenerator:
         rule += '\n'
         return rule
 
+    def __define_votes_publishing_and_counting_rule(self):
+        rule = "rule PublishAndCountVotes:\n"
+        rule += "\tlet\n"
+        for voter_id in range(1, self.no_voters + 1):
+            candidate_list = self.__generate_candidate_list(voter_id)
+            rule += f"\t\tonion{voter_id} = aenc(<{candidate_list}, ~d.{voter_id}>, pkE)\n"
+            rule += f"\t\tchosen{voter_id} = select(selection{voter_id}, <{candidate_list}>)\n"
+        rule += f"\tin\n"
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters + 1):
+            rule += f"\t\tVote(selection{voter_id}, onion{voter_id}),\n"
+        rule += "\t\t!ElectionAuthority(E),\n"
+        rule += "\t\t!Sk(E, skE)\n"
+        rule += '\t]\n'
+        rule += f'  --[ CountVotes() ]->\n'
+        rule += '\t[\n'
+        for voter_id in range(1, self.no_voters + 1):
+            rule += f"\t\tDecBoard(chosen{voter_id}),\n"
+            rule += f"\t\t!Board(selection{voter_id}, onion{voter_id}),\n"
+        rule += "\t\tOut("
+        for voter_id in range(1, self.no_voters + 1):
+            rule += f"chosen{voter_id} + "
+        rule = rule.rstrip(" +")
+        rule += ")\n"
+        rule += '\t]\n'
+        rule += '\n'
+        return rule
+
     def __define_vote_verifying_rule(self):
         rule = "rule VerifyVote:\n"
         rule += '\t[\n'
@@ -396,3 +497,141 @@ for candidate_id in range(1, candidates_no + 1):
     f.close()
 
     print(f"Done. Created model saved in {file_name}")
+
+
+# diffLemma Observational_equivalence:
+# rule-equivalence
+#   case Rule_Destrd_0_fst
+#   backward-search
+#     case RHS
+#     step( simplify )
+#     step( solve( !KD( <x, x.1> ) ▶₀ #i ) )
+#       case CastVoteI
+#       step( solve( (#vl, 0) ~~> (#i, 0) ) )
+#         case d_1_select_case_1
+#         step( solve( (#vr.1, 0) ~~> (#i, 0) ) )
+#           case pair
+#           step( solve( !Choice( ch1 ) ▶₀ #vr ) )
+#             case InitialSetup_case_1
+#             step( solve( !Choice( s(x) ) ▶₁ #vr ) )
+#               case InitialSetup_case_2
+#               step( solve( VoterI( V ) ▶₂ #vr ) )
+#                 case InitialSetup
+#                 step( solve( BallotWithOrderAndOnion( B, C1, 'C1', onion ) ▶₃ #vr ) )
+#                   case GenerateBallot_case_1
+#                   step( solve( !KU( s(s(z)) ) @ #vk ) )
+#                     case CastVoteI_case_1
+#                     by ATTACK // trace found
+#                   qed
+#                 qed
+#               qed
+#             qed
+#           qed
+#         qed
+#       qed
+#     qed
+#   qed
+# qed
+#
+# end
+
+
+
+
+# diffLemma Observational_equivalence:
+# rule-equivalence
+#   case Rule_Destrd_0_fst
+#   backward-search
+#     case RHS
+#     step( simplify )
+#     step( solve( !KD( <x, x.1> ) ▶₀ #i ) )
+#       case CastAllVotes
+#       step( solve( (#vl, 0) ~~> (#i, 0) ) )
+#         case d_1_select_case_1
+#         step( solve( (#vr.1, 0) ~~> (#i, 0) ) )
+#           case pair
+#           step( solve( !Choice( c1 ) ▶₀ #vr ) )
+#             case InitialSetup_case_1
+#             step( solve( Voter( V1 ) ▶₁ #vr ) )
+#               case InitialSetup
+#               step( solve( BallotWithOrderAndOnion( B1, C1, C2, onion1 ) ▶₂ #vr ) )
+#                 case GenerateBallot_case_1
+#                 step( solve( !Choice( ch1 ) ▶₃ #vr ) )
+#                   case InitialSetup_case_1
+#                   step( solve( !Choice( s(x) ) ▶₄ #vr ) )
+#                     case InitialSetup_case_2
+#                     step( solve( VoterI( VI ) ▶₅ #vr ) )
+#                       case InitialSetup
+#                       step( solve( BallotWithOrderAndOnion( BI, C1, 'C1', onionI ) ▶₆ #vr ) )
+#                         case GenerateBallot
+#                         step( solve( !KU( s(s(z)) ) @ #vk ) )
+#                           case CastAllVotes_case_1
+#                           by ATTACK // trace found
+#                         qed
+#                       qed
+#                     qed
+#                   qed
+#                 qed
+#               qed
+#             qed
+#           qed
+#         qed
+#       qed
+#     qed
+#   qed
+# qed
+#
+# end
+
+
+
+# Joined Ballots rule attack:
+# diffLemma Observational_equivalence:
+# rule-equivalence
+#   case Rule_Destrd_0_fst
+#   backward-search
+#     case RHS
+#     step( simplify )
+#     step( solve( !KD( <x, x.1> ) ▶₀ #i ) )
+#       case CastAllVotes
+#       step( solve( (#vl, 0) ~~> (#i, 0) ) )
+#         case d_1_select_case_1
+#         step( solve( (#vr.1, 0) ~~> (#i, 0) ) )
+#           case pair
+#           step( solve( !Choice( c1 ) ▶₀ #vr ) )
+#             case InitialSetup_case_1
+#             step( solve( Voter( V1 ) ▶₁ #vr ) )
+#               case InitialSetup
+#               step( solve( BallotWithOrderAndOnion( B1, C1, C2, onion1 ) ▶₂ #vr ) )
+#                 case GenerateAllBallots_case_01
+#                 step( solve( !Choice( ch1 ) ▶₃ #vr ) )
+#                   case InitialSetup_case_2
+#                   step( solve( !Choice( s(x) ) ▶₄ #vr ) )
+#                     case InitialSetup_case_1
+#                     step( solve( VoterI( VI ) ▶₅ #vr ) )
+#                       case InitialSetup
+#                       step( solve( BallotWithOrderAndOnion( BI, 'C1', C2, onionI ) ▶₆ #vr ) )
+#                         case GenerateAllBallots
+#                         step( solve( !KU( s(s(z)) ) @ #vk ) )
+#                           case c_s
+#                           step( solve( !KU( s(z) ) @ #vk.1 ) )
+#                             case CastAllVotes_case_2
+#                             by ATTACK // trace found
+#                           qed
+#                         qed
+#                       qed
+#                     qed
+#                   qed
+#                 qed
+#               qed
+#             qed
+#           qed
+#         qed
+#       qed
+#     qed
+#   qed
+# qed
+
+
+
+# Usunąć onion z receipt (tylko fresh value, a połączenie trzymać tajne)
