@@ -50,8 +50,6 @@ class PretAVoterSpthyGenerator:
         rules = ""
 
         rules += self.__define_setup_rules()
-        #rules += self.__define_ballot_generation_rule()
-        #rules += self.__define_vote_intruder_casting_rule()
         if self.single:
             rules += self.__define_single_rules()
         else:
@@ -62,7 +60,8 @@ class PretAVoterSpthyGenerator:
 
     def __define_single_rules(self):
         rules = ""
-        rules += self.__define_ballot_generation_rule()
+        rules += self.__define_single_ballot_generation_rule()
+        rules += self.__define_vote_intruder_casting_rule()
         rules += self.__define_single_vote_casting_rule()
         rules += self.__define_single_vote_publishing_rule()
         rules += self.__define_single_vote_counting_rule()
@@ -70,7 +69,6 @@ class PretAVoterSpthyGenerator:
 
     def __define_multi_rules(self):
         rules = ""
-        #rules += self.__define_votes_casting_rule()
         rules += self.__define_all_ballots_generation_rule()
         rules += self.__define_all_votes_casting_rule()
         #rules += self.__define_votes_publishing_rule()
@@ -149,7 +147,7 @@ class PretAVoterSpthyGenerator:
         facts += "\t\t!Pk($E, pk(~f))\n"
         return facts
 
-    def __define_ballot_generation_rule(self):
+    def __define_single_ballot_generation_rule(self):
         rule = "rule GenerateBallot:\n"
         candidate_list = self.__generate_candidate_list()
         rule += "\tlet\n"
