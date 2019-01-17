@@ -268,7 +268,7 @@ class MvATLModel(ATLirModel):
                     if P.isEventually(formula[3]):
                         self.print_model()
                         if len(formula[1]) == 0: # E \phi  
-                            self.minimum_formula_no_agents(set(winning_states))
+                            result = self.minimum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi
                             # print(winning_states)
                             result = self.minimum_formula_one_agent(int(agents[0]), set(winning_states))

@@ -333,7 +333,7 @@ class PollutionModel:
         places = state["place"][:]
         energies = state["energy"][:]
         visited = state["visited"][:]
-        actions = {}
+        actions = []
         drone_number = -1
         for d_action in drone_actions:
             drone_number += 1
@@ -346,7 +346,7 @@ class PollutionModel:
             places[drone_number] = next_place
             visited[drone_number] = visited[drone_number].copy()
             visited[drone_number].add(next_place)
-            actions[drone_number] = self.movement_to_action(d_action[0], d_action[1])
+            actions.append(self.movement_to_action(d_action[0], d_action[1]))
 
         new_state = {
             "map": self.model_map,
@@ -633,6 +633,41 @@ def generate_formula3(no_drones, no_places):
     return conj
 
 
+def generate_new_formula2(no_drones, location_id):
+    coal = ""
+    for d in range(0, no_drones):
+        coal += str(d)
+        if d != no_drones - 1:
+            coal += ","
+
+    result = f"<<{coal}>> F ("
+    for d in range(0, no_drones):
+        result += f"(loc{location_id}_{d} & polD{location_id}_{d})"
+        if d != no_drones - 1:
+            result += " | "
+
+    result += ")"
+    return result
+
+
+def generate_new_formula1_a(no_places):
+    conj = list()
+    for l in range(0, no_places):
+        dis1 = list()
+        dis1.append("<<>> F polD" + str(l) + "_0")
+        conj.append(dis1)
+    return conj
+
+
+def generate_new_formula1_b(no_places, drone_id):
+    conj = list()
+    for l in range(0, no_places):
+        dis1 = list()
+        dis1.append(f"<<{drone_id}>> F polD{l}_0")
+        conj.append(dis1)
+    return conj
+
+
 def dformula2string(disj, i):
     if i == len(disj) - 1:
         return disj[i]
@@ -642,7 +677,7 @@ def dformula2string(disj, i):
 def cformula2string(conj, i):
     if i == len(conj) - 1:
         return dformula2string(conj[i], 0)
-    return "(" + dformula2string(conj[i], 0) + " & " + cformula2string(conj, i + 1) + ")"
+    return "(" + dformula2string(conj[i], 0) + " | " + cformula2string(conj, i + 1) + ")"
 
 
 n_agent = 2
@@ -657,8 +692,13 @@ tgen = stop - start
 # formula = generate_formula1(len(map))
 # formula = generate_formula2(len(map))
 # formula = generate_formula2_prime()
-formula = generate_formula3(n_agent, len(map))
-txt = cformula2string(formula, 0)
+# formula = generate_formula3(n_agent, len(map))
+# formula = generate_new_formula1_a(len(map))
+# formula = generate_new_formula1_b(len(map), 0)
+# txt = cformula2string(formula, 0)
+
+txt = generate_new_formula2(n_agent, 1)
+# txt = dformula2string(formula, 0)
 print(txt)
 props = list()
 for l in range(0, len(map)):
