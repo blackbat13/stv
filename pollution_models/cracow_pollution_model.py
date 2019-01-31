@@ -71,84 +71,84 @@ map.append({
 connections.append([1, 3])
 connections.append([2, 3])
 
-# map.append({
-#     "id": 4,
-#     "name": "Przybyszewskiego 56",
-#     "PM2.5": "u",
-#     "d_PM2.5": "f",
-#     "PM10": 50,
-#     "temperature": 4,
-#     "pressure": 1009,
-#     "humidity": 59,
-#     "x": 1,
-#     "y": 1
-# })
-#
-# connections.append([3, 4])
-# connections.append([1, 4])
-#
-#
-# map.append({
-#     "id": 5,
-#     "name": "Studencka",
-#     "PM2.5": "u",
-#     "d_PM2.5": "u",
-#     "PM10": 72,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 66,
-#     "x": 2,
-#     "y": 1
-# })
-#
-# connections.append([2, 5])
-#
-# map.append({
-#     "id": 6,
-#     "name": "Na Błonie",
-#     "PM2.5": "t",
-#     "d_PM2.5": "u",
-#     "PM10": 84,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 45,
-#     "x": 1,
-#     "y": 3
-# })
-#
-# connections.append([3, 5])
-# connections.append([5, 6])
-#
-# map.append({
-#     "id": 7,
-#     "name": "osiedle Złota Podkowa",
-#     "PM2.5": "t",
-#     "d_PM2.5": "f",
-#     "PM10": 68,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 69,
-#     "x": 1,
-#     "y": 2
-# })
-#
-# connections.append([6, 7])
-#
-# map.append({
-#     "id": 8,
-#     "name": "aleja Juliusza Słowackiego",
-#     "PM2.5": "f",
-#     "d_PM2.5": "f",
-#     "PM10": 70,
-#     "temperature": 3,
-#     "pressure": 1008,
-#     "humidity": 66,
-#     "x": 2,
-#     "y": 2
-# })
-#
-# connections.append([5, 8])
-# connections.append([3, 8])
+map.append({
+    "id": 4,
+    "name": "Przybyszewskiego 56",
+    "PM2.5": "u",
+    "d_PM2.5": "f",
+    "PM10": 50,
+    "temperature": 4,
+    "pressure": 1009,
+    "humidity": 59,
+    "x": 1,
+    "y": 2
+})
+
+connections.append([3, 4])
+connections.append([1, 4])
+
+
+map.append({
+    "id": 5,
+    "name": "Studencka",
+    "PM2.5": "u",
+    "d_PM2.5": "u",
+    "PM10": 72,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 66,
+    "x": 2,
+    "y": 1
+})
+
+connections.append([2, 5])
+
+map.append({
+    "id": 6,
+    "name": "Na Błonie",
+    "PM2.5": "t",
+    "d_PM2.5": "u",
+    "PM10": 84,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 45,
+    "x": 1,
+    "y": 3
+})
+
+connections.append([3, 5])
+connections.append([5, 6])
+
+map.append({
+    "id": 7,
+    "name": "osiedle Złota Podkowa",
+    "PM2.5": "t",
+    "d_PM2.5": "f",
+    "PM10": 68,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 69,
+    "x": 1,
+    "y": 2
+})
+
+connections.append([6, 7])
+
+map.append({
+    "id": 8,
+    "name": "aleja Juliusza Słowackiego",
+    "PM2.5": "f",
+    "d_PM2.5": "f",
+    "PM10": 70,
+    "temperature": 3,
+    "pressure": 1008,
+    "humidity": 66,
+    "x": 2,
+    "y": 2
+})
+
+connections.append([5, 8])
+connections.append([3, 8])
 
 # map.append({
 #     "id": 9,
@@ -217,7 +217,7 @@ class PollutionModel:
     graph = []
     lattice = None
 
-    def __init__(self, model_map, connections, no_drones, energies, comm_radius):
+    def __init__(self, model_map, connections, no_drones, energies, comm_radius, first_place_id=0):
         self.model_map = model_map
         self.no_drones = no_drones
         self.comm_radius = comm_radius  # Communication radius for drones
@@ -225,20 +225,20 @@ class PollutionModel:
         self.prepare_epistemic_states_dictionary()
         self.create_map_graph(connections)
 
-        first_state = self.create_first_state(energies)
+        first_state = self.create_first_state(energies, first_place_id)
         self.add_state(first_state)
 
         self.generate_model()
         self.model.states = self.states
         self.prepare_epistemic_relation()
 
-    def create_first_state(self, energies):
+    def create_first_state(self, energies, first_place_id):
         places = []
         visited = []
         loc0 = []
         for _ in range(0, self.no_drones):
-            places.append(0)
-            visited.append({0})
+            places.append(first_place_id)
+            visited.append({first_place_id})
             loc0.append('t')
 
         first_state = {
@@ -281,7 +281,7 @@ class PollutionModel:
 
         for con in connections:
             self.graph[con[0]].append(con[1])
-            # self.graph[con[1]].append(con[0]) # Uncomment for undirected graph
+            self.graph[con[1]].append(con[0]) # Uncomment for undirected graph
 
     def prepare_lattice(self):
         self.lattice = mvatl_model.QBAlgebra('t', 'f', [('tg', 't'),
@@ -318,7 +318,7 @@ class PollutionModel:
         available_actions = []
         for drone_number in range(0, self.no_drones):
             available_actions.append([])
-            # available_actions[drone_number].append(-1)  # Wait
+            available_actions[drone_number].append(-1)  # Wait
             drone_energy = state["energy"][drone_number]
             if drone_energy == 0:
                 continue
@@ -340,7 +340,7 @@ class PollutionModel:
             if energies[drone_number] > 0:
                 energies[drone_number] -= 1
             if d_action == -1:
-                actions[drone_number] = "Wait"
+                actions.append("Wait")
                 continue
             next_place = d_action[2]
             places[drone_number] = next_place
@@ -466,7 +466,18 @@ class PollutionModel:
             prop_name = "loc" + str(place_number)
             state[prop_name] = self.loc_prop_in_state(state, place_number)
 
+        state['polnew'] = self.pol_new_in_state(state)
+
         state['locA'] = self.loc_all_prop_in_state(state)
+
+    def pol_new_in_state(self, state):
+        pol_prop = []
+        for drone_number in range(0, self.no_drones):
+            drone_reading = self.drone_reading_for_place(drone_number, state['place'][drone_number])
+            prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone_number]]['PM2.5'])
+            pol_prop.append(prop)
+
+        return pol_prop
 
     def pol_prop_in_state(self, state, place_number):
         pol_prop = []
@@ -640,13 +651,14 @@ def generate_new_formula2(no_drones, location_id):
         if d != no_drones - 1:
             coal += ","
 
-    result = f"<<{coal}>> F ("
+    result = f"<<{coal}>> F "
+    lst = list()
     for d in range(0, no_drones):
-        result += f"(loc{location_id}_{d} & polD{location_id}_{d})"
-        if d != no_drones - 1:
-            result += " | "
+        lst2 = list()
+        lst2.append(f"(loc{location_id}_{d} & polnew_{d})")
+        lst.append(lst2)
 
-    result += ")"
+    result += cformula2string(lst, 0)
     return result
 
 
@@ -654,7 +666,7 @@ def generate_new_formula1_a(no_places):
     conj = list()
     for l in range(0, no_places):
         dis1 = list()
-        dis1.append("<<>> F polD" + str(l) + "_0")
+        dis1.append("<<>> F pol" + str(l) + "_0")
         conj.append(dis1)
     return conj
 
@@ -663,7 +675,7 @@ def generate_new_formula1_b(no_places, drone_id):
     conj = list()
     for l in range(0, no_places):
         dis1 = list()
-        dis1.append(f"<<{drone_id}>> F polD{l}_0")
+        dis1.append(f"<<{drone_id}>> F pol{l}_0")
         conj.append(dis1)
     return conj
 
@@ -680,12 +692,14 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " | " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 2
-energies = [2, 2]
+n_agent = 4
+energies = [3, 3, 3, 3]
 radius = 1
-start = time.clock()
-pollution_model = PollutionModel(map, connections, n_agent, energies, radius)
-stop = time.clock()
+selected_place = 5
+first_place_id = 0
+start = time.perf_counter()
+pollution_model = PollutionModel(map, connections, n_agent, energies, radius, first_place_id)
+stop = time.perf_counter()
 tgen = stop - start
 # formula = generate_formula(n_agent, len(map))
 # formula = generate_formula(n_agent, len(map))
@@ -697,7 +711,11 @@ tgen = stop - start
 # formula = generate_new_formula1_b(len(map), 0)
 # txt = cformula2string(formula, 0)
 
-txt = generate_new_formula2(n_agent, 1)
+# txt = "<<>> F polnew_0"
+# txt = "<<0>> F polnew_0"
+
+txt = generate_new_formula2(n_agent, selected_place)
+#txt = "<<0,1,2>> F (((loc3_0 & pol3_0) | (loc3_1 & pol3_1)) | (loc3_2 & pol3_2))"
 # txt = dformula2string(formula, 0)
 print(txt)
 props = list()
@@ -708,18 +726,22 @@ for l in range(0, len(map)):
         props.append("loc" + str(l))
         props.append("polD" + str(l))
 props.append('locA')
+props.append('polnew')
 pollution_model.model.props = props
 const = "t td tg f fd fg u"
 atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
 formula = atlparser.parse(txt)
 print("Formula:", formula)
-start = time.clock()
+start = time.perf_counter()
 result = pollution_model.model.interpreter(formula, 0)
-stop = time.clock()
+stop = time.perf_counter()
 tverif = stop - start
 print(str(result))
 
-file = open("results-mac.txt", "a")
+# for state in pollution_model.states:
+#     print(state['visited'][0])
+
+file = open("results-linux_new_2.txt", "a")
 
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
@@ -728,10 +750,12 @@ file.write(f"Connections: {connections}\n")
 file.write(f'Map size: {len(map)}\n')
 file.write(f'Radius: {radius}\n')
 file.write(f'Number of states: {len(pollution_model.states)}\n')
-file.write(f"Formula: {formula}\n")
+file.write(f"Formula: {txt}\n")
 file.write(f"Result: {result}\n")
 file.write(f'Tgen: {tgen}\n')
 file.write(f'Tverif: {tverif}\n')
+file.write(f'Selected place: {selected_place}\n')
+file.write(f'First place id: {first_place_id}\n')
 file.write("\n")
 
 file.close()
