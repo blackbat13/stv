@@ -244,9 +244,7 @@ class MvATLModel(ATLirModel):
     # Can only handle ability formula followed by box or diamond
     # returns true or false
     def interpreter(self, formula, initial_state):
-        #print("Interpreter")
         if P.isAbility(formula):
-            #print("Is Ability")
             if P.isEventually(formula[3]) or P.isAlways(formula[3]):
                 valid = list()
                 for l in self.lattice.get_join_irreducible():
@@ -258,7 +256,6 @@ class MvATLModel(ATLirModel):
                         if self.simple_interpreter(formula[3][1], None, l, s, state):
                             winning_states.append(s)
                     if P.isAlways(formula[3]):
-                        self.print_model()
                         if len(formula[1]) == 0: # E \phi
                             result = self.maximum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi
@@ -266,39 +263,28 @@ class MvATLModel(ATLirModel):
                         else: # <<C>> \phi
                             result = self.maximum_formula_many_agents(list(map(lambda a: int(a), agents)), set(winning_states))
                     if P.isEventually(formula[3]):
-                        self.print_model()
                         if len(formula[1]) == 0: # E \phi  
                             result = self.minimum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi
-                            # print(winning_states)
                             result = self.minimum_formula_one_agent(int(agents[0]), set(winning_states))
-                            # print(result)
                         else: # <<C>> \phi
                             result = self.minimum_formula_many_agents(list(map(lambda
                                                                  a: int(a), agents)), set(winning_states))
                     if len(result) > 0 and initial_state in list(result):
                         valid.append(l)
-                print(formula, self.lattice.join_list(valid))
                 return self.lattice.join_list(valid)
         elif P.isAnd(formula):
             l1 = self.interpreter(formula[0], initial_state)
             l2 = self.interpreter(formula[2], initial_state)
-            #print(l1,l2)
-            print(formula, self.lattice.meet(l1, l2))
             return self.lattice.meet(l1, l2)
         elif P.isOr(formula):
             l1 = self.interpreter(formula[0], initial_state)
             l2 = self.interpreter(formula[2], initial_state)
-            #print(l1,l2)
-            print(formula, self.lattice.join(l1,l2))
             return self.lattice.join(l1,l2)
         elif P.isNot(formula):
             l = self.interpreter(formula[1], initial_state)
-            print(formula, self.lattice.neg(l))
             return self.lattice.neg(l)
             
-                        
-
 
 def print_create_for_state(state_number, state):
     msg = "CREATE (S" + str(state_number) + ":State { "
@@ -314,11 +300,6 @@ def print_create_for_state(state_number, state):
             msg += "[" + prop + "]" + " = " + str(state[prop]) + " "
     msg += "]}"
     print(msg)
-
-
-
-
-
 
 
 def generate_driving(mv_atl): # generate the driving example of MVVSA (Jamroga:2016)
@@ -351,17 +332,3 @@ def generate_driving(mv_atl): # generate the driving example of MVVSA (Jamroga:2
     mv_atl.states.append(state_o)
     mv_atl.states.append(state_i)
     mv_atl.states.append(state_c)
-
-
-# l2p4 = QBAlgebra('t', 'b', [('b', 'n'), ('n', 'i'), ('n', 'u'), ('i', 's'), ('u', 's'), ('s', 't')])
-# test = MvATLModel(2, 3, l2p4)
-# generate_driving(test)
-# res = []
-#
-#
-# props = "In Out Penalty Collision"
-# const = "b n i u s t"
-# atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
-# txt = "<<1>> F (Out_1 <= s)"
-# print(atlparser.parse(txt))
-# print(str(test.f1(atlparser.parse(txt), 0)))

@@ -269,13 +269,11 @@ class ATLIrModel:
         return result_states
 
     def is_reachable_in_model(self, state_id: int, is_winning_state: List[bool]):
-        result = False
         for transition in self.transitions[state_id]:
-            result = True
-            if not is_winning_state[transition.next_state]:
-                return False
+            if is_winning_state[transition.next_state]:
+                return True
 
-        return result
+        return False
 
     def print_model(self):
         print("----MODEL START-----")
@@ -390,7 +388,7 @@ class ATLirModel(ATLIrModel):
         for agent_id in agents_ids:
             epistemic_class.update(self.epistemic_class_for_state_one_agent(state_id, agent_id))
 
-        print(epistemic_class)
+        # print(epistemic_class)
         return epistemic_class
 
     def epistemic_class_for_state_one_agent(self, state_id: int, agent_id: int) -> Set[int]:
