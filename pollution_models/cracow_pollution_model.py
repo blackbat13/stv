@@ -547,13 +547,13 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " | " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 3
-energies = [2, 2, 2]
+n_agent = 2
+energies = [5, 5]
 radius = 1
-selected_place = 2
+selected_place = 7
 first_place_id = 0
 
-file = open("results-linux_new_2.txt", "a")
+file = open("results-phi2.txt", "a")
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
 file.write(f"Map: {map}\n")
