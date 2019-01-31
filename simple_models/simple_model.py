@@ -1,5 +1,6 @@
 from typing import List, Set
 from atl.atl_ir_model import ATLIrModel, ATLirModel
+import json
 
 
 class SimpleModel:
@@ -17,6 +18,7 @@ class SimpleModel:
     graph: List[List[Transition]] = []
     no_states = 0
     no_agents = 0
+    no_transitions = 0
     epistemic_classes = []
     epistemic_class_membership = []
     states = []
@@ -33,6 +35,7 @@ class SimpleModel:
         self.graph = []
         self.no_states = 0
         self.no_agents = 0
+        self.no_transitions = 0
         self.epistemic_classes = []
         self.epistemic_class_membership = []
         self.states = []
@@ -49,6 +52,7 @@ class SimpleModel:
         """
         self.resize_to_state(max(from_state_id, to_state_id))
         self.graph[from_state_id].append(self.Transition(to_state_id, actions))
+        self.no_transitions += 1
 
     def resize_to_state(self, state_id: int):
         while len(self.graph) <= state_id:
@@ -190,3 +194,25 @@ class SimpleModel:
             current_state = self.graph[current_state][choice].next_state
 
         print("----SIMULATION END-----")
+
+    def dump(self) -> str:
+        result = ""
+        result += f"{self.no_states}\n"
+        result += f"{self.no_agents}\n"
+        for state in self.states:
+            result += f"{json.dumps(state)}\n"
+
+        result += f"{self.no_transitions}\n"
+        for state_id in range(0, self.no_states):
+            for transition in self.graph[state_id]:
+                result += f"{state_id} {transition.next_state} {json.dumps(transition.actions)}\n"
+
+        for agent_id in range(0, self.no_agents):
+            result += f"{len(self.epistemic_classes[agent_id])}\n"
+            for epistemic_class in self.epistemic_classes[agent_id]:
+                result += f"{len(epistemic_class)}"
+                for state_id in epistemic_class:
+                    result += f" {state_id}"
+                result += "\n"
+
+        return result
