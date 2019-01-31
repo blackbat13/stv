@@ -32,7 +32,7 @@ class PretAVoterSpthyGenerator:
         return builtins
 
     def __define_functions(self):
-        functions = "functions: select/2, s/1, z/0\n\n"
+        functions = "functions: select/2, iselect/2, s/1, z/0\n\n"
         return functions
 
     def __define_equations(self):
@@ -42,6 +42,7 @@ class PretAVoterSpthyGenerator:
         for candidate_id in range(1, self.no_candidates + 1):
             choice = f"s({choice})"
             equations += f"\tselect({choice}, <{candidate_list}>) = C{candidate_id},\n"
+            equations += f"\tiselect(C{candidate_id}, <{candidate_list}>) = {choice},\n"
         equations = equations.rstrip("\n,")
         equations += "\n\n"
         return equations
@@ -257,12 +258,13 @@ class PretAVoterSpthyGenerator:
         rule = "rule CastAllVotes:\n"
         rule += "\tlet\n"
         rule += f"\t\tchI = diff(ch1, ch2)\n"
+        rule += f"\t\tc1 = iselect(diff('C1', 'C2'), <C1.1, C2.1>)\n"
         rule += f"\tin\n"
         rule += '\t[\n'
         for voter_id in range(1, self.no_voters):
             candidate_list = self.__generate_candidate_list(voter_id)
             rule += f'\t\t//--Voter {voter_id}--\n'
-            rule += f'\t\t!Choice(c{voter_id}),\n'
+            #rule += f'\t\t!Choice(c{voter_id}),\n'
             rule += f'\t\tVoter(V{voter_id}),\n'
             rule += f"\t\tBallotWithOrderAndOnion(B{voter_id}, {candidate_list}, onion{voter_id}),\n"
         rule += f'\t\t//--Coerced Voter--\n'
@@ -478,7 +480,7 @@ class PretAVoterSpthyGenerator:
 
 
 voters_no = 2
-candidates_no = 2
+candidates_no = 3
 pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
 file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
 f = open(file_name, "w")

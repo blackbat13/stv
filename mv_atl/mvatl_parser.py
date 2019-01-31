@@ -62,7 +62,7 @@ class AlternatingTimeTemporalLogicParser:
             return result[0]
 
         except (ParseException, ParseSyntaxException) as err:
-            # print(err)
+            print(err)
             return "Error"
 
 def isBinary(formula):
