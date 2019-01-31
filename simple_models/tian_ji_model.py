@@ -66,3 +66,9 @@ class TianJiModel(ModelGenerator):
                     new_state_number = self.add_state(new_state)
                     self.model.add_transition(new_king_state_number, new_state_number, actions)
 
+    def get_actions(self):
+        agent_actions = ['Wait']
+        for horse_id in range(0, self.no_horses):
+            agent_actions.append(f'Send{horse_id}')
+
+        return [agent_actions, agent_actions[:]]

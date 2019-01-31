@@ -130,7 +130,6 @@ class SimpleModel:
         for state_id in range(0, len(self.graph)):
             for transition in self.graph[state_id]:
                 atl_model.add_transition(state_id, transition.next_state, transition.actions)
-
         atl_model.states = self.states
         return atl_model
 
@@ -146,7 +145,6 @@ class SimpleModel:
             for epistemic_class in self.epistemic_classes[i]:
                 atl_model.add_epistemic_class(i, epistemic_class)
         atl_model.states = self.states
-        atl_model.finish_model()
         return atl_model
 
     def to_subjective(self, coalition: List[int]) -> None:
@@ -216,3 +214,83 @@ class SimpleModel:
                 result += "\n"
 
         return result
+
+    def js_dump(self) -> str:
+        nodes = []
+        state_id = 0
+        for state in self.states:
+            nodes.append({"T": state, "id": state_id, "bgn": 0})
+            state_id += 1
+
+        for state_id in self.epistemic_class_for_state(0, 0):
+            nodes[state_id]["bgn"] = 1
+
+        links = []
+        for state_id in range(0, self.no_states):
+            for transition in self.graph[state_id]:
+                if transition.next_state == state_id:
+                    continue
+                links.append({"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+
+        return json.dumps({"nodes": nodes, "links": links})
+
+    def js_dump_strategy(self, strategy) -> str:
+        nodes = []
+        state_id = 0
+        for state in self.states:
+            nodes.append({"T": state, "id": state_id})
+            state_id += 1
+
+        links = []
+        for state_id in range(0, self.no_states):
+            for transition in self.graph[state_id]:
+                if transition.next_state == state_id:
+                    continue
+                actions = []
+                ln = 0
+                if strategy[state_id] is not None:
+                    ln = len(strategy[state_id])
+                for i in range(0, ln):
+                    actions.append(transition.actions[i])
+                if strategy[state_id] == actions:
+                    links.append(
+                        {"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 1})
+                    nodes[state_id]["str"] = 1
+                    nodes[transition.next_state]["str"] = 1
+                else:
+                    links.append(
+                        {"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+
+        return json.dumps({"nodes": nodes, "links": links})
+
+    def js_dump_strategy_subjective(self, strategy) -> str:
+        nodes = []
+        state_id = 0
+        for state in self.states:
+            if state_id != self.first_state_id:
+                nodes.append({"T": state, "id": state_id})
+            state_id += 1
+
+        links = []
+        for state_id in range(0, self.no_states):
+            if state_id == self.first_state_id:
+                continue
+            for transition in self.graph[state_id]:
+                if transition.next_state == state_id:
+                    continue
+                actions = []
+                ln = 0
+                if strategy[state_id] is not None:
+                    ln = len(strategy[state_id])
+                for i in range(0, ln):
+                    actions.append(transition.actions[i])
+                if strategy[state_id] == actions:
+                    links.append(
+                        {"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 1})
+                    nodes[state_id]["str"] = 1
+                    nodes[transition.next_state]["str"] = 1
+                else:
+                    links.append(
+                        {"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+
+        return json.dumps({"nodes": nodes, "links": links})

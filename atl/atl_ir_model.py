@@ -390,6 +390,7 @@ class ATLirModel(ATLIrModel):
         for agent_id in agents_ids:
             epistemic_class.update(self.epistemic_class_for_state_one_agent(state_id, agent_id))
 
+        print(epistemic_class)
         return epistemic_class
 
     def epistemic_class_for_state_one_agent(self, state_id: int, agent_id: int) -> Set[int]:

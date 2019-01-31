@@ -116,3 +116,14 @@ class CastleModel(ModelGenerator):
                     possible_actions[-1].append(f'attack {enemy_castle_id}')
 
         return possible_actions
+
+    def get_actions(self):
+        actions = []
+        for castle_id in range(0, self.castles_no):
+            for worker_id in range(0, self.castle_sizes[castle_id]):
+                actions.append(['idle', 'defend'])
+                for enemy_castle_id in range(0, self.castles_no):
+                    if enemy_castle_id == castle_id:
+                        continue
+                    actions[-1].append(f'attack {enemy_castle_id}')
+        return actions

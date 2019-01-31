@@ -338,6 +338,17 @@ class DroneModel:
         y = self.map.places[place_id_2]["y"] - self.map.places[place_id_1]["y"]
         return x, y
 
+    def get_actions(self):
+        result = []
+        for i in range(0, self.no_drones):
+            result.append(self.drone_actions)
+        return result
+
+    def listify_states(self):
+        for state in self.states:
+            for drone_id in range(0, self.no_drones):
+                state['visited'][drone_id] = list(state['visited'][drone_id])
+
     @staticmethod
     def movement_to_action(x: int, y: int) -> int:
         """Transform movement to drone action"""

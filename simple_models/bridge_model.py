@@ -124,6 +124,13 @@ class BridgeModel(ModelGenerator):
     def get_model(self):
         return self.model
 
+    def get_actions(self):
+        actions = [-1]
+        for i in self.cards_available:
+            actions.append(i)
+
+        return [actions, actions[:], actions[:]]
+
     @staticmethod
     def new_state_after_play(state, card_index):
         card = state['hands'][state['next']][card_index]
