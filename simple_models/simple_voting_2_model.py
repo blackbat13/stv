@@ -72,9 +72,9 @@ class SimpleVoting2Model(ModelGenerator):
                         new_state['voter_action'][voter_id] = 'ng'
                         actions[voter_id + 2] = 'ng'
                     else:
-                        candidate_id = voter_action[1]
+                        candidate_id = voter_action[voter_id][1]
                         new_state['vote'][voter_id] = candidate_id
-                        actions[voter_id + 2] = f'vote{candidate_id}'
+                        actions[voter_id + 2] = f'Vote{candidate_id}'
 
                 new_state_id = self.add_state(new_state)
                 self.model.add_transition(current_state_id, new_state_id, actions)
