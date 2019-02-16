@@ -1,5 +1,6 @@
 from typing import List, Set
 from atl.atl_ir_model import ATLIrModel, ATLirModel
+from atl.strategy_logic import SLIr
 import json
 
 
@@ -146,6 +147,17 @@ class SimpleModel:
                 atl_model.add_epistemic_class(i, epistemic_class)
         atl_model.states = self.states
         return atl_model
+
+    def to_sl_perfect(self, actions) -> SLIr:
+        sl_model = SLIr(self.no_agents)
+        for i in range(0, len(actions)):
+            for action in actions[i]:
+                sl_model.add_action(i, action)
+        for state_id in range(0, len(self.graph)):
+            for transition in self.graph[state_id]:
+                sl_model.add_transition(state_id, transition.next_state, transition.actions)
+        sl_model.states = self.states
+        return sl_model
 
     def to_subjective(self, coalition: List[int]) -> None:
         """

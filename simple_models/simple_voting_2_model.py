@@ -80,12 +80,14 @@ class SimpleVoting2Model(ModelGenerator):
                 self.model.add_transition(current_state_id, new_state_id, actions)
 
     def get_coercer_possible_actions(self, state):
-        coercer_actions = ['Wait']
+        coercer_actions = []
         for voter_id in range(0, self.no_voters):
             if state['pun'][voter_id] is None and state['voter_action'][voter_id] != '':
                 coercer_actions.append(('pun', voter_id))
                 coercer_actions.append(('np', voter_id))
 
+        if len(coercer_actions) == 0:
+            return ['Wait']
         return coercer_actions
 
     def get_voter_possible_actions(self, state, voter_id):
@@ -120,3 +122,16 @@ class SimpleVoting2Model(ModelGenerator):
 
     def get_epistemic_state(self, state: hash, agent_number: int):
         return state
+
+    def get_actions(self) -> list:
+        actions = [['low protection', 'high protection', 'Wait'], ['Wait']]
+        for voter_id in range(0, self.no_voters):
+            actions[-1].append(f'pun{voter_id}')
+            actions[-1].append(f'np{voter_id}')
+        for voter_id in range(0, self.no_voters):
+            actions.append(['Wait', 'give', 'ng'])
+            for candidate_id in range(0, self.no_candidates):
+                actions[-1].append(f'Vote{candidate_id}')
+
+        print(actions)
+        return actions
