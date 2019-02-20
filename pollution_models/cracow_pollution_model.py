@@ -96,13 +96,12 @@ def create_map():
     })
 
     connections.append([0, 1])
-    connections.append([1, 2])
-    connections.append([1, 4])  #
-    connections.append([2, 5])  #
+    connections.append([1, 4])
+    connections.append([2, 5])
+    connections.append([2, 5])
     connections.append([3, 4])
-    connections.append([3, 5])
-    connections.append([3, 8])  #
-    connections.append([5, 6])  #
+    connections.append([3, 8])
+    connections.append([5, 6])
     connections.append([5, 8])
     connections.append([6, 7])
 
@@ -195,18 +194,21 @@ class PollutionModel:
             self.graph[con[1]].append(con[0])  # Uncomment for undirected graph
 
     def prepare_lattice(self):
-        self.lattice = mvatl_model.QBAlgebra('t', 'f', [('tg', 't'),
-                                                        ('td', 't'),
+        self.lattice = mvatl_model.QBAlgebra('t', 'f', [('td+tg', 't'),
+                                                        ('tg', 'td+tg'),
+                                                        ('td', 'td+tg'),
                                                         ('u', 'td'),
                                                         ('u', 'tg'),
                                                         ('fd', 'u'),
                                                         ('fg', 'u'),
-                                                        ('f', 'fd'),
-                                                        ('f', 'fg')],
+                                                        ('fd+fg', 'fd'),
+                                                        ('fd+fd', 'fg'),
+                                                        ('f', 'fd+fg')],
                                              {('u', 'u'),
                                               ('t', 'f'),
                                               ('td', 'fd'),
-                                              ('tg', 'fg')})
+                                              ('tg', 'fg'),
+                                              ('fd+fg', 'td+tg')})
 
     def relation_between_places(self, place_id_1, place_id_2):
         """Computes relation between two places on the map as the (+x,+y)"""
@@ -217,13 +219,13 @@ class PollutionModel:
         elif place_id_1 == 1 and place_id_2 == 0:
             return "S"
         elif place_id_1 == 1 and place_id_2 == 4:
-            return "N"
-        elif place_id_1 == 4 and place_id_2 == 1:
-            return "S"
-        elif place_id_1 == 1 and place_id_2 == 2:
             return "E"
-        elif place_id_1 == 2 and place_id_2 == 1:
+        elif place_id_1 == 4 and place_id_2 == 1:
             return "W"
+        elif place_id_1 == 2 and place_id_2 == 3:
+            return "N"
+        elif place_id_1 == 3 and place_id_2 == 2:
+            return "S"
         elif place_id_1 == 4 and place_id_2 == 3:
             return "S"
         elif place_id_1 == 3 and place_id_2 == 4:
@@ -232,10 +234,6 @@ class PollutionModel:
             return "E"
         elif place_id_1 == 8 and place_id_2 == 3:
             return "W"
-        elif place_id_1 == 3 and place_id_2 == 5:
-            return "S"
-        elif place_id_1 == 5 and place_id_2 == 3:
-            return "N"
         elif place_id_1 == 2 and place_id_2 == 5:
             return "E"
         elif place_id_1 == 5 and place_id_2 == 2:
@@ -508,7 +506,6 @@ class PollutionModel:
         print("State places:", state["place"])
         print("State energies:", state["energy"])
         print("State visited places:", state["visited"])
-        print("Properties:", state["prop"])
         print("Pollutions:", state["pollution"])
 
 
@@ -547,13 +544,14 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " | " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 2
-energies = [5, 5]
+n_agent = 1
+energies = [12000]
 radius = 1
-selected_place = 7
-first_place_id = 0
 
-file = open("results-phi2.txt", "a")
+selected_place = 7
+first_place_id = 5
+
+file = open("results-f1l.txt", "a")
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
 file.write(f"Map: {map}\n")
@@ -575,7 +573,7 @@ phi1_l = "<<>> F polnew_0"
 phi1_r = "<<0>> F polnew_0"
 phi2 = generate_new_formula2(n_agent, selected_place)
 
-formula_txt = phi2
+formula_txt = phi1_l
 
 file.write(f"Formula: {formula_txt}\n")
 

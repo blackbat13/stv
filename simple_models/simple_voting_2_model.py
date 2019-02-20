@@ -38,6 +38,14 @@ class SimpleVoting2Model(ModelGenerator):
                 actions_product_array.append(self.get_voter_possible_actions(state, voter_id))
 
             for possibility in itertools.product(*actions_product_array):
+                all_wait = True
+                for act in possibility:
+                    if act != 'Wait':
+                        all_wait = False
+                        break
+
+                if all_wait:
+                    continue
                 coercer_action = possibility[0]
                 voter_action = possibility[1:]
                 new_state = {'vote': state['vote'][:],
@@ -133,5 +141,4 @@ class SimpleVoting2Model(ModelGenerator):
             for candidate_id in range(0, self.no_candidates):
                 actions[-1].append(f'Vote{candidate_id}')
 
-        print(actions)
         return actions
