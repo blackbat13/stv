@@ -1,0 +1,126 @@
+Drones: 1
+Energies: [1]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczï¿½kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczï¿½w', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeï¿½ska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na Bï¿½onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Zï¿½ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Sï¿½owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 7
+First place id: 5
+Tgen: 0.007155756000000013
+Number of states: 5
+Formula: <<>> F polnew_0
+Result: tg
+Tverif: 0.024832799999999988
+
+Drones: 1
+Energies: [2]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczï¿½kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczï¿½w', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeï¿½ska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na Bï¿½onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Zï¿½ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Sï¿½owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 7
+First place id: 5
+Tgen: 0.005997829999999982
+Number of states: 14
+Formula: <<>> F polnew_0
+Result: td+tg
+Tverif: 0.067204767
+
+Drones: 1
+Energies: [3]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczï¿½kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczï¿½w', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeï¿½ska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na Bï¿½onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Zï¿½ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Sï¿½owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 7
+First place id: 5
+Tgen: 0.023134428999999956
+Number of states: 32
+Formula: <<>> F polnew_0
+Result: td+tg
+Tverif: 0.126714125
+
+Drones: 1
+Energies: [4]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczï¿½kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczï¿½w', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeï¿½ska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na Bï¿½onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Zï¿½ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Sï¿½owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 7
+First place id: 5
+Tgen: 0.044965548999999994
+Number of states: 61
+Formula: <<>> F polnew_0
+Result: t
+Tverif: 0.23797895799999996
+
+Drones: 1
+Energies: [5]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczï¿½kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczï¿½w', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeï¿½ska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na Bï¿½onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Zï¿½ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Sï¿½owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 7
+First place id: 5
+Tgen: 0.03911152099999998
+Number of states: 106
+Formula: <<>> F polnew_0
+Result: t
+Tverif: 0.38675570800000003
+
+Drones: 1
+Energies: [10]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczï¿½kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczï¿½w', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeï¿½ska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na Bï¿½onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Zï¿½ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza Sï¿½owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 3
+First place id: 5
+Tgen: 0.371707011
+Number of states: 601
+Formula: <<>> F polnew_0
+Result: t
+Tverif: 2.324772474
+
+Drones: 1
+Energies: [100]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczó³kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeñska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na B³onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Z³ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza S³owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 3
+First place id: 5
+Tgen: 8.846836878
+Number of states: 16740
+Formula: <<>> F polnew_0
+Result: t
+Tverif: 89.97375722400001
+
+Drones: 1
+Energies: [2]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczó³kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeñska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na B³onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Z³ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza S³owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 3
+First place id: 7
+Tgen: 0.008039509
+Number of states: 7
+Formula: <<>> F polnew_0
+Result: tg
+Tverif: 0.03532840899999995
+
+Drones: 1
+Energies: [3]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wyczó³kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszczów', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiedeñska', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na B³onie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Z³ota Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza S³owackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 3
+First place id: 7
+Tgen: 0.009965435999999994
+Number of states: 14
+Formula: <<>> F polnew_0
+Result: tg
+Tverif: 0.11186098300000002
+

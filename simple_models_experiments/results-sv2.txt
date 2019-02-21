@@ -1,0 +1,93 @@
+no_candidates: 2
+no_voters: 1
+no_states: 29
+generation time: 0.000826863000000011
+verification time: 0.00241461300000001
+formula result: True
+
+
+no_candidates: 2
+no_voters: 2
+no_states: 395
+generation time: 0.029698718000000013
+verification time: 0.17688505399999999
+formula result: True
+
+
+no_candidates: 2
+no_voters: 3
+no_states: 5573
+generation time: 0.9808122769999998
+verification time: 45.314004442000005
+formula result: True
+
+
+no_candidates: 2
+no_voters: 4
+no_states: 79187
+generation time: 30.406435703
+verification time: 8502.120033785
+formula result: True
+
+
+(2, 5) > 9h no_candidates: 2
+no_voters: 5
+no_states: 1130669
+generation time: 805.382398605
+verification time: 1.5810001059435308e-06
+formula result: False
+
+
+examples/simple_voting_2_2_3.ispl has been parsed successfully.
+Global syntax checking...
+Done
+Encoding BDD parameters...
+Building partial transition relation...
+Building BDD for initial states...
+Building reachable state space...
+Checking formulae...
+Verifying imperfect recall properties...
+done, 0 imperfect recall formulae successfully read and checked
+Verifying perfect recall properties...
+  Formula number 1: [[env]] (Environment, env) <<e>> (EA, e) [[c]] (Coercer, c) <<v>> (Voter1, v) [[v2]] (Voter2, v2) [[v3]] (Voter3, v3) F ((Voter1Voted1 && Voter1Finish) && (! Voter1Punished)), is TRUE in the model
+done, 1 perfect recall formulae successfully read and checked
+execution time = 5247.65
+number of reachable states = 5573
+BDD memory in use = 588618816
+
+
+examples/simple_voting_2_2_2.ispl has been parsed successfully.
+Global syntax checking...
+Done
+Encoding BDD parameters...
+Building partial transition relation...
+Building BDD for initial states...
+Building reachable state space...
+Checking formulae...
+Verifying imperfect recall properties...
+done, 0 imperfect recall formulae successfully read and checked
+Verifying perfect recall properties...
+  Formula number 1: [[env]] (Environment, env) <<e>> (EA, e) [[c]] (Coercer, c) <<v>> (Voter1, v) [[v2]] (Voter2, v2) F ((Voter1Voted1 && Voter1Finish) && (! Voter1Punished)), is TRUE in the model
+done, 1 perfect recall formulae successfully read and checked
+execution time = 27.763
+number of reachable states = 395
+BDD memory in use = 60739856
+
+
+
+examples/simple_voting_2_2_1.ispl has been parsed successfully.
+Global syntax checking...
+Done
+Encoding BDD parameters...
+Building partial transition relation...
+Building BDD for initial states...
+Building reachable state space...
+Checking formulae...
+Verifying imperfect recall properties...
+done, 0 imperfect recall formulae successfully read and checked
+Verifying perfect recall properties...
+  Formula number 1: [[env]] (Environment, env) <<e>> (EA, e) [[c]] (Coercer, c) <<v>> (Voter1, v) F ((Voter1Voted1 && Voter1Finish) && (! Voter1Punished)), is TRUE in the model
+done, 1 perfect recall formulae successfully read and checked
+execution time = 0.427
+number of reachable states = 29
+BDD memory in use = 19842448
