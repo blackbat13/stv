@@ -545,13 +545,13 @@ def cformula2string(conj, i):
 
 
 n_agent = 4
-energies = [3, 3, 3, 3]
+energies = [2, 2, 2, 2]
 radius = 1
 
 selected_place = 7
 first_place_id = 5
 
-file = open("results-f1l.txt", "a")
+file = open("results-f1r.txt", "a")
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
 file.write(f"Map: {map}\n")
@@ -573,7 +573,7 @@ phi1_l = "<<>> F polnew_0"
 phi1_r = "<<0>> F polnew_0"
 phi2 = generate_new_formula2(n_agent, selected_place)
 
-formula_txt = phi1_l
+formula_txt = phi1_r
 
 file.write(f"Formula: {formula_txt}\n")
 
