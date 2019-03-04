@@ -236,3 +236,31 @@ Formula: <<>> F polnew_0
 Result: td+tg
 Tverif: 51.52726535
 
+Drones: 3
+Energies: [4, 4, 4]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wycz馧kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszcz闚', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiede雟ka', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na B這nie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Z這ta Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza S這wackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 7
+First place id: 5
+Tgen: 77.179624084
+Number of states: 31015
+Formula: <<>> F polnew_0
+Result: t
+Tverif: 298.81934994200003
+
+Drones: 4
+Energies: [2, 2, 2, 2]
+Map: [{'id': 0, 'name': 'Vlastimila Hofmana', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 0}, {'id': 1, 'name': 'Leona Wycz馧kowskiego', 'PM2.5': 't', 'd_PM2.5': 't', 'x': 0, 'y': 1}, {'id': 2, 'name': 'Aleje Trzech Wieszcz闚', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 1, 'y': 0}, {'id': 3, 'name': 'Wiede雟ka', 'PM2.5': 'f', 'd_PM2.5': 't', 'x': 1, 'y': 1}, {'id': 4, 'name': 'Przybyszewskiego 56', 'PM2.5': 'u', 'd_PM2.5': 'f', 'x': 1, 'y': 2}, {'id': 5, 'name': 'Studencka', 'PM2.5': 'u', 'd_PM2.5': 'u', 'x': 2, 'y': 0}, {'id': 6, 'name': 'Na B這nie', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 1}, {'id': 7, 'name': 'osiedle Z這ta Podkowa', 'PM2.5': 't', 'd_PM2.5': 'f', 'x': 3, 'y': 2}, {'id': 8, 'name': 'aleja Juliusza S這wackiego', 'PM2.5': 'f', 'd_PM2.5': 'f', 'x': 2, 'y': 1}]
+Connections: [[0, 1], [1, 4], [2, 5], [2, 5], [3, 4], [3, 8], [5, 6], [5, 8], [6, 7]]
+Map size: 9
+Radius: 1
+Selected place: 7
+First place id: 5
+Tgen: 15.340210955
+Number of states: 6818
+Formula: <<>> F polnew_0
+Result: td+tg
+Tverif: 56.909316057999995
+
