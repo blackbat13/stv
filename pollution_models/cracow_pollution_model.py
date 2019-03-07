@@ -545,13 +545,13 @@ def cformula2string(conj, i):
 
 
 n_agent = 4
-energies = [2, 2, 2, 2]
+energies = [4, 4, 4, 4]
 radius = 1
 
 selected_place = 7
 first_place_id = 5
 
-file = open("results-f1r.txt", "a")
+file = open("results-f1l.txt", "a")
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
 file.write(f"Map: {map}\n")
@@ -569,37 +569,37 @@ tgen = stop - start
 file.write(f'Tgen: {tgen}\n')
 file.write(f'Number of states: {len(pollution_model.states)}\n')
 
-phi1_l = "<<>> F polnew_0"
-phi1_r = "<<0>> F polnew_0"
-phi2 = generate_new_formula2(n_agent, selected_place)
-
-formula_txt = phi1_r
-
-file.write(f"Formula: {formula_txt}\n")
-
-print(formula_txt)
-props = list()
-for l in range(0, len(map)):
-    for a in range(0, n_agent):
-        props.append("pol" + str(l))
-        props.append("polE" + str(l))
-        props.append("loc" + str(l))
-        props.append("polD" + str(l))
-props.append('locA')
-props.append('polnew')
-pollution_model.model.props = props
-const = "t td tg f fd fg u"
-atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
-formula = atlparser.parse(formula_txt)
-print("Formula:", formula)
-start = time.perf_counter()
-result = pollution_model.model.interpreter(formula, 0)
-stop = time.perf_counter()
-tverif = stop - start
-print(str(result))
-
-file.write(f"Result: {result}\n")
-file.write(f'Tverif: {tverif}\n')
-file.write("\n")
+# phi1_l = "<<>> F polnew_0"
+# phi1_r = "<<0>> F polnew_0"
+# phi2 = generate_new_formula2(n_agent, selected_place)
+#
+# formula_txt = phi1_l
+#
+# file.write(f"Formula: {formula_txt}\n")
+#
+# print(formula_txt)
+# props = list()
+# for l in range(0, len(map)):
+#     for a in range(0, n_agent):
+#         props.append("pol" + str(l))
+#         props.append("polE" + str(l))
+#         props.append("loc" + str(l))
+#         props.append("polD" + str(l))
+# props.append('locA')
+# props.append('polnew')
+# pollution_model.model.props = props
+# const = "t td tg f fd fg u"
+# atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
+# formula = atlparser.parse(formula_txt)
+# print("Formula:", formula)
+# start = time.perf_counter()
+# result = pollution_model.model.interpreter(formula, 0)
+# stop = time.perf_counter()
+# tverif = stop - start
+# print(str(result))
+#
+# file.write(f"Result: {result}\n")
+# file.write(f'Tverif: {tverif}\n')
+# file.write("\n")
 
 file.close()
