@@ -10,10 +10,6 @@ class ATLIrModel:
     """Class for creating ATL models with perfect information and imperfect recall"""
 
     class Transition:
-        def __init__(self, next_state: int, actions: List[str]):
-            self.actions = actions[:]
-            self.next_state = next_state
-
         @property
         def next_state(self) -> int:
             return self.__next_state
@@ -30,17 +26,80 @@ class ATLIrModel:
         def actions(self, value: List[str]):
             self.__actions = value
 
+        def __init__(self, next_state: int, actions: List[str]):
+            self.actions = actions[:]
+            self.next_state = next_state
+
         def to_str(self):
             return f"Next state: {self.next_state}; Actions: {self.actions}"
 
-    number_of_agents: int = 0
-    transitions: List[List[Transition]] = []
-    reverse_transitions: List[List[Transition]] = []
-    agents_actions: List[Set] = []
-    pre_states: List[Set] = []
-    number_of_states: int = 0
-    states: List = []
-    strategy: List = []
+    @property
+    def number_of_agents(self) -> int:
+        return self.__number_of_agents
+
+    @number_of_agents.setter
+    def number_of_agents(self, value: int):
+        if value < 0:
+            raise AttributeError
+        self.__number_of_agents = value
+
+    @property
+    def transitions(self) -> List[List[Transition]]:
+        return self.__transitions
+
+    @transitions.setter
+    def transitions(self, value: List[List[Transition]]):
+        self.__transitions = value
+
+    @property
+    def reverse_transitions(self) -> List[List[Transition]]:
+        return self.__reverse_transitions
+
+    @reverse_transitions.setter
+    def reverse_transitions(self, value: List[List[Transition]]):
+        self.__reverse_transitions = value
+
+    @property
+    def agents_actions(self) -> List[Set]:
+        return self.__agents_actions
+
+    @agents_actions.setter
+    def agents_actions(self, value: List[Set]):
+        self.__agents_actions = value
+
+    @property
+    def pre_states(self) -> List[Set]:
+        return self.__pre_states
+
+    @pre_states.setter
+    def pre_states(self, value: List[Set]):
+        self.__pre_states = value
+
+    @property
+    def number_of_states(self) -> int:
+        return self.__number_of_states
+
+    @number_of_states.setter
+    def number_of_states(self, value: int):
+        if value < 0:
+            raise AttributeError
+        self.__number_of_states = value
+
+    @property
+    def states(self) -> List:
+        return self.__states
+
+    @states.setter
+    def states(self, value: List):
+        self.__states = value
+
+    @property
+    def strategy(self) -> List:
+        return self.__strategy
+
+    @strategy.setter
+    def strategy(self, value: List):
+        self.__strategy = value
 
     def __init__(self, number_of_agents: int):
         self.number_of_agents = number_of_agents
@@ -157,7 +216,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ArrayTools.create_value_array_of_size(len(self.states), None)
+        self.strategy = ArrayTools.create_value_array_of_size(self.number_of_states, None)
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             result_states.update(current_states)
@@ -174,7 +233,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ArrayTools.create_value_array_of_size(len(self.states), None)
+        self.strategy = ArrayTools.create_value_array_of_size(self.number_of_states, None)
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             to_remove = result_states.difference(current_states)
@@ -290,9 +349,30 @@ class ATLIrModel:
 
 class ATLirModel(ATLIrModel):
     """Class for creating ATL models with imperfect information and imperfect recall"""
-    epistemic_class_membership: List[List[int]] = []
-    imperfect_information: List[List] = []
-    finish_model_called = False
+
+    @property
+    def epistemic_class_membership(self) -> List[List[int]]:
+        return self.__epistemic_class_membership
+
+    @epistemic_class_membership.setter
+    def epistemic_class_membership(self, value: List[List[int]]):
+        self.__epistemic_class_membership = value
+
+    @property
+    def imperfect_information(self) -> List[List]:
+        return self.__imperfect_information
+
+    @imperfect_information.setter
+    def imperfect_information(self, value: List[List]):
+        self.__imperfect_information = value
+
+    @property
+    def finish_model_called(self) -> bool:
+        return self.__finish_model_called
+
+    @finish_model_called.setter
+    def finish_model_called(self, value: bool):
+        self.__finish_model_called = value
 
     def __init__(self, number_of_agents):
         super().__init__(number_of_agents)
@@ -409,11 +489,46 @@ class ATLirModel(ATLIrModel):
 
 class ATLirModelDisjoint(ATLIrModel):
     """Class for creating ATL models with imperfect information and imperfect recall using disjoint-union structure"""
-    epistemic_class_membership: List[List[int]] = []
-    epistemic_class_disjoint: List[DisjointSet] = []
-    imperfect_information: List[List] = []
-    can_go_there: List[List[dict]] = []
-    finish_model_called = False
+
+    @property
+    def epistemic_class_membership(self) -> List[List[int]]:
+        return self.__epistemic_class_membership
+
+    @epistemic_class_membership.setter
+    def epistemic_class_membership(self, value: List[List[int]]):
+        self.__epistemic_class_membership = value
+
+    @property
+    def epistemic_class_disjoint(self) -> List[DisjointSet]:
+        return self.__epistemic_class_disjoint
+
+    @epistemic_class_disjoint.setter
+    def epistemic_class_disjoint(self, value: List[DisjointSet]):
+        self.__epistemic_class_disjoint = value
+
+    @property
+    def imperfect_information(self) -> List[List]:
+        return self.__imperfect_information
+
+    @imperfect_information.setter
+    def imperfect_information(self, value: List[List]):
+        self.__imperfect_information = value
+
+    @property
+    def can_go_there(self) -> List[List[dict]]:
+        return self.__can_go_there
+
+    @can_go_there.setter
+    def can_go_there(self, value: List[List[dict]]):
+        self.__can_go_there = value
+
+    @property
+    def finish_model_called(self) -> bool:
+        return self.__finish_model_called
+
+    @finish_model_called.setter
+    def finish_model_called(self, value: bool):
+        self.__finish_model_called = value
 
     def __init__(self, number_of_agents):
         super().__init__(number_of_agents)
