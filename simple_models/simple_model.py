@@ -1,21 +1,11 @@
 from typing import List, Set
 from atl.atl_ir_model import ATLIrModel, ATLirModel
 from atl.strategy_logic import SLIr
+from simple_models.transition import Transition
 import json
 
 
 class SimpleModel:
-    class Transition:
-        next_state: int = 0
-        actions: List[str] = []
-
-        def __init__(self, next_state: int, actions: List[str]):
-            self.actions = actions[:]
-            self.next_state = next_state
-
-        def to_str(self):
-            return f"Next state: {self.next_state}; Actions: {self.actions}"
-
     graph: List[List[Transition]] = []
     no_states = 0
     no_agents = 0
@@ -52,7 +42,7 @@ class SimpleModel:
         actions: [String]
         """
         self.resize_to_state(max(from_state_id, to_state_id))
-        self.graph[from_state_id].append(self.Transition(to_state_id, actions))
+        self.graph[from_state_id].append(Transition(to_state_id, actions))
         self.no_transitions += 1
 
     def resize_to_state(self, state_id: int):
