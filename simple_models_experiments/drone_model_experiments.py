@@ -18,6 +18,6 @@ result = atl_imperfect_model.minimum_formula_many_agents([0], winning)
 
 print(result)
 drone_model.listify_states()
-print(drone_model.model.js_dump())
+print(drone_model.model.js_dump_model())
 
 
