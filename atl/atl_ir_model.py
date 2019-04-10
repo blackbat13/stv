@@ -1,37 +1,14 @@
-from tools.number_tools import NumberTools
-from tools.array_tools import ArrayTools
-from typing import List, Set
-from tools.disjoint_set import DisjointSet
 import itertools
 import copy
+from typing import List, Set
+from tools.number_tools import NumberTools
+from tools.array_tools import ArrayTools
+from tools.disjoint_set import DisjointSet
+from atl.transition import Transition
 
 
 class ATLIrModel:
     """Class for creating ATL models with perfect information and imperfect recall"""
-
-    class Transition:
-        @property
-        def next_state(self) -> int:
-            return self.__next_state
-
-        @next_state.setter
-        def next_state(self, value: int):
-            self.__next_state = value
-
-        @property
-        def actions(self) -> List[str]:
-            return self.__actions
-
-        @actions.setter
-        def actions(self, value: List[str]):
-            self.__actions = value
-
-        def __init__(self, next_state: int, actions: List[str]):
-            self.actions = actions[:]
-            self.next_state = next_state
-
-        def to_str(self):
-            return f"Next state: {self.next_state}; Actions: {self.actions}"
 
     @property
     def number_of_agents(self) -> int:
@@ -137,8 +114,8 @@ class ATLIrModel:
     def add_transition(self, from_state: int, to_state: int, actions: List[str]):
         self.enlarge_transitions(to_state + 1)  # TODO This is slow. Better idea?
         self.number_of_states = NumberTools.max(self.number_of_states, to_state + 1)
-        self.transitions[from_state].append(self.Transition(next_state=to_state, actions=actions))
-        self.reverse_transitions[to_state].append(self.Transition(next_state=from_state, actions=actions))
+        self.transitions[from_state].append(Transition(next_state=to_state, actions=actions))
+        self.reverse_transitions[to_state].append(Transition(next_state=from_state, actions=actions))
         self.pre_states[to_state].add(from_state)
 
     def minimum_formula_one_agent(self, agent_id: int, winning_states: Set[int]) -> Set[int]:
