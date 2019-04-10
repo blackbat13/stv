@@ -6,7 +6,14 @@ import json
 
 
 class SimpleModel:
-    graph: List[List[Transition]] = []
+    @property
+    def graph(self) -> List[List[Transition]]:
+        return self.__graph
+
+    @graph.setter
+    def graph(self, value: List[List[Transition]]):
+        self.__graph = value
+
     no_states = 0
     no_agents = 0
     no_transitions = 0
@@ -16,16 +23,16 @@ class SimpleModel:
     first_state_id = 0
 
     def __init__(self, no_agents: int):
-        self.clear_all()
+        self.prepare_variables()
         self.no_agents = no_agents
         for _ in range(0, self.no_agents):
             self.epistemic_classes.append([])
             self.epistemic_class_membership.append([])
 
-    def clear_all(self) -> None:
+    def prepare_variables(self) -> None:
         """
-        Clears all data from the model
-        :return:
+        Sets default values for used variables
+        :return: None
         """
         self.graph = []
         self.no_states = 0
@@ -34,6 +41,7 @@ class SimpleModel:
         self.epistemic_classes = []
         self.epistemic_class_membership = []
         self.states = []
+        self.first_state_id = 0
 
     def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]) -> None:
         """
