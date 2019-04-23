@@ -1,4 +1,4 @@
-from simple_models.model_generator import ModelGenerator
+from simple_model.model_generator import ModelGenerator
 from typing import List
 from tools.array_tools import ArrayTools
 import itertools
@@ -28,6 +28,21 @@ class CastleModel(ModelGenerator):
                 defend[castle_id].append(False)
         first_state = {'lifes': self.castle_lifes[:], 'defend': defend, 'defeated': defeated}
         return first_state
+
+    def get_props_for_state(self, state: hash) -> List[str]:
+        props = []
+        for i in range(0, 3):
+            if state['lifes'][i] == 0:
+                props.append(f'castle{i+1}defeated')
+
+        if sum(state['lifes']) == 0:
+            props.append('alldefeated')
+
+        return props
+
+    def get_props_list(self) -> List[str]:
+        props = ['castle1defeated', 'castle2defeated', 'castle3defeated', 'alldefeated']
+        return props
 
     def get_epistemic_state(self, state: hash, agent_id: int) -> hash:
         castle_id = 0
@@ -127,3 +142,12 @@ class CastleModel(ModelGenerator):
                         continue
                     actions[-1].append(f'attack {enemy_castle_id}')
         return actions
+
+    def get_winning_states(self, prop: str) -> List[int]:
+        result = []
+        for state_id in range(0, len(self.states)):
+            state = self.states[state_id]
+            if prop in state['props']:
+                result.append(state_id)
+
+        return result

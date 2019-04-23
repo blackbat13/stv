@@ -1,4 +1,4 @@
-from simple_models.dining_cryptographers import DiningCryptographers
+from simple_model.dining_cryptographers import DiningCryptographers
 from comparing_strats.graph_drawing import GraphDrawing
 
 diningCryptographers = DiningCryptographers(3)

@@ -1,4 +1,4 @@
-from simple_models.drone_model import DroneModel, CracowMap
+from simple_model.drone_model import DroneModel, CracowMap
 
 drone_model = DroneModel(1, [1], CracowMap())
 

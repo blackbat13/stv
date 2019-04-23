@@ -1,4 +1,4 @@
-from simple_models.bridge_model import *
+from simple_model.bridge_model import *
 from comparing_strats.strat_simpl import StrategyComparer
 # from comparing_strats.graph_drawing import GraphDrawing
 import time

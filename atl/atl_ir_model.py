@@ -112,7 +112,7 @@ class ATLIrModel:
             self.pre_states.append(set())
 
     def add_transition(self, from_state: int, to_state: int, actions: List[str]):
-        self.enlarge_transitions(to_state + 1)  # TODO This is slow. Better idea?
+        self.enlarge_transitions(max(to_state, from_state) + 1)  # TODO This is slow. Better idea?
         self.number_of_states = NumberTools.max(self.number_of_states, to_state + 1)
         self.transitions[from_state].append(Transition(next_state=to_state, actions=actions))
         self.reverse_transitions[to_state].append(Transition(next_state=from_state, actions=actions))

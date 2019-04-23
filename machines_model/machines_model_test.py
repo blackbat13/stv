@@ -1,4 +1,4 @@
-from simple_models.machine_model import MachineModel, MachineModelWithCharging, MachineModelWithStorage
+from simple_model.machine_model import MachineModel, MachineModelWithCharging, MachineModelWithStorage
 import time
 import datetime
 from enum import Enum

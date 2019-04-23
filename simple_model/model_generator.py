@@ -1,4 +1,4 @@
-from simple_models.simple_model import SimpleModel
+from simple_model.simple_model import SimpleModel
 from typing import List, Dict, Set
 from abc import ABC, abstractmethod
 
@@ -63,11 +63,20 @@ class ModelGenerator(ABC):
             self.epistemic_states_dictionaries.append({})
 
     def add_state(self, state: hash) -> int:
+        state['props'] = self.get_props_for_state(state)
         new_state_number = self.get_state_number(state)
         for i in range(0, self.no_agents):
             epistemic_state = self.get_epistemic_state(state, i)
             self.add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
         return new_state_number
+
+    @abstractmethod
+    def get_props_for_state(self, state: hash) -> List[str]:
+        """
+        Compute propositions for the given state
+        :param state: State for which propositions should be computed
+        """
+        pass
 
     def get_state_number(self, state: hash) -> int:
         state_str = ' '.join(str(state[e]) for e in state)
@@ -99,4 +108,12 @@ class ModelGenerator(ABC):
 
     @abstractmethod
     def generate_model(self):
+        pass
+
+    @abstractmethod
+    def get_props_list(self) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_winning_states(self, prop: str) -> List[int]:
         pass

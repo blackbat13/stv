@@ -1,4 +1,4 @@
-from simple_models.model_generator import ModelGenerator
+from simple_model.model_generator import ModelGenerator
 from tools.array_tools import ArrayTools
 
 
