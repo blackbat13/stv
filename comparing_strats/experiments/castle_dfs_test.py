@@ -1,4 +1,4 @@
-from simple_model.castle_model import *
+from simple_models.castle_model import *
 from comparing_strats.strat_simpl import StrategyComparer
 import time
 import datetime

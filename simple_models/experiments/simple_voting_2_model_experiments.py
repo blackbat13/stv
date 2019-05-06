@@ -1,4 +1,4 @@
-from simple_model.simple_voting_2_model import SimpleVoting2Model
+from simple_models.simple_voting_2_model import SimpleVoting2Model
 import time
 
 no_candidates = 2

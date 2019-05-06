@@ -1,4 +1,4 @@
-from simple_model.simple_model import SimpleModel
+from simple_models.simple_model import SimpleModel
 from enum import Enum
 import itertools
 

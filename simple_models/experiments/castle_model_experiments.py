@@ -1,4 +1,4 @@
-from simple_model.castle_model import CastleModel
+from simple_models.castle_model import CastleModel
 import time
 import datetime
 from typing import List

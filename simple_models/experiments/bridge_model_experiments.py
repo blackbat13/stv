@@ -1,4 +1,4 @@
-from simple_model.bridge_model import BridgeModel
+from simple_models.bridge_model import BridgeModel
 
 n = 1
 bridge_model = BridgeModel(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],

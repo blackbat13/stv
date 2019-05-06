@@ -1,4 +1,4 @@
-from simple_model.tian_ji_model import TianJiModel
+from simple_models.tian_ji_model import TianJiModel
 
 tian_ji_model = TianJiModel(4)
 # tian_ji_model.model.simulate(0)
