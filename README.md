@@ -23,7 +23,7 @@ I will try to fix that.
 
 ### Approximations
 
-To run experiments using approximations algorithm, simply select the desired model in the simple_model/experiments folder and run it in the PyCharm IDE.
+To run experiments using approximations algorithm, simply select the desired model in the simple_models/experiments folder and run it in the PyCharm IDE.
 Please keep in mind that you may need to modify the code a little, as not all of the experiments are implemented in an user-friendly way.
 
 ### DominoDFS
