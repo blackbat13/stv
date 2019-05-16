@@ -1,3 +1,5 @@
+from typing import List
+
 from simple_models.model_generator import ModelGenerator
 import itertools
 import random
@@ -130,6 +132,15 @@ class BridgeModel(ModelGenerator):
             actions.append(i)
 
         return [actions, actions[:], actions[:]]
+
+    def get_props_list(self) -> List[str]:
+        pass
+
+    def get_winning_states(self, prop: str) -> List[int]:
+        pass
+
+    def get_props_for_state(self, state: hash) -> List[str]:
+        pass
 
     @staticmethod
     def new_state_after_play(state, card_index):
