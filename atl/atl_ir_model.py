@@ -232,7 +232,7 @@ class ATLIrModel:
         for state_id in pre_image:
             for action in itertools.product(*actions):
                 if self.is_reachable_by_agents(agent_ids, state_id, action, is_winning_state):
-                    self.strategy[state_id] = action
+                    self.strategy[state_id] = list(action)
                     result_states.add(state_id)
                     is_winning_state[state_id] = True
                     break
@@ -391,7 +391,7 @@ class ATLirModel(ATLIrModel):
                         epistemic_class = self.epistemic_class_for_state_one_agent(pre_state, agent_id)
                         result_states.update(epistemic_class)
                         for epistemic_state_id in epistemic_class:
-                            self.strategy[epistemic_state_id] = action
+                            self.strategy[epistemic_state_id] = list(action)
                             is_winning_state[epistemic_state_id] = True
                         break
 
@@ -425,7 +425,7 @@ class ATLirModel(ATLIrModel):
                         result_states.update(epistemic_class)
                         for epistemic_state_id in epistemic_class:
                             is_winning_state[epistemic_state_id] = True
-                            self.strategy[epistemic_state_id] = action
+                            self.strategy[epistemic_state_id] = list(action)
                         break
 
         return result_states
