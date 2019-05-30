@@ -142,6 +142,12 @@ class BridgeModel(ModelGenerator):
     def get_props_for_state(self, state: hash) -> List[str]:
         pass
 
+    def transitions_to_readable(self):
+        for state_id in range(0, len(self.model.graph)):
+            for transition in self.model.graph[state_id]:
+                for act_id in range(0, len(transition.actions)):
+                    transition.actions[act_id] = self.card_to_readable(transition.actions[act_id])
+
     @staticmethod
     def new_state_after_play(state, card_index):
         card = state['hands'][state['next']][card_index]

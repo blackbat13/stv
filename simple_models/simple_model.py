@@ -324,11 +324,14 @@ class SimpleModel:
 
     def fill_links_model(self) -> List[hash]:
         links = []
+        id = 0
         for state_id in range(0, self.no_states):
             for transition in self.graph[state_id]:
                 if transition.next_state == state_id:
                     continue
-                links.append({"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+                links.append(
+                    {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+                id += 1
 
         return links
 
@@ -348,12 +351,14 @@ class SimpleModel:
 
     def fill_links_strategy_objective(self, nodes, strategy) -> List[hash]:
         links = []
+        id = 0
         for state_id in range(0, self.no_states):
             for transition in self.graph[state_id]:
                 if transition.next_state == state_id:
                     continue
 
-                self.js_dump_transition(transition, state_id, strategy, links, nodes)
+                self.js_dump_transition(transition, state_id, strategy, links, nodes, id)
+                id += 1
 
         return links
 
@@ -374,6 +379,7 @@ class SimpleModel:
 
     def fill_links_strategy_subjective(self, nodes, strategy) -> List[hash]:
         links = []
+        id = 0
         for state_id in range(0, self.no_states):
             if state_id == self.first_state_id:
                 continue
@@ -381,11 +387,12 @@ class SimpleModel:
                 if transition.next_state == state_id:
                     continue
 
-                self.js_dump_transition(transition, state_id, strategy, links, nodes)
+                self.js_dump_transition(transition, state_id, strategy, links, nodes, id)
+                id += 1
 
         return links
 
-    def js_dump_transition(self, transition, state_id, strategy, links, nodes) -> None:
+    def js_dump_transition(self, transition, state_id, strategy, links, nodes, id) -> None:
         actions = []
         ln = 0
         if strategy[state_id] is not None:
@@ -394,9 +401,9 @@ class SimpleModel:
             actions.append(transition.actions[i])
         if strategy[state_id] == actions:
             links.append(
-                {"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 1})
+                {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 1})
             nodes[state_id]["str"] = 1
             nodes[transition.next_state]["str"] = 1
         else:
             links.append(
-                {"source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+                {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
