@@ -38,3 +38,4 @@ To run experiments using DominoDFS algorithm, open desired model in the comparin
 ## Graphical Interface
 There is also a graphical interface for the tool available.
 As the tool itself, it's also a work in progress, so right now it supports only part of the models and algorithms.
+It is available here: https://github.com/blackbat13/StraTegicVerifier
