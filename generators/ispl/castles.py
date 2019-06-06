@@ -3,7 +3,7 @@ from typing import List
 from generators.ispl.ispl_generator import IsplGenerator
 
 
-class CastlesIsplGenerator(IsplGenerator):
+class CastlesIsplGeneratorObjective(IsplGenerator):
 
     def __init__(self, workers: List[int], no_castles: int = 3, castles_life=None):
         super().__init__()
@@ -14,11 +14,11 @@ class CastlesIsplGenerator(IsplGenerator):
         self.__no_castles = no_castles
         self.__castles_life = castles_life
 
-    def __define_semantics(self) -> str:
+    def _define_semantics(self) -> str:
         semantics = "Semantics=SingleAssignment;\n\n"
         return semantics
 
-    def __create_environment_obsvars(self) -> str:
+    def _create_environment_obsvars(self) -> str:
         obsvars = "\tObsvars:\n"
 
         for castle_id in range(1, self.__no_castles + 1):
@@ -27,7 +27,7 @@ class CastlesIsplGenerator(IsplGenerator):
         obsvars += "\tend Obsvars\n"
         return obsvars
 
-    def __create_environment_vars(self) -> str:
+    def _create_environment_vars(self) -> str:
         vars = "\tVars:\n"
 
         for castle_id in range(1, self.__no_castles + 1):
@@ -36,17 +36,17 @@ class CastlesIsplGenerator(IsplGenerator):
         vars += "\tend Vars\n"
         return vars
 
-    def __create_environment_actions(self) -> str:
+    def _create_environment_actions(self) -> str:
         actions = "\tActions = {none};\n"
         return actions
 
-    def __create_environment_protocol(self) -> str:
+    def _create_environment_protocol(self) -> str:
         protocol = "\tProtocol:\n"
         protocol += "\t\tOther: {wait};\n"
         protocol += "\tend Protocol\n"
         return protocol
 
-    def __create_environment_evolution(self) -> str:
+    def _create_environment_evolution(self) -> str:
         evolution = "\tEvolution:\n"
 
         actions = self.__compute_workers_actions()
@@ -104,7 +104,7 @@ class CastlesIsplGenerator(IsplGenerator):
         evolution += "\tend Evolution\n"
         return evolution
 
-    def __create_agents(self) -> str:
+    def _create_agents(self) -> str:
         agents = ""
         for worker_id in range(0, self.__no_workers):
             agents += self.__create_worker(worker_id)
@@ -189,13 +189,13 @@ class CastlesIsplGenerator(IsplGenerator):
         evolution += "\tend Evolution\n"
         return evolution
 
-    def __create_evaluation(self) -> str:
+    def _create_evaluation(self) -> str:
         evaluation = "Evaluation\n"
         evaluation += "\tcastle3Defeated if Environment.castle3Defeated = true;\n"
         evaluation += "end Evaluation\n\n"
         return evaluation
 
-    def __create_init_states(self) -> str:
+    def _create_init_states(self) -> str:
         init_states = "InitStates\n"
         init_states += self.__create_environment_init_states()
         init_states += self.__create_workers_init_states()
@@ -217,7 +217,7 @@ class CastlesIsplGenerator(IsplGenerator):
         wrk_init_states += ";\n"
         return wrk_init_states
 
-    def __create_groups(self) -> str:
+    def _create_groups(self) -> str:
         groups = "Groups\n"
         groups += self.__create_c12_group()
         groups += "end Groups\n\n"
@@ -231,7 +231,7 @@ class CastlesIsplGenerator(IsplGenerator):
         c12_group += "};\n"
         return c12_group
 
-    def __create_formulae(self) -> str:
+    def _create_formulae(self) -> str:
         formulae = "Formulae\n"
         formulae += "\t<c12>F(castle3Defeated);\n"
         formulae += "end Formulae\n\n"
@@ -250,12 +250,12 @@ class CastlesIsplGenerator(IsplGenerator):
         return castle_id
 
 
-class CastlesIsplGeneratorSubjective(CastlesIsplGenerator):
+class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
 
     def __init__(self, workers: List[int], no_castles: int = 3, castles_life=None):
         super().__init__(workers, no_castles, castles_life)
 
-    def __create_environment_obsvars(self) -> str:
+    def _create_environment_obsvars(self) -> str:
         obsvars = "\tObsvars:\n"
 
         for castle_id in range(1, self.__no_castles + 1):
@@ -265,11 +265,11 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGenerator):
         obsvars += "\tend Obsvars\n"
         return obsvars
 
-    def __create_environment_actions(self) -> str:
+    def _create_environment_actions(self) -> str:
         actions = "\tActions = {wait};\n"
         return actions
 
-    def __create_environment_evolution(self) -> str:
+    def _create_environment_evolution(self) -> str:
         evolution = "\tEvolution:\n"
 
         evolution += "\t\tdecide=false if decide=true;\n"
@@ -345,7 +345,7 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGenerator):
         evolution += "\tend Evolution\n"
         return evolution
 
-    def __create_agents(self) -> str:
+    def _create_agents(self) -> str:
         agents = ""
         for worker_id in range(0, self.__no_workers):
             agents += self.__create_worker(worker_id)
@@ -441,7 +441,7 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGenerator):
         evolution += "\tend Evolution\n"
         return evolution
 
-    def __create_init_states(self) -> str:
+    def _create_init_states(self) -> str:
         init_states = "InitStates\n"
         for castle_id in range(0, self.__no_castles):
             init_states += f"\tEnvironment.castle{castle_id + 1}HP={self.__castles_life[castle_id]} and\n"

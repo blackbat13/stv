@@ -1,6 +1,7 @@
-from generators.ispl.castles import CastlesIsplGenerator, CastlesIsplGeneratorSubjective
+from generators.ispl.castles import CastlesIsplGeneratorObjective, CastlesIsplGeneratorSubjective
 from generators.ispl.bridge import BridgeModelIsplGenerator, AbsentMindedBridgeModelIsplGenerator
 from generators.ispl.selene import SeleneModelIsplGenerator, SeleneModelMkIsplGenerator
+from tools.file_tools import FileTools
 
 
 class Menu:
@@ -16,13 +17,17 @@ class Menu:
         while option != 0:
             if option == 1:
                 self.handle_ispl_generator_menu()
+            elif option == 2:
+                print("Not implemented")
+                pass
             option = self.show_main_menu()
 
     def show_main_menu(self) -> int:
         print("0 - Exit\n"
-              "1 - ISPL generators")
+              "1 - ISPL generators\n"
+              "2 - Verification\n")
         option = int(input("Choose option:"))
-        while option > 1 or option < 0:
+        while option > 2 or option < 0:
             option = int(input("Invalid oprion. Please, choose again:"))
 
         return option
@@ -59,11 +64,9 @@ class Menu:
         option = self.show_ispl_castles_menu()
         while option != 0:
             if option == 1:
-                print("Not implemented")
-                pass
+                self.ispl_castles_objective()
             elif option == 2:
-                print("Not implemented")
-                pass
+                self.ispl_castles_subjective()
             option = self.show_ispl_castles_menu()
 
     def show_ispl_castles_menu(self) -> int:
@@ -76,6 +79,24 @@ class Menu:
             option = int(input("Invalid oprion. Please, choose again:"))
 
         return option
+
+    def ispl_castles_objective(self) -> None:
+        workers = [0, 0, 0]
+        for i in range(0, len(workers)):
+            workers[i] = int(input(f"Number of workers in Castle {i + 1}"))
+        file_name = input("Enter output filename: ")
+        castles_objective = CastlesIsplGeneratorObjective(workers)
+        FileTools.save_to_file(file_name, castles_objective.create_model())
+        print(f"Result written in the file {file_name}.ispl")
+
+    def ispl_castles_subjective(self) -> None:
+        workers = [0, 0, 0]
+        for i in range(0, len(workers)):
+            workers[i] = int(input(f"Number of workers in Castle {i + 1}"))
+        file_name = input("Enter output filename: ")
+        castles_objective = CastlesIsplGeneratorSubjective(workers)
+        FileTools.save_to_file(file_name, castles_objective.create_model())
+        print(f"Result written in the file {file_name}.ispl")
 
     def handle_ispl_bridge_menu(self):
         option = self.show_ispl_bridge_menu()

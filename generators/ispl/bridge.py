@@ -56,28 +56,28 @@ class BridgeModelIsplGenerator(IsplGenerator):
                 self.__cards_colors[self.__cards[i]] = color
                 i += 1
 
-    def __create_agents(self) -> str:
+    def _create_agents(self) -> str:
         agents = ""
         players_ids = [0, 1, 3]
         for player_id in players_ids:
             agents += self.__create_player(player_id)
         return agents
 
-    def __define_semantics(self) -> str:
+    def _define_semantics(self) -> str:
         semantics = "Semantics=SingleAssignment;\n\n"
         return semantics
 
-    def __create_environment(self) -> str:
+    def _create_environment(self) -> str:
         environment = "Agent Environment\n"
-        environment += self.__create_environment_obsvars()
-        environment += self.__create_environment_vars()
-        environment += self.__create_environment_actions()
-        environment += self.__create_environment_protocol()
-        environment += self.__create_environment_evolution()
+        environment += self._create_environment_obsvars()
+        environment += self._create_environment_vars()
+        environment += self._create_environment_actions()
+        environment += self._create_environment_protocol()
+        environment += self._create_environment_evolution()
         environment += "end Agent\n\n"
         return environment
 
-    def __create_environment_obsvars(self) -> str:
+    def _create_environment_obsvars(self) -> str:
         obsvars = f"\tObsvars:\n" \
             f"\t\tfirstTeamScore: 0..{self.__number_of_cards_in_hand};\n" \
             f"\t\tsecondTeamScore: 0..{self.__number_of_cards_in_hand};\n" \
@@ -122,23 +122,23 @@ class BridgeModelIsplGenerator(IsplGenerator):
             obsvars += f"\t\thas{color}: 0..{self.__number_of_cards_in_hand};\n"
         return obsvars
 
-    def __create_environment_vars(self) -> str:
+    def _create_environment_vars(self) -> str:
         vars = "\tVars:\n" \
                "\t\tsmc: 0..1;\n" \
                "\tend Vars\n"
         return vars
 
-    def __create_environment_actions(self) -> str:
+    def _create_environment_actions(self) -> str:
         actions = "\tActions = {none};\n"
         return actions
 
-    def __create_environment_protocol(self) -> str:
+    def _create_environment_protocol(self) -> str:
         protocol = "\tProtocol:\n" \
                    "\t\tOther:{none};\n" \
                    "\tend Protocol\n"
         return protocol
 
-    def __create_environment_evolution(self) -> str:
+    def _create_environment_evolution(self) -> str:
         evolution = "\tEvolution:\n"
         evolution += self.__create_env_first_team_score_evolution()
         evolution += self.__create_env_second_team_score_evolution()
@@ -451,7 +451,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
         evolution += "\tend Evolution\n"
         return evolution
 
-    def __create_evaluation(self) -> str:
+    def _create_evaluation(self) -> str:
         evaulation = "Evaluation\n" \
                      "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and " \
                      f"Environment.firstTeamScore+Environment.secondTeamScore={self.__number_of_cards_in_hand};\n" \
@@ -460,7 +460,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
                      "end Evaluation\n\n"
         return evaulation
 
-    def __create_init_states(self) -> str:
+    def _create_init_states(self) -> str:
         init_states = "InitStates\n"
         oponents_cards = []
         for k in range(self.__number_of_cards_in_hand, self.__number_of_cards_in_hand * 2):
@@ -533,13 +533,13 @@ class BridgeModelIsplGenerator(IsplGenerator):
         init_states += ";\nend InitStates\n\n"
         return init_states
 
-    def __create_groups(self) -> str:
+    def _create_groups(self) -> str:
         groups = "Groups\n" \
                  "\tg1={SPlayer};\n" \
                  "end Groups\n\n"
         return groups
 
-    def __create_formulae(self) -> str:
+    def _create_formulae(self) -> str:
         formulae = "Formulae\n" \
                    "\t<g1>F FirstTeamWin;\n" \
                    "end Formulae\n\n"
