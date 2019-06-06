@@ -85,8 +85,8 @@ class Menu:
         for i in range(0, len(workers)):
             workers[i] = int(input(f"Number of workers in Castle {i + 1}"))
         file_name = input("Enter output filename: ")
-        castles_objective = CastlesIsplGeneratorObjective(workers)
-        FileTools.save_to_file(file_name, castles_objective.create_model())
+        castles = CastlesIsplGeneratorObjective(workers)
+        FileTools.save_to_file(file_name, castles.create_model())
         print(f"Result written in the file {file_name}.ispl")
 
     def ispl_castles_subjective(self) -> None:
@@ -94,19 +94,17 @@ class Menu:
         for i in range(0, len(workers)):
             workers[i] = int(input(f"Number of workers in Castle {i + 1}"))
         file_name = input("Enter output filename: ")
-        castles_objective = CastlesIsplGeneratorSubjective(workers)
-        FileTools.save_to_file(file_name, castles_objective.create_model())
-        print(f"Result written in the file {file_name}.ispl")
+        castles = CastlesIsplGeneratorSubjective(workers)
+        FileTools.save_to_file(file_name, castles.create_model())
+        print(f"Result written to the file {file_name}.ispl")
 
     def handle_ispl_bridge_menu(self):
         option = self.show_ispl_bridge_menu()
         while option != 0:
             if option == 1:
-                print("Not implemented")
-                pass
+                self.ispl_bridge_standard()
             elif option == 2:
-                print("Not implemented")
-                pass
+                self.ispl_bridge_absent_minded()
             option = self.show_ispl_bridge_menu()
 
     def show_ispl_bridge_menu(self) -> int:
@@ -119,6 +117,22 @@ class Menu:
             option = int(input("Invalid oprion. Please, choose again:"))
 
         return option
+
+    def ispl_bridge_standard(self):
+        number_of_cards = int(input("Number of cards: "))
+        number_of_cards_in_hand = int(input("Number of cards in hand: "))
+        file_name = input("Enter output filename: ")
+        bridge = BridgeModelIsplGenerator(number_of_cards, number_of_cards_in_hand)
+        FileTools.save_to_file(file_name, bridge.create_model())
+        print(f"Result written to the file {file_name}.ispl")
+
+    def ispl_bridge_absent_minded(self):
+        number_of_cards = int(input("Number of cards: "))
+        number_of_cards_in_hand = int(input("Number of cards in hand: "))
+        file_name = input("Enter output filename: ")
+        bridge = AbsentMindedBridgeModelIsplGenerator(number_of_cards, number_of_cards_in_hand)
+        FileTools.save_to_file(file_name, bridge.create_model())
+        print(f"Result written to the file {file_name}.ispl")
 
     def handle_ispl_selene_menu(self):
         option = self.show_ispl_selene_menu()

@@ -17,8 +17,10 @@ class BridgeModelIsplGenerator(IsplGenerator):
     def player_names(self) -> [str]:
         return ["SPlayer", "WPlayer", "NPlayer", "EPlayer"]
 
-    def __init__(self, number_of_cards, number_of_cards_in_hand, card_ordering):
+    def __init__(self, number_of_cards, number_of_cards_in_hand, card_ordering=None):
         super().__init__()
+        if card_ordering is None:
+            card_ordering = self.generate_random_card_array(4 * number_of_cards_in_hand)
         self._number_of_cards = number_of_cards
         self._number_of_cards_in_hand = number_of_cards_in_hand
         self._card_ordering = card_ordering
@@ -211,9 +213,9 @@ class BridgeModelIsplGenerator(IsplGenerator):
                             continue
 
                         if self._cards_colors[combination[i]] == self._cards_colors[
-                                                                                combination[winning_player_number]]:
+                            combination[winning_player_number]]:
                             if self._cards_values[combination[i]] > self._cards_values[
-                                                                                    combination[winning_player_number]]:
+                                combination[winning_player_number]]:
                                 winning_player_number = i
 
                     if not (winning_player_number == winning_player):
@@ -240,9 +242,9 @@ class BridgeModelIsplGenerator(IsplGenerator):
                         if i == beginning_player:
                             continue
                         if self._cards_colors[combination[i]] == self._cards_colors[
-                                                                                combination[winning_player_number]]:
+                            combination[winning_player_number]]:
                             if self._cards_values[combination[i]] > self._cards_values[
-                                                                                    combination[winning_player_number]]:
+                                combination[winning_player_number]]:
                                 winning_player_number = i
 
                     if not (winning_player_number == winning_player):
@@ -259,7 +261,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
 
     def _create_env_clock_evolution(self) -> str:
         evolution = "\t\tsuit=None if clock=4;\n" \
-                     "\t\tclock=0 if clock=4;\n"
+                    "\t\tclock=0 if clock=4;\n"
         for clock in range(1, 5):
             evolution += f"\t\tclock={clock} if clock={clock - 1};\n"
         for player in self.player_names:
@@ -397,21 +399,21 @@ class BridgeModelIsplGenerator(IsplGenerator):
                 for j in range(0, 4 * self._number_of_cards):
                     protocol += "\t\tEnvironment.cardN" + str(i) + "=N"
                     protocol += f"{self._cards[j]} and Environment.currentPlayer=2 and " \
-                                "Environment.clock<4 and " \
-                                "(Environment.suit=None or Environment.suit=" \
-                                f"{self._cards_colors[self._cards[j]]} or " \
-                                "((Environment.hasSpade<=0 and Environment.suit=Spade) or " \
-                                "(Environment.hasClub<=0 and Environment.suit=Club) or " \
-                                "(Environment.hasDiamond<=0 and Environment.suit=Diamond) or " \
-                                "(Environment.hasHeart<=0 and Environment.suit=Heart))): " \
-                                f"{{Play{self._cards[j]}}};\n"
+                        "Environment.clock<4 and " \
+                        "(Environment.suit=None or Environment.suit=" \
+                        f"{self._cards_colors[self._cards[j]]} or " \
+                        "((Environment.hasSpade<=0 and Environment.suit=Spade) or " \
+                        "(Environment.hasClub<=0 and Environment.suit=Club) or " \
+                        "(Environment.hasDiamond<=0 and Environment.suit=Diamond) or " \
+                        "(Environment.hasHeart<=0 and Environment.suit=Heart))): " \
+                        f"{{Play{self._cards[j]}}};\n"
 
         if player_number != 0:
             protocol += f"\t\t!(Environment.currentPlayer={player_number}) or Environment.clock=4: " \
-                        f"{{Wait}};\n"
+                f"{{Wait}};\n"
         else:
             protocol += f"\t\t(!(Environment.currentPlayer={player_number}) and " \
-                        f"!(Environment.currentPlayer=2)) or Environment.clock=4: {{Wait}};\n"
+                f"!(Environment.currentPlayer=2)) or Environment.clock=4: {{Wait}};\n"
         protocol += "\tend Protocol\n"
         return protocol
 
@@ -421,7 +423,8 @@ class BridgeModelIsplGenerator(IsplGenerator):
             evolution += f"\t\t{self.player_names[player_number][0]}card{i}=None if\n"
             for j in range(0, 4 * self._number_of_cards):
                 card = self._cards[j]
-                evolution += f"\t\t\t({self.player_names[player_number][0]}card{i}={self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
+                evolution += f"\t\t\t({self.player_names[player_number][0]}card{i}=" \
+                    f"{self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -433,7 +436,8 @@ class BridgeModelIsplGenerator(IsplGenerator):
                     card = self._cards[j]
                     if self._cards_colors[card] != color:
                         continue
-                    evolution += f"\t\t\t({self.player_names[player_number][0]}card{i}={self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
+                    evolution += f"\t\t\t({self.player_names[player_number][0]}card{i}=" \
+                        f"{self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -444,7 +448,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
     def _create_evaluation(self) -> str:
         evaulation = "Evaluation\n" \
                      "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and " \
-                     f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
+            f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
                      "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and " \
                      "Environment.firstTeamScore+Environment.secondTeamScore={self.__number_of_cards_in_hand};\n" \
                      "end Evaluation\n\n"
@@ -555,7 +559,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
 
 class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
-    def __init__(self, number_of_cards, number_of_cards_in_hand, card_ordering):
+    def __init__(self, number_of_cards, number_of_cards_in_hand, card_ordering=None):
         super().__init__(number_of_cards, number_of_cards_in_hand, card_ordering)
 
     def _define_semantics(self) -> str:
@@ -564,8 +568,8 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
     def _create_environment_obsvars(self):
         obsvars = "\tObsvars:\n" \
-                  f"\t\tfirstTeamScore: 0..{self._number_of_cards_in_hand};\n" \
-                  f"\t\tsecondTeamScore: 0..{self._number_of_cards_in_hand};\n" \
+            f"\t\tfirstTeamScore: 0..{self._number_of_cards_in_hand};\n" \
+            f"\t\tsecondTeamScore: 0..{self._number_of_cards_in_hand};\n" \
                   "\t\tbeginningPlayer: 0..3;\n" \
                   "\t\tcurrentPlayer: 0..4;\n" \
                   "\t\tclock: 0..5;\n"
@@ -629,7 +633,7 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                 evolution += "\t\tsecondTeamScore=secondTeamScore+1"
 
             evolution += f" and beginningPlayer={winning_player}" \
-                         f" and clock=0 and suit=None and currentPlayer={winning_player}"
+                f" and clock=0 and suit=None and currentPlayer={winning_player}"
 
             for player in self.player_names:
                 evolution += f" and {player}Card=None"
@@ -647,7 +651,8 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                             continue
 
                         if self._cards_colors[combination[i]] == self._cards_colors[combination[winning_player_number]]:
-                            if self._cards_values[combination[i]] > self._cards_values[combination[winning_player_number]]:
+                            if self._cards_values[combination[i]] > self._cards_values[
+                                combination[winning_player_number]]:
                                 winning_player_number = i
 
                     if not (winning_player_number == winning_player):
@@ -680,8 +685,8 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
             for j in range(1, self._number_of_cards_in_hand + 1):
                 evolution += f"\t\tNPlayerCard={card} and {card}H=true and currentCardN{j}=None if\n" \
-                             f"\t\t\tcurrentPlayer=0 and clock<4 and SPlayer.Action=PlayN{card} and " \
-                             f"currentCardN{j}={card} and NPlayerCard=None;\n"
+                    f"\t\t\tcurrentPlayer=0 and clock<4 and SPlayer.Action=PlayN{card} and " \
+                    f"currentCardN{j}={card} and NPlayerCard=None;\n"
 
             # Player W plays, Player S Wait
 
@@ -879,10 +884,10 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                 protocol += f"\t\tcard{i}={self._cards[j]}"
                 if player_number != 0:
                     protocol += f" and Environment.currentPlayer={player_number} and Environment.clock<4 and " \
-                                f"(Environment.suit=None or Environment.suit={self._cards_colors[self._cards[j]]} " \
-                                f"or ((hasSpade<=0 and Environment.suit=Spade) or " \
-                                f"(hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and " \
-                                f"Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))):"
+                        f"(Environment.suit=None or Environment.suit={self._cards_colors[self._cards[j]]} " \
+                        f"or ((hasSpade<=0 and Environment.suit=Spade) or " \
+                        f"(hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and " \
+                        f"Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))):"
                 else:
                     protocol += " and Environment.SPlayerCard=None:"
                 protocol += f" {{Play{self._cards[j]}"
@@ -919,11 +924,11 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
     def _create_evaluation(self) -> str:
         evaulation = f"Evaluation\n" \
-                     f"\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore " \
-                     f"and Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
-                     f"\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and " \
-                     f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
-                     f"end Evaluation\n\n"
+            f"\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore " \
+            f"and Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
+            f"\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and " \
+            f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
+            f"end Evaluation\n\n"
         return evaulation
 
     def _create_init_states(self) -> str:
