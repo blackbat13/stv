@@ -5,7 +5,7 @@ class SimpleVotingModelIsplGenerator:
         self.number_of_candidates = number_of_candidates
         self.number_of_voters = number_of_voters
 
-    def create_ispl_model(self):
+    def create_model(self):
         self.ispl_model += "Semantics = SA;\n"
         self.ispl_model += self.__create_environment()
         self.ispl_model += self.__create_coercer()
@@ -219,7 +219,7 @@ class SimpleVotingModel2IsplGenerator:
         self.number_of_candidates = number_of_candidates
         self.number_of_voters = number_of_voters
 
-    def create_ispl_model(self):
+    def create_model(self):
         self.ispl_model += "Semantics = SA;\n"
         self.ispl_model += self.__create_environment()
         self.ispl_model += self.__create_election_authority()

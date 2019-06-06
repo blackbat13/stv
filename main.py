@@ -1,6 +1,7 @@
 from generators.ispl.castles import CastlesIsplGeneratorObjective, CastlesIsplGeneratorSubjective
 from generators.ispl.bridge import BridgeModelIsplGenerator, AbsentMindedBridgeModelIsplGenerator
 from generators.ispl.selene import SeleneModelIsplGenerator, SeleneModelMkIsplGenerator
+from generators.ispl.simple_voting import SimpleVotingModelIsplGenerator, SimpleVotingModel2IsplGenerator
 from tools.file_tools import FileTools
 
 
@@ -160,11 +161,9 @@ class Menu:
         option = self.show_ispl_simple_voting_menu()
         while option != 0:
             if option == 1:
-                print("Not implemented")
-                pass
+                self.ispl_simple_voting_standard()
             elif option == 2:
-                print("Not implemented")
-                pass
+                self.ispl_simple_voting_modified()
             option = self.show_ispl_simple_voting_menu()
 
     def show_ispl_simple_voting_menu(self) -> int:
@@ -177,6 +176,22 @@ class Menu:
             option = int(input("Invalid oprion. Please, choose again:"))
 
         return option
+
+    def ispl_simple_voting_standard(self):
+        number_of_voters = int(input("Number of voters: "))
+        number_of_candidates = int(input("Number of candidates: "))
+        file_name = input("Enter output filename: ")
+        simple_voting = SimpleVotingModelIsplGenerator(number_of_candidates, number_of_voters)
+        FileTools.save_to_file(file_name, simple_voting.create_model())
+        print(f"Result written to the file {file_name}.ispl")
+
+    def ispl_simple_voting_modified(self):
+        number_of_voters = int(input("Number of voters: "))
+        number_of_candidates = int(input("Number of candidates: "))
+        file_name = input("Enter output filename: ")
+        simple_voting = SimpleVotingModel2IsplGenerator(number_of_candidates, number_of_voters)
+        FileTools.save_to_file(file_name, simple_voting.create_model())
+        print(f"Result written to the file {file_name}.ispl")
 
     def handle_ispl_tmn_menu(self):
         option = self.show_ispl_tmn_menu()
