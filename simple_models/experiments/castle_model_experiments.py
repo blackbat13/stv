@@ -50,6 +50,7 @@ class CastleModelExperiments:
     def generate_model(self):
         start = time.process_time()
         self.castle_model = CastleModel(self.castle_sizes, self.castle_life)
+        self.castle_model.generate()
         self.castle_model.model.to_subjective(self.coalition)
         end = time.process_time()
         self.results_file.write(f'Model generated in: {end - start} seconds\n')

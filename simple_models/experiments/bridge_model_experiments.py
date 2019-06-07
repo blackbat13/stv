@@ -4,7 +4,7 @@ n = 1
 bridge_model = BridgeModel(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
                                   'hands': BridgeModel.generate_random_hands(n, n), 'next': 0, 'history': [],
                                   'beginning': 0, 'clock': 0, 'suit': -1})
-
+bridge_model.generate()
 winning_states = set()
 for state_id in range(0, len(bridge_model.states)):
     state = bridge_model.states[state_id]

@@ -5,6 +5,7 @@ no_candidates = 2
 no_voters = 5
 start = time.perf_counter()
 simple_voting = SimpleVoting2Model(no_voters, no_candidates)
+simple_voting.generate()
 stop = time.perf_counter()
 time_generation = stop - start
 
