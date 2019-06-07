@@ -9,10 +9,10 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
         super().__init__()
         if castles_life is None:
             castles_life = [3, 3, 3]
-        self.__workers = workers
-        self.__no_workers = sum(self.__workers)
-        self.__no_castles = no_castles
-        self.__castles_life = castles_life
+        self._workers = workers
+        self._no_workers = sum(self._workers)
+        self._no_castles = no_castles
+        self._castles_life = castles_life
 
     def _define_semantics(self) -> str:
         semantics = "Semantics=SingleAssignment;\n\n"
@@ -21,7 +21,7 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
     def _create_environment_obsvars(self) -> str:
         obsvars = "\tObsvars:\n"
 
-        for castle_id in range(1, self.__no_castles + 1):
+        for castle_id in range(1, self._no_castles + 1):
             obsvars += f"\t\tcastle{castle_id}Defeated: boolean;\n"
 
         obsvars += "\tend Obsvars\n"
@@ -30,21 +30,19 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
     def _create_environment_vars(self) -> str:
         vars = "\tVars:\n"
 
-        for castle_id in range(1, self.__no_castles + 1):
-            vars += f"\t\tcastle{castle_id}HP: 0..{self.__castles_life[castle_id - 1]};\n"
+        for castle_id in range(1, self._no_castles + 1):
+            vars += f"\t\tcastle{castle_id}HP: 0..{self._castles_life[castle_id - 1]};\n"
 
         vars += "\tend Vars\n"
         return vars
 
     def _create_environment_actions(self) -> str:
-        actions = "\tActions = {none};\n"
-        return actions
+        return "\tActions = {none};\n"
 
     def _create_environment_protocol(self) -> str:
-        protocol = "\tProtocol:\n"
-        protocol += "\t\tOther: {wait};\n"
-        protocol += "\tend Protocol\n"
-        return protocol
+        return "\tProtocol:\n" \
+               "\t\tOther: {wait};\n" \
+               "\tend Protocol\n"
 
     def _create_environment_evolution(self) -> str:
         evolution = "\tEvolution:\n"
@@ -57,28 +55,28 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
             attacked = [0, 0, 0]
 
             worker_id = -1
-            for castle_id in range(1, self.__no_castles + 1):
-                for _ in range(0, self.__workers[castle_id - 1]):
+            for castle_id in range(1, self._no_castles + 1):
+                for _ in range(0, self._workers[castle_id - 1]):
                     worker_id += 1
                     action = round[worker_id]
                     if action == "defend":
                         defenders[castle_id - 1] += 1
                     elif action != "wait":
-                        for attacked_id in range(1, self.__no_castles + 1):
+                        for attacked_id in range(1, self._no_castles + 1):
                             if action == f'attack{attacked_id}':
                                 attacked[attacked_id - 1] += 1
                                 break
 
-            for castle_id in range(0, self.__no_castles):
+            for castle_id in range(0, self._no_castles):
                 if attacked[castle_id] > defenders[castle_id]:
                     castle_lifes[castle_id] -= (attacked[castle_id] - defenders[castle_id])
 
-            for castle_id in range(1, self.__no_castles + 1):
+            for castle_id in range(1, self._no_castles + 1):
                 if castle_lifes[castle_id - 1] == 0:
                     continue
 
                 evolution += f"\t\tcastle{castle_id}Defeated=true if\n"
-                for worker_id in range(0, self.__no_workers):
+                for worker_id in range(0, self._no_workers):
                     evolution += f"\t\t\tWorker{worker_id + 1}.Action={round[worker_id]} and\n"
 
                 life_req = castle_lifes[castle_id - 1] * (-1)
@@ -86,17 +84,17 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
                     life_req = 3
                 evolution += f"\t\t\tcastle{castle_id}HP <= {life_req};\n"
 
-            for castle_id in range(1, self.__no_castles + 1):
+            for castle_id in range(1, self._no_castles + 1):
                 if castle_lifes[castle_id - 1] == 0:
                     continue
 
-                for life in range(1, self.__castles_life[castle_id - 1] + 1):
+                for life in range(1, self._castles_life[castle_id - 1] + 1):
                     new_life = life + castle_lifes[castle_id - 1]
                     if new_life < 0:
                         new_life = 0
 
                     evolution += f"\t\tcastle{castle_id}HP={new_life} if\n"
-                    for worker_id in range(0, self.__no_workers):
+                    for worker_id in range(0, self._no_workers):
                         evolution += f"\t\t\tWorker{worker_id + 1}.Action={round[worker_id]} and\n"
 
                     evolution += f"\t\t\tcastle{castle_id}HP = {life};\n"
@@ -106,7 +104,7 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
 
     def _create_agents(self) -> str:
         agents = ""
-        for worker_id in range(0, self.__no_workers):
+        for worker_id in range(0, self._no_workers):
             agents += self.__create_worker(worker_id)
 
         return agents
@@ -122,22 +120,17 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
         return agent
 
     def __create_worker_lobsvars(self, worker_id: int) -> str:
-        lobsvars = "\tLobsvars = {"
-
         worker_castle_id = self.__get_castle_id(worker_id) + 1
-        lobsvars += f"castle{worker_castle_id}HP"
-
-        lobsvars += "};\n"
-        return lobsvars
+        return f"\tLobsvars = {{castle{worker_castle_id}HP}};\n"
 
     def __compute_workers_actions(self) -> List[List[str]]:
         actions = []
         worker_id = -1
-        for castle_id in range(1, self.__no_castles + 1):
-            for _ in range(0, self.__workers[castle_id - 1]):
+        for castle_id in range(1, self._no_castles + 1):
+            for _ in range(0, self._workers[castle_id - 1]):
                 worker_id += 1
                 actions.append(['wait', 'defend'])
-                for attacked_id in range(1, self.__no_castles + 1):
+                for attacked_id in range(1, self._no_castles + 1):
                     if attacked_id == castle_id:
                         continue
                     actions[-1].append(f'attack{attacked_id}')
@@ -145,30 +138,28 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
         return actions
 
     def __create_worker_vars(self) -> str:
-        vars = "\tVars:\n"
-        vars += "\t\tcanDefend: boolean;\n"
-        vars += "\tend Vars\n"
-        return vars
+        return "\tVars:\n" \
+               "\t\tcanDefend: boolean;\n" \
+               "\tend Vars\n"
 
     def __create_worker_actions(self, worker_id: int) -> str:
         actions = "\tActions = {"
         worker_castle_id = self.__get_castle_id(worker_id)
-        for castle_id in range(0, self.__no_castles):
+        for castle_id in range(0, self._no_castles):
             if worker_castle_id == castle_id:
                 continue
             actions += f"attack{castle_id + 1}, "
-        actions += "defend, "
-        actions += "wait};\n"
+        actions += "defend, wait};\n"
         return actions
 
     def __create_worker_protocol(self, worker_id: int) -> str:
         protocol = "\tProtocol:\n"
         worker_castle_id = self.__get_castle_id(worker_id)
-        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=true: " + "{wait};\n"
-        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=true: " + "{defend, "
+        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=true: {{wait}};\n"
+        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=true: {{defend, "
         protocol += self.__create_worker_attack_protocol(worker_castle_id)
         protocol += "wait};\n"
-        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=false: " + "{"
+        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=false: {{"
         protocol += self.__create_worker_attack_protocol(worker_castle_id)
         protocol += "wait};\n"
         protocol += "\tend Protocol\n"
@@ -176,24 +167,22 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
 
     def __create_worker_attack_protocol(self, worker_castle_id):
         protocol = ""
-        for castle_id in range(0, self.__no_castles):
+        for castle_id in range(0, self._no_castles):
             if worker_castle_id == castle_id:
                 continue
             protocol += f"attack{castle_id + 1}, "
         return protocol
 
     def __create_worker_evolution(self) -> str:
-        evolution = "\tEvolution:\n"
-        evolution += "\t\tcanDefend=false if Action=defend;\n"
-        evolution += "\t\tcanDefend=true if canDefend=false;\n"
-        evolution += "\tend Evolution\n"
-        return evolution
+        return "\tEvolution:\n" \
+               "\t\tcanDefend=false if Action=defend;\n" \
+               "\t\tcanDefend=true if canDefend=false;\n" \
+               "\tend Evolution\n"
 
     def _create_evaluation(self) -> str:
-        evaluation = "Evaluation\n"
-        evaluation += "\tcastle3Defeated if Environment.castle3Defeated = true;\n"
-        evaluation += "end Evaluation\n\n"
-        return evaluation
+        return "Evaluation\n" \
+               "\tcastle3Defeated if Environment.castle3Defeated = true;\n" \
+               "end Evaluation\n\n"
 
     def _create_init_states(self) -> str:
         init_states = "InitStates\n"
@@ -204,14 +193,14 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
 
     def __create_environment_init_states(self) -> str:
         env_init_states = ""
-        for castle_id in range(0, self.__no_castles):
-            env_init_states += f"\tEnvironment.castle{castle_id + 1}HP={self.__castles_life[castle_id]} and\n"
-            env_init_states += f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n"
+        for castle_id in range(0, self._no_castles):
+            env_init_states += f"\tEnvironment.castle{castle_id + 1}HP={self._castles_life[castle_id]} and\n" \
+                f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n"
         return env_init_states
 
     def __create_workers_init_states(self) -> str:
         wrk_init_states = ""
-        for worker_id in range(0, self.__no_workers):
+        for worker_id in range(0, self._no_workers):
             wrk_init_states += f"\tWorker{worker_id + 1}.canDefend=true and\n"
         wrk_init_states = wrk_init_states.rstrip("\ndna ")
         wrk_init_states += ";\n"
@@ -225,22 +214,21 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
 
     def __create_c12_group(self) -> str:
         c12_group = "\tc12 = {"
-        for worker_id in range(0, self.__workers[0] + self.__workers[1]):
+        for worker_id in range(0, self._workers[0] + self._workers[1]):
             c12_group += f"Worker{worker_id + 1}, "
         c12_group = c12_group.rstrip(" ,")
         c12_group += "};\n"
         return c12_group
 
     def _create_formulae(self) -> str:
-        formulae = "Formulae\n"
-        formulae += "\t<c12>F(castle3Defeated);\n"
-        formulae += "end Formulae\n\n"
-        return formulae
+        return "Formulae\n" \
+               "\t<c12>F(castle3Defeated);\n" \
+               "end Formulae\n\n"
 
     def __get_castle_id(self, worker_id: int) -> int:
         castle_id = 0
         workers_sum = 0
-        for i in self.__workers:
+        for i in self._workers:
             workers_sum += i
             if worker_id >= workers_sum:
                 castle_id += 1
@@ -258,36 +246,31 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
     def _create_environment_obsvars(self) -> str:
         obsvars = "\tObsvars:\n"
 
-        for castle_id in range(1, self.__no_castles + 1):
+        for castle_id in range(1, self._no_castles + 1):
             obsvars += f"\t\tcastle{castle_id}Defeated: boolean;\n"
 
-        obsvars += "\t\tdecide: boolean;\n"
-        obsvars += "\tend Obsvars\n"
+        obsvars += "\t\tdecide: boolean;\n" \
+                   "\tend Obsvars\n"
         return obsvars
 
     def _create_environment_actions(self) -> str:
-        actions = "\tActions = {wait};\n"
-        return actions
+        return "\tActions = {wait};\n"
 
     def _create_environment_evolution(self) -> str:
-        evolution = "\tEvolution:\n"
+        evolution = "\tEvolution:\n" \
+                    "\t\tdecide=false if decide=true;\n"
 
-        evolution += "\t\tdecide=false if decide=true;\n"
-
-        for castle_id in range(0, self.__no_castles):
-            for life in range(1, self.__castles_life[castle_id] + 1):
+        for castle_id in range(0, self._no_castles):
+            for life in range(1, self._castles_life[castle_id] + 1):
                 evolution += f"\t\tcastle{castle_id + 1}HP={life} if Decider{castle_id + 1}.Action=decideHP{life};\n"
 
-            # evolution += f"\t\tcastle{castle_id+1}Defeated=true if Decider{castle_id+1}.Action=decideHP0;\n"
-
         actions = []
-
         worker_id = -1
-        for castle_id in range(1, self.__no_castles + 1):
-            for _ in range(0, self.__workers[castle_id - 1]):
+        for castle_id in range(1, self._no_castles + 1):
+            for _ in range(0, self._workers[castle_id - 1]):
                 worker_id += 1
                 actions.append(['wait', 'defend'])
-                for attacked_id in range(1, self.__no_castles + 1):
+                for attacked_id in range(1, self._no_castles + 1):
                     if attacked_id == castle_id:
                         continue
                     actions[-1].append(f'attack{attacked_id}')
@@ -298,28 +281,28 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
             attacked = [0, 0, 0]
 
             worker_id = -1
-            for castle_id in range(1, self.__no_castles + 1):
-                for _ in range(0, self.__workers[castle_id - 1]):
+            for castle_id in range(1, self._no_castles + 1):
+                for _ in range(0, self._workers[castle_id - 1]):
                     worker_id += 1
                     action = round[worker_id]
                     if action == "defend":
                         defenders[castle_id - 1] += 1
                     elif action != "wait":
-                        for attacked_id in range(1, self.__no_castles + 1):
+                        for attacked_id in range(1, self._no_castles + 1):
                             if action == f'attack{attacked_id}':
                                 attacked[attacked_id - 1] += 1
                                 break
 
-            for castle_id in range(0, self.__no_castles):
+            for castle_id in range(0, self._no_castles):
                 if attacked[castle_id] > defenders[castle_id]:
                     castle_lifes[castle_id] -= (attacked[castle_id] - defenders[castle_id])
 
-            for castle_id in range(1, self.__no_castles + 1):
+            for castle_id in range(1, self._no_castles + 1):
                 if castle_lifes[castle_id - 1] == 0:
                     continue
 
                 evolution += f"\t\tcastle{castle_id}Defeated=true if\n"
-                for worker_id in range(0, self.__no_workers):
+                for worker_id in range(0, self._no_workers):
                     evolution += f"\t\t\tWorker{worker_id + 1}.Action={round[worker_id]} and\n"
 
                 life_req = castle_lifes[castle_id - 1] * (-1)
@@ -327,17 +310,17 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
                     life_req = 3
                 evolution += f"\t\t\tcastle{castle_id}HP <= {life_req};\n"
 
-            for castle_id in range(1, self.__no_castles + 1):
+            for castle_id in range(1, self._no_castles + 1):
                 if castle_lifes[castle_id - 1] == 0:
                     continue
 
-                for life in range(1, self.__castles_life[castle_id - 1] + 1):
+                for life in range(1, self._castles_life[castle_id - 1] + 1):
                     new_life = life + castle_lifes[castle_id - 1]
                     if new_life < 0:
                         new_life = 0
 
                     evolution += f"\t\tcastle{castle_id}HP={new_life} if\n"
-                    for worker_id in range(0, self.__no_workers):
+                    for worker_id in range(0, self._no_workers):
                         evolution += f"\t\t\tWorker{worker_id + 1}.Action={round[worker_id]} and\n"
 
                     evolution += f"\t\t\tcastle{castle_id}HP = {life};\n"
@@ -347,9 +330,9 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
 
     def _create_agents(self) -> str:
         agents = ""
-        for worker_id in range(0, self.__no_workers):
+        for worker_id in range(0, self._no_workers):
             agents += self.__create_worker(worker_id)
-        for castle_id in range(0, self.__no_castles):
+        for castle_id in range(0, self._no_castles):
             agents += self.__create_decider(castle_id)
 
         return agents
@@ -357,7 +340,7 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
     def __create_worker_actions(self, worker_id: int) -> str:
         actions = "\tActions = {"
         worker_castle_id = self.__get_castle_id(worker_id)
-        for castle_id in range(0, self.__no_castles):
+        for castle_id in range(0, self._no_castles):
             if worker_castle_id == castle_id:
                 continue
             actions += f"attack{castle_id + 1}, "
@@ -374,30 +357,33 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
             protocol += "\t\tEnvironment.decide=true: " + "{decideTrue, decideFalse};\n"
         else:
             protocol += "\t\tEnvironment.decide=true: " + "{wait};\n"
-        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=true and Environment.decide=false: " + "{wait};\n"
-        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=true and Environment.decide=false: " + "{defend, "
-        for castle_id in range(0, self.__no_castles):
+        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=true and " \
+            f"Environment.decide=false: {{wait}};\n" \
+            f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=true and " \
+            f"Environment.decide=false: {{defend, "
+        for castle_id in range(0, self._no_castles):
             if worker_castle_id == castle_id:
                 continue
             protocol += f"attack{castle_id + 1}, "
         protocol += "wait};\n"
-        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=false and Environment.decide=false: " + "{"
-        for castle_id in range(0, self.__no_castles):
+        protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=false and " \
+            f"Environment.decide=false: {{"
+        for castle_id in range(0, self._no_castles):
             if worker_castle_id == castle_id:
                 continue
             protocol += f"attack{castle_id + 1}, "
-        protocol += "wait};\n"
-        protocol += "\tend Protocol\n"
+        protocol += "wait};\n" \
+                    "\tend Protocol\n"
         return protocol
 
     def __create_worker_evolution(self, worker_id: int) -> str:
         evolution = "\tEvolution:\n"
         worker_castle_id = self.__get_castle_id(worker_id)
-        evolution += "\t\tcanDefend=false if Action=defend;\n"
-        evolution += "\t\tcanDefend=true if canDefend=false;\n"
+        evolution += "\t\tcanDefend=false if Action=defend;\n" \
+                     "\t\tcanDefend=true if canDefend=false;\n"
         if worker_castle_id == 2:
-            evolution += "\t\tcanDefend=true if Action=decideTrue;\n"
-            evolution += "\t\tcanDefend=false if Action=decideFalse;\n"
+            evolution += "\t\tcanDefend=true if Action=decideTrue;\n" \
+                         "\t\tcanDefend=false if Action=decideFalse;\n"
         evolution += "\tend Evolution\n"
         return evolution
 
@@ -411,46 +397,44 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
         return agent
 
     def __create_decider_vars(self) -> str:
-        vars = "\tVars:\n"
-        vars += "\t\tdecide: boolean;\n"
-        vars += "\tend Vars\n"
-        return vars
+        return "\tVars:\n" \
+               "\t\tdecide: boolean;\n" \
+               "\tend Vars\n"
 
     def __create_decider_actions(self, castle_id: int) -> str:
         actions = "\tActions = {"
-        for life in range(1, self.__castles_life[castle_id] + 1):
+        for life in range(1, self._castles_life[castle_id] + 1):
             actions += f"decideHP{life}, "
         actions += "wait};\n"
         return actions
 
     def __create_decider_protocol(self, castle_id: int) -> str:
-        protocol = "\tProtocol:\n"
-        protocol += "\t\tdecide=true: {"
-        for life in range(1, self.__castles_life[castle_id] + 1):
+        protocol = "\tProtocol:\n" \
+                   "\t\tdecide=true: {"
+        for life in range(1, self._castles_life[castle_id] + 1):
             protocol += f"decideHP{life}, "
 
         protocol = protocol.rstrip(" ,")
-        protocol += "};\n"
-        protocol += "\t\tOther: {wait};\n"
-        protocol += "\tend Protocol\n"
+        protocol += "};\n" \
+                    "\t\tOther: {wait};\n" \
+                    "\tend Protocol\n"
         return protocol
 
     def __create_decider_evolution(self) -> str:
-        evolution = "\tEvolution:\n"
-        evolution += "\t\tdecide=false if decide=true;\n"
-        evolution += "\tend Evolution\n"
-        return evolution
+        return "\tEvolution:\n" \
+               "\t\tdecide=false if decide=true;\n" \
+               "\tend Evolution\n"
 
     def _create_init_states(self) -> str:
         init_states = "InitStates\n"
-        for castle_id in range(0, self.__no_castles):
-            init_states += f"\tEnvironment.castle{castle_id + 1}HP={self.__castles_life[castle_id]} and\n"
-            init_states += f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n"
-            init_states += f"\tDecider{castle_id + 1}.decide=true and\n"
+        for castle_id in range(0, self._no_castles):
+            init_states += f"\tEnvironment.castle{castle_id + 1}HP={self._castles_life[castle_id]} and\n" \
+                f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n" \
+                f"\tDecider{castle_id + 1}.decide=true and\n"
 
-        for worker_id in range(0, self.__no_workers):
+        for worker_id in range(0, self._no_workers):
             init_states += f"\tWorker{worker_id + 1}.canDefend=true and\n"
 
-        init_states += "\tEnvironment.decide=true;\n"
-        init_states += "end InitStates\n\n"
+        init_states += "\tEnvironment.decide=true;\n" \
+                       "end InitStates\n\n"
         return init_states
