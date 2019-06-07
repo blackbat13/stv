@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Set
 from simple_models.model_generator import ModelGenerator
 import itertools
 import random
@@ -126,13 +126,29 @@ class BridgeModel(ModelGenerator):
         return [actions, actions[:], actions[:]]
 
     def get_props_list(self) -> List[str]:
-        pass
+        return ["finish", "ns_win", "ew_win", "draw"]
 
-    def get_winning_states(self, prop: str) -> List[int]:
-        pass
+    def get_winning_states(self, prop: str) -> Set[int]:
+        winning = set()
+        state_id = -1
+        for state in self.states:
+            state_id += 1
+            if prop in state["props"]:
+                winning.add(state_id)
+        return winning
 
     def _get_props_for_state(self, state: hash) -> List[str]:
-        pass
+        props = []
+        if state['lefts'][0] + state['lefts'][1] == self._no_end_cards:
+            props.append("finish")
+            if state['lefts'][0] > state['lefts'][1]:
+                props.append("ns_win")
+            elif state['lefts'][0] < state['lefts'][1]:
+                props.append("ew_win")
+            else:
+                props.append("draw")
+
+        return props
 
     def transitions_to_readable(self):
         for state_id in range(0, len(self.model.graph)):

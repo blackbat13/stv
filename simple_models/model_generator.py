@@ -128,5 +128,5 @@ class ModelGenerator(ABC):
         pass
 
     @abstractmethod
-    def get_winning_states(self, prop: str) -> List[int]:
+    def get_winning_states(self, prop: str) -> Set[int]:
         pass
