@@ -8,6 +8,8 @@ from enum import Enum
 import random
 import time
 import copy
+from tools.array_tools import ArrayTools
+import datetime
 
 
 def create_map():
@@ -144,7 +146,8 @@ class PollutionModel:
 
         self.generate_model()
         self.model.states = self.states
-        self.prepare_epistemic_relation()
+        self.model.finish_model()
+        #self.prepare_epistemic_relation()
 
     def create_first_state(self, energies, first_place_id):
         places = []
@@ -154,7 +157,7 @@ class PollutionModel:
             visited.append({first_place_id})
 
         first_state = {
-            "map": self.model_map,
+            # "map": self.model_map,
             "place": places,
             "energy": energies,
             "visited": visited,
@@ -295,7 +298,7 @@ class PollutionModel:
             actions.append(d_action[0])
 
         new_state = {
-            "map": self.model_map,
+            # "map": self.model_map,
             "place": places,
             "energy": energies,
             "visited": visited
@@ -321,8 +324,8 @@ class PollutionModel:
 
     def add_state(self, state):
         new_state_number = self.get_state_number(state)
-        epistemic_states = self.get_epistemic_states(state)
-        self.add_to_epistemic_dictionary(epistemic_states, new_state_number)
+        #epistemic_states = self.get_epistemic_states(state)
+        #self.add_to_epistemic_dictionary(epistemic_states, new_state_number)
         return new_state_number
 
     def get_state_number(self, state):
@@ -476,6 +479,10 @@ class PollutionModel:
 
         return loc_prop
 
+    def print_states(self):
+        for i in range(0, len(self.states)):
+            print(i, self.states[i])
+
     @staticmethod
     def value_for_prop(v1, v2):
         if v1 == "t" and v2 == "t":
@@ -544,14 +551,18 @@ def cformula2string(conj, i):
     return "(" + dformula2string(conj[i], 0) + " | " + cformula2string(conj, i + 1) + ")"
 
 
-n_agent = 4
-energies = [4, 4, 4, 4]
-radius = 1
+n_agent = 3
+energy = 4
 
+energies = ArrayTools.create_value_array_of_size(n_agent, energy)
+radius = 1
+# 18:42
 selected_place = 7
 first_place_id = 5
 
-file = open("results-f1l.txt", "a")
+print(datetime.datetime.now())
+
+file = open("results-f2-perf.txt", "a")
 file.write(f"Drones: {n_agent}\n")
 file.write(f"Energies: {energies}\n")
 file.write(f"Map: {map}\n")
@@ -566,40 +577,42 @@ pollution_model = PollutionModel(map, connections, n_agent, energies, radius, fi
 stop = time.perf_counter()
 tgen = stop - start
 
+#pollution_model.print_states()
+
 file.write(f'Tgen: {tgen}\n')
 file.write(f'Number of states: {len(pollution_model.states)}\n')
 
-# phi1_l = "<<>> F polnew_0"
-# phi1_r = "<<0>> F polnew_0"
-# phi2 = generate_new_formula2(n_agent, selected_place)
-#
-# formula_txt = phi1_l
-#
-# file.write(f"Formula: {formula_txt}\n")
-#
-# print(formula_txt)
-# props = list()
-# for l in range(0, len(map)):
-#     for a in range(0, n_agent):
-#         props.append("pol" + str(l))
-#         props.append("polE" + str(l))
-#         props.append("loc" + str(l))
-#         props.append("polD" + str(l))
-# props.append('locA')
-# props.append('polnew')
-# pollution_model.model.props = props
-# const = "t td tg f fd fg u"
-# atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
-# formula = atlparser.parse(formula_txt)
-# print("Formula:", formula)
-# start = time.perf_counter()
-# result = pollution_model.model.interpreter(formula, 0)
-# stop = time.perf_counter()
-# tverif = stop - start
-# print(str(result))
-#
-# file.write(f"Result: {result}\n")
-# file.write(f'Tverif: {tverif}\n')
-# file.write("\n")
+phi1_l = "<<>> F polnew_0"
+phi1_r = "<<0>> F polnew_0"
+phi2 = generate_new_formula2(n_agent, selected_place)
+
+formula_txt = phi2
+
+file.write(f"Formula: {formula_txt}\n")
+
+print(formula_txt)
+props = list()
+for l in range(0, len(map)):
+    for a in range(0, n_agent):
+        props.append("pol" + str(l))
+        props.append("polE" + str(l))
+        props.append("loc" + str(l))
+        props.append("polD" + str(l))
+props.append('locA')
+props.append('polnew')
+pollution_model.model.props = props
+const = "t td tg f fd fg u"
+atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
+formula = atlparser.parse(formula_txt)
+print("Formula:", formula)
+start = time.perf_counter()
+result = pollution_model.model.interpreter(formula, 0)
+stop = time.perf_counter()
+tverif = stop - start
+print(str(result))
+
+file.write(f"Result: {result}\n")
+file.write(f'Tverif: {tverif}\n')
+file.write("\n")
 
 file.close()
