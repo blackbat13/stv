@@ -225,7 +225,7 @@ class MvATLModel(ATLirModel):
         if isinstance(formula, str): # If is atomic proposition
             if '_' in formula:       # If has a subscript
                 p = formula[:formula.index('_')]
-                n = int(formula[formula.index('_')+1:]) - 1
+                n = int(formula[formula.index('_')+1:])# - 1
                 return state[p][n]
             if formula in self.props:
                 return state[formula]
@@ -263,7 +263,7 @@ class MvATLModel(ATLirModel):
                         else: # <<C>> \phi
                             result = self.maximum_formula_many_agents(list(map(lambda a: int(a), agents)), set(winning_states))
                     if P.isEventually(formula[3]):
-                        if len(formula[1]) == 0: # E \phi  
+                        if len(formula[1]) == 0: # E \phi
                             result = self.minimum_formula_no_agents(set(winning_states))
                         elif len(formula[1]) == 1: # <<a>> \phi
                             result = self.minimum_formula_one_agent(int(agents[0]), set(winning_states))
@@ -284,7 +284,7 @@ class MvATLModel(ATLirModel):
         elif P.isNot(formula):
             l = self.interpreter(formula[1], initial_state)
             return self.lattice.neg(l)
-            
+
 
 def print_create_for_state(state_number, state):
     msg = "CREATE (S" + str(state_number) + ":State { "
