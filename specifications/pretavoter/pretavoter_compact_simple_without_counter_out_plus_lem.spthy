@@ -1,4 +1,4 @@
-theory PretaVoterCompactSimpleWithoutCounterOutT
+theory PretaVoterCompactSimpleWithoutCounterOutLema
 begin
 
 builtins: asymmetric-encryption, multiset
@@ -28,17 +28,14 @@ rule InitialSetup:
   --[ InitialSetup(), RunOnce() ]->
     [
         // -- Generate Voters --
-        Voter('v1', diff('c1', 'c2')),
-        Voter('v2', diff('c2', 'c1')),
+        Voter('v1', 'c1'),
+        Voter('v2', 'c2'),
 
         !ElectionAuthority($E),
         !Sk($E, ~f),
         !Pk($E, pk(~f)),
 
         // -- Generate Ballots --
-        //BallotWithOrderAndOnion(diff('c1', 'c2'), diff('c2', 'c1'), aenc(<diff('c1', 'c2'), diff('c2', 'c1'), ~d1>, pk(~f))),
-        //BallotWithOrderAndOnion(diff('c2', 'c1'), diff('c1', 'c2'), aenc(<diff('c2', 'c1'), diff('c1', 'c2'), ~d2>, pk(~f)))
-
         BallotWithOrderAndOnion('c1', 'c2', aenc(<'c1', 'c2', ~d1>, pk(~f))),
         BallotWithOrderAndOnion('c2', 'c1', aenc(<'c2', 'c1', ~d2>, pk(~f)))
     ]
@@ -53,11 +50,10 @@ rule CastVote:
         Voter(V, ch),
         BallotWithOrderAndOnion(C1, C2, onion)
     ]
-  --[ CastVote(selection, onion) ]->
+  --[ CastVote(selection, onion), Voted(V, ch) ]->
     [
         Vote(selection, onion),
         Receipt(V, selection, onion)
-        //Out(<V, ch>)
     ]
 
 // --- VOTE PUBLISHING AND COUNTING ---
@@ -111,5 +107,54 @@ restriction RunInitialSetupOnce:
   "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
 
 // ---------------- LEMMAS ----------------
+
+/*lemma coercion:
+    all-traces
+    "Ex n C.
+        ((All #i.(
+            (Ex #j. K(n) @ #j) ==> (Voted('v1', C) @ #i)
+            ))
+        & (All #i. (
+            (not (Ex #j. K(n) @ #j)) ==> (Ex C2. Voted('v1', C2) @ #i & not(C=C2))
+            )))
+    "
+*/
+
+
+
+
+lemma coercion:
+    all-traces
+    "Ex n.
+        ((All #i.( (Voted('v1', 'C1') @ #i) ==> (Ex #j. K(n) @ #j & #i<#j)
+                )
+           ))
+
+
+
+        //& (All #i. (Voted('v1', 'C2') @ #i) ==> (not (Ex #j. K(n) @ #j & #i<#j))
+
+          //  ))
+    "
+
+
+
+
+lemma coercion2:
+    all-traces
+    "Ex n C. All #i.(
+        ((Ex #j. K(n) @ #j) ==> (Voted('v1', C) @ #i))
+        & ( not(Ex #j. K(n) @ #j) ==> (Ex C2. Voted('v1', C2) @ #i & not(C=C2) ))
+        )
+    "
+
+lemma coercion3:
+    all-traces
+    "
+        Ex n. (
+        Ex C #i #j. Voted('v1', C) @ #i & K(n) @ #j & #i<#j
+        & not(Ex C2 #i #j. Voted('v1', C2) @ #i & K(n) @ #j & #i<#j))
+    "
+
 
 end

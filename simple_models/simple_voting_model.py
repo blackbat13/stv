@@ -1,42 +1,42 @@
+from typing import List
 from simple_models.model_generator import ModelGenerator
 import itertools
 
 
 class SimpleVotingModel(ModelGenerator):
-    number_of_candidates = 0
-    number_of_voters = 0
 
-    def __init__(self, number_of_candidates, number_of_voters):
-        self.number_of_candidates = number_of_candidates
-        self.number_of_voters = number_of_voters
+    def __init__(self, number_of_candidates: int, number_of_voters: int):
         super().__init__(no_agents=(number_of_candidates + 1))
-        self.generate_model()
-        self.prepare_epistemic_relation()
+        self._number_of_candidates = number_of_candidates
+        self._number_of_voters = number_of_voters
 
-    def generate_model(self):
+    def generate(self):
+        self._generate_initial_states()
+        self._generate_model()
+        self._prepare_epistemic_relation()
+
+    def _generate_initial_states(self):
         beginning_array = []
-        for _ in range(0, self.number_of_voters):
+        for _ in range(0, self._number_of_voters):
             beginning_array.append('')
 
         beginning_array_minus_one = []
-        for _ in range(0, self.number_of_voters):
+        for _ in range(0, self._number_of_voters):
             beginning_array_minus_one.append(-1)
 
         first_state = {'voted': beginning_array_minus_one[:], 'voters_action': beginning_array[:],
                        'coercer_actions': beginning_array[:], 'finish': beginning_array_minus_one[:]}
-        state_number = 0
+        self._add_state(first_state)
 
-        self.add_state(first_state)
-        state_number += 1
+    def _generate_model(self):
         current_state_number = -1
-
         for state in self.states:
             current_state_number += 1
             voting_product_array = []
             coercer_possible_actions = ['wait']
-            for voter_number in range(0, self.number_of_voters):
+            for voter_number in range(0, self._number_of_voters):
                 if state['voted'][voter_number] == -1:
-                    voting_product_array.append(list(range(0, self.number_of_candidates)))
+                    voting_product_array.append(list(range(0, self._number_of_candidates)))
                     voting_product_array[voter_number].append('wait')
                 elif state['voters_action'][voter_number] == '':
                     voting_product_array.append(['give', 'ng', 'wait'])
@@ -51,12 +51,12 @@ class SimpleVotingModel(ModelGenerator):
 
             for possibility in itertools.product(*voting_product_array):
                 action = []
-                for _ in range(0, self.number_of_voters + 1):
+                for _ in range(0, self._number_of_voters + 1):
                     action.append('')
                 new_state = {'voted': state['voted'][:], 'voters_action': state['voters_action'][:],
                              'coercer_actions': state['coercer_actions'][:], 'finish': state['finish'][:]}
 
-                for voter_number in range(0, self.number_of_voters):
+                for voter_number in range(0, self._number_of_voters):
                     action[voter_number + 1] = possibility[voter_number]
                     voter_action_string = str(possibility[voter_number])
                     if voter_action_string[0] == 'g' or voter_action_string[0] == 'n':
@@ -64,7 +64,7 @@ class SimpleVotingModel(ModelGenerator):
                     elif voter_action_string[0] != 'w':
                         new_state['voted'][voter_number] = possibility[voter_number]
 
-                action[0] = possibility[self.number_of_voters]
+                action[0] = possibility[self._number_of_voters]
                 if action[0][0:3] == 'pun':
                     pun_voter_number = int(action[0][3:])
                     new_state['coercer_actions'][pun_voter_number - 1] = 'pun'
@@ -74,15 +74,15 @@ class SimpleVotingModel(ModelGenerator):
                     new_state['coercer_actions'][np_voter_number - 1] = 'np'
                     new_state['finish'][np_voter_number - 1] = 1
 
-                new_state_id = self.add_state(new_state)
+                new_state_id = self._add_state(new_state)
 
                 self.model.add_transition(current_state_number, new_state_id, action)
 
-    def get_epistemic_state(self, state: hash, agent_number: int):
+    def _get_epistemic_state(self, state: hash, agent_number: int):
         if agent_number == 0:
             epistemic_state = {'coercer_actions': state['coercer_actions'][:], 'voted': state['voted'][:],
                                'voters_action': state['voters_action'][:], 'finish': state['finish'][:]}
-            for voter_number in range(0, self.number_of_voters):
+            for voter_number in range(0, self._number_of_voters):
                 if state['voters_action'][voter_number] == -1 and state['voted'][voter_number] != -1:
                     epistemic_state['voted'][voter_number] = -2
                 elif state['voters_action'][voter_number] == 'ng':
@@ -91,7 +91,7 @@ class SimpleVotingModel(ModelGenerator):
         else:
             epistemic_state = {'coercer_actions': state['coercer_actions'][:], 'voted': state['voted'][:],
                                'voters_action': state['voters_action'][:], 'finish': state['finish'][:]}
-            for voter_number in range(1, self.number_of_voters):
+            for voter_number in range(1, self._number_of_voters):
                 epistemic_state['voters_action'][voter_number] = -1
                 epistemic_state['voted'][voter_number] = -1
                 epistemic_state['coercer_actions'][voter_number] = -1
@@ -101,12 +101,21 @@ class SimpleVotingModel(ModelGenerator):
     def get_actions(self):
         result = [['wait']]
 
-        for voter_number in range(1, self.number_of_voters + 1):
+        for voter_number in range(1, self._number_of_voters + 1):
             result[0].append(f'np{voter_number}')
             result[0].append(f'pun{voter_number}')
             result.append(['give, ng, wait'])
 
-            for candidate_number in range(0, self.number_of_candidates):
+            for candidate_number in range(0, self._number_of_candidates):
                 result[-1].append(str(candidate_number))
 
         return result
+
+    def _get_props_for_state(self, state: hash) -> List[str]:
+        pass
+
+    def get_props_list(self) -> List[str]:
+        pass
+
+    def get_winning_states(self, prop: str) -> List[int]:
+        pass

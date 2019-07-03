@@ -5,37 +5,52 @@ import itertools
 
 
 class CastleModel(ModelGenerator):
-    castle_sizes: List[int] = []
-    castle_lifes: List[int] = []
-    castles_no: int = 0
 
     def __init__(self, castle_sizes: List[int], castle_lifes: List[int]):
         assert len(castle_sizes) == len(castle_lifes)
         super().__init__(no_agents=sum(castle_sizes))
-        self.castle_sizes = castle_sizes
-        self.castle_lifes = castle_lifes
-        self.castles_no = len(castle_lifes)
-        self.generate_model()
-        self.prepare_epistemic_relation()
+        self._castle_sizes = castle_sizes
+        self._castle_lifes = castle_lifes
+        self._castles_no = len(castle_lifes)
 
-    def generate_first_state(self) -> hash:
+    def generate(self):
+        self._generate_initial_states()
+        self._generate_model()
+        self._prepare_epistemic_relation()
+
+    def _generate_initial_states(self):
         defend = []
         defeated = []
-        for castle_id in range(0, self.castles_no):
+        for castle_id in range(0, self._castles_no):
             defeated.append(False)
             defend.append([])
-            for i in range(0, self.castle_sizes[castle_id]):
+            for i in range(0, self._castle_sizes[castle_id]):
                 defend[castle_id].append(False)
-        first_state = {'lifes': self.castle_lifes[:], 'defend': defend, 'defeated': defeated}
-        return first_state
+        first_state = {'lifes': self._castle_lifes[:], 'defend': defend, 'defeated': defeated}
+        self._add_state(first_state)
 
-    def get_epistemic_state(self, state: hash, agent_id: int) -> hash:
+    def _get_props_for_state(self, state: hash) -> List[str]:
+        props = []
+        for i in range(0, 3):
+            if state['lifes'][i] == 0:
+                props.append(f'castle{i + 1}defeated')
+
+        if sum(state['lifes']) == 0:
+            props.append('alldefeated')
+
+        return props
+
+    def get_props_list(self) -> List[str]:
+        props = ['castle1defeated', 'castle2defeated', 'castle3defeated', 'alldefeated']
+        return props
+
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
         castle_id = 0
         agent_no = 0
         size = 0
-        for i in range(0, self.castles_no):
+        for i in range(0, self._castles_no):
             prev_size = size
-            size += self.castle_sizes[i]
+            size += self._castle_sizes[i]
             if agent_id < size:
                 castle_id = i
                 agent_no = agent_id - prev_size
@@ -46,9 +61,7 @@ class CastleModel(ModelGenerator):
 
         return epistemic_state
 
-    def generate_model(self):
-        first_state = self.generate_first_state()
-        self.add_state(first_state)
+    def _generate_model(self):
         current_state_id = -1
 
         for state in self.states:
@@ -56,28 +69,28 @@ class CastleModel(ModelGenerator):
             if sum(state['lifes']) == 0:
                 continue
 
-            possible_actions = self.generate_possible_actions(state)
+            possible_actions = self._generate_possible_actions(state)
             for action in itertools.product(*possible_actions):
-                new_state = self.new_state_after_action(state, action)
-                new_state_id = self.add_state(new_state)
+                new_state = self._new_state_after_action(state, action)
+                new_state_id = self._add_state(new_state)
                 self.model.add_transition(current_state_id, new_state_id, list(action))
 
-    def new_state_after_action(self, state: dict, action: tuple) -> dict:
+    def _new_state_after_action(self, state: dict, action: tuple) -> dict:
         defend = []
-        for i in range(0, self.castles_no):
+        for i in range(0, self._castles_no):
             defend.append(state['defend'][i][:])
         new_state = {'lifes': state['lifes'][:],
                      'defend': defend, 'defeated': state['defeated'][:]}
-        self.apply_action_to_state(new_state, action)
+        self._apply_action_to_state(new_state, action)
 
         return new_state
 
-    def apply_action_to_state(self, state: dict, action: tuple) -> None:
-        life_result = ArrayTools.create_value_array_of_size(self.castles_no, 0)
+    def _apply_action_to_state(self, state: dict, action: tuple) -> None:
+        life_result = ArrayTools.create_value_array_of_size(self._castles_no, 0)
 
         agent_id = -1
-        for castle_id in range(0, self.castles_no):
-            for i in range(0, self.castle_sizes[castle_id]):
+        for castle_id in range(0, self._castles_no):
+            for i in range(0, self._castle_sizes[castle_id]):
                 agent_id += 1
                 if action[agent_id] == 'idle':
                     state['defend'][castle_id][i] = False
@@ -89,10 +102,10 @@ class CastleModel(ModelGenerator):
                     state['defend'][castle_id][i] = False
                     life_result[castle_no] -= 1
 
-        self.apply_life_result_to_state(state, life_result)
+        self._apply_life_result_to_state(state, life_result)
 
-    def apply_life_result_to_state(self, state: dict, life_result: List[int]) -> None:
-        for i in range(0, self.castles_no):
+    def _apply_life_result_to_state(self, state: dict, life_result: List[int]) -> None:
+        for i in range(0, self._castles_no):
             if life_result[i] < 0:
                 state['lifes'][i] += life_result[i]
                 if state['lifes'][i] < 0:
@@ -100,17 +113,17 @@ class CastleModel(ModelGenerator):
                 if state['lifes'][i] == 0:
                     state['defeated'][i] = True
 
-    def generate_possible_actions(self, state: dict) -> List[List]:
+    def _generate_possible_actions(self, state: dict) -> List[List]:
         possible_actions = []
 
-        for castle_id in range(0, self.castles_no):
-            for worker_id in range(0, self.castle_sizes[castle_id]):
+        for castle_id in range(0, self._castles_no):
+            for worker_id in range(0, self._castle_sizes[castle_id]):
                 possible_actions.append(['idle'])
                 if state['defeated'][castle_id]:
                     continue
                 if not state['defend'][castle_id][worker_id]:
                     possible_actions[-1].append('defend')
-                for enemy_castle_id in range(0, self.castles_no):
+                for enemy_castle_id in range(0, self._castles_no):
                     if enemy_castle_id == castle_id:
                         continue
                     possible_actions[-1].append(f'attack {enemy_castle_id}')
@@ -119,11 +132,20 @@ class CastleModel(ModelGenerator):
 
     def get_actions(self):
         actions = []
-        for castle_id in range(0, self.castles_no):
-            for worker_id in range(0, self.castle_sizes[castle_id]):
+        for castle_id in range(0, self._castles_no):
+            for worker_id in range(0, self._castle_sizes[castle_id]):
                 actions.append(['idle', 'defend'])
-                for enemy_castle_id in range(0, self.castles_no):
+                for enemy_castle_id in range(0, self._castles_no):
                     if enemy_castle_id == castle_id:
                         continue
                     actions[-1].append(f'attack {enemy_castle_id}')
         return actions
+
+    def get_winning_states(self, prop: str) -> List[int]:
+        result = []
+        for state_id in range(0, len(self.states)):
+            state = self.states[state_id]
+            if prop in state['props']:
+                result.append(state_id)
+
+        return result

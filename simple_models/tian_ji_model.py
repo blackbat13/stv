@@ -8,8 +8,8 @@ class TianJiModel(ModelGenerator):
     def __init__(self, no_horses: int):
         super().__init__(no_agents=2)
         self.no_horses = no_horses
-        self.generate_model()
-        self.prepare_epistemic_relation()
+        self._generate_model()
+        self._prepare_epistemic_relation()
 
     def generate_first_state(self) -> hash:
         king_horses = list(range(0, self.no_horses))
@@ -19,14 +19,14 @@ class TianJiModel(ModelGenerator):
                        'results': ArrayTools.create_value_array_of_size(self.no_horses, 0), 'king_choice': -1}
         return first_state
 
-    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         epistemic_state = {'king_score': state['king_score'], 'tian_ji_score': state['tian_ji_score'],
                            'tian_ji_horses': state['tian_ji_horses'], 'king_choice': state['king_choice']}
         return epistemic_state
 
-    def generate_model(self):
+    def _generate_model(self):
         first_state = self.generate_first_state()
-        self.add_state(first_state)
+        self._add_state(first_state)
         current_state_number = -1
         for state in self.states:
             current_state_number += 1
@@ -44,7 +44,7 @@ class TianJiModel(ModelGenerator):
                                   'tian_ji_horses': state['tian_ji_horses'], 'results': state['results'],
                                   'king_choice': king_horse}
                 king_actions = ['Wait', f'Send{king_horse}']
-                new_king_state_number = self.add_state(new_king_state)
+                new_king_state_number = self._add_state(new_king_state)
                 self.model.add_transition(current_state_number, new_king_state_number, king_actions)
                 for tian_ji_horse in state['tian_ji_horses']:
                     new_tian_ji_horses = state['tian_ji_horses'][:]
@@ -63,7 +63,7 @@ class TianJiModel(ModelGenerator):
                                  'king_horses': new_king_horses,
                                  'tian_ji_horses': new_tian_ji_horses, 'results': new_results, 'king_choice': -1}
                     actions = [f'Send{tian_ji_horse}', 'Wait']
-                    new_state_number = self.add_state(new_state)
+                    new_state_number = self._add_state(new_state)
                     self.model.add_transition(new_king_state_number, new_state_number, actions)
 
     def get_actions(self):

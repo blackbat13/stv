@@ -1,3 +1,5 @@
+from typing import List
+
 from simple_models.model_generator import ModelGenerator
 from enum import Enum
 import itertools
@@ -14,13 +16,27 @@ class DiningCryptographers(ModelGenerator):
         ODD = 1
         EVEN = 2
 
-    def __init__(self, no_agents):
+    def __init__(self, no_agents: int):
         super().__init__(no_agents=no_agents)
-        self.generate_model()
-        self.prepare_epistemic_relation()
+        self._generate_model()
+        self._prepare_epistemic_relation()
 
-    def generate_model(self):
-        self.create_beginning_states()
+    def generate(self):
+        self._generate_initial_states()
+        self._generate_model()
+        self._prepare_epistemic_relation()
+
+    def _generate_initial_states(self):
+        available_coins = []
+        for _ in range(0, self.no_agents):
+            available_coins.append([self.Coin.HEAD, self.Coin.TAIL])
+
+        for coins in itertools.product(*available_coins):
+            for paying in range(-1, self.no_agents):
+                state = {'number_of_odd': self.NumberOfOdd.NONE, 'coins': list(coins), 'paying': paying}
+                self._add_state(state)
+
+    def _generate_model(self):
         current_state_number = -1
         for state in self.model.states:
             current_state_number += 1
@@ -42,20 +58,10 @@ class DiningCryptographers(ModelGenerator):
                 number_of_odd = self.NumberOfOdd.ODD
 
             new_state = {'number_of_odd': number_of_odd, 'coins': state['coins'], 'paying': state['paying']}
-            new_state_number = self.add_state(new_state)
+            new_state_number = self._add_state(new_state)
             self.model.add_transition(current_state_number, new_state_number, actions)
 
-    def create_beginning_states(self):
-        available_coins = []
-        for _ in range(0, self.no_agents):
-            available_coins.append([self.Coin.HEAD, self.Coin.TAIL])
-
-        for coins in itertools.product(*available_coins):
-            for paying in range(-1, self.no_agents):
-                state = {'number_of_odd': self.NumberOfOdd.NONE, 'coins': list(coins), 'paying': paying}
-                self.add_state(state)
-
-    def get_epistemic_state(self, state, agent_no):
+    def _get_epistemic_state(self, state, agent_no):
         epistemic_coins = state['coins'][:]
         for i in range(0, self.no_agents):
             if i == agent_no or i == agent_no - 1:
@@ -64,3 +70,15 @@ class DiningCryptographers(ModelGenerator):
             epistemic_coins[i] = self.Coin.NONE
         epistemic_state = {'number_of_odd': state['number_of_odd'], 'coins': epistemic_coins, 'paying': -2}
         return epistemic_state
+
+    def _get_props_for_state(self, state: hash) -> List[str]:
+        pass
+
+    def get_actions(self):
+        pass
+
+    def get_props_list(self) -> List[str]:
+        pass
+
+    def get_winning_states(self, prop: str) -> List[int]:
+        pass

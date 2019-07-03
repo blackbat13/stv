@@ -11,7 +11,7 @@ class ModelGenerator(ABC):
         self.state_number: int = 0
         self.epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
         self.no_agents: int = no_agents
-        self.prepare_epistemic_dictionaries()
+        self._prepare_epistemic_dictionaries()
 
     @property
     def states(self) -> List[hash]:
@@ -57,19 +57,28 @@ class ModelGenerator(ABC):
     def no_agents(self, value: int):
         self.__no_agents = value
 
-    def prepare_epistemic_dictionaries(self):
+    def _prepare_epistemic_dictionaries(self):
         self.epistemic_states_dictionaries.clear()
         for _ in range(0, self.no_agents):
             self.epistemic_states_dictionaries.append({})
 
-    def add_state(self, state: hash) -> int:
-        new_state_number = self.get_state_number(state)
+    def _add_state(self, state: hash) -> int:
+        state['props'] = self._get_props_for_state(state)
+        new_state_number = self._get_state_number(state)
         for i in range(0, self.no_agents):
-            epistemic_state = self.get_epistemic_state(state, i)
-            self.add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
+            epistemic_state = self._get_epistemic_state(state, i)
+            self._add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
         return new_state_number
 
-    def get_state_number(self, state: hash) -> int:
+    @abstractmethod
+    def _get_props_for_state(self, state: hash) -> List[str]:
+        """
+        Compute propositions for the given state
+        :param state: State for which propositions should be computed
+        """
+        pass
+
+    def _get_state_number(self, state: hash) -> int:
         state_str = ' '.join(str(state[e]) for e in state)
         if state_str not in self.states_dictionary:
             self.states_dictionary[state_str] = self.state_number
@@ -82,21 +91,42 @@ class ModelGenerator(ABC):
         return new_state_number
 
     @abstractmethod
-    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         pass
 
-    def add_to_epistemic_dictionary(self, state: hash, new_state_number: int, agent_number: int):
+    def _add_to_epistemic_dictionary(self, state: hash, new_state_number: int, agent_number: int):
         state_str = ' '.join(str(state[e]) for e in state)
         if state_str not in self.epistemic_states_dictionaries[agent_number]:
             self.epistemic_states_dictionaries[agent_number][state_str] = {new_state_number}
         else:
             self.epistemic_states_dictionaries[agent_number][state_str].add(new_state_number)
 
-    def prepare_epistemic_relation(self):
+    def _prepare_epistemic_relation(self):
         for i in range(0, self.no_agents):
             for state, epistemic_class in self.epistemic_states_dictionaries[i].items():
                 self.model.add_epistemic_class(i, epistemic_class)
 
+    def generate(self):
+        self._generate_initial_states()
+        self._generate_model()
+        self._prepare_epistemic_relation()
+
     @abstractmethod
-    def generate_model(self):
+    def _generate_initial_states(self):
+        pass
+
+    @abstractmethod
+    def _generate_model(self):
+        pass
+
+    @abstractmethod
+    def get_actions(self):
+        pass
+
+    @abstractmethod
+    def get_props_list(self) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_winning_states(self, prop: str) -> Set[int]:
         pass
