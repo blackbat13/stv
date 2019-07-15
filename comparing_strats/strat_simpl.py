@@ -6,11 +6,11 @@ from tools.array_tools import ArrayTools
 
 
 class StrategyComparer:
-    possible_actions = []
-    winning_states = []
-    current_heuristic = None
-    current_coalition: List[int] = []
-    dfs_visited_states = []
+    class CompareResult(Enum):
+        NOT_COMPARABLE = -1
+        EQUAL = 0
+        FIRST_BETTER = 1
+        SECOND_BETTER = 2
 
     @property
     def model(self) -> SimpleModel:
@@ -20,25 +20,59 @@ class StrategyComparer:
     def model(self, val: SimpleModel):
         self.__model = val
 
-    class CompareResult(Enum):
-        NOT_COMPARABLE = -1
-        EQUAL = 0
-        FIRST_BETTER = 1
-        SECOND_BETTER = 2
+    @property
+    def possible_actions(self) -> List:
+        return self.__possible_actions
+
+    @possible_actions.setter
+    def possible_actions(self, val: List):
+        self.__possible_actions = val
+
+    @property
+    def winning_states(self) -> List[int]:
+        return self.__winning_states
+
+    @winning_states.setter
+    def winning_states(self, val: List[int]):
+        self.__winning_states = val
+
+    @property
+    def current_heuristic(self):
+        return self.__current_heuristic
+
+    @current_heuristic.setter
+    def current_heuristic(self, val):
+        self.__current_heuristic = val
+
+    @property
+    def current_coalition(self) -> List[int]:
+        return self.__current_coalition
+
+    @current_coalition.setter
+    def current_coalition(self, val: List[int]):
+        self.__current_coalition = val
+
+    @property
+    def dfs_visited_states(self) -> List[bool]:
+        return self.__dfs_visited_states
+
+    @dfs_visited_states.setter
+    def dfs_visited_states(self, val: List[bool]):
+        self.__dfs_visited_states = val
 
     def __init__(self, model: SimpleModel, possible_actions: list):
-        self.clear_all()
+        self.set_defaults()
         self.model = model
         self.possible_actions = possible_actions
 
-    def clear_all(self):
+    def set_defaults(self):
         self.model = None
         self.possible_actions = []
         self.winning_states = []
         self.current_heuristic = None
         self.dfs_visited_states = []
 
-    def generate_strategy_dfs(self, initial_state: int, winning_states: Set[int], coalition: List[int], heuristic) -> (
+    def domino_dfs(self, initial_state: int, winning_states: Set[int], coalition: List[int], heuristic) -> (
             bool, List):
         self.winning_states = winning_states
         self.dfs_visited_states = []

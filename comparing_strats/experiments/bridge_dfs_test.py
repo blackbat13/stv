@@ -30,7 +30,7 @@ if DEBUG:
 
 strategy_comparer = StrategyComparer(bridge_model.model, [])
 start = time.process_time()
-(result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning_states), [0], strategy_comparer.basic_h)
+(result, strategy) = strategy_comparer.domino_dfs(0, set(winning_states), [0], strategy_comparer.basic_h)
 end = time.process_time()
 results_file.write(f'Strategy generated in: {end - start} seconds\n')
 print(f'Strategy result: {result}')
