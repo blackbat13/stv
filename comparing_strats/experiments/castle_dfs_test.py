@@ -76,9 +76,9 @@ class CastleDfsTest:
 
     def generate_strategy(self):
         start = time.process_time()
-        (self.result, self.strategy) = self.strategy_comparer.generate_strategy_dfs(self.castle_model.model.first_state_id, set(self.winning_states),
-                                                                                    self.coalition,
-                                                                                    self.strategy_comparer.visited_states_h)
+        (self.result, self.strategy) = self.strategy_comparer.domino_dfs(self.castle_model.model.first_state_id, set(self.winning_states),
+                                                                         self.coalition,
+                                                                         self.strategy_comparer.visited_states_h)
         end = time.process_time()
         return end - start
 
