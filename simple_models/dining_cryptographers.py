@@ -18,11 +18,6 @@ class DiningCryptographers(ModelGenerator):
     def __init__(self, no_agents: int):
         super().__init__(no_agents=no_agents)
 
-    def generate(self):
-        self._generate_initial_states()
-        self._generate_model()
-        self._prepare_epistemic_relation()
-
     def _generate_initial_states(self):
         available_coins = []
         for _ in range(0, self.no_agents):

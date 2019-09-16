@@ -32,7 +32,7 @@ class ModelGenerator(ABC):
     @states_dictionary.setter
     def states_dictionary(self, value: Dict[hash, int]):
         self.__states_dictionary = value
-        
+
     @property
     def state_number(self) -> int:
         return self.__state_number

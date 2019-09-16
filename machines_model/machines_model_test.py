@@ -83,6 +83,8 @@ elif model_type == ModelType.STORAGE:
                                             machine_requirements=machine_requirements,
                                             storage_positions=storage_positions,
                                             production_times=production_times, imperfect=imperfect)
+
+machine_model.generate()
 end = time.clock()
 print(f'{machine_model.name}')
 print(f'Machine requirements: {machine_requirements}')
@@ -118,8 +120,8 @@ for state in machine_model.states:
             winning_states.add(state_id)
     state_id += 1
 
-graphDrawing = GraphDrawing(machine_model.model, strategy)
-graphDrawing.draw()
+# graphDrawing = GraphDrawing(machine_model.model, strategy)
+# graphDrawing.draw()
 
 if imperfect:
     mode = 'Imperfect'
@@ -151,29 +153,3 @@ else:
 print(f'Verification time: {end - start} seconds')
 print(f'Result: {0 in result}')
 print(f'Number of reachable states: {len(result)}')
-
-# Add storage room - Done
-# Add bad states: where machine is stuck (must wait):
-#   machine can produce new item, but it has space to hold only one produced item - Done (prop_stuck)
-# Add times for production to each machine - Done
-# Add energy and charging stations for robots (for example 100% at the beginning, and then each action uses 1%) - Done
-# Add collisions for robots - Done
-# Add obstacles to larger maps (maybe prepare some static maps)
-
-# Properties:
-#   Each machine can produce at least n items
-#   Avoid waiting time for machines (when they cannot produce item, due to output capacity)
-#   See if each machine request can be served under n minutes (adding clock to machines)
-#   See if each robot can avoid running out of energy while serving requests
-
-
-# Machine clocks are epistemic
-
-# TODO
-# Review section 3 (with figure 2)
-# Updated versions of Figures 6 and 7
-# Divide into "use cases" - formuła i podstawowe wartości (ilość itemów do produkcji, początkowa energia)
-#       Eksperymenty z różnymi mody
-# fikacjami modelu - production times, locations, storages, etc.
-
-# Wypełnić tablekę z rozmiarami różnych wersji modelu

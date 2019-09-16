@@ -1,15 +1,12 @@
 from simple_models.simple_model import SimpleModel
+from simple_models.model_generator import ModelGenerator
 import itertools
-from typing import List
+from typing import List, Set
 from enum import Enum
 
 
-class MachineModel:
+class MachineModel(ModelGenerator):
     name: str = "Classic Machine Model"
-    model = None
-    states = []
-    states_dictionary = {}
-    state_number = 0
     no_robots = 0
     no_machines = 0
     output_items_limit = 1
@@ -20,7 +17,6 @@ class MachineModel:
     machine_positions = []
     robot_positions = []
     obstacle_positions = []
-    epistemic_states_dictionaries = []
     imperfect = False
 
     class RobotAction(Enum):
@@ -41,6 +37,8 @@ class MachineModel:
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
                  obstacle_positions: List, machine_requirements: List, production_times: List, imperfect: bool):
+        super().__init__(no_agents=no_robots + no_machines)
+
         self.no_robots = no_robots
         self.no_machines = no_machines
         self.items_limit = items_limit
@@ -51,16 +49,8 @@ class MachineModel:
         self.machine_requirements = machine_requirements
         self.production_times = production_times
         self.imperfect = imperfect
-
         self.prepare_map()
         self.print_map()
-        if imperfect:
-            self.prepare_epistemic_dictionaries()
-
-        self.model = SimpleModel(no_robots + no_machines)
-        self.generate_model()
-        if imperfect:
-            self.prepare_epistemic_relation()
 
     def prepare_map(self):
         self.create_map()
@@ -104,11 +94,6 @@ class MachineModel:
             map_string += '\n'
         print(map_string)
 
-    def prepare_epistemic_dictionaries(self):
-        self.epistemic_states_dictionaries.clear()
-        for _ in range(0, self.no_robots):
-            self.epistemic_states_dictionaries.append({})
-
     def generate_first_state(self):
         robot_items = []
         for i in range(0, self.no_robots):
@@ -134,11 +119,10 @@ class MachineModel:
                        'prop_stuck': False}
         return first_state
 
-    def generate_model(self):
-        first_state = self.generate_first_state()
+    def _generate_initial_states(self):
+        self._add_state(self.generate_first_state())
 
-        self.add_state(first_state)
-
+    def _generate_model(self):
         current_state_number = -1
         for state in self.states:
             current_state_number += 1
@@ -166,7 +150,7 @@ class MachineModel:
             for current_actions in itertools.product(*available_actions):
                 new_state, actions = self.new_state_after_action(state, current_actions)
 
-                new_state_number = self.add_state(new_state)
+                new_state_number = self._add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
         self.model.states = self.states
@@ -296,27 +280,7 @@ class MachineModel:
 
         return True
 
-    def add_state(self, state: hash) -> int:
-        new_state_number = self.get_state_number(state)
-        if self.imperfect:
-            for i in range(0, self.no_robots):
-                epistemic_state = self.get_epistemic_state(state, i)
-                self.add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
-        return new_state_number
-
-    def get_state_number(self, state: hash) -> int:
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.states_dictionary:
-            self.states_dictionary[state_str] = self.state_number
-            new_state_number = self.state_number
-            self.states.append(state)
-            self.state_number += 1
-        else:
-            new_state_number = self.states_dictionary[state_str]
-
-        return new_state_number
-
-    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         if agent_number >= self.no_robots:
             return state
 
@@ -340,18 +304,6 @@ class MachineModel:
                            'm_out': machine_outputs, 'it_count': produced_items_count}
         return epistemic_state
 
-    def add_to_epistemic_dictionary(self, state: hash, new_state_number: int, agent_number: int):
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.epistemic_states_dictionaries[agent_number]:
-            self.epistemic_states_dictionaries[agent_number][state_str] = {new_state_number}
-        else:
-            self.epistemic_states_dictionaries[agent_number][state_str].add(new_state_number)
-
-    def prepare_epistemic_relation(self):
-        for i in range(0, self.no_robots):
-            for state, epistemic_class in self.epistemic_states_dictionaries[i].items():
-                self.model.add_epistemic_class(i, epistemic_class)
-
     def get_actions(self):
         actions = []
         for _ in range(0, self.no_robots):
@@ -363,6 +315,15 @@ class MachineModel:
             actions[-1].extend(['Wait', 'produce'])
 
         return actions
+
+    def _get_props_for_state(self, state: hash) -> List[str]:
+        pass
+
+    def get_props_list(self) -> List[str]:
+        pass
+
+    def get_winning_states(self, prop: str) -> Set[int]:
+        pass
 
     @staticmethod
     def random_factory_layout(size: int, no_robots: int, no_machines: int, no_charging_stations: int = 0, no_storage: int = 0):
@@ -479,7 +440,7 @@ class MachineModelWithCharging(MachineModel):
 
         return available_actions[:]
 
-    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         if agent_number >= self.no_robots:
             return state
 
@@ -607,7 +568,7 @@ class MachineModelWithStorage(MachineModel):
 
         return available_actions[:]
 
-    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         if agent_number >= self.no_robots:
             return state
 
@@ -676,7 +637,7 @@ class MachineModelWaiting(MachineModel):
 
         return new_state, actions
 
-    def get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         if agent_number >= self.no_robots:
             return state
 

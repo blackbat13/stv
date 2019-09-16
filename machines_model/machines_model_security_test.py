@@ -84,6 +84,8 @@ elif model_type == ModelType.STORAGE:
                                             machine_requirements=machine_requirements,
                                             storage_positions=storage_positions,
                                             production_times=production_times, imperfect=imperfect)
+
+machine_model.generate()
 end = time.clock()
 print(f'{machine_model.name}')
 print(f'Machine requirements: {machine_requirements}')
