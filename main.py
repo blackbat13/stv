@@ -87,8 +87,8 @@ class Menu:
             workers[i] = int(input(f"Number of workers in Castle {i + 1}"))
         file_name = input("Enter output filename: ")
         castles = CastlesIsplGeneratorObjective(workers)
-        FileTools.save_to_file(file_name, castles.create_model())
-        print(f"Result written in the file {file_name}.ispl")
+        file_name = FileTools.save_to_file(file_name, castles.create_model())
+        print(f"Result written in the file {file_name}")
 
     def ispl_castles_subjective(self) -> None:
         workers = [0, 0, 0]
@@ -96,8 +96,8 @@ class Menu:
             workers[i] = int(input(f"Number of workers in Castle {i + 1}"))
         file_name = input("Enter output filename: ")
         castles = CastlesIsplGeneratorSubjective(workers)
-        FileTools.save_to_file(file_name, castles.create_model())
-        print(f"Result written to the file {file_name}.ispl")
+        file_name = FileTools.save_to_file(file_name, castles.create_model())
+        print(f"Result written to the file {file_name}")
 
     def handle_ispl_bridge_menu(self):
         option = self.show_ispl_bridge_menu()
@@ -124,16 +124,16 @@ class Menu:
         number_of_cards_in_hand = int(input("Number of cards in hand: "))
         file_name = input("Enter output filename: ")
         bridge = BridgeModelIsplGenerator(number_of_cards, number_of_cards_in_hand)
-        FileTools.save_to_file(file_name, bridge.create_model())
-        print(f"Result written to the file {file_name}.ispl")
+        file_name = FileTools.save_to_file(file_name, bridge.create_model())
+        print(f"Result written to the file {file_name}")
 
     def ispl_bridge_absent_minded(self):
         number_of_cards = int(input("Number of cards: "))
         number_of_cards_in_hand = int(input("Number of cards in hand: "))
         file_name = input("Enter output filename: ")
         bridge = AbsentMindedBridgeModelIsplGenerator(number_of_cards, number_of_cards_in_hand)
-        FileTools.save_to_file(file_name, bridge.create_model())
-        print(f"Result written to the file {file_name}.ispl")
+        file_name = FileTools.save_to_file(file_name, bridge.create_model())
+        print(f"Result written to the file {file_name}")
 
     def handle_ispl_selene_menu(self):
         option = self.show_ispl_selene_menu()
@@ -182,16 +182,16 @@ class Menu:
         number_of_candidates = int(input("Number of candidates: "))
         file_name = input("Enter output filename: ")
         simple_voting = SimpleVotingModelIsplGenerator(number_of_candidates, number_of_voters)
-        FileTools.save_to_file(file_name, simple_voting.create_model())
-        print(f"Result written to the file {file_name}.ispl")
+        file_name = FileTools.save_to_file(file_name, simple_voting.create_model())
+        print(f"Result written to the file {file_name}")
 
     def ispl_simple_voting_modified(self):
         number_of_voters = int(input("Number of voters: "))
         number_of_candidates = int(input("Number of candidates: "))
         file_name = input("Enter output filename: ")
         simple_voting = SimpleVotingModel2IsplGenerator(number_of_candidates, number_of_voters)
-        FileTools.save_to_file(file_name, simple_voting.create_model())
-        print(f"Result written to the file {file_name}.ispl")
+        file_name = FileTools.save_to_file(file_name, simple_voting.create_model())
+        print(f"Result written to the file {file_name}")
 
     def handle_ispl_tmn_menu(self):
         option = self.show_ispl_tmn_menu()
