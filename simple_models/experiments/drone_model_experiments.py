@@ -1,6 +1,7 @@
 from simple_models.drone_model import DroneModel, CracowMap
 
 drone_model = DroneModel(1, [1], CracowMap())
+drone_model.generate()
 
 atl_imperfect_model = drone_model.model.to_atl_imperfect(drone_model.get_actions())
 
