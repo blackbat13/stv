@@ -1,4 +1,3 @@
-from simple_models.simple_model import SimpleModel
 import itertools
 from tools.disjoint_set import DisjointSet
 from random import randint
@@ -147,7 +146,6 @@ class CracowMap:
 
 
 class DroneModel(ModelGenerator):
-    no_drones: int = 0
     energies: List[int] = []
     map = []
     graph = []
@@ -156,7 +154,6 @@ class DroneModel(ModelGenerator):
 
     def __init__(self, no_drones: int, energies: List[int], map, is_random: bool = False):
         super().__init__(no_agents=no_drones)
-        self.no_drones = no_drones
         self.energies = energies
         self.map = map
         self.create_map_graph()
@@ -165,7 +162,7 @@ class DroneModel(ModelGenerator):
     def _generate_initial_states(self):
         places = []
         visited = []
-        for i in range(0, self.no_drones):
+        for i in range(0, self.no_agents):
             places.append(0)
             visited.append({0})
 
@@ -194,7 +191,7 @@ class DroneModel(ModelGenerator):
 
             available_actions = []
 
-            for drone_number in range(0, self.no_drones):
+            for drone_number in range(0, self.no_agents):
                 available_actions.append([])
                 available_actions[drone_number].append(-1)  # Wait
                 drone_energy = state["energy"][drone_number]
@@ -241,7 +238,7 @@ class DroneModel(ModelGenerator):
                 energies = state["energy"][:]
                 visited = state["visited"][:]
                 actions = []
-                for _ in range(0, self.no_drones):
+                for _ in range(0, self.no_agents):
                     actions.append(None)
                 drone_number = -1
                 for d_action in drone_actions:
@@ -292,13 +289,13 @@ class DroneModel(ModelGenerator):
 
     def get_actions(self):
         result = []
-        for i in range(0, self.no_drones):
+        for i in range(0, self.no_agents):
             result.append(self.drone_actions)
         return result
 
     def listify_states(self):
         for state in self.states:
-            for drone_id in range(0, self.no_drones):
+            for drone_id in range(0, self.no_agents):
                 state['visited'][drone_id] = list(state['visited'][drone_id])
 
     def _get_props_for_state(self, state: hash) -> List[str]:
