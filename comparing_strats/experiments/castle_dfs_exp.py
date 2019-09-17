@@ -5,8 +5,17 @@ import datetime
 from typing import List
 
 
-class CastleDfsTest:
+class CastleDfsExp:
+    """
+    Class for running experiments with DominoDFS on Castles model
+    """
     def __init__(self, castle_sizes: List[int], castle_lifes: List[int], DEBUG: bool = False):
+        """
+
+        :param castle_sizes: list of numbers of workers for each castle
+        :param castle_lifes: list of castle lifes
+        :param DEBUG:
+        """
         self.castle_sizes = castle_sizes
         self.castle_lifes = castle_lifes
         self.DEBUG = DEBUG
@@ -18,7 +27,11 @@ class CastleDfsTest:
         self.result = None
         self.strategy = None
 
-    def run_test(self):
+    def run_experiments(self) -> None:
+        """
+        Runs experiments
+        :return: None
+        """
         print(datetime.datetime.now())
         self.results_file = open("strat_dfs_castles_results.txt", "a")
         self.write_file_header()
@@ -67,12 +80,10 @@ class CastleDfsTest:
         self.winning_states = []
         for i, state in enumerate(self.castle_model.model.states):
             if state['defeated'][2]:
-                if self.DEBUG:
-                    print(f'Winning state: {state}')
                 self.winning_states.append(i)
+                print(f'Winning state: {state}') if self.DEBUG else None
 
-        if self.DEBUG:
-            print(f'Number of winning states: {len(self.winning_states)}')
+        print(f'Number of winning states: {len(self.winning_states)}') if self.DEBUG else None
 
     def generate_strategy(self):
         start = time.process_time()
@@ -91,5 +102,5 @@ class CastleDfsTest:
         return strategy_defined_count
 
 
-castle_dfs_test = CastleDfsTest(castle_sizes=[1, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
-castle_dfs_test.run_test()
+# castle_dfs_test = CastleDfsTest(castle_sizes=[1, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
+# castle_dfs_test.run_experiments()
