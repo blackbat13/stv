@@ -1,6 +1,6 @@
 from mv_atl.president_model import PresidentModel
 import time
-import mv_atl.mvatl_parser
+from mv_atl import mvatl_parser
 
 
 class PresidentModelExp:

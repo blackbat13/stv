@@ -1,116 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from atl.atl_ir_model import ATLIrModel, ATLirModel
 import itertools
-from mv_atl import mvatl_model, mvatl_parser
+from mv_atl import mvatl_model
 from enum import Enum
-import random
-import time
 import copy
-from tools.array_tools import ArrayTools
-import datetime
-
-
-def create_map():
-    map = []
-    connections = []
-
-    map.append({
-        "id": 0,
-        "name": "Vlastimila Hofmana",
-        "PM2.5": "t",
-        "d_PM2.5": "t",
-        "x": 0,
-        "y": 0
-    })
-
-    map.append({
-        "id": 1,
-        "name": "Leona Wyczółkowskiego",
-        "PM2.5": "t",
-        "d_PM2.5": "t",
-        "x": 0,
-        "y": 1
-    })
-
-    map.append({
-        "id": 2,
-        "name": "Aleje Trzech Wieszczów",
-        "PM2.5": "t",
-        "d_PM2.5": "f",
-        "x": 1,
-        "y": 0
-    })
-
-    map.append({
-        "id": 3,
-        "name": "Wiedeńska",
-        "PM2.5": "f",
-        "d_PM2.5": "t",
-        "x": 1,
-        "y": 1
-    })
-
-    map.append({
-        "id": 4,
-        "name": "Przybyszewskiego 56",
-        "PM2.5": "u",
-        "d_PM2.5": "f",
-        "x": 1,
-        "y": 2
-    })
-
-    map.append({
-        "id": 5,
-        "name": "Studencka",
-        "PM2.5": "u",
-        "d_PM2.5": "u",
-        "x": 2,
-        "y": 0
-    })
-
-    map.append({
-        "id": 6,
-        "name": "Na Błonie",
-        "PM2.5": "t",
-        "d_PM2.5": "f",
-        "x": 3,
-        "y": 1
-    })
-
-    map.append({
-        "id": 7,
-        "name": "osiedle Złota Podkowa",
-        "PM2.5": "t",
-        "d_PM2.5": "f",
-        "x": 3,
-        "y": 2
-    })
-
-    map.append({
-        "id": 8,
-        "name": "aleja Juliusza Słowackiego",
-        "PM2.5": "f",
-        "d_PM2.5": "f",
-        "x": 2,
-        "y": 1
-    })
-
-    connections.append([0, 1])
-    connections.append([1, 4])
-    connections.append([2, 5])
-    connections.append([2, 5])
-    connections.append([3, 4])
-    connections.append([3, 8])
-    connections.append([5, 6])
-    connections.append([5, 8])
-    connections.append([6, 7])
-
-    return map, connections
-
-
-map, connections = create_map()
 
 
 class DroneAction(Enum):
@@ -147,7 +41,7 @@ class PollutionModel:
         self.generate_model()
         self.model.states = self.states
         self.model.finish_model()
-        #self.prepare_epistemic_relation()
+        # self.prepare_epistemic_relation()
 
     def create_first_state(self, energies, first_place_id):
         places = []
@@ -324,8 +218,8 @@ class PollutionModel:
 
     def add_state(self, state):
         new_state_number = self.get_state_number(state)
-        #epistemic_states = self.get_epistemic_states(state)
-        #self.add_to_epistemic_dictionary(epistemic_states, new_state_number)
+        # epistemic_states = self.get_epistemic_states(state)
+        # self.add_to_epistemic_dictionary(epistemic_states, new_state_number)
         return new_state_number
 
     def get_state_number(self, state):
@@ -455,7 +349,7 @@ class PollutionModel:
 
     def pol_propE_in_state(self, place_number):
         pol_prop = []
-        pol_prop.append(self.value_for_prop(map[place_number]['PM2.5'], map[place_number]['d_PM2.5']))
+        pol_prop.append(self.value_for_prop(self.model_map[place_number]['PM2.5'], self.model_map[place_number]['d_PM2.5']))
         return pol_prop
 
     def loc_prop_in_state(self, state, place_number):
@@ -471,7 +365,7 @@ class PollutionModel:
     def loc_all_prop_in_state(self, state):
         loc_prop = []
         for drone_number in range(0, self.no_drones):
-            if len(state['visited'][drone_number]) == len(map):
+            if len(state['visited'][drone_number]) == len(self.model_map):
                 prop = 't'
             else:
                 prop = 'f'
@@ -514,105 +408,3 @@ class PollutionModel:
         print("State energies:", state["energy"])
         print("State visited places:", state["visited"])
         print("Pollutions:", state["pollution"])
-
-
-# Syntax for propositions:
-# Polution prop -> poll the list of size no_drones with (the second) l as the location number
-# In formula -> poll_d with l location and d drone (ex: pol3 = [t,f,t] and pol3_1 = f)
-# Location prop -> locl the list of size no_drones with (the second) l as the location number
-# In formula -> locl_d with l location and d drone (ex: loc3 = [t,f,t] and loc3_1 = f)
-def generate_new_formula2(no_drones, location_id):
-    coal = ""
-    for d in range(0, no_drones):
-        coal += str(d)
-        if d != no_drones - 1:
-            coal += ","
-
-    result = f"<<{coal}>> F "
-    lst = list()
-    for d in range(0, no_drones):
-        lst2 = list()
-        lst2.append(f"(loc{location_id}_{d} & polnew_{d})")
-        lst.append(lst2)
-
-    result += cformula2string(lst, 0)
-    return result
-
-
-def dformula2string(disj, i):
-    if i == len(disj) - 1:
-        return disj[i]
-    return "(" + disj[i] + " | " + dformula2string(disj, i + 1) + ")"
-
-
-def cformula2string(conj, i):
-    if i == len(conj) - 1:
-        return dformula2string(conj[i], 0)
-    return "(" + dformula2string(conj[i], 0) + " | " + cformula2string(conj, i + 1) + ")"
-
-
-n_agent = 3
-energy = 4
-
-energies = ArrayTools.create_value_array_of_size(n_agent, energy)
-radius = 1
-# 18:42
-selected_place = 7
-first_place_id = 5
-
-print(datetime.datetime.now())
-
-file = open("results-f2-perf.txt", "a")
-file.write(f"Drones: {n_agent}\n")
-file.write(f"Energies: {energies}\n")
-file.write(f"Map: {map}\n")
-file.write(f"Connections: {connections}\n")
-file.write(f'Map size: {len(map)}\n')
-file.write(f'Radius: {radius}\n')
-file.write(f'Selected place: {selected_place}\n')
-file.write(f'First place id: {first_place_id}\n')
-
-start = time.perf_counter()
-pollution_model = PollutionModel(map, connections, n_agent, energies, radius, first_place_id)
-stop = time.perf_counter()
-tgen = stop - start
-
-#pollution_model.print_states()
-
-file.write(f'Tgen: {tgen}\n')
-file.write(f'Number of states: {len(pollution_model.states)}\n')
-
-phi1_l = "<<>> F polnew_0"
-phi1_r = "<<0>> F polnew_0"
-phi2 = generate_new_formula2(n_agent, selected_place)
-
-formula_txt = phi2
-
-file.write(f"Formula: {formula_txt}\n")
-
-print(formula_txt)
-props = list()
-for l in range(0, len(map)):
-    for a in range(0, n_agent):
-        props.append("pol" + str(l))
-        props.append("polE" + str(l))
-        props.append("loc" + str(l))
-        props.append("polD" + str(l))
-props.append('locA')
-props.append('polnew')
-pollution_model.model.props = props
-const = "t td tg f fd fg u"
-atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
-formula = atlparser.parse(formula_txt)
-print("Formula:", formula)
-start = time.perf_counter()
-result = pollution_model.model.interpreter(formula, 0)
-stop = time.perf_counter()
-tverif = stop - start
-print(str(result))
-
-file.write(f"Result: {result}\n")
-file.write(f'Tverif: {tverif}\n')
-file.write("\n")
-
-file.close()
