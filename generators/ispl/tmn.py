@@ -2,6 +2,7 @@ from tools.string_tools import StringTools
 
 
 class TmnProtocolIsplGenerator:
+    # TODO: integrate with IsplGenerator class
     ispl_model = ""
     agents = ["alice", "bob", "server", "attacker"]
     no_messages = 3

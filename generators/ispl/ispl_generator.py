@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class IsplGenerator(ABC):
+    """
+    Template class for ispl generators.
+    """
 
     @property
     def ispl_model(self) -> str:

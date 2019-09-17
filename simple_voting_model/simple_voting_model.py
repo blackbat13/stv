@@ -1,4 +1,4 @@
-from atl.atl_model import *
+from deprecated.atl_model import *
 import time
 
 # import resource

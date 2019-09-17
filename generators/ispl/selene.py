@@ -3,6 +3,7 @@ import itertools
 
 
 class SeleneModelIsplGenerator:
+    # TODO: integrate with IsplGenerator class
     ispl_model = ""
 
     def __init__(self, number_of_candidates, number_of_voters):
@@ -297,6 +298,7 @@ class SeleneModelIsplGenerator:
 
 
 class SeleneModelMkIsplGenerator:
+    # TODO: integrate with IsplGenerator class
     def __init__(self, votersNo, ballotsNo, maxCoerced, maxWaitingForVotes, maxWaitingForHelp, coalitionSize):
 
         self.votersNo = votersNo

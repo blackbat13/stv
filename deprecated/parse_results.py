@@ -1,3 +1,5 @@
+# DEPRECATED
+
 import math
 
 file = open("results.txt")
