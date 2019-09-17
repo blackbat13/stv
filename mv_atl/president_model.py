@@ -1,8 +1,8 @@
 import time
 import random
 import copy
-import mvatl_model
-import mvatl_parser
+import mv_atl.mvatl_model
+import mv_atl.mvatl_parser
 
 __author__ = 'Arthur Queffelec'
 
@@ -284,46 +284,23 @@ def print_create_for_state(state_number, state):
     # msg += "]}"
     # print(msg)
 
-def print_automata(f):
-    i = 0
-    f.write("#states\n")
-    for s in test.states:
-        f.write("s" + str(i) + "\n")
-        i += 1
-    f.write("#initial\n")
-    f.write("s0\n")
-    f.write("#accepting\n")
-    f.write("#alphabet\n")
-    f.write("Wait\nPass\nClear\nTwo\nAs\nKing\nQueen\nJack\nTen\nNine\nEight\nSeven\nSix\nFive\nFour\nThree\n")
-    f.write("#transitions\n")
-    i = 0
-    for s1 in test.model.transitions:
-        for t in s1:
-            s2 = t['nextState']
-            for a in t['actions']:
-                if isinstance(a, str):
-                    f.write("s" + str(i) + ":" + a + ">s" + str(s2) + "\n")
-        i += 1
-
-
-start = time.clock()
-test = PresidentModel(5, 1, 5)
-test.create_mvatl_model()
-#cards = {0: {'Two': 0, 'As': 0, 'King': 0, 'Queen': 2, 'Jack': 0, 'Ten': 2, 'Nine': 0, 'Eight': 0, 'Seven': 0, 'Six': 0, 'Five': 1, 'Four': 0, 'Three': 0}, 1: {'Two': 0, 'As': 0, 'King': 0, 'Queen': 2, 'Jack': 0, 'Ten': 0, 'Nine': 0, 'Eight': 0, 'Seven': 0, 'Six': 2, 'Five': 0, 'Four': 1, 'Three': 0}, 2: {'Two': 1, 'As': 2, 'King': 0, 'Queen': 0, 'Jack': 0, 'Ten': 0, 'Nine': 0, 'Eight': 2, 'Seven': 0, 'Six': 0, 'Five': 0, 'Four': 0, 'Three': 0}, 3: {'Two': 2, 'As': 0, 'King': 0, 'Queen': 0, 'Jack': 0, 'Ten': 0, 'Nine': 0, 'Eight': 0, 'Seven': 0, 'Six': 1, 'Five': 0, 'Four': 2, 'Three': 0}}
-#test.players_cards = cards
-test.generate_model()
-end = time.clock()
-print("Gen:", end - start, "s")
-print(f'Number of states: {len(test.states)}')
-test.model.states = test.states
-
-start = time.clock()
-props = "Hierarchy"
-test.model.props = [props]
-const = "b n t"
-atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
-txt = "<<1>> F (t <= Hierarchy_1)"
-print("Formula : " + atlparser.parse(txt))
-print(str(test.model.interpreter(atlparser.parse(txt), 0)))
-end = time.clock()
-print("Verif:", end - start, "s")
+# def print_automata(f):
+#     i = 0
+#     f.write("#states\n")
+#     for s in test.states:
+#         f.write("s" + str(i) + "\n")
+#         i += 1
+#     f.write("#initial\n")
+#     f.write("s0\n")
+#     f.write("#accepting\n")
+#     f.write("#alphabet\n")
+#     f.write("Wait\nPass\nClear\nTwo\nAs\nKing\nQueen\nJack\nTen\nNine\nEight\nSeven\nSix\nFive\nFour\nThree\n")
+#     f.write("#transitions\n")
+#     i = 0
+#     for s1 in test.model.transitions:
+#         for t in s1:
+#             s2 = t['nextState']
+#             for a in t['actions']:
+#                 if isinstance(a, str):
+#                     f.write("s" + str(i) + ":" + a + ">s" + str(s2) + "\n")
+#         i += 1
