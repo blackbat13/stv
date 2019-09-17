@@ -479,159 +479,21 @@ class PretAVoterSpthyGenerator:
         return lemmas
 
 
-voters_no = 2
-candidates_no = 3
-pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
-file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
-f = open(file_name, "w")
-f.write(pret_a_voter_spthy_generator.create_spthy_model())
-f.close()
-
-print(f"Done. Created model saved in {file_name}")
-
-for candidate_id in range(1, candidates_no + 1):
-    pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False, candidate_id)
-    file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}_ic{candidate_id}.spthy"
-    f = open(file_name, "w")
-    f.write(pret_a_voter_spthy_generator.create_spthy_model())
-    f.close()
-
-    print(f"Done. Created model saved in {file_name}")
-
-
-# diffLemma Observational_equivalence:
-# rule-equivalence
-#   case Rule_Destrd_0_fst
-#   backward-search
-#     case RHS
-#     step( simplify )
-#     step( solve( !KD( <x, x.1> ) ▶₀ #i ) )
-#       case CastVoteI
-#       step( solve( (#vl, 0) ~~> (#i, 0) ) )
-#         case d_1_select_case_1
-#         step( solve( (#vr.1, 0) ~~> (#i, 0) ) )
-#           case pair
-#           step( solve( !Choice( ch1 ) ▶₀ #vr ) )
-#             case InitialSetup_case_1
-#             step( solve( !Choice( s(x) ) ▶₁ #vr ) )
-#               case InitialSetup_case_2
-#               step( solve( VoterI( V ) ▶₂ #vr ) )
-#                 case InitialSetup
-#                 step( solve( BallotWithOrderAndOnion( B, C1, 'C1', onion ) ▶₃ #vr ) )
-#                   case GenerateBallot_case_1
-#                   step( solve( !KU( s(s(z)) ) @ #vk ) )
-#                     case CastVoteI_case_1
-#                     by ATTACK // trace found
-#                   qed
-#                 qed
-#               qed
-#             qed
-#           qed
-#         qed
-#       qed
-#     qed
-#   qed
-# qed
+# voters_no = 2
+# candidates_no = 3
+# pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
+# file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
+# f = open(file_name, "w")
+# f.write(pret_a_voter_spthy_generator.create_spthy_model())
+# f.close()
 #
-# end
-
-
-
-
-# diffLemma Observational_equivalence:
-# rule-equivalence
-#   case Rule_Destrd_0_fst
-#   backward-search
-#     case RHS
-#     step( simplify )
-#     step( solve( !KD( <x, x.1> ) ▶₀ #i ) )
-#       case CastAllVotes
-#       step( solve( (#vl, 0) ~~> (#i, 0) ) )
-#         case d_1_select_case_1
-#         step( solve( (#vr.1, 0) ~~> (#i, 0) ) )
-#           case pair
-#           step( solve( !Choice( c1 ) ▶₀ #vr ) )
-#             case InitialSetup_case_1
-#             step( solve( Voter( V1 ) ▶₁ #vr ) )
-#               case InitialSetup
-#               step( solve( BallotWithOrderAndOnion( B1, C1, C2, onion1 ) ▶₂ #vr ) )
-#                 case GenerateBallot_case_1
-#                 step( solve( !Choice( ch1 ) ▶₃ #vr ) )
-#                   case InitialSetup_case_1
-#                   step( solve( !Choice( s(x) ) ▶₄ #vr ) )
-#                     case InitialSetup_case_2
-#                     step( solve( VoterI( VI ) ▶₅ #vr ) )
-#                       case InitialSetup
-#                       step( solve( BallotWithOrderAndOnion( BI, C1, 'C1', onionI ) ▶₆ #vr ) )
-#                         case GenerateBallot
-#                         step( solve( !KU( s(s(z)) ) @ #vk ) )
-#                           case CastAllVotes_case_1
-#                           by ATTACK // trace found
-#                         qed
-#                       qed
-#                     qed
-#                   qed
-#                 qed
-#               qed
-#             qed
-#           qed
-#         qed
-#       qed
-#     qed
-#   qed
-# qed
+# print(f"Done. Created model saved in {file_name}")
 #
-# end
-
-
-
-# Joined Ballots rule attack:
-# diffLemma Observational_equivalence:
-# rule-equivalence
-#   case Rule_Destrd_0_fst
-#   backward-search
-#     case RHS
-#     step( simplify )
-#     step( solve( !KD( <x, x.1> ) ▶₀ #i ) )
-#       case CastAllVotes
-#       step( solve( (#vl, 0) ~~> (#i, 0) ) )
-#         case d_1_select_case_1
-#         step( solve( (#vr.1, 0) ~~> (#i, 0) ) )
-#           case pair
-#           step( solve( !Choice( c1 ) ▶₀ #vr ) )
-#             case InitialSetup_case_1
-#             step( solve( Voter( V1 ) ▶₁ #vr ) )
-#               case InitialSetup
-#               step( solve( BallotWithOrderAndOnion( B1, C1, C2, onion1 ) ▶₂ #vr ) )
-#                 case GenerateAllBallots_case_01
-#                 step( solve( !Choice( ch1 ) ▶₃ #vr ) )
-#                   case InitialSetup_case_2
-#                   step( solve( !Choice( s(x) ) ▶₄ #vr ) )
-#                     case InitialSetup_case_1
-#                     step( solve( VoterI( VI ) ▶₅ #vr ) )
-#                       case InitialSetup
-#                       step( solve( BallotWithOrderAndOnion( BI, 'C1', C2, onionI ) ▶₆ #vr ) )
-#                         case GenerateAllBallots
-#                         step( solve( !KU( s(s(z)) ) @ #vk ) )
-#                           case c_s
-#                           step( solve( !KU( s(z) ) @ #vk.1 ) )
-#                             case CastAllVotes_case_2
-#                             by ATTACK // trace found
-#                           qed
-#                         qed
-#                       qed
-#                     qed
-#                   qed
-#                 qed
-#               qed
-#             qed
-#           qed
-#         qed
-#       qed
-#     qed
-#   qed
-# qed
-
-
-
-# Usunąć onion z receipt (tylko fresh value, a połączenie trzymać tajne)
+# for candidate_id in range(1, candidates_no + 1):
+#     pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False, candidate_id)
+#     file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}_ic{candidate_id}.spthy"
+#     f = open(file_name, "w")
+#     f.write(pret_a_voter_spthy_generator.create_spthy_model())
+#     f.close()
+#
+#     print(f"Done. Created model saved in {file_name}")

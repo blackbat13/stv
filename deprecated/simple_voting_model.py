@@ -1,3 +1,5 @@
+# DEPRECATED
+
 from deprecated.atl_model import *
 import time
 
