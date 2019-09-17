@@ -1,20 +1,31 @@
 from simple_models.tian_ji_model import TianJiModel
 
-tian_ji_model = TianJiModel(4)
-tian_ji_model.generate()
-# tian_ji_model.model.simulate(0)
 
-atl_model = tian_ji_model.model.to_atl_imperfect(tian_ji_model.get_actions())
+class TianJiModelExperiments:
+    def __init__(self, no_horses: int):
+        self.no_horses = no_horses
+        self.model = None
 
-winning = []
+    def run_experiments(self):
+        self.generate_model()
+        atl_model = self.model.model.to_atl_imperfect(self.model.get_actions())
 
-state_id = -1
+        winning = []
 
-for state in tian_ji_model.states:
-    state_id += 1
-    if state['tian_ji_score'] > state['king_score'] and len(state['tian_ji_horses']) == 0:
-        winning.append(state_id)
+        state_id = -1
 
-result = atl_model.minimum_formula_many_agents([0], winning)
+        for state in self.model.states:
+            state_id += 1
+            if state['tian_ji_score'] > state['king_score'] and len(state['tian_ji_horses']) == 0:
+                winning.append(state_id)
 
-print(result)
+        result = atl_model.minimum_formula_many_agents([0], winning)
+
+        print(result)
+
+    def generate_model(self):
+        self.model = TianJiModel(self.no_horses)
+        self.model.generate()
+
+# tian_ji_model_experiments = TianJiModelExperiments(4)
+# tian_ji_model_experiments.run_experiments()

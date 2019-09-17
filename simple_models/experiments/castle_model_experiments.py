@@ -83,5 +83,5 @@ class CastleModelExperiments:
         return workers
 
 
-castle_model_experiments = CastleModelExperiments(CastleModelExperiments.read_castle_sizes())
-castle_model_experiments.run_experiments()
+# castle_model_experiments = CastleModelExperiments(CastleModelExperiments.read_castle_sizes())
+# castle_model_experiments.run_experiments()
