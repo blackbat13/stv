@@ -1,5 +1,5 @@
 from typing import List, Set
-from simple_models.model_generator import ModelGenerator
+from models.model_generator import ModelGenerator
 import itertools
 import random
 

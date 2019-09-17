@@ -33,7 +33,7 @@
 # dining_cryptographers_experiments.run_experiments()
 
 # from experiments.approximations.drone_model_experiments import DroneModelExperiments
-# from simple_models.drone_model import CracowMap
+# from models.drone_model import CracowMap
 #
 # drone_model_experiments = DroneModelExperiments(1, [1], CracowMap())
 # drone_model_experiments.run_experiments()

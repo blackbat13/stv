@@ -1,4 +1,4 @@
-from simple_models.drone_model import *
+from models.drone_model import *
 from comparing_strats.strat_simpl import StrategyComparer
 from typing import List
 import datetime

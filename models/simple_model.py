@@ -1,8 +1,8 @@
 import json
 from typing import List, Set
-from atl.atl_ir_model import ATLIrModel, ATLirModel
-from atl.strategy_logic import SLIr
-from simple_models.transition import Transition
+from logics.atl.atl_ir_model import ATLIrModel, ATLirModel
+from logics.sl.strategy_logic import SLIr
+from models.transition import Transition
 
 
 class SimpleModel:

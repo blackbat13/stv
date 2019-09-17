@@ -1,5 +1,5 @@
-from simple_models.simple_model import SimpleModel
-from simple_models.model_generator import ModelGenerator
+from models.simple_model import SimpleModel
+from models.model_generator import ModelGenerator
 import itertools
 from typing import List, Set
 from enum import Enum

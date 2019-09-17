@@ -1,4 +1,4 @@
-from simple_models.drone_model import DroneModel, CracowMap
+from models.drone_model import DroneModel, CracowMap
 
 
 class DroneModelExperiments:

@@ -1,4 +1,4 @@
-from simple_models.simple_voting_2_model import SimpleVoting2Model
+from models.simple_voting_2_model import SimpleVoting2Model
 import time
 
 

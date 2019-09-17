@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import itertools
-from mv_atl import mvatl_model
+from logics.atl.mv import mvatl_model
 from enum import Enum
 import copy
 

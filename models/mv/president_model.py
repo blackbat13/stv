@@ -1,13 +1,11 @@
-import time
 import random
 import copy
-import mv_atl.mvatl_model
-import mv_atl.mvatl_parser
 
 __author__ = 'Arthur Queffelec'
 
 
 class PresidentModel:
+    # TODO implement as SimpleModel
     number_of_players = 3
     number_of_decks = 1
     number_of_cards = 0

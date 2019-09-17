@@ -1,4 +1,4 @@
-from simple_models.bridge_model import BridgeModel
+from models.bridge_model import BridgeModel
 
 
 class BridgeModelExperiments:

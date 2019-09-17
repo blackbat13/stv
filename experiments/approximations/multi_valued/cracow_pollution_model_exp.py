@@ -1,8 +1,9 @@
-from pollution_models.cracow_pollution_model import PollutionModel
+from models.mv.cracow_pollution_model import PollutionModel
 import datetime
 from tools.array_tools import ArrayTools
 import time
-from mv_atl import mvatl_parser
+from logics.atl.mv import mvatl_parser
+
 
 class CracowPollutionModelExp:
     def __init__(self, n_agent: int, energy: int, radius: int, selected_place: int, first_place_id: int):

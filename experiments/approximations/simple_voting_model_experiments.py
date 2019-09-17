@@ -1,4 +1,4 @@
-from simple_models.simple_voting_model import SimpleVotingModel
+from models.simple_voting_model import SimpleVotingModel
 
 
 class SimpleVotingModelExperiments:

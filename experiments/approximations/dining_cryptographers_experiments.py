@@ -1,4 +1,4 @@
-from simple_models.dining_cryptographers import DiningCryptographers
+from models.dining_cryptographers import DiningCryptographers
 from tools.graph_drawing import GraphDrawing
 
 

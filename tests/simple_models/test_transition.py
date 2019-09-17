@@ -1,5 +1,5 @@
 import unittest
-from simple_models.transition import Transition
+from models.transition import Transition
 
 
 class TestTransition(unittest.TestCase):

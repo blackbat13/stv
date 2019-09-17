@@ -1,4 +1,4 @@
-from atl.atl_ir_model import ATLIrModel
+from logics.atl.atl_ir_model import ATLIrModel
 from tools.array_tools import ArrayTools
 
 

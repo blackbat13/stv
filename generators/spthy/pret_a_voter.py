@@ -478,24 +478,21 @@ class PretAVoterSpthyGenerator:
 
         return lemmas
 
-
-voters_no = 2
-candidates_no = 3
-pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
-file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
-f = open(file_name, "w")
-f.write(pret_a_voter_spthy_generator.create_spthy_model())
-f.close()
-
-print(f"Done. Created model saved in {file_name}")
-
-for candidate_id in range(1, candidates_no + 1):
-    pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False, candidate_id)
-    file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}_ic{candidate_id}.spthy"
-    f = open(file_name, "w")
-    f.write(pret_a_voter_spthy_generator.create_spthy_model())
-    f.close()
-
-    print(f"Done. Created model saved in {file_name}")
-
-# Usunąć onion z receipt (tylko fresh value, a połączenie trzymać tajne)
+# voters_no = 2
+# candidates_no = 3
+# pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
+# file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
+# f = open(file_name, "w")
+# f.write(pret_a_voter_spthy_generator.create_spthy_model())
+# f.close()
+#
+# print(f"Done. Created model saved in {file_name}")
+#
+# for candidate_id in range(1, candidates_no + 1):
+#     pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False, candidate_id)
+#     file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}_ic{candidate_id}.spthy"
+#     f = open(file_name, "w")
+#     f.write(pret_a_voter_spthy_generator.create_spthy_model())
+#     f.close()
+#
+#     print(f"Done. Created model saved in {file_name}")

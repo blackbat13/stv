@@ -2,7 +2,7 @@ import itertools
 from tools.disjoint_set import DisjointSet
 from random import randint
 from typing import List, Set
-from simple_models.model_generator import ModelGenerator
+from models.model_generator import ModelGenerator
 
 
 class CracowMap:

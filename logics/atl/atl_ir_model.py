@@ -4,7 +4,7 @@ from typing import List, Set
 from tools.number_tools import NumberTools
 from tools.array_tools import ArrayTools
 from tools.disjoint_set import DisjointSet
-from atl.transition import Transition
+from logics.atl.transition import Transition
 
 
 class ATLIrModel:

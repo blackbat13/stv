@@ -1,5 +1,5 @@
 # DEPRECATED
-# Please use simple_models/bridge_model.py
+# Please use models/bridge_model.py
 
 from deprecated.atl_model import *
 import time

@@ -1,4 +1,4 @@
-from simple_models.simple_model import SimpleModel
+from models.simple_model import SimpleModel
 
 
 class StrategyGenerator:

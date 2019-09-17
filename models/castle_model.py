@@ -1,4 +1,4 @@
-from simple_models.model_generator import ModelGenerator
+from models.model_generator import ModelGenerator
 from typing import List
 from tools.array_tools import ArrayTools
 import itertools

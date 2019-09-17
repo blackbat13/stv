@@ -1,4 +1,4 @@
-from simple_models.tian_ji_model import TianJiModel
+from models.tian_ji_model import TianJiModel
 
 
 class TianJiModelExperiments:

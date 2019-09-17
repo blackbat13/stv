@@ -1,8 +1,8 @@
 # import atl_model
-from atl.atl_ir_model import ATLIrModel, ATLirModel
+from logics.atl.atl_ir_model import ATLirModel
 import copy
 
-from mv_atl import mvatl_parser as P
+from logics.atl.mv import mvatl_parser as P
 
 __author__ = 'Arthur Queffelec'
 
