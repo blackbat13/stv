@@ -3,7 +3,14 @@ from tools.array_tools import ArrayTools
 
 
 class SLIr(ATLIrModel):
+    """
+    Class for handling Strategy Logic with perfect information and imperfect recall
+    """
     def __init__(self, number_of_agents):
+        """
+        Initializes class based on a number of agents
+        :param number_of_agents: number of agents in the model
+        """
         super().__init__(number_of_agents)
 
     def verify(self, winning_states, quant_pref, bind_pref, all_quant_ids):

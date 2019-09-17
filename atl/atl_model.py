@@ -1,3 +1,5 @@
+# DEPRECATED
+
 import itertools
 import copy
 from tools.disjoint_set import *
