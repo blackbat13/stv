@@ -1,5 +1,6 @@
 from typing import List
 from models.model_generator import ModelGenerator
+from tools.array_tools import ArrayTools
 import itertools
 
 
@@ -10,22 +11,11 @@ class SimpleVotingModel(ModelGenerator):
         self._number_of_candidates = number_of_candidates
         self._number_of_voters = number_of_voters
 
-    def generate(self):
-        self._generate_initial_states()
-        self._generate_model()
-        self._prepare_epistemic_relation()
-
     def _generate_initial_states(self):
-        beginning_array = []
-        for _ in range(0, self._number_of_voters):
-            beginning_array.append('')
-
-        beginning_array_minus_one = []
-        for _ in range(0, self._number_of_voters):
-            beginning_array_minus_one.append(-1)
-
-        first_state = {'voted': beginning_array_minus_one[:], 'voters_action': beginning_array[:],
-                       'coercer_actions': beginning_array[:], 'finish': beginning_array_minus_one[:]}
+        initial_array = ArrayTools.create_value_array_of_size(self._number_of_voters, '')
+        initial_array_minus_one = ArrayTools.create_value_array_of_size(self._number_of_voters, -1)
+        first_state = {'voted': initial_array_minus_one[:], 'voters_action': initial_array[:],
+                       'coercer_actions': initial_array[:], 'finish': initial_array_minus_one[:]}
         self._add_state(first_state)
 
     def _generate_model(self):
@@ -50,9 +40,7 @@ class SimpleVotingModel(ModelGenerator):
             voting_product_array.append(coercer_possible_actions)
 
             for possibility in itertools.product(*voting_product_array):
-                action = []
-                for _ in range(0, self._number_of_voters + 1):
-                    action.append('')
+                action = ArrayTools.create_value_array_of_size(self._number_of_voters + 1, '')
                 new_state = {'voted': state['voted'][:], 'voters_action': state['voters_action'][:],
                              'coercer_actions': state['coercer_actions'][:], 'finish': state['finish'][:]}
 

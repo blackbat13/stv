@@ -146,18 +146,14 @@ class CracowMap:
 
 
 class DroneModel(ModelGenerator):
-    energies: List[int] = []
-    map = []
-    graph = []
-    drone_actions: List[str] = ['N', 'W', 'S', 'E', 'F']
-    is_random: bool = False
-
     def __init__(self, no_drones: int, energies: List[int], map, is_random: bool = False):
         super().__init__(no_agents=no_drones)
         self.energies = energies
         self.map = map
         self.create_map_graph()
         self.is_random = is_random
+        self.drone_actions: List[str] = ['N', 'W', 'S', 'E', 'F']
+        self.graph = []
 
     def _generate_initial_states(self):
         places = []

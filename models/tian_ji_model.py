@@ -1,23 +1,21 @@
+from typing import Set, List
+
 from models.model_generator import ModelGenerator
 from tools.array_tools import ArrayTools
 
 
 class TianJiModel(ModelGenerator):
-    no_horses = 0
-
     def __init__(self, no_horses: int):
         super().__init__(no_agents=2)
         self.no_horses = no_horses
-        self._generate_model()
-        self._prepare_epistemic_relation()
 
-    def generate_first_state(self) -> hash:
+    def _generate_initial_states(self):
         king_horses = list(range(0, self.no_horses))
         tian_ji_horses = list(range(0, self.no_horses))
         first_state = {'king_score': 0, 'tian_ji_score': 0, 'king_horses': king_horses,
                        'tian_ji_horses': tian_ji_horses,
                        'results': ArrayTools.create_value_array_of_size(self.no_horses, 0), 'king_choice': -1}
-        return first_state
+        self._add_state(first_state)
 
     def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
         epistemic_state = {'king_score': state['king_score'], 'tian_ji_score': state['tian_ji_score'],
@@ -25,8 +23,6 @@ class TianJiModel(ModelGenerator):
         return epistemic_state
 
     def _generate_model(self):
-        first_state = self.generate_first_state()
-        self._add_state(first_state)
         current_state_number = -1
         for state in self.states:
             current_state_number += 1
@@ -72,3 +68,12 @@ class TianJiModel(ModelGenerator):
             agent_actions.append(f'Send{horse_id}')
 
         return [agent_actions, agent_actions[:]]
+
+    def _get_props_for_state(self, state: hash) -> List[str]:
+        pass
+
+    def get_props_list(self) -> List[str]:
+        pass
+
+    def get_winning_states(self, prop: str) -> Set[int]:
+        pass

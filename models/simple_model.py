@@ -2,7 +2,7 @@ import json
 from typing import List, Set
 from logics.atl.atl_ir_model import ATLIrModel, ATLirModel
 from logics.sl.strategy_logic import SLIr
-from models.transition import Transition
+from logics.atl.transition import Transition
 
 
 class SimpleModel:

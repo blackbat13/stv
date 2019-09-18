@@ -1,4 +1,3 @@
-from models.simple_model import SimpleModel
 from models.model_generator import ModelGenerator
 import itertools
 from typing import List, Set
@@ -6,19 +5,6 @@ from enum import Enum
 
 
 class MachineModel(ModelGenerator):
-    name: str = "Classic Machine Model"
-    no_robots = 0
-    no_machines = 0
-    output_items_limit = 1
-    map = []
-    machine_requirements = []
-    items_limit = 0
-    map_size = (0, 0)
-    machine_positions = []
-    robot_positions = []
-    obstacle_positions = []
-    imperfect = False
-
     class RobotAction(Enum):
         N = 1
         E = 2
@@ -31,8 +17,6 @@ class MachineModel(ModelGenerator):
     class MapItems(Enum):
         EMPTY = 0
         OBSTACLE = -1
-
-    map_item_symbols = {MapItems.EMPTY: '.', MapItems.OBSTACLE: '#'}
 
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
@@ -49,6 +33,9 @@ class MachineModel(ModelGenerator):
         self.machine_requirements = machine_requirements
         self.production_times = production_times
         self.imperfect = imperfect
+        self.output_items_limit = 1
+        self.name: str = "Classic Machine Model"
+        self.map_item_symbols = {self.MapItems.EMPTY: '.', self.MapItems.OBSTACLE: '#'}
         self.prepare_map()
         self.print_map()
 
@@ -326,7 +313,8 @@ class MachineModel(ModelGenerator):
         pass
 
     @staticmethod
-    def random_factory_layout(size: int, no_robots: int, no_machines: int, no_charging_stations: int = 0, no_storage: int = 0):
+    def random_factory_layout(size: int, no_robots: int, no_machines: int, no_charging_stations: int = 0,
+                              no_storage: int = 0):
         robot_positions = []
         machine_positions = []
         obstacle_positions = []
@@ -352,21 +340,16 @@ class MachineModel(ModelGenerator):
             charging_stations.append((i, 1))
 
         for i in range(0, no_storage):
-            storages.append((i, size-2))
+            storages.append((i, size - 2))
 
         return robot_positions, machine_positions, obstacle_positions, machine_requirements, production_times, charging_stations, storages
 
 
 class MachineModelWithCharging(MachineModel):
-    name: str = "Machine Model With Charging"
-    max_charge = 10
-
     class MapItems(Enum):
         EMPTY = 0
         OBSTACLE = -1
         CHARGING_STATION = -2
-
-    map_item_symbols = {MapItems.EMPTY: '.', MapItems.OBSTACLE: '#', MapItems.CHARGING_STATION: 'C'}
 
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
@@ -377,6 +360,9 @@ class MachineModelWithCharging(MachineModel):
 
         super().__init__(no_robots, no_machines, map_size, items_limit, robot_positions, machine_positions,
                          obstacle_positions, machine_requirements, production_times, imperfect)
+        self.name: str = "Machine Model With Charging"
+        self.max_charge = 10
+        self.map_item_symbols = {self.MapItems.EMPTY: '.', self.MapItems.OBSTACLE: '#', self.MapItems.CHARGING_STATION: 'C'}
 
     def prepare_map(self):
         super().prepare_map()
@@ -473,8 +459,6 @@ class MachineModelWithCharging(MachineModel):
 
 
 class MachineModelWithStorage(MachineModel):
-    name: str = "Machine Model With Storage"
-
     class MapItems(Enum):
         EMPTY = 0
         OBSTACLE = -1
@@ -492,6 +476,7 @@ class MachineModelWithStorage(MachineModel):
 
         super().__init__(no_robots, no_machines, map_size, items_limit, robot_positions, machine_positions,
                          obstacle_positions, machine_requirements, production_times, imperfect)
+        self.name: str = "Machine Model With Storage"
 
     def prepare_map(self):
         super().prepare_map()
@@ -601,8 +586,6 @@ class MachineModelWithStorage(MachineModel):
 
 
 class MachineModelWaiting(MachineModel):
-    name: str = "Machine Model With Waiting"
-
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
                  obstacle_positions: List, machine_requirements: List,
@@ -610,6 +593,7 @@ class MachineModelWaiting(MachineModel):
 
         super().__init__(no_robots, no_machines, map_size, items_limit, robot_positions, machine_positions,
                          obstacle_positions, machine_requirements, production_times, imperfect)
+        self.name: str = "Machine Model With Waiting"
 
     def generate_first_state(self):
         first_state = super().generate_first_state()

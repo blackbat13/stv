@@ -1,29 +1,23 @@
 import random
 import copy
+import logics.atl.mv.mvatl_model as mvatl_model
 
 __author__ = 'Arthur Queffelec'
 
 
 class PresidentModel:
-    # TODO implement as SimpleModel
-    number_of_players = 3
-    number_of_decks = 1
-    number_of_cards = 0
-    model = None
-    states = []
-    players_cards = {}
-    deck = {}
+    # TODO implement using ModelGenerator
     empty_deck = {"Two": 0, "As": 0,
                   "King": 0, "Queen": 0, "Jack": 0, "Ten": 0, "Nine": 0, "Eight": 0, "Seven": 0, "Six": 0, "Five": 0,
                   "Four": 0, "Three": 0}
 
-    def __init__(self, number_of_players, number_of_decks, number_of_cards=0):
+    def __init__(self, number_of_players: int, number_of_decks: int, number_of_cards: int = 0):
         self.number_of_decks = number_of_decks
         self.number_of_players = number_of_players
         self.number_of_cards = number_of_cards
         self.deck = {"Two": 4, "As": 4,
-            "King": 4, "Queen": 4, "Jack": 4, "Ten": 4, "Nine": 4, "Eight": 4, "Seven": 4, "Six": 4, "Five": 4,
-            "Four": 4, "Three": 4}
+                     "King": 4, "Queen": 4, "Jack": 4, "Ten": 4, "Nine": 4, "Eight": 4, "Seven": 4, "Six": 4, "Five": 4,
+                     "Four": 4, "Three": 4}
         self.states = []
         self.players_cards = {}
         self.model = None
@@ -65,7 +59,7 @@ class PresidentModel:
     def number_cards_players(self):
         if self.number_of_cards == 0:
             return ((self.number_of_decks * len(self.deck) * 4) - (
-                (self.number_of_decks * len(self.deck) * 4) % self.number_of_players)) / self.number_of_players
+                    (self.number_of_decks * len(self.deck) * 4) % self.number_of_players)) / self.number_of_players
         else:
             return self.number_of_cards
 
@@ -99,17 +93,17 @@ class PresidentModel:
             for s2 in self.states:
                 if i == j:
                     continue
-                if s1['Cards'][agent] == s2['Cards'][agent] and s1['Hierarchy'] == s2['Hierarchy'] and s1['Turn'] == s2['Turn'] and s1['Table'] == s2['Table']:
+                if s1['Cards'][agent] == s2['Cards'][agent] and s1['Hierarchy'] == s2['Hierarchy'] and s1['Turn'] == s2[
+                    'Turn'] and s1['Table'] == s2['Table']:
                     c.append(j)
-                    print("State i-"+str(i)+" = "+str(s1))
-                    print("State j-"+str(j)+" = "+str(s2))
-                j+=1
+                    print("State i-" + str(i) + " = " + str(s1))
+                    print("State j-" + str(j) + " = " + str(s2))
+                j += 1
             if len(c) > 0:
                 c.append(i)
                 cs.append(c)
-            i+=1
+            i += 1
         return cs
-
 
     def get_nb_cards(self, deck):
         nb = 0

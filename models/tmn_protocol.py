@@ -4,6 +4,7 @@ import itertools
 
 
 class TMNProtocol:
+    # TODO implement using ModelGenerator
     model = None
     agent_names = ["Alice", "Bob", "Server", "Attacker", "Network"]
     states_dictionary: dict = {}

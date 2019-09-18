@@ -13,11 +13,6 @@ class CastleModel(ModelGenerator):
         self._castle_lifes = castle_lifes
         self._castles_no = len(castle_lifes)
 
-    def generate(self):
-        self._generate_initial_states()
-        self._generate_model()
-        self._prepare_epistemic_relation()
-
     def _generate_initial_states(self):
         defend = []
         defeated = []
