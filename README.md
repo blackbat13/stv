@@ -18,7 +18,7 @@
 ## Requirements
 + Python 3.7 minimum
 + All libraries from requirements.txt
-+ PyCharm IDE (Community or Professional)
++ PyCharm IDE (Community or Professional) 
 
 ## Getting started
 
@@ -26,14 +26,9 @@ First you need to open the project directory in the PyCharm IDE.
 For some reason, without it, Python cannot see the modules.
 I will try to fix that in the future.
 
-### Approximations
+### Experiments
 
-To run experiments using approximations algorithm, simply select the desired model in the simple_models/experiments folder and run it in the PyCharm IDE.
-Please keep in mind that you may need to modify the code a little, as not all of the experiments are implemented in an user-friendly way.
-
-### DominoDFS
-
-To run experiments using DominoDFS algorithm, open desired model in the comparing_strats/experiments folder and run in in the PyCharm IDE.
+For running the experiments please follow the instructions in the **examples.py** file.
 
 ## Graphical Interface
 There is also a graphical interface for the tool available.

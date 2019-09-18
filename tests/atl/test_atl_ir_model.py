@@ -1,5 +1,5 @@
 import unittest
-from atl.atl_ir_model import *
+from logics.atl.atl_ir_model import *
 
 
 class TestATLIrModel(unittest.TestCase):
