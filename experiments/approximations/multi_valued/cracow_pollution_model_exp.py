@@ -209,5 +209,5 @@ class CracowPollutionModelExp(AExperiment):
         return "(" + self.dformula2string(conj[i], 0) + " | " + self.cformula2string(conj, i + 1) + ")"
 
 
-cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5)
-cracow_pollution_model_exp.run_experiments()
+# cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5)
+# cracow_pollution_model_exp.run_experiments()
