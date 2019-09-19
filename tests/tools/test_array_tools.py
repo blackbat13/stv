@@ -18,6 +18,11 @@ class TestArrayTools(unittest.TestCase):
         ArrayTools.unique(array)
         self.assertEqual(len(array), 3)
 
+    def test_count_not_none(self):
+        array = [1,2,None,3,4,None,None]
+        count = ArrayTools.count_not_none(array)
+        self.assertEqual(count, 4)
+
 
 if __name__ == '__main__':
     unittest.main()
