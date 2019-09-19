@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import itertools
 from logics.atl.mv import mvatl_model
+from models.model_generator import ModelGenerator
+import itertools
 from enum import Enum
 import copy
 
@@ -69,9 +70,8 @@ class PollutionModel:
             self.epistemic_states_dictionary.append({})
 
     def create_mvatl_model(self):
-        # TODO: Approx number of states
         self.prepare_lattice()
-        self.model = mvatl_model.MvATLirModel(self.no_drones, 1000000, self.lattice)
+        self.model = mvatl_model.MvATLirModel(self.no_drones, self.lattice)
         self.add_actions()
 
     def add_actions(self):

@@ -126,7 +126,7 @@ class QBAlgebra:
 class MvATLirModel(ATLirModel):
     lattice = None
 
-    def __init__(self, number_of_agents, number_of_states, lattice):
+    def __init__(self, number_of_agents, lattice):
         super(MvATLirModel, self).__init__(number_of_agents)
         self.lattice = lattice
 
