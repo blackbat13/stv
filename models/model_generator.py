@@ -120,7 +120,7 @@ class ModelGenerator(ABC):
         pass
 
     @abstractmethod
-    def get_actions(self):
+    def get_actions(self) -> List[List[str]]:
         pass
 
     @abstractmethod

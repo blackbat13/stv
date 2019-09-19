@@ -132,11 +132,10 @@ class CracowPollutionModelExp(AExperiment):
         start = time.perf_counter()
         self._model = PollutionModel(self.__map, self.__connections, self.__n_agent, self.__energies, self.__radius,
                                          self.__first_place_id)
+        self._model.generate()
         stop = time.perf_counter()
         tgen = stop - start
-
-        # pollution_model.print_states()
-
+        self._model = self._model.model.to_mvatl_imperfect(self._model.get_actions(), self._model.lattice)
         self._results_file.write(f'Tgen: {tgen}\n')
         self._results_file.write(f'Number of states: {len(self._model.states)}\n')
 
@@ -159,13 +158,13 @@ class CracowPollutionModelExp(AExperiment):
                 props.append("polD" + str(l))
         props.append('locA')
         props.append('polnew')
-        self._model.model.props = props
+        self._model.props = props
         const = "t td tg f fd fg u"
         atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
         formula = atlparser.parse(formula_txt)
         print("Formula:", formula)
         start = time.perf_counter()
-        self.__result = self._model.model.interpreter(formula, 0)
+        self.__result = self._model.interpreter(formula, 0)
         stop = time.perf_counter()
         tverif = stop - start
         print(str(self.__result))
@@ -210,5 +209,5 @@ class CracowPollutionModelExp(AExperiment):
         return "(" + self.dformula2string(conj[i], 0) + " | " + self.cformula2string(conj, i + 1) + ")"
 
 
-# cracow_pollution_model_exp = CracowPollutionModelExp(1, 1, 1, 7, 5)
-# cracow_pollution_model_exp.run_experiments()
+cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5)
+cracow_pollution_model_exp.run_experiments()
