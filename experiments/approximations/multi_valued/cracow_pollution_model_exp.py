@@ -2,12 +2,19 @@ from models.mv.cracow_pollution_model import PollutionModel
 from logics.atl.mv import mvatl_parser
 from tools.list_tools import ListTools
 from experiments.aexperiment import AExperiment
+from typing import List
 import datetime
 import time
 
 
 class CracowPollutionModelExp(AExperiment):
-    def __init__(self, n_agent: int, energy: int, radius: int, selected_place: int, first_place_id: int, DEBUG: bool = False):
+    """
+    Class for conducting experiments based on MvATLir model-checking on a pollution model
+    based on a (small part of) Cracow locations.
+    """
+
+    def __init__(self, n_agent: int, energy: int, radius: int, selected_place: int, first_place_id: int, formula_id: int = 1,
+                 DEBUG: bool = False):
         super().__init__(DEBUG)
         self._file_name = "results-f2-perf.txt"
         self.__n_agent = n_agent
@@ -18,8 +25,14 @@ class CracowPollutionModelExp(AExperiment):
         self.__energies = ListTools.create_value_array_of_size(n_agent, energy)
         self.__map, self.__connections = self.__create_map()
         self.__result = None
+        self.__formula_id = formula_id
 
-    def __create_map(self):
+    def __create_map(self) -> (List[hash], List[List[int]]):
+        """
+        Creates map for experiments. In the current version it's just a fixed map.
+        In the next version it should be given as a parameter.
+        :return: pair of values: a list of locations and a list of connections between these locations
+        """
         map = []
         connections = []
 
@@ -131,7 +144,7 @@ class CracowPollutionModelExp(AExperiment):
     def _generate_model(self):
         start = time.perf_counter()
         self._model = PollutionModel(self.__map, self.__connections, self.__n_agent, self.__energies, self.__radius,
-                                         self.__first_place_id)
+                                     self.__first_place_id)
         self._model.generate()
         stop = time.perf_counter()
         tgen = stop - start
@@ -140,11 +153,12 @@ class CracowPollutionModelExp(AExperiment):
         self._results_file.write(f'Number of states: {len(self._model.states)}\n')
 
     def _run_mc(self):
-        phi1_l = "<<>> F polnew_0"
-        phi1_r = "<<0>> F polnew_0"
-        phi2 = self.generate_new_formula2(self.__n_agent, self.__selected_place)
-
-        formula_txt = phi2
+        if self.__formula_id == 1:
+            formula_txt = "<<>> F polnew_0"
+        elif self.__formula_id == 2:
+            formula_txt = "<<0>> F polnew_0"
+        else:
+            formula_txt = self.generate_new_formula2(self.__n_agent, self.__selected_place)
 
         self._results_file.write(f"Formula: {formula_txt}\n")
 
@@ -199,15 +213,26 @@ class CracowPollutionModelExp(AExperiment):
         return result
 
     def dformula2string(self, disj, i):
+        """
+        Converts a given disjunction formula to string
+        :param disj:
+        :param i:
+        :return:
+        """
         if i == len(disj) - 1:
             return disj[i]
         return "(" + disj[i] + " | " + self.dformula2string(disj, i + 1) + ")"
 
     def cformula2string(self, conj, i):
+        """
+        Converts a given conjuction formula to string
+        :param conj:
+        :param i:
+        :return:
+        """
         if i == len(conj) - 1:
             return self.dformula2string(conj[i], 0)
         return "(" + self.dformula2string(conj[i], 0) + " | " + self.cformula2string(conj, i + 1) + ")"
 
-
-# cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5)
+# cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5, 1, False)
 # cracow_pollution_model_exp.run_experiments()
