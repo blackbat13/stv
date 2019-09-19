@@ -1,26 +1,26 @@
 import unittest
-from tools.array_tools import ArrayTools
+from tools.list_tools import ListTools
 
 
 class TestArrayTools(unittest.TestCase):
     def test_create_array_of_size(self):
-        array = ArrayTools.create_array_of_size(10, [])
+        array = ListTools.create_array_of_size(10, [])
         self.assertEqual(len(array), 10)
         self.assertEqual(len(array[0]), 0)
 
     def test_create_integer_array_of_size(self):
-        array = ArrayTools.create_value_array_of_size(10, 1)
+        array = ListTools.create_value_array_of_size(10, 1)
         self.assertEqual(len(array), 10)
         self.assertEqual(array[0], 1)
 
     def test_unique(self):
         array = [1,2,3,1,2,3]
-        ArrayTools.unique(array)
+        ListTools.unique(array)
         self.assertEqual(len(array), 3)
 
     def test_count_not_none(self):
         array = [1,2,None,3,4,None,None]
-        count = ArrayTools.count_not_none(array)
+        count = ListTools.count_not_none(array)
         self.assertEqual(count, 4)
 
 

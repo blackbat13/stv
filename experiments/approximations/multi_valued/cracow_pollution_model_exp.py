@@ -1,6 +1,6 @@
 from models.mv.cracow_pollution_model import PollutionModel
 import datetime
-from tools.array_tools import ArrayTools
+from tools.list_tools import ListTools
 import time
 from logics.atl.mv import mvatl_parser
 
@@ -12,7 +12,7 @@ class CracowPollutionModelExp:
         self.radius = radius
         self.selected_place = selected_place
         self.first_place_id = first_place_id
-        self.energies = ArrayTools.create_value_array_of_size(n_agent, energy)
+        self.energies = ListTools.create_value_array_of_size(n_agent, energy)
         self.map, self.connections = self.create_map()
 
     def create_map(self):

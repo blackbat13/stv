@@ -1,6 +1,6 @@
 from models.model_generator import ModelGenerator
 from typing import List
-from tools.array_tools import ArrayTools
+from tools.list_tools import ListTools
 import itertools
 
 
@@ -81,7 +81,7 @@ class CastleModel(ModelGenerator):
         return new_state
 
     def _apply_action_to_state(self, state: dict, action: tuple) -> None:
-        life_result = ArrayTools.create_value_array_of_size(self._castles_no, 0)
+        life_result = ListTools.create_value_array_of_size(self._castles_no, 0)
 
         agent_id = -1
         for castle_id in range(0, self._castles_no):

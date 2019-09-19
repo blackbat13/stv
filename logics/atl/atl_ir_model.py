@@ -2,7 +2,7 @@ import itertools
 import copy
 from typing import List, Set
 from tools.number_tools import NumberTools
-from tools.array_tools import ArrayTools
+from tools.list_tools import ListTools
 from tools.disjoint_set import DisjointSet
 from logics.atl.transition import Transition
 
@@ -90,7 +90,7 @@ class ATLIrModel:
         self.reverse_transitions = []
 
     def init_agent_actions(self):
-        self.agents_actions = ArrayTools.create_array_of_size(self.number_of_agents, set())
+        self.agents_actions = ListTools.create_array_of_size(self.number_of_agents, set())
 
     def init_states(self):
         self.pre_states = []
@@ -139,7 +139,7 @@ class ATLIrModel:
         return result_states
 
     def marked_winning_states(self, winning_states: Set[int]) -> List[bool]:
-        is_winning_state = ArrayTools.create_value_array_of_size(self.number_of_states, False)
+        is_winning_state = ListTools.create_value_array_of_size(self.number_of_states, False)
         for state_id in winning_states:
             is_winning_state[state_id] = True
 
@@ -193,7 +193,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ArrayTools.create_value_array_of_size(self.number_of_states, None)
+        self.strategy = ListTools.create_value_array_of_size(self.number_of_states, None)
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             result_states.update(current_states)
@@ -209,7 +209,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ArrayTools.create_value_array_of_size(self.number_of_states, None)
+        self.strategy = ListTools.create_value_array_of_size(self.number_of_states, None)
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             to_remove = result_states.difference(current_states)
@@ -361,11 +361,11 @@ class ATLirModel(ATLIrModel):
         self.finish_model_called = False
 
     def init_epistemic_relation(self):
-        self.imperfect_information = ArrayTools.create_array_of_size(self.number_of_agents, [])
+        self.imperfect_information = ListTools.create_array_of_size(self.number_of_agents, [])
 
     def finish_model(self):
-        self.epistemic_class_membership = ArrayTools.create_array_of_size(self.number_of_agents,
-                                                                          ArrayTools.create_value_array_of_size(
+        self.epistemic_class_membership = ListTools.create_array_of_size(self.number_of_agents,
+                                                                         ListTools.create_value_array_of_size(
                                                                               self.number_of_states, -1))
 
     def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]):
@@ -514,14 +514,14 @@ class ATLirModelDisjoint(ATLIrModel):
         self.finish_model_called = False
 
     def init_epistemic_relation(self):
-        self.imperfect_information = ArrayTools.create_array_of_size(self.number_of_agents, [])
+        self.imperfect_information = ListTools.create_array_of_size(self.number_of_agents, [])
         self.epistemic_class_disjoint = [DisjointSet(self.number_of_states) for _ in
                                          itertools.repeat(None, self.number_of_agents)]
-        self.can_go_there = ArrayTools.create_array_of_size(self.number_of_agents, [])
+        self.can_go_there = ListTools.create_array_of_size(self.number_of_agents, [])
 
     def finish_model(self):
-        self.epistemic_class_membership = ArrayTools.create_array_of_size(self.number_of_agents,
-                                                                          ArrayTools.create_value_array_of_size(
+        self.epistemic_class_membership = ListTools.create_array_of_size(self.number_of_agents,
+                                                                         ListTools.create_value_array_of_size(
                                                                               self.number_of_states, -1))
 
     def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]):

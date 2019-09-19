@@ -1,4 +1,4 @@
-class ArrayTools:
+class ListTools:
     @staticmethod
     def create_array_of_size(size: int, basic_item) -> list:
         """Creates array of given size containing copies of given items"""

@@ -1,7 +1,7 @@
 from models.bridge_model import *
 from comparing_strats.strat_simpl import StrategyComparer
 from experiments.aexperiment import AExperiment
-from tools.array_tools import ArrayTools
+from tools.list_tools import ListTools
 import time
 import datetime
 
@@ -49,7 +49,7 @@ class BridgeDfsExp(AExperiment):
             print(self.__strategy)
 
     def _write_result(self):
-        strategy_defined_count = ArrayTools.count_not_none(self.__strategy)
+        strategy_defined_count = ListTools.count_not_none(self.__strategy)
         self._results_file.write(f'Number of states where strategy is defined: {strategy_defined_count}\n')
         if self._DEBUG:
             for index, value in enumerate(self.__strategy):
