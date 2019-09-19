@@ -123,11 +123,11 @@ class QBAlgebra:
         return ji
 
 
-class MvATLModel(ATLirModel):
+class MvATLirModel(ATLirModel):
     lattice = None
 
     def __init__(self, number_of_agents, number_of_states, lattice):
-        super(MvATLModel, self).__init__(number_of_agents)
+        super(MvATLirModel, self).__init__(number_of_agents)
         self.lattice = lattice
 
 

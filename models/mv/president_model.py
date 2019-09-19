@@ -69,7 +69,7 @@ class PresidentModel:
             lattice = mvatl_model.QBAlgebra('t', 'b', [('b', 'n'), ('n', 't')])
         else:
             lattice = mvatl_model.QBAlgebra('t', 'b', [('b', 'd'), ('d', 'n'), ('n', 'p'), ('p', 't')])
-        self.model = mvatl_model.MvATLModel(self.number_of_players, 1000000, lattice)
+        self.model = mvatl_model.MvATLirModel(self.number_of_players, 1000000, lattice)
         self.add_actions()
 
     def generate_model(self):

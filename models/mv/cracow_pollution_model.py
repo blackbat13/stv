@@ -71,7 +71,7 @@ class PollutionModel:
     def create_mvatl_model(self):
         # TODO: Approx number of states
         self.prepare_lattice()
-        self.model = mvatl_model.MvATLModel(self.no_drones, 1000000, self.lattice)
+        self.model = mvatl_model.MvATLirModel(self.no_drones, 1000000, self.lattice)
         self.add_actions()
 
     def add_actions(self):
