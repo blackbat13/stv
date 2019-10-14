@@ -5,3 +5,6 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import tools
+import logics.atl.mv
+import logics.atl
+import logics.sl

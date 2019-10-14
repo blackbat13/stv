@@ -1,15 +1,15 @@
 import unittest
-from logics.atl.atl_ir_model import *
+from ..context import logics
 
 
-class TestATLIrModel(unittest.TestCase):
+class ATLIrModelTestSuite(unittest.TestCase):
     atl_Ir_model = None
 
     def setUp(self):
         self.create_test_model()
 
     def create_test_model(self):
-        self.atl_Ir_model = ATLIrModel(number_of_agents=2)
+        self.atl_Ir_model = logics.atl.ATLIrModel(number_of_agents=2)
         self.atl_Ir_model.add_action(0, 'Wait')
         self.atl_Ir_model.add_action(0, 'Push')
         self.atl_Ir_model.add_action(1, 'Wait')
@@ -52,14 +52,14 @@ class TestATLIrModel(unittest.TestCase):
         self.assertEqual(2, len(result))
 
 
-class TestATLirModel(unittest.TestCase):
+class ATLirModelTestSuite(unittest.TestCase):
     atl_ir_model = None
 
     def setUp(self):
         self.create_test_model()
 
     def create_test_model(self):
-        self.atl_ir_model = ATLirModel(number_of_agents=2)
+        self.atl_ir_model = logics.atl.ATLirModel(number_of_agents=2)
         self.atl_ir_model.add_action(0, 'Wait')
         self.atl_ir_model.add_action(0, 'Push')
         self.atl_ir_model.add_action(1, 'Wait')
