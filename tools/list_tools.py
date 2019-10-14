@@ -1,4 +1,4 @@
-class ArrayTools:
+class ListTools:
     @staticmethod
     def create_array_of_size(size: int, basic_item) -> list:
         """Creates array of given size containing copies of given items"""
@@ -26,3 +26,13 @@ class ArrayTools:
                 l[n] = x
                 n += 1
         del l[n:]
+
+    @staticmethod
+    def count_not_none(l: list) -> int:
+        """Counts elements with value != None"""
+        count = 0
+        for item in l:
+            if item is not None:
+                count += 1
+
+        return count

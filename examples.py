@@ -60,7 +60,7 @@
 
 # from experiments.approximations.multi_valued.cracow_pollution_model_exp import CracowPollutionModelExp
 #
-# cracow_pollution_model_exp = CracowPollutionModelExp(3, 4, 1, 7, 5)
+# cracow_pollution_model_exp = CracowPollutionModelExp(1, 1, 1, 7, 5)
 # cracow_pollution_model_exp.run_experiments()
 
 # from experiments.approximations.multi_valued.president_model_exp import PresidentModelExp

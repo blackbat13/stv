@@ -1,84 +1,41 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-import itertools
 from logics.atl.mv import mvatl_model
-from enum import Enum
+from models.model_generator import ModelGenerator
+from typing import List, Set
+import itertools
 import copy
 
 
-class DroneAction(Enum):
-    Wait = 0
-    N = 1
-    S = 2
-    E = 3
-    W = 4
-
-
-class PollutionModel:
+class PollutionModel(ModelGenerator):
     model_map = []
-    model = None
-    states = []
-    no_drones = 1
     sides = ["right", "up", "left", "down"]
-    states_dictionary = {}
-    epistemic_states_dictionary = []
-    state_number = 0
     graph = []
     lattice = None
 
     def __init__(self, model_map, connections, no_drones, energies, comm_radius, first_place_id=0):
+        super().__init__(no_agents=no_drones)
         self.model_map = model_map
-        self.no_drones = no_drones
         self.comm_radius = comm_radius  # Communication radius for drones
-        self.create_mvatl_model()
-        self.prepare_epistemic_states_dictionary()
+        self.prepare_lattice()
         self.create_map_graph(connections)
+        self.energies = energies
+        self.first_place_id = first_place_id
 
-        first_state = self.create_first_state(energies, first_place_id)
-        self.add_state(first_state)
-
-        self.generate_model()
-        self.model.states = self.states
-        self.model.finish_model()
-        # self.prepare_epistemic_relation()
-
-    def create_first_state(self, energies, first_place_id):
+    def _generate_initial_states(self):
         places = []
         visited = []
-        for _ in range(0, self.no_drones):
-            places.append(first_place_id)
-            visited.append({first_place_id})
+        for _ in range(0, self.no_agents):
+            places.append(self.first_place_id)
+            visited.append({self.first_place_id})
 
         first_state = {
-            # "map": self.model_map,
             "place": places,
-            "energy": energies,
+            "energy": self.energies,
             "visited": visited,
         }
 
         first_state["prop"] = self.prop_for_state(first_state)
         first_state["pollution"] = self.readings_for_state(first_state)
-        self.add_props_to_state(first_state)
-
-        return first_state
-
-    def prepare_epistemic_states_dictionary(self):
-        self.epistemic_states_dictionary = []
-        for _ in range(0, self.no_drones):
-            self.epistemic_states_dictionary.append({})
-
-    def create_mvatl_model(self):
-        # TODO: Approx number of states
-        self.prepare_lattice()
-        self.model = mvatl_model.MvATLModel(self.no_drones, 1000000, self.lattice)
-        self.add_actions()
-
-    def add_actions(self):
-        actions = ['N', 'E', 'S', 'W', 'Wait']
-        for drone in range(0, self.no_drones):
-            for action in actions:
-                self.model.add_action(drone, action)
+        self._add_state(first_state)
 
     def create_map_graph(self, connections):
         """Creates graph from connections between places in the map"""
@@ -148,19 +105,19 @@ class PollutionModel:
         elif place_id_1 == 7 and place_id_2 == 6:
             return "S"
 
-    def generate_model(self):
+    def _generate_model(self):
         current_state_number = -1
         for state in self.states:
             current_state_number += 1
             available_actions = self.prepare_available_actions(state)
             for drone_actions in itertools.product(*available_actions):
                 new_state, actions = self.new_state_after_action(state, drone_actions)
-                new_state_number = self.add_state(new_state)
+                new_state_number = self._add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
     def prepare_available_actions(self, state):
         available_actions = []
-        for drone_number in range(0, self.no_drones):
+        for drone_number in range(0, self.no_agents):
             available_actions.append([])
             available_actions[drone_number].append(-1)  # Wait
             drone_energy = state["energy"][drone_number]
@@ -192,10 +149,9 @@ class PollutionModel:
             actions.append(d_action[0])
 
         new_state = {
-            # "map": self.model_map,
             "place": places,
             "energy": energies,
-            "visited": visited
+            "visited": visited,
         }
 
         new_state["pollution"] = self.readings_for_state(new_state)
@@ -206,7 +162,7 @@ class PollutionModel:
 
     def readings_for_state(self, state):
         readings = []
-        for drone in range(0, self.no_drones):
+        for drone in range(0, self.no_agents):
             drone_reading = self.drone_reading_for_place(drone, state['place'][drone])
             prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone]]['PM2.5'])
             readings.append(prop)
@@ -216,40 +172,12 @@ class PollutionModel:
         # TODO: improve
         return self.model_map[place]["d_PM2.5"]
 
-    def add_state(self, state):
-        new_state_number = self.get_state_number(state)
-        # epistemic_states = self.get_epistemic_states(state)
-        # self.add_to_epistemic_dictionary(epistemic_states, new_state_number)
-        return new_state_number
-
-    def get_state_number(self, state):
-        state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.states_dictionary:
-            self.states_dictionary[state_str] = self.state_number
-            new_state_number = self.state_number
-            self.states.append(state)
-            self.state_number += 1
-        else:
-            new_state_number = self.states_dictionary[state_str]
-
-        return new_state_number
-
-    def add_to_epistemic_dictionary(self, states, new_state_number):
-        drone = -1
-        for state in states:
-            drone += 1
-            state_str = ' '.join(str(state[e]) for e in state)
-            if state_str not in self.epistemic_states_dictionary[drone]:
-                self.epistemic_states_dictionary[drone][state_str] = {new_state_number}
-            else:
-                self.epistemic_states_dictionary[drone][state_str].add(new_state_number)
-
-    def get_epistemic_state(self, state, drone):
-        drone_place = state['place'][drone]
+    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+        drone_place = state['place'][agent_number]
         epistemic_state = {'place': state['place'][:], 'energy': state['energy'][:],
                            'visited': copy.deepcopy(state['visited'])}
-        for coal_drone in range(0, self.no_drones):
-            if coal_drone == drone:
+        for coal_drone in range(0, self.no_agents):
+            if coal_drone == agent_number:
                 continue
             coal_drone_place = state['place'][coal_drone]
             if self.is_within_radius(drone_place, coal_drone_place):
@@ -259,12 +187,6 @@ class PollutionModel:
             epistemic_state['visited'][coal_drone] = []
         return epistemic_state
 
-    def get_epistemic_states(self, state):
-        epistemic_states = []
-        for drone in range(0, self.no_drones):
-            epistemic_states.append(self.get_epistemic_state(state, drone))
-        return epistemic_states
-
     def is_within_radius(self, place1, place2):
         x1 = self.model_map[place1]['x']
         y1 = self.model_map[place1]['y']
@@ -273,19 +195,27 @@ class PollutionModel:
         distance = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
         return distance <= (self.comm_radius ** 2)
 
-    def prepare_epistemic_relation(self):
-        for drone in range(0, self.no_drones):
-            for state, epistemic_class in self.epistemic_states_dictionary[drone].items():
-                self.model.add_epistemic_class(drone, epistemic_class)
+    def _add_state(self, state: hash) -> int:
+        # TODO modify that
+        self.add_props_to_state(state)
+        # state['props'] = self._get_props_for_state(state)
+        new_state_number = self._get_state_number(state)
+        for i in range(0, self.no_agents):
+            epistemic_state = self._get_epistemic_state(state, i)
+            self._add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
+        return new_state_number
 
-    def prop_for_state(self, state):
+    def _get_props_for_state(self, state: hash) -> List[str]:
+        pass
+
+    def prop_for_state(self, state) -> []:
         p = []
         for place in state["place"]:
             p.append(self.value_for_prop(self.model_map[place]["d_PM2.5"], self.model_map[place]["PM2.5"]))
 
         return p
 
-    def add_props_to_state(self, state):
+    def add_props_to_state(self, state: hash) -> None:
         for place_number in range(0, len(self.model_map)):
             prop_name = "pol" + str(place_number)
             state[prop_name] = self.pol_prop_in_state(state, place_number)
@@ -300,18 +230,18 @@ class PollutionModel:
 
         state['locA'] = self.loc_all_prop_in_state(state)
 
-    def pol_new_in_state(self, state):
+    def pol_new_in_state(self, state) -> []:
         pol_prop = []
-        for drone_number in range(0, self.no_drones):
+        for drone_number in range(0, self.no_agents):
             drone_reading = self.drone_reading_for_place(drone_number, state['place'][drone_number])
             prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone_number]]['PM2.5'])
             pol_prop.append(prop)
 
         return pol_prop
 
-    def pol_prop_in_state(self, state, place_number):
+    def pol_prop_in_state(self, state, place_number) -> []:
         pol_prop = []
-        for drone_number in range(0, self.no_drones):
+        for drone_number in range(0, self.no_agents):
             if state['place'][drone_number] != place_number:
                 pol_prop.append('f')
                 continue
@@ -321,10 +251,10 @@ class PollutionModel:
 
         return pol_prop
 
-    def pol_propD_in_state(self, state, place_number):
+    def pol_propD_in_state(self, state, place_number) -> []:
         pol_prop = []
         return_prop = 'f'
-        for drone_number in range(0, self.no_drones):
+        for drone_number in range(0, self.no_agents):
             if state['place'][drone_number] != place_number:
                 continue
             drone_reading = self.drone_reading_for_place(drone_number, state['place'][drone_number])
@@ -347,14 +277,13 @@ class PollutionModel:
         pol_prop.append(return_prop)
         return pol_prop
 
-    def pol_propE_in_state(self, place_number):
-        pol_prop = []
-        pol_prop.append(self.value_for_prop(self.model_map[place_number]['PM2.5'], self.model_map[place_number]['d_PM2.5']))
+    def pol_propE_in_state(self, place_number) -> []:
+        pol_prop = [self.value_for_prop(self.model_map[place_number]['PM2.5'], self.model_map[place_number]['d_PM2.5'])]
         return pol_prop
 
     def loc_prop_in_state(self, state, place_number):
         loc_prop = []
-        for drone_number in range(0, self.no_drones):
+        for drone_number in range(0, self.no_agents):
             prop = 'f'
             if state['place'][drone_number] == place_number:
                 prop = 't'
@@ -364,7 +293,7 @@ class PollutionModel:
 
     def loc_all_prop_in_state(self, state):
         loc_prop = []
-        for drone_number in range(0, self.no_drones):
+        for drone_number in range(0, self.no_agents):
             if len(state['visited'][drone_number]) == len(self.model_map):
                 prop = 't'
             else:
@@ -376,6 +305,20 @@ class PollutionModel:
     def print_states(self):
         for i in range(0, len(self.states)):
             print(i, self.states[i])
+
+    def get_actions(self) -> List[List[str]]:
+        drone_actions = ['N', 'E', 'S', 'W', 'Wait']
+        actions = []
+        for drone in range(0, self.no_agents):
+            actions.append(drone_actions[:])
+
+        return actions
+
+    def get_props_list(self) -> List[str]:
+        pass
+
+    def get_winning_states(self, prop: str) -> Set[int]:
+        pass
 
     @staticmethod
     def value_for_prop(v1, v2):

@@ -2,7 +2,7 @@ from comparing_strats.strategy_generator import *
 import itertools
 from typing import List, Set
 from enum import Enum
-from tools.array_tools import ArrayTools
+from tools.list_tools import ListTools
 
 
 class StrategyComparer:
@@ -318,7 +318,7 @@ class StrategyComparer:
 
     def group_by_epistemic_classes(self, states: List[int]) -> List[List[int]]:
         new_states = []
-        added = ArrayTools.create_value_array_of_size(len(states), False)
+        added = ListTools.create_value_array_of_size(len(states), False)
         for i in range(0, len(states)):
             if added[i]:
                 continue

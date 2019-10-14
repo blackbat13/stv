@@ -1,6 +1,7 @@
 import json
 from typing import List, Set
 from logics.atl.atl_ir_model import ATLIrModel, ATLirModel
+from logics.atl.mv.mvatl_model import MvATLirModel
 from logics.sl.strategy_logic import SLIr
 from logics.atl.transition import Transition
 
@@ -199,6 +200,26 @@ class SimpleModel:
                 atl_model.add_epistemic_class(i, epistemic_class)
         atl_model.states = self.states
         return atl_model
+
+    def to_mvatl_imperfect(self, actions, lattice) -> MvATLirModel:
+        """
+        Creates Multi-Valued Alternating-Time Temporal Logic model with imperfect information
+        :param actions:
+        :param lattice:
+        :return: MvATLir model
+        """
+        mvatl_model = MvATLirModel(self.no_agents, lattice)
+        for i in range(0, len(actions)):
+            for action in actions[i]:
+                mvatl_model.add_action(i, action)
+        for state_id in range(0, len(self.graph)):
+            for transition in self.graph[state_id]:
+                mvatl_model.add_transition(state_id, transition.next_state, transition.actions)
+        for i in range(0, len(self.epistemic_classes)):
+            for epistemic_class in self.epistemic_classes[i]:
+                mvatl_model.add_epistemic_class(i, epistemic_class)
+        mvatl_model.states = self.states
+        return mvatl_model
 
     def to_sl_perfect(self, actions) -> SLIr:
         """

@@ -1,21 +1,38 @@
 from models.mv.cracow_pollution_model import PollutionModel
-import datetime
-from tools.array_tools import ArrayTools
-import time
 from logics.atl.mv import mvatl_parser
+from tools.list_tools import ListTools
+from experiments.aexperiment import AExperiment
+from typing import List
+import datetime
+import time
 
 
-class CracowPollutionModelExp:
-    def __init__(self, n_agent: int, energy: int, radius: int, selected_place: int, first_place_id: int):
-        self.n_agent = n_agent
-        self.energy = energy
-        self.radius = radius
-        self.selected_place = selected_place
-        self.first_place_id = first_place_id
-        self.energies = ArrayTools.create_value_array_of_size(n_agent, energy)
-        self.map, self.connections = self.create_map()
+class CracowPollutionModelExp(AExperiment):
+    """
+    Class for conducting experiments based on MvATLir model-checking on a pollution model
+    based on a (small part of) Cracow locations.
+    """
 
-    def create_map(self):
+    def __init__(self, n_agent: int, energy: int, radius: int, selected_place: int, first_place_id: int, formula_id: int = 1,
+                 DEBUG: bool = False):
+        super().__init__(DEBUG)
+        self._file_name = "results-f2-perf.txt"
+        self.__n_agent = n_agent
+        self.__energy = energy
+        self.__radius = radius
+        self.__selected_place = selected_place
+        self.__first_place_id = first_place_id
+        self.__energies = ListTools.create_value_array_of_size(n_agent, energy)
+        self.__map, self.__connections = self.__create_map()
+        self.__result = None
+        self.__formula_id = formula_id
+
+    def __create_map(self) -> (List[hash], List[List[int]]):
+        """
+        Creates map for experiments. In the current version it's just a fixed map.
+        In the next version it should be given as a parameter.
+        :return: pair of values: a list of locations and a list of connections between these locations
+        """
         map = []
         connections = []
 
@@ -112,63 +129,66 @@ class CracowPollutionModelExp:
 
         return map, connections
 
-    def run_experiments(self):
-        print(datetime.datetime.now())
+    def _write_file_header(self):
+        self._results_file.write(f'----------------Pollution Model----------------\n')
+        self._results_file.write(f'{datetime.datetime.now()}\n')
+        self._results_file.write(f"Drones: {self.__n_agent}\n")
+        self._results_file.write(f"Energies: {self.__energies}\n")
+        self._results_file.write(f"Map: {self.__map}\n")
+        self._results_file.write(f"Connections: {self.__connections}\n")
+        self._results_file.write(f'Map size: {len(self.__map)}\n')
+        self._results_file.write(f'Radius: {self.__radius}\n')
+        self._results_file.write(f'Selected place: {self.__selected_place}\n')
+        self._results_file.write(f'First place id: {self.__first_place_id}\n')
 
-        file = open("results-f2-perf.txt", "a")
-        file.write(f"Drones: {self.n_agent}\n")
-        file.write(f"Energies: {self.energies}\n")
-        file.write(f"Map: {self.map}\n")
-        file.write(f"Connections: {self.connections}\n")
-        file.write(f'Map size: {len(self.map)}\n')
-        file.write(f'Radius: {self.radius}\n')
-        file.write(f'Selected place: {self.selected_place}\n')
-        file.write(f'First place id: {self.first_place_id}\n')
-
+    def _generate_model(self):
         start = time.perf_counter()
-        pollution_model = PollutionModel(self.map, self.connections, self.n_agent, self.energies, self.radius, self.first_place_id)
+        self._model = PollutionModel(self.__map, self.__connections, self.__n_agent, self.__energies, self.__radius,
+                                     self.__first_place_id)
+        self._model.generate()
         stop = time.perf_counter()
         tgen = stop - start
+        self._model = self._model.model.to_mvatl_imperfect(self._model.get_actions(), self._model.lattice)
+        self._results_file.write(f'Tgen: {tgen}\n')
+        self._results_file.write(f'Number of states: {len(self._model.states)}\n')
 
-        # pollution_model.print_states()
+    def _run_mc(self):
+        if self.__formula_id == 1:
+            formula_txt = "<<>> F polnew_0"
+        elif self.__formula_id == 2:
+            formula_txt = "<<0>> F polnew_0"
+        else:
+            formula_txt = self.generate_new_formula2(self.__n_agent, self.__selected_place)
 
-        file.write(f'Tgen: {tgen}\n')
-        file.write(f'Number of states: {len(pollution_model.states)}\n')
-
-        phi1_l = "<<>> F polnew_0"
-        phi1_r = "<<0>> F polnew_0"
-        phi2 = self.generate_new_formula2(self.n_agent, self.selected_place)
-
-        formula_txt = phi2
-
-        file.write(f"Formula: {formula_txt}\n")
+        self._results_file.write(f"Formula: {formula_txt}\n")
 
         print(formula_txt)
         props = list()
-        for l in range(0, len(self.map)):
-            for a in range(0, self.n_agent):
+        for l in range(0, len(self.__map)):
+            for a in range(0, self.__n_agent):
                 props.append("pol" + str(l))
                 props.append("polE" + str(l))
                 props.append("loc" + str(l))
                 props.append("polD" + str(l))
         props.append('locA')
         props.append('polnew')
-        pollution_model.model.props = props
+        self._model.props = props
         const = "t td tg f fd fg u"
         atlparser = mvatl_parser.AlternatingTimeTemporalLogicParser(const, props)
         formula = atlparser.parse(formula_txt)
         print("Formula:", formula)
         start = time.perf_counter()
-        result = pollution_model.model.interpreter(formula, 0)
+        self.__result = self._model.interpreter(formula, 0)
         stop = time.perf_counter()
         tverif = stop - start
-        print(str(result))
+        print(str(self.__result))
 
-        file.write(f"Result: {result}\n")
-        file.write(f'Tverif: {tverif}\n')
-        file.write("\n")
+        self._results_file.write(f"Result: {self.__result}\n")
+        self._results_file.write(f'Tverif: {tverif}\n')
+        self._results_file.write("\n")
 
-        file.close()
+    def _write_result(self):
+        pass
 
     # Syntax for propositions:
     # Polution prop -> poll the list of size no_drones with (the second) l as the location number
@@ -193,15 +213,26 @@ class CracowPollutionModelExp:
         return result
 
     def dformula2string(self, disj, i):
+        """
+        Converts a given disjunction formula to string
+        :param disj:
+        :param i:
+        :return:
+        """
         if i == len(disj) - 1:
             return disj[i]
         return "(" + disj[i] + " | " + self.dformula2string(disj, i + 1) + ")"
 
     def cformula2string(self, conj, i):
+        """
+        Converts a given conjuction formula to string
+        :param conj:
+        :param i:
+        :return:
+        """
         if i == len(conj) - 1:
             return self.dformula2string(conj[i], 0)
         return "(" + self.dformula2string(conj[i], 0) + " | " + self.cformula2string(conj, i + 1) + ")"
 
-
-# cracow_pollution_model_exp = CracowPollutionModelExp(3, 4, 1, 7, 5)
+# cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5, 1, False)
 # cracow_pollution_model_exp.run_experiments()
