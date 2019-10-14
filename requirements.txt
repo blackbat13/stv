@@ -4,3 +4,5 @@ matplotlib
 scipy
 graphviz
 pygraphviz
+nose
+sphinx

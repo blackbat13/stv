@@ -1,11 +1,11 @@
 import unittest
-from tools.file_tools import FileTools
+from ..context import tools
 
 
-class TestFileTools(unittest.TestCase):
+class FileToolsTestSuite(unittest.TestCase):
     def test_add_extension(self):
-        self.assertEqual(FileTools.add_extension("file", "ext"), "file.ext")
-        self.assertEqual(FileTools.add_extension("file.ext", "ext"), "file.ext")
+        self.assertEqual(tools.FileTools.add_extension("file", "ext"), "file.ext")
+        self.assertEqual(tools.FileTools.add_extension("file.ext", "ext"), "file.ext")
 
 
 if __name__ == '__main__':

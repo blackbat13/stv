@@ -1,10 +1,10 @@
 import unittest
-from tools.string_tools import StringTools
+from ..context import tools
 
 
-class TestStringTools(unittest.TestCase):
+class StringToolsTestSuite(unittest.TestCase):
     def test_capitalize_first_letter(self):
-        self.assertEqual(StringTools.capitalize_first_letter('ala'), 'Ala')
+        self.assertEqual(tools.StringTools.capitalize_first_letter('ala'), 'Ala')
 
 
 if __name__ == '__main__':
