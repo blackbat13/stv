@@ -154,6 +154,7 @@ class DroneModel(ModelGenerator):
         self.is_random = is_random
         self.drone_actions: List[str] = ['N', 'W', 'S', 'E', 'F']
         self.graph = []
+        self.create_map_graph()
 
     def _generate_initial_states(self):
         places = []

@@ -22,6 +22,7 @@ class SimpleModel:
     epistemic_class_membership = []
     states = []
     first_state_id = 0
+    pre_image = []
 
     def __init__(self, no_agents: int):
         self.prepare_variables()
@@ -36,6 +37,7 @@ class SimpleModel:
         :return: None
         """
         self.graph = []
+        self.pre_image = []
         self.no_states = 0
         self.no_agents = 0
         self.no_transitions = 0
@@ -54,6 +56,7 @@ class SimpleModel:
         """
         self.resize_to_state(max(from_state_id, to_state_id))
         self.graph[from_state_id].append(Transition(to_state_id, actions))
+        self.pre_image[to_state_id].append(from_state_id)
         self.no_transitions += 1
 
     def resize_to_state(self, state_id: int) -> None:
@@ -64,6 +67,7 @@ class SimpleModel:
         """
         while len(self.graph) <= state_id:
             self.graph.append([])
+            self.pre_image.append([])
 
         for agent_number in range(0, self.no_agents):
             while len(self.epistemic_class_membership[agent_number]) <= state_id:

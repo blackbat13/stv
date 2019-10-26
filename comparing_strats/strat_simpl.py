@@ -3,6 +3,7 @@ import itertools
 from typing import List, Set
 from enum import Enum
 from tools.list_tools import ListTools
+import random
 
 
 class StrategyComparer:
@@ -224,6 +225,54 @@ class StrategyComparer:
                     strategies[j], strategies[j + 1] = strategies[j + 1], strategies[j]
         return strategies
 
+    def generate_winning_strategy_perfect_information(self, agent_id: int, winning_states: List[int]):
+        new_winning_states = set(winning_states)
+        comp_states = set()
+        new_comp_states = set(winning_states)
+        result_strategy = [None for _ in range(self.model.no_states)]
+        while comp_states != new_comp_states:
+            comp_states = new_comp_states.copy()
+            new_comp_states = set()
+            pre_states = set()
+            for state in comp_states:
+                pre_states.update(self.model.pre_image[state])
+            for state in pre_states:
+                strategies = self.model.get_possible_strategies(state)
+                winning_strategies = []
+                ok = False
+                for strategy in strategies:
+                    if self.check_strategy(agent_id, state, strategy[agent_id], winning_states):
+                        winning_strategies.append(strategy[agent_id])
+                        ok = True
+
+                if ok:
+                    new_comp_states.add(state)
+                    result_strategy[state] = random.choice(winning_strategies)
+
+            new_winning_states.update(new_comp_states)
+        return result_strategy
+
+    def check_strategy(self, agent_id: int, state_id: int, action: str, winning_states: List[int]) -> bool:
+        result = False
+        for transition in self.model.graph[state_id]:
+            if transition.actions[agent_id] == action:
+                result = True
+                if transition.next_state not in winning_states:
+                    return False
+        return result
+
+    def count_epistemic_mismatch(self, agent_id: int, strategy: List[str]) -> int:
+        result = 0
+        for epistemic_class in self.model.epistemic_classes[agent_id]:
+            action = None
+            for state in epistemic_class:
+                if strategy[state] is not None:
+                    if action is None:
+                        action = strategy[state]
+                    else:
+                        result += 1
+        return result
+
     def simplify_strategy(self, strategy: list, heuristic):
         """
         Simplifies given strategy in specified model using given heuristic
@@ -248,7 +297,7 @@ class StrategyComparer:
                 continue
 
             # skip if strategy not defined for state
-            if len(strategy[state]) == 0:
+            if strategy[state] is None or len(strategy[state]) == 0:
                 continue
 
             current_strategy = strategy[state][:]
@@ -282,6 +331,48 @@ class StrategyComparer:
         strategy_generator = StrategyGenerator(self.model)
         # return strategy
         return strategy_generator.cut_to_reachable(self.strategy)
+
+    def simplify_strategy_one_agent(self, agent_id: int, strategy: list, heuristic):
+        self.strategy = strategy
+        actions = []
+        for _ in range(0, self.model.no_agents):
+            actions.append(self.possible_actions[:])
+
+        for state in range(0, self.model.no_states):
+            # skip if strategy not defined for state
+            if strategy[state] is None:
+                continue
+
+            current_strategy = strategy[state]
+            for strat in self.model.get_possible_strategies(state):
+                action = strat[agent_id]
+                if action == strategy[state]:
+                    continue
+
+                compare_result = self.basic_h(state, [strategy[state]], [action])
+
+                if compare_result == self.CompareResult.NOT_COMPARABLE:
+                    continue
+
+                # Do additional heuristics
+
+                if compare_result == self.CompareResult.SECOND_BETTER and heuristic is not None:
+                    compare_result = heuristic(state, [current_strategy], [action])
+                elif compare_result == self.CompareResult.SECOND_BETTER and heuristic is None:
+                    compare_result = self.basic_h(state, [current_strategy], [action])
+
+                if compare_result != self.CompareResult.SECOND_BETTER:
+                    continue
+
+                current_strategy = action
+
+            if current_strategy != strategy[state]:
+                self.strategy[state] = current_strategy
+
+        # strategy_generator = StrategyGenerator(self.model)
+        # # return strategy
+        # return strategy_generator.cut_to_reachable(self.strategy)
+        return strategy
 
     def get_action_result(self, state: int, action: str) -> list:
         result = []

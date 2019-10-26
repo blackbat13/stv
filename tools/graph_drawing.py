@@ -1,4 +1,4 @@
-from models.simple_model import SimpleModel
+from models import SimpleModel
 import networkx
 import matplotlib.pyplot as plt
 
