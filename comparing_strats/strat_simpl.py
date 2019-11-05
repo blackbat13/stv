@@ -240,26 +240,40 @@ class StrategyComparer:
                 strategies = self.model.get_possible_strategies(state)
                 winning_strategies = []
                 ok = False
+                mx_count = -1
+                # print(strategies)
                 for strategy in strategies:
-                    if self.check_strategy(agent_id, state, strategy[agent_id], winning_states):
-                        winning_strategies.append(strategy[agent_id])
+                    res, count = self.check_strategy(agent_id, state, strategy[agent_id], list(new_winning_states))
+                    if res:
+                        winning_strategies.append((strategy[agent_id], count))
+                        mx_count = max(count, mx_count)
                         ok = True
 
                 if ok:
                     new_comp_states.add(state)
-                    result_strategy[state] = random.choice(winning_strategies)
+                    for win_str in winning_strategies:
+                        if win_str[1] == mx_count:
+                            result_strategy[state] = [win_str[0]]
+                            break
+                    # result_strategy[state] = random.choice(winning_strategies)[0]
 
             new_winning_states.update(new_comp_states)
-        return result_strategy
 
-    def check_strategy(self, agent_id: int, state_id: int, action: str, winning_states: List[int]) -> bool:
+        strategy_generator = StrategyGenerator(self.model)
+        # return result_strategy
+        print(result_strategy)
+        return strategy_generator.cut_to_reachable(result_strategy)
+
+    def check_strategy(self, agent_id: int, state_id: int, action: str, winning_states: List[int]) -> (bool, int):
         result = False
+        count = 0
         for transition in self.model.graph[state_id]:
             if transition.actions[agent_id] == action:
                 result = True
+                count += 1
                 if transition.next_state not in winning_states:
-                    return False
-        return result
+                    return False, 0
+        return result, count
 
     def count_epistemic_mismatch(self, agent_id: int, strategy: List[str]) -> int:
         result = 0
@@ -271,6 +285,20 @@ class StrategyComparer:
                         action = strategy[state]
                     else:
                         result += 1
+        return result
+
+    def count_non_control_states(self, agent_id: int, strategy: List[str]) -> int:
+        result = 0
+        for state_id in range(len(strategy)):
+            if strategy[state_id] is None:
+                continue
+            next_states = 0
+            for transition in self.model.graph[state_id]:
+                # print(transition.actions, strategy[state_id])
+                if transition.actions[agent_id] == strategy[state_id][agent_id]:
+                    next_states += 1
+            if next_states > 1:
+                result += 1
         return result
 
     def simplify_strategy(self, strategy: list, heuristic):
@@ -344,12 +372,12 @@ class StrategyComparer:
                 continue
 
             current_strategy = strategy[state]
+            # print(self.model.get_possible_strategies(state))
             for strat in self.model.get_possible_strategies(state):
-                action = strat[agent_id]
-                if action == strategy[state]:
+                if strat == strategy[state]:
                     continue
 
-                compare_result = self.basic_h(state, [strategy[state]], [action])
+                compare_result = self.basic_h(state, strategy[state], list(strat))
 
                 if compare_result == self.CompareResult.NOT_COMPARABLE:
                     continue
@@ -357,22 +385,23 @@ class StrategyComparer:
                 # Do additional heuristics
 
                 if compare_result == self.CompareResult.SECOND_BETTER and heuristic is not None:
-                    compare_result = heuristic(state, [current_strategy], [action])
+                    compare_result = heuristic(state, current_strategy, strat)
                 elif compare_result == self.CompareResult.SECOND_BETTER and heuristic is None:
-                    compare_result = self.basic_h(state, [current_strategy], [action])
+                    compare_result = self.basic_h(state, current_strategy, list(strat))
 
                 if compare_result != self.CompareResult.SECOND_BETTER:
                     continue
 
-                current_strategy = action
+                current_strategy = list(strat)
 
             if current_strategy != strategy[state]:
+                # print("NEW STRATEGY FOR", state, "-----------------------------------------------------")
                 self.strategy[state] = current_strategy
 
-        # strategy_generator = StrategyGenerator(self.model)
-        # # return strategy
-        # return strategy_generator.cut_to_reachable(self.strategy)
-        return strategy
+        strategy_generator = StrategyGenerator(self.model)
+        # return strategy
+        return strategy_generator.cut_to_reachable(self.strategy)
+        # return strategy
 
     def get_action_result(self, state: int, action: str) -> list:
         result = []
@@ -448,6 +477,45 @@ class StrategyComparer:
             if state not in strategy2_result:
                 return self.CompareResult.NOT_COMPARABLE
 
+        return self.CompareResult.FIRST_BETTER
+
+    def basic_h2(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
+        strategy1_result = set(self.get_action_result(state, strategy1[0]))
+        strategy2_result = set(self.get_action_result(state, strategy2[0]))
+        # print(strategy1_result)
+        # print(strategy2_result)
+
+
+        if len(strategy1_result) == 0 or len(strategy2_result) == 0:
+            # print("NOT COMPARABLE")
+            # print()
+            return self.CompareResult.NOT_COMPARABLE
+
+        result = 1
+
+        for state in strategy2_result:
+            if not (state in strategy1_result):
+                result = -1
+                break
+
+        if result == 1:
+            if len(strategy2_result) < len(strategy1_result):
+                # print("SECOND_BETTER")
+                # print()
+                return self.CompareResult.SECOND_BETTER
+            else:
+                # print("EQUAL")
+                # print()
+                return self.CompareResult.EQUAL
+
+        for state in strategy1_result:
+            if state not in strategy2_result:
+                # print("NOT COMPARABLE")
+                # print()
+                return self.CompareResult.NOT_COMPARABLE
+
+        # print("FIRST_BETTER")
+        # print()
         return self.CompareResult.FIRST_BETTER
 
     def epistemic_h(self, state: int, strategy1: list, strategy2: list) -> CompareResult:

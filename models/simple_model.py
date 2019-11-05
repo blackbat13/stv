@@ -55,9 +55,17 @@ class SimpleModel:
         :return: None
         """
         self.resize_to_state(max(from_state_id, to_state_id))
+        # if self.is_unique_transition(Transition(to_state_id, actions), from_state_id):
         self.graph[from_state_id].append(Transition(to_state_id, actions))
         self.pre_image[to_state_id].append(from_state_id)
         self.no_transitions += 1
+
+    def is_unique_transition(self, transition: Transition, state_id: int) -> bool:
+        for tr in self.graph[state_id]:
+            if tr.actions == transition.actions and tr.next_state == transition.next_state:
+                return False
+
+        return True
 
     def resize_to_state(self, state_id: int) -> None:
         """

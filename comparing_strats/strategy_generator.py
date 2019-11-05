@@ -57,9 +57,7 @@ class StrategyGenerator:
         self.reachable_states = set()
         self.reachable_states.add(0)
         self.dfs(0, strategy)
-        new_strategy = []
-        for _ in range(0, len(strategy)):
-            new_strategy.append([])
+        new_strategy = [None for _ in range(len(strategy))]
 
         for state in self.reachable_states:
             if strategy[state] is not list:
