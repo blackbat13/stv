@@ -2,85 +2,111 @@ from models.random_model import *
 from comparing_strats.strat_simpl import StrategyComparer
 from typing import List
 import datetime
+import time
+import signal
 
 
 class RandomModelExp:
-    def __init__(self, model_size: int, exp_count: int, DEBUG: bool = False):
+    def __init__(self, model_size: int, exp_count: int, filename: str, timeout: int = 60, DEBUG: bool = False):
         self.__exp_count = exp_count
         self.__DEBUG = DEBUG
         self.__model_size = model_size
+        self.__filename = filename
+        self.__file = None
+        self.__timeout = timeout
+        signal.signal(signal.SIGALRM, self.__timeout_handler)
 
     def run_experiments(self):
-        for _ in range(self.__exp_count):
+        self.__file = open(self.__filename, "a")
+
+        self.__file.write(f"EXPERIMENTS START: {datetime.datetime.now()}")
+        for i in range(self.__exp_count):
+            self.__file.write(f"----BEGIN: EXPERIMENT {i}----\n")
             self._run_experiment()
-            print()
-            print()
+            self.__file.write(f"----END: EXPERIMENT {i}----\n\n")
 
     def _run_experiment(self):
         random_model = RandomModel(self.__model_size)
+        start = time.process_time()
         random_model.generate()
-        print("-------------------PERFECT INFORMATION STRATEGY-------------------")
+        end = time.process_time()
+        self.__file.write(f"Model generated in {end - start}s")
+        self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
         strategy = self._generate_perfect_information_strategy(random_model)
-        print("-------------------SIMPLIFIED STRATEGY-------------------")
+        self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
+        self.__file.write("-------------------BEGIN: SIMPLIFIED STRATEGY-------------------\n")
         simplified_strategy = self._generate_simplified_strategy(random_model, strategy)
-        print("-------------------DOMINO DFS-------------------")
-        self._run_domino_dfs(random_model)
+        self.__file.write("-------------------END: SIMPLIFIED STRATEGY-------------------\n")
+        self.__file.write("-------------------BEGIN: DOMINO DFS-------------------\n")
+        signal.alarm(self.__timeout)
+        try:
+            self._run_domino_dfs(random_model)
+        except Exception as exc:
+            self.__file.write(f"{exc}\n")
+        self.__file.write("-------------------END: DOMINO DFS-------------------\n")
 
     def _run_domino_dfs(self, model: RandomModel):
         winning_states = model.get_winning_states("win")
         strategy_comparer = StrategyComparer(model.model, model.get_actions()[0])
+        start = time.process_time()
         (result, strategy) = strategy_comparer.domino_dfs(0, set(winning_states), [0], strategy_comparer.basic_h)
-        print(f'Strategy result: {result}')
-        print(strategy)
+        end = time.process_time()
+        self.__file.write(f"Strategy found in: {end - start}s\n")
+        self.__file.write(f'Strategy result: {result}\n')
+        self.__file.write(f"{strategy}\n")
         if self.__DEBUG:
             self._print_strategy(strategy)
 
     def _print_strategy(self, strategy):
         for index, value in enumerate(strategy):
             if value is not None:
-                print(f"{index}: {value}")
+                self.__file.write(f"{index}: {value}\n")
 
     def _generate_perfect_information_strategy(self, model: RandomModel):
         winning_states = model.get_winning_states("win")
         strategy_comparer = StrategyComparer(model.model, model.get_actions()[0])
+        start = time.process_time()
         strategy = strategy_comparer.generate_winning_strategy_perfect_information(0, list(winning_states))
+        end = time.process_time()
         defined_in = 0
-        # if strategy[0] is None:
-        #     print("Not winning")
-        #     return
-
-        print("Strategy result:", strategy[0] is not None)
-        print(strategy)
+        self.__file.write(f"Strategy generated in: {end - start}s\n")
+        self.__file.write(f"Strategy result: {strategy[0] is not None}\n")
+        self.__file.write(f"{strategy}\n")
         if self.__DEBUG:
             self._print_strategy(strategy)
         for index, value in enumerate(strategy):
             if value is not None:
                 defined_in += 1
         epistemic_mismatch = strategy_comparer.count_epistemic_mismatch(0, strategy)
-        print("Non control states in strategy:", strategy_comparer.count_non_control_states(0, strategy))
-        print("Epistemic mismatch for random strategy: ", epistemic_mismatch)
-        print("Random strategy defined in", defined_in, "states")
+        self.__file.write(
+            f"Non control states in strategy: {strategy_comparer.count_non_control_states(0, strategy)}\n")
+        self.__file.write(f"Epistemic mismatch for random strategy: {epistemic_mismatch}\n")
+        self.__file.write(f"Random strategy defined in {defined_in} states\n")
         return strategy
 
     def _generate_simplified_strategy(self, model: RandomModel, strategy):
         strategy_comparer = StrategyComparer(model.model, model.get_actions()[0])
+        start = time.process_time()
         simplified_strategy = strategy_comparer.simplify_strategy_one_agent(0, strategy, None)
-        print(simplified_strategy)
+        end = time.process_time()
+        self.__file.write(f"Strategy simplified in: {end - start}s\n")
+        self.__file.write(f"{simplified_strategy}\n")
         if self.__DEBUG:
             self._print_strategy(simplified_strategy)
-        print("Different: ", simplified_strategy != strategy)
+        self.__file.write(f"Different: {simplified_strategy != strategy}\n")
         defined_in = 0
         for index, value in enumerate(simplified_strategy):
             if value is not None:
-                # print(f"{index}: {value}")
+                if self.__DEBUG:
+                    print(f"{index}: {value}\n")
                 defined_in += 1
 
         epistemic_mismatch = strategy_comparer.count_epistemic_mismatch(0, simplified_strategy)
-        print("Non control states in strategy:", strategy_comparer.count_non_control_states(0, simplified_strategy))
-        print("Epistemic mismatch for simplified strategy: ", epistemic_mismatch)
-        print("Simpified strategy defined in", defined_in, "states")
+        self.__file.write(
+            f"Non control states in strategy: {strategy_comparer.count_non_control_states(0, simplified_strategy)}\n")
+        self.__file.write(f"Epistemic mismatch for simplified strategy: {epistemic_mismatch}\n")
+        self.__file.write(f"Simpified strategy defined in {defined_in} states\n")
         return simplified_strategy
 
-
-random_model_exp = RandomModelExp(model_size=20, exp_count=5)
-random_model_exp.run_experiments()
+    def __timeout_handler(self, signum, frame):
+        raise Exception("Timeout!")

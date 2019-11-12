@@ -72,3 +72,8 @@
 #
 # simple_voting2_model_experiments = SimpleVoting2ModelExperiments(2, 5)
 # simple_voting2_model_experiments.run_experiments()
+
+from experiments.strategy_simpl.random_model_exp import RandomModelExp
+
+random_model_exp = RandomModelExp(model_size=100, exp_count=50, filename="random_results.txt", timeout=60)
+random_model_exp.run_experiments()
