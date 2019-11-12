@@ -25,6 +25,8 @@ class RandomModelExp:
             self._run_experiment()
             self.__file.write(f"----END: EXPERIMENT {i}----\n\n")
 
+        self.__file.close()
+
     def _run_experiment(self):
         random_model = RandomModel(self.__model_size)
         start = time.process_time()
@@ -43,6 +45,7 @@ class RandomModelExp:
             self._run_domino_dfs(random_model)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
+        signal.alarm(0)
         self.__file.write("-------------------END: DOMINO DFS-------------------\n")
 
     def _run_domino_dfs(self, model: RandomModel):

@@ -75,5 +75,7 @@
 
 from experiments.strategy_simpl.random_model_exp import RandomModelExp
 
-random_model_exp = RandomModelExp(model_size=100, exp_count=1, filename="random_results_v2.txt", timeout=10)
-random_model_exp.run_experiments()
+data = [10, 100, 1000, 10000, 100000]
+for model_size in data:
+    random_model_exp = RandomModelExp(model_size=model_size, exp_count=10, filename=f"random_results_{model_size}_v2.txt", timeout=60)
+    random_model_exp.run_experiments()
