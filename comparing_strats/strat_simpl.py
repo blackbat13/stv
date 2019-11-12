@@ -4,6 +4,7 @@ from typing import List, Set
 from enum import Enum
 from tools.list_tools import ListTools
 import random
+import time
 
 
 class StrategyComparer:
@@ -359,6 +360,131 @@ class StrategyComparer:
         # return strategy
         return strategy_generator.cut_to_reachable(self.strategy)
 
+    def simplify_strategy_one_agent_imperfect_info(self, agent_id: int, strategy: list, timeout: int):
+        self.strategy = strategy
+        actions = []
+        for _ in range(0, self.model.no_agents):
+            actions.append(self.possible_actions[:])
+
+        old_strategy = strategy[:]
+        information_sets = []
+        for state_id in range(0, self.model.no_states):
+            epistemic_class = self.model.epistemic_class_for_state(state_id, agent_id)
+            next = False
+            i_set = []
+            for epistemic_state_id in epistemic_class:
+                if epistemic_state_id < state_id:
+                    next = True
+
+                if not next and strategy[epistemic_state_id] is not None:
+                    i_set.append(epistemic_state_id)
+            if next or len(i_set) == 0:
+                continue
+
+            information_sets.append(i_set[:])
+        start = time.process_time()
+        while(True):
+            for i_set in information_sets:
+                conflicts = 0
+                for i in range(1, len(i_set)):
+                    if strategy[i_set[i]] != strategy[i_set[0]]:
+                        conflicts += 1
+
+                current_strategy = strategy[i_set[0]]
+                replace = False
+                good_strategies = []
+                for strat in self.model.get_possible_strategies(i_set[0]):
+                    if strat == strategy[i_set[0]]:
+                        continue
+                    ok = True
+                    for state_id in i_set:
+                        compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                        if not (
+                                compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.SECOND_BETTER):
+                            ok = False
+                    if not ok:
+                        for state_id in i_set:
+                            compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                            if not (
+                                    compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.SECOND_BETTER):
+                                continue
+                            new_conflicts = 0
+                            for i in range(0, len(i_set)):
+                                if i_set[i] == state_id:
+                                    continue
+                                if strategy[i_set[i]] != strategy[state_id]:
+                                    new_conflicts += 1
+                            if new_conflicts < conflicts:
+                                strategy[state_id] = list(strat)
+                                conflicts = new_conflicts
+                        continue
+                    current_strategy = list(strat)
+                    replace = True
+                    conflicts = 0
+                    good_strategies.append(current_strategy[:])
+                if replace:
+                    for state_id in i_set:
+                        strategy[state_id] = current_strategy
+                current_strategy = strategy[i_set[0]]
+                replace = False
+                for strat in good_strategies:
+                    if strat == strategy[i_set[0]]:
+                        continue
+                    ok = True
+                    better = False
+                    for state_id in i_set:
+                        compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                        if not (
+                                compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.SECOND_BETTER):
+                            ok = False
+                        if compare_result == self.CompareResult.SECOND_BETTER:
+                            better = True
+
+                    if not ok:
+                        continue
+                    if better:
+                        current_strategy = list(strat)
+                        replace = True
+                if replace:
+                    for state_id in i_set:
+                        strategy[state_id] = current_strategy
+                if len(good_strategies) > 0:
+                    continue
+                current_strategy = strategy[i_set[0]]
+                for strat in self.model.get_possible_strategies(i_set[0]):
+                    if strat == strategy[i_set[0]]:
+                        continue
+                    for state_id in i_set:
+                        compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                        if not (compare_result == self.CompareResult.SECOND_BETTER):
+                            continue
+                        new_conflicts = 0
+                        for i in range(0, len(i_set)):
+                            if i_set[i] == state_id:
+                                continue
+                            if strategy[i_set[i]] != strategy[state_id]:
+                                new_conflicts += 1
+                        if new_conflicts < conflicts:
+                            strategy[state_id] = list(strat)
+                            conflicts = new_conflicts
+
+            if strategy == old_strategy:
+                break
+
+            print(strategy)
+            strategy_generator = StrategyGenerator(self.model)
+            strategy = strategy_generator.cut_to_reachable(self.strategy)
+            old_strategy = strategy[:]
+            print(strategy)
+            end = time.process_time()
+            if (end - start) >= timeout:
+                break
+
+
+        self.strategy = strategy[:]
+        strategy_generator = StrategyGenerator(self.model)
+        return strategy_generator.cut_to_reachable(self.strategy)
+
     def simplify_strategy_one_agent(self, agent_id: int, strategy: list, heuristic):
         self.strategy = strategy
         actions = []
@@ -477,7 +603,6 @@ class StrategyComparer:
     def basic_h2(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
         strategy1_result = set(self.get_action_result(state, strategy1[0]))
         strategy2_result = set(self.get_action_result(state, strategy2[0]))
-
 
         if len(strategy1_result) == 0 or len(strategy2_result) == 0:
             return self.CompareResult.NOT_COMPARABLE

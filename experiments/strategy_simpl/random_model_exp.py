@@ -87,7 +87,8 @@ class RandomModelExp:
     def _generate_simplified_strategy(self, model: RandomModel, strategy):
         strategy_comparer = StrategyComparer(model.model, model.get_actions()[0])
         start = time.process_time()
-        simplified_strategy = strategy_comparer.simplify_strategy_one_agent(0, strategy, None)
+        # simplified_strategy = strategy_comparer.simplify_strategy_one_agent(0, strategy, None)
+        simplified_strategy = strategy_comparer.simplify_strategy_one_agent_imperfect_info(0, strategy, self.__timeout)
         end = time.process_time()
         self.__file.write(f"Strategy simplified in: {end - start}s\n")
         self.__file.write(f"{simplified_strategy}\n")
