@@ -14,6 +14,17 @@ class RandomModelExp:
         self.__filename = filename
         self.__file = None
         self.__timeout = timeout
+        self.__avg_upper_approx_time = 0
+        self.__avg_lower_approx_time = 0
+        self.__avg_model_states = 0
+        self.__avg_perfect_reachable_states = 0
+        self.__avg_simplified_reachable_states = 0
+        self.__avg_perfect_mismatch = 0
+        self.__avg_simplified_mismatch = 0
+        self.__avg_perfect_time = 0
+        self.__avg_simplified_time = 0
+        self.__avg_model_time = 0
+        self.__avg_domino_time = 0
         signal.signal(signal.SIGALRM, self.__timeout_handler)
 
     def run_experiments(self):
@@ -23,8 +34,23 @@ class RandomModelExp:
         for i in range(self.__exp_count):
             self.__file.write(f"----BEGIN: EXPERIMENT {i}----\n")
             self._run_experiment()
-            self.__file.write(f"----END: EXPERIMENT {i}----\n\n")
+            self.__file.write(f"----END: EXPERIMENT {i}----\n")
 
+        self.__file.write("------STATISTICS------\n")
+        self.__file.write(f"Average model generation time: {self.__avg_model_time / self.__exp_count} s")
+        self.__file.write(f"Average perfect strategy generation time: {self.__avg_perfect_time / self.__exp_count} s")
+        self.__file.write(f"Average simplified strategy time: {self.__avg_simplified_time / self.__exp_count} s")
+        self.__file.write(f"Average domino dfs time: {self.__avg_domino_time / self.__exp_count} s")
+        self.__file.write(f"Average lower approximation time: {self.__avg_lower_approx_time / self.__exp_count} s")
+        self.__file.write(f"Average upper approximation time: {self.__avg_upper_approx_time / self.__exp_count} s")
+        self.__file.write(
+            f"Average perfect strategy reachable states: {self.__avg_perfect_reachable_states / self.__exp_count} s")
+        self.__file.write(f"Average simplified strategy reachable states: {self.__avg_simplified_reachable_states / self.__exp_count} s")
+        self.__file.write(
+            f"Average perfect strategy epistemic mismatch: {self.__avg_perfect_mismatch / self.__exp_count} s")
+        self.__file.write(
+            f"Average simplified strategy epistemic mismatch: {self.__avg_simplified_mismatch / self.__exp_count} s")
+        self.__file.write("------END STATISTICS------\n\n\n")
         self.__file.close()
 
     def _run_experiment(self):
@@ -32,6 +58,7 @@ class RandomModelExp:
         start = time.process_time()
         random_model.generate()
         end = time.process_time()
+        self.__avg_model_time += (end - start)
         self.__file.write(f"Model generated in {end - start}s")
         self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
         strategy = self._generate_perfect_information_strategy(random_model)
@@ -45,6 +72,7 @@ class RandomModelExp:
             self._run_domino_dfs(random_model)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
+            self.__avg_domino_time += self.__timeout
         signal.alarm(0)
         self.__file.write("-------------------END: DOMINO DFS-------------------\n")
         self.__file.write("-------------------BEGIN: APPROXIMATIONS-------------------\n")
@@ -57,6 +85,7 @@ class RandomModelExp:
         start = time.process_time()
         (result, strategy) = strategy_comparer.domino_dfs(0, set(winning_states), [0], strategy_comparer.basic_h)
         end = time.process_time()
+        self.__avg_domino_time += (end - start)
         self.__file.write(f"Strategy found in: {end - start}s\n")
         self.__file.write(f'Strategy result: {result}\n')
         self.__file.write(f"{strategy}\n")
@@ -71,9 +100,11 @@ class RandomModelExp:
             result = model.model.to_atl_imperfect(model.get_actions()).minimum_formula_one_agent(0, winning_states)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
+            self.__avg_lower_approx_time  += self.__timeout
             return
         signal.alarm(0)
         end = time.process_time()
+        self.__avg_upper_approx_time += (end - start)
         self.__file.write(f"Lower approximation time: {end - start}s\n")
         self.__file.write(f"Lower approximation result: {0 in result}\n")
         new_timeout = self.__timeout - (end - start)
@@ -86,9 +117,11 @@ class RandomModelExp:
             result = model.model.to_atl_perfect(model.get_actions()).minimum_formula_one_agent(0, winning_states)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
+            self.__avg_upper_approx_time += new_timeout
             return
         signal.alarm(0)
         end = time.process_time()
+        self.__avg_upper_approx_time += (end - start)
         self.__file.write(f"Upper approximation time: {end - start}s\n")
         self.__file.write(f"Upper approximation result: {0 in result}\n")
 
@@ -104,6 +137,7 @@ class RandomModelExp:
         strategy = strategy_comparer.generate_winning_strategy_perfect_information(0, list(winning_states))
         end = time.process_time()
         defined_in = 0
+        self.__avg_perfect_time += (end - start)
         self.__file.write(f"Strategy generated in: {end - start}s\n")
         self.__file.write(f"Strategy result: {strategy[0] is not None}\n")
         self.__file.write(f"{strategy}\n")
@@ -117,6 +151,8 @@ class RandomModelExp:
             f"Non control states in strategy: {strategy_comparer.count_non_control_states(0, strategy)}\n")
         self.__file.write(f"Epistemic mismatch for random strategy: {epistemic_mismatch}\n")
         self.__file.write(f"Random strategy defined in {defined_in} states\n")
+        self.__avg_perfect_mismatch += epistemic_mismatch
+        self.__avg_perfect_reachable_states += defined_in
         return strategy
 
     def _generate_simplified_strategy(self, model: RandomModel, strategy):
@@ -125,6 +161,7 @@ class RandomModelExp:
         # simplified_strategy = strategy_comparer.simplify_strategy_one_agent(0, strategy, None)
         simplified_strategy = strategy_comparer.simplify_strategy_one_agent_imperfect_info(0, strategy, self.__timeout)
         end = time.process_time()
+        self.__avg_simplified_time += (end - start)
         self.__file.write(f"Strategy simplified in: {end - start}s\n")
         self.__file.write(f"{simplified_strategy}\n")
         if self.__DEBUG:
@@ -142,6 +179,8 @@ class RandomModelExp:
             f"Non control states in strategy: {strategy_comparer.count_non_control_states(0, simplified_strategy)}\n")
         self.__file.write(f"Epistemic mismatch for simplified strategy: {epistemic_mismatch}\n")
         self.__file.write(f"Simpified strategy defined in {defined_in} states\n")
+        self.__avg_simplified_mismatch += epistemic_mismatch
+        self.__avg_simplified_reachable_states += defined_in
         return simplified_strategy
 
     def __timeout_handler(self, signum, frame):
