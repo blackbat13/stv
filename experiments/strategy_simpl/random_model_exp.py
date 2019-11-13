@@ -25,6 +25,8 @@ class RandomModelExp:
             self._run_experiment()
             self.__file.write(f"----END: EXPERIMENT {i}----\n\n")
 
+        self.__file.close()
+
     def _run_experiment(self):
         random_model = RandomModel(self.__model_size)
         start = time.process_time()
@@ -43,7 +45,11 @@ class RandomModelExp:
             self._run_domino_dfs(random_model)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
+        signal.alarm(0)
         self.__file.write("-------------------END: DOMINO DFS-------------------\n")
+        self.__file.write("-------------------BEGIN: APPROXIMATIONS-------------------\n")
+        self._run_approximations(random_model)
+        self.__file.write("-------------------END: APPROXIMATIONS-------------------\n")
 
     def _run_domino_dfs(self, model: RandomModel):
         winning_states = model.get_winning_states("win")
@@ -56,6 +62,35 @@ class RandomModelExp:
         self.__file.write(f"{strategy}\n")
         if self.__DEBUG:
             self._print_strategy(strategy)
+
+    def _run_approximations(self, model: RandomModel):
+        winning_states = model.get_winning_states("win")
+        signal.alarm(self.__timeout)
+        start = time.process_time()
+        try:
+            result = model.model.to_atl_imperfect(model.get_actions()).minimum_formula_one_agent(0, winning_states)
+        except Exception as exc:
+            self.__file.write(f"{exc}\n")
+            return
+        signal.alarm(0)
+        end = time.process_time()
+        self.__file.write(f"Lower approximation time: {end - start}s\n")
+        self.__file.write(f"Lower approximation result: {0 in result}\n")
+        new_timeout = self.__timeout - (end - start)
+        if new_timeout < 1:
+            self.__file.write("Timeout!\n")
+            return
+        signal.alarm(int(new_timeout))
+        start = time.process_time()
+        try:
+            result = model.model.to_atl_perfect(model.get_actions()).minimum_formula_one_agent(0, winning_states)
+        except Exception as exc:
+            self.__file.write(f"{exc}\n")
+            return
+        signal.alarm(0)
+        end = time.process_time()
+        self.__file.write(f"Upper approximation time: {end - start}s\n")
+        self.__file.write(f"Upper approximation result: {0 in result}\n")
 
     def _print_strategy(self, strategy):
         for index, value in enumerate(strategy):

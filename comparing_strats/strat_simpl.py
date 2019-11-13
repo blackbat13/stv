@@ -484,11 +484,11 @@ class StrategyComparer:
             if strategy == old_strategy:
                 break
 
-            print(strategy)
+            # print(strategy)
             strategy_generator = StrategyGenerator(self.model)
             strategy = strategy_generator.cut_to_reachable(self.strategy)
             old_strategy = strategy[:]
-            print(strategy)
+            # print(strategy)
             end = time.process_time()
             if (end - start) >= timeout:
                 break
