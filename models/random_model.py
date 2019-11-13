@@ -5,6 +5,7 @@ from models.model_generator import ModelGenerator
 from enum import Enum
 import itertools
 import random
+import math
 
 
 class RandomModel(ModelGenerator):
@@ -17,9 +18,18 @@ class RandomModel(ModelGenerator):
         self.__paths_count = random.randint(self.__max_states * 2, self.__max_states * 4)
         self.__max_action = 1
         self.__random_connections_count = random.randint(self.__max_states // 4, self.__max_states * 4)
-        self.state_epistemic_class = [random.randint(0, self.__max_epistemic_classes) for _ in
-                                      range(self.__max_states + 1)]
-        self.state_epistemic_class[0] = -1
+        # self.state_epistemic_class = [random.randint(0, self.__max_epistemic_classes) for _ in
+        #                               range(self.__max_states + 1)]
+        # self.state_epistemic_class[0] = -1
+        self.state_epistemic_class = [i for i in range(self.__max_states + 1)]
+        for epistemic_class_id in range(self.__max_states + 2, self.__max_states + 2 + self.__max_epistemic_classes):
+            epistemic_class_size = random.randint(2, math.log2(self.__max_states))
+            for i in range(0, epistemic_class_size):
+                state_id = random.randint(1, self.__max_states)
+                while self.state_epistemic_class[state_id] > self.__max_states + 1:
+                    state_id = random.randint(1, self.__max_states)
+                self.state_epistemic_class[state_id] = epistemic_class_id
+
         self.winning_states = [False for _ in range(self.__max_states + 1)]
         self.__paths: List[List[int]] = []
         self.__graph = [set() for _ in range(self.__max_states + 1)]
