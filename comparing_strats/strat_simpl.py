@@ -280,12 +280,25 @@ class StrategyComparer:
         result = 0
         for epistemic_class in self.model.epistemic_classes[agent_id]:
             action = None
+            actions = {}
+            max_a = -1
             for state in epistemic_class:
                 if strategy[state] is not None:
-                    if action is None:
-                        action = strategy[state]
+                    if strategy[state] in actions:
+                        actions[strategy[state]] += 1
                     else:
+                        actions[strategy[state]] = 1
+                    if actions[strategy[state]] > max_a:
+                        max_a = actions[strategy[state]]
+                        action = strategy[state]
+            for state in epistemic_class:
+                if strategy[state] is not None:
+                    if strategy[state] != action:
                         result += 1
+                    # if action is None:
+                    #     action = strategy[state]
+                    # else:
+                    #     result += 1
         return result
 
     def count_non_control_states(self, agent_id: int, strategy: List[str]) -> int:
