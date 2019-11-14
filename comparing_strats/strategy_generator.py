@@ -55,6 +55,8 @@ class StrategyGenerator:
     def cut_to_reachable(self, strategy: list) -> list:
         """Removes states from given strategy that are not reachable in it"""
         self.reachable_states = set()
+        # self.reachable_states.add(0)
+        # self.dfs2(0, strategy)
         self.reachable_states.add(0)
         self.dfs(0, strategy)
         new_strategy = [None for _ in range(len(strategy))]
@@ -76,6 +78,21 @@ class StrategyGenerator:
             if next_state not in self.reachable_states:
                 self.reachable_states.add(next_state)
                 self.dfs(next_state, strategy)
+
+    def dfs2(self, state: int, strategy) -> None:
+        state_stack = [state]
+        while len(state_stack) > 0:
+            state = state_stack.pop()
+            if state in self.reachable_states:
+                continue
+            self.reachable_states.add(state)
+            for transition in self.model.graph[state]:
+                if transition.actions != strategy[state]:
+                    continue
+                next_state = transition.next_state
+                if next_state not in self.reachable_states:
+                    self.reachable_states.add(next_state)
+                    state_stack.append(next_state)
 
     def print_strategy(self, strategy):
         for state_number in range(0, len(strategy)):

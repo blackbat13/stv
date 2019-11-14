@@ -37,19 +37,19 @@ class RandomModelExp:
             self.__file.write(f"----END: EXPERIMENT {i}----\n")
 
         self.__file.write("------STATISTICS------\n")
-        self.__file.write(f"Average model generation time: {self.__avg_model_time / self.__exp_count} s")
-        self.__file.write(f"Average perfect strategy generation time: {self.__avg_perfect_time / self.__exp_count} s")
-        self.__file.write(f"Average simplified strategy time: {self.__avg_simplified_time / self.__exp_count} s")
-        self.__file.write(f"Average domino dfs time: {self.__avg_domino_time / self.__exp_count} s")
-        self.__file.write(f"Average lower approximation time: {self.__avg_lower_approx_time / self.__exp_count} s")
-        self.__file.write(f"Average upper approximation time: {self.__avg_upper_approx_time / self.__exp_count} s")
+        self.__file.write(f"Average model generation time: {self.__avg_model_time / self.__exp_count} s\n")
+        self.__file.write(f"Average perfect strategy generation time: {self.__avg_perfect_time / self.__exp_count} s\n")
+        self.__file.write(f"Average simplified strategy time: {self.__avg_simplified_time / self.__exp_count} s\n")
+        self.__file.write(f"Average domino dfs time: {self.__avg_domino_time / self.__exp_count} s\n")
+        self.__file.write(f"Average lower approximation time: {self.__avg_lower_approx_time / self.__exp_count} s\n")
+        self.__file.write(f"Average upper approximation time: {self.__avg_upper_approx_time / self.__exp_count} s\n")
         self.__file.write(
-            f"Average perfect strategy reachable states: {self.__avg_perfect_reachable_states / self.__exp_count} s")
-        self.__file.write(f"Average simplified strategy reachable states: {self.__avg_simplified_reachable_states / self.__exp_count} s")
+            f"Average perfect strategy reachable states: {self.__avg_perfect_reachable_states / self.__exp_count}\n")
+        self.__file.write(f"Average simplified strategy reachable states: {self.__avg_simplified_reachable_states / self.__exp_count}\n")
         self.__file.write(
-            f"Average perfect strategy epistemic mismatch: {self.__avg_perfect_mismatch / self.__exp_count} s")
+            f"Average perfect strategy epistemic mismatch: {self.__avg_perfect_mismatch / self.__exp_count}\n")
         self.__file.write(
-            f"Average simplified strategy epistemic mismatch: {self.__avg_simplified_mismatch / self.__exp_count} s")
+            f"Average simplified strategy epistemic mismatch: {self.__avg_simplified_mismatch / self.__exp_count}\n")
         self.__file.write("------END STATISTICS------\n\n\n")
         self.__file.close()
 

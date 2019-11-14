@@ -12,7 +12,8 @@ class RandomModel(ModelGenerator):
     def __init__(self, max_states: int = 20):
         super().__init__(no_agents=2)
         self.__max_states = max_states
-        self.__max_epistemic_classes = random.randint(self.__max_states // 4, self.__max_states // 2)
+        # self.__max_epistemic_classes = random.randint(self.__max_states // 4, self.__max_states // 2)
+        self.__max_epistemic_classes = int(self.__max_states // math.log2(self.__max_states))
         self.__max_winning_states = random.randint(1, self.__max_states // 5)
         self.__path_length = random.randint(self.__max_states // 4, 3 * self.__max_states // 4)
         self.__paths_count = random.randint(self.__max_states * 2, self.__max_states * 4)
@@ -20,22 +21,34 @@ class RandomModel(ModelGenerator):
         self.__random_connections_count = random.randint(self.__max_states // 4, self.__max_states * 4)
         # self.state_epistemic_class = [random.randint(0, self.__max_epistemic_classes) for _ in
         #                               range(self.__max_states + 1)]
-        # self.state_epistemic_class[0] = -1
+
         self.state_epistemic_class = [i for i in range(self.__max_states + 1)]
+
+        epistemic_classes_count = 0
         for epistemic_class_id in range(self.__max_states + 2, self.__max_states + 2 + self.__max_epistemic_classes):
-            epistemic_class_size = random.randint(2, math.log2(self.__max_states))
+            # epistemic_class_size = random.randint(int(math.log2(self.__max_states)/2), int(math.log2(self.__max_states)))
+            epistemic_class_size = int(math.log2(self.__max_states))
+            epistemic_classes_count += 1
             for i in range(0, epistemic_class_size):
                 state_id = random.randint(1, self.__max_states)
-                while self.state_epistemic_class[state_id] > self.__max_states + 1:
+                cnt = 0
+                while cnt < self.__max_states and self.state_epistemic_class[state_id] > self.__max_states + 1:
                     state_id = random.randint(1, self.__max_states)
+                    cnt += 1
+                if cnt >= self.__max_states:
+                    epistemic_classes_count -= 1
+                    break
                 self.state_epistemic_class[state_id] = epistemic_class_id
-
+        self.state_epistemic_class[0] = 0
+        print(f"Max epistemic classes: {self.__max_epistemic_classes}")
+        print(epistemic_classes_count)
+        print(self.state_epistemic_class)
         self.winning_states = [False for _ in range(self.__max_states + 1)]
         self.__paths: List[List[int]] = []
         self.__graph = [set() for _ in range(self.__max_states + 1)]
 
     def _generate_initial_states(self):
-        self._add_state({'id': 0, 'epistemic_class': -1})
+        self._add_state({'id': 0, 'epistemic_class': self.state_epistemic_class[0]})
 
     def _generate_model(self):
         self._generate_paths()

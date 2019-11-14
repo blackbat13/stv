@@ -284,12 +284,12 @@ class StrategyComparer:
             max_a = -1
             for state in epistemic_class:
                 if strategy[state] is not None:
-                    if strategy[state] in actions:
-                        actions[strategy[state]] += 1
+                    if strategy[state][0] in actions:
+                        actions[strategy[state][0]] += 1
                     else:
-                        actions[strategy[state]] = 1
-                    if actions[strategy[state]] > max_a:
-                        max_a = actions[strategy[state]]
+                        actions[strategy[state][0]] = 1
+                    if actions[strategy[state][0]] > max_a:
+                        max_a = actions[strategy[state][0]]
                         action = strategy[state]
             for state in epistemic_class:
                 if strategy[state] is not None:
