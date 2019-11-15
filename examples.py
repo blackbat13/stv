@@ -95,7 +95,7 @@
 from experiments.strategy_simpl.drone_model_exp2 import DroneModelExp2
 
 # data = [10, 100, 1000, 10000, 100000]
-data = [5]
+data = [3, 5]
 for model_size in data:
-    random_model_exp = DroneModelExp2(model_size=model_size, exp_count=1, filename=f"drone2_results_{model_size}_v1.txt", timeout=60, energy=model_size)
+    random_model_exp = DroneModelExp2(model_size=model_size, exp_count=5, filename=f"drone2_results_{model_size}_v1.txt", timeout=60, energy=model_size*2)
     random_model_exp.run_experiments()
