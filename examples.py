@@ -73,21 +73,21 @@
 # simple_voting2_model_experiments = SimpleVoting2ModelExperiments(2, 5)
 # simple_voting2_model_experiments.run_experiments()
 
-# from experiments.strategy_simpl.random_model_exp import RandomModelExp
-#
-# # data = [10, 100, 1000, 10000, 100000]
-# data = [10, 100, 1000]
-# for model_size in data:
-#     random_model_exp = RandomModelExp(model_size=model_size, exp_count=10, filename=f"random_results_{model_size}_v4.txt", timeout=60)
-#     random_model_exp.run_experiments()
+from experiments.strategy_simpl.random_model_exp import RandomModelExp
+
+# data = [10, 100, 1000, 10000, 100000]
+data = [100, 1000]
+for model_size in data:
+    random_model_exp = RandomModelExp(model_size=model_size, exp_count=10, filename=f"random_results_{model_size}_v5.txt", timeout=60)
+    random_model_exp.run_experiments()
 
 # random_model_exp = RandomModelExp(model_size=10, exp_count=1, filename=f"random_results_tt_v2.txt", timeout=60)
 # random_model_exp.run_experiments()
 
-from experiments.strategy_simpl.drone_model_exp import DroneModelExp
-
-# data = [10, 100, 1000, 10000, 100000]
-data = [5, 10, 15, 20]
-for model_size in data:
-    random_model_exp = DroneModelExp(model_size=model_size, exp_count=10, filename=f"drone_results_{model_size}.txt", timeout=60, energy=model_size * 2)
-    random_model_exp.run_experiments()
+# from experiments.strategy_simpl.drone_model_exp import DroneModelExp
+#
+# # data = [10, 100, 1000, 10000, 100000]
+# data = [10]
+# for model_size in data:
+#     random_model_exp = DroneModelExp(model_size=model_size, exp_count=10, filename=f"drone_results_{model_size}_v4.txt", timeout=60, energy=model_size * 2)
+#     random_model_exp.run_experiments()

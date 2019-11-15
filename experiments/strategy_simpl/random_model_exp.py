@@ -68,12 +68,12 @@ class RandomModelExp:
         simplified_strategy = self._generate_simplified_strategy(random_model, strategy)
         self.__file.write("-------------------END: SIMPLIFIED STRATEGY-------------------\n")
         self.__file.write("-------------------BEGIN: DOMINO DFS-------------------\n")
-        signal.alarm(self.__timeout)
+        signal.alarm(self.__timeout+30)
         try:
             self._run_domino_dfs(random_model)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
-            self.__avg_domino_time += self.__timeout
+            self.__avg_domino_time += self.__timeout+30
         signal.alarm(0)
         self.__file.write("-------------------END: DOMINO DFS-------------------\n")
         self.__file.write("-------------------BEGIN: APPROXIMATIONS-------------------\n")

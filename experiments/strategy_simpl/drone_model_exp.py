@@ -33,16 +33,18 @@ class DroneModelExp:
         self.__file = open(self.__filename, "a")
 
         self.__file.write(f"EXPERIMENTS START: {datetime.datetime.now()}")
-        for i in range(self.__exp_count):
+        i = 0
+        while i < self.__exp_count:
             self.__file.write(f"----BEGIN: EXPERIMENT {i}----\n")
             result = self._run_experiment()
             if result == False:
-                i -= 1
                 continue
             self.__file.write(f"----END: EXPERIMENT {i}----\n")
+            i += 1
 
         self.__file.write("------STATISTICS------\n")
         self.__file.write(f"Average model generation time: {self.__avg_model_time / self.__exp_count} s\n")
+        self.__file.write(f"Average model states count: {self.__avg_model_states / self.__exp_count}\n")
         self.__file.write(f"Average perfect strategy generation time: {self.__avg_perfect_time / self.__exp_count} s\n")
         self.__file.write(f"Average simplified strategy time: {self.__avg_simplified_time / self.__exp_count} s\n")
         self.__file.write(f"Average domino dfs time: {self.__avg_domino_time / self.__exp_count} s\n")
@@ -64,23 +66,25 @@ class DroneModelExp:
         start = time.process_time()
         random_model.generate()
         end = time.process_time()
-        self.__avg_model_time += (end - start)
-        self.__file.write(f"Model generated in {end - start}s")
+        self.__file.write(f"Model generated in {end - start}s\n")
+        self.__file.write(f"Model has {len(random_model.states)} states\n")
         self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
         strategy = self._generate_perfect_information_strategy(random_model)
-        if strategy == None:
+        if strategy is None:
             return False
+        self.__avg_model_time += (end - start)
+        self.__avg_model_states += len(random_model.states)
         self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
         self.__file.write("-------------------BEGIN: SIMPLIFIED STRATEGY-------------------\n")
         simplified_strategy = self._generate_simplified_strategy(random_model, strategy)
         self.__file.write("-------------------END: SIMPLIFIED STRATEGY-------------------\n")
         self.__file.write("-------------------BEGIN: DOMINO DFS-------------------\n")
-        signal.alarm(self.__timeout)
+        signal.alarm(self.__timeout+30)
         try:
             self._run_domino_dfs(random_model)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
-            self.__avg_domino_time += self.__timeout
+            self.__avg_domino_time += self.__timeout + 30
         signal.alarm(0)
         self.__file.write("-------------------END: DOMINO DFS-------------------\n")
         self.__file.write("-------------------BEGIN: APPROXIMATIONS-------------------\n")
@@ -151,7 +155,7 @@ class DroneModelExp:
         self.__avg_perfect_time += (end - start)
         self.__file.write(f"Strategy generated in: {end - start}s\n")
         self.__file.write(f"Strategy result: {strategy[0] is not None}\n")
-        self.__file.write(f"{strategy}\n")
+        # self.__file.write(f"{strategy}\n")
         if self.__DEBUG:
             self._print_strategy(strategy)
         for index, value in enumerate(strategy):
@@ -174,7 +178,7 @@ class DroneModelExp:
         end = time.process_time()
         self.__avg_simplified_time += (end - start)
         self.__file.write(f"Strategy simplified in: {end - start}s\n")
-        self.__file.write(f"{simplified_strategy}\n")
+        # self.__file.write(f"{simplified_strategy}\n")
         if self.__DEBUG:
             self._print_strategy(simplified_strategy)
         self.__file.write(f"Different: {simplified_strategy != strategy}\n")
