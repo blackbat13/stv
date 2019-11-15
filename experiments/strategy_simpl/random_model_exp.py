@@ -43,6 +43,7 @@ class RandomModelExp:
         self.__file.write(f"Average domino dfs time: {self.__avg_domino_time / self.__exp_count} s\n")
         self.__file.write(f"Average lower approximation time: {self.__avg_lower_approx_time / self.__exp_count} s\n")
         self.__file.write(f"Average upper approximation time: {self.__avg_upper_approx_time / self.__exp_count} s\n")
+        self.__file.write(f"Average approximation time: {(self.__avg_lower_approx_time + self.__avg_upper_approx_time)/self.__exp_count}")
         self.__file.write(
             f"Average perfect strategy reachable states: {self.__avg_perfect_reachable_states / self.__exp_count}\n")
         self.__file.write(f"Average simplified strategy reachable states: {self.__avg_simplified_reachable_states / self.__exp_count}\n")
@@ -104,7 +105,7 @@ class RandomModelExp:
             return
         signal.alarm(0)
         end = time.process_time()
-        self.__avg_upper_approx_time += (end - start)
+        self.__avg_lower_approx_time += (end - start)
         self.__file.write(f"Lower approximation time: {end - start}s\n")
         self.__file.write(f"Lower approximation result: {0 in result}\n")
         new_timeout = self.__timeout - (end - start)
