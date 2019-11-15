@@ -1,4 +1,5 @@
 from models.random_model import *
+from models.drone_model import *
 from comparing_strats.strat_simpl import StrategyComparer
 from typing import List
 import datetime
@@ -6,8 +7,8 @@ import time
 import signal
 
 
-class RandomModelExp:
-    def __init__(self, model_size: int, exp_count: int, filename: str, timeout: int = 60, DEBUG: bool = False):
+class DroneModelExp:
+    def __init__(self, model_size: int, exp_count: int, filename: str, timeout: int = 60, energy: int = 10, DEBUG: bool = False):
         self.__exp_count = exp_count
         self.__DEBUG = DEBUG
         self.__model_size = model_size
@@ -25,6 +26,7 @@ class RandomModelExp:
         self.__avg_simplified_time = 0
         self.__avg_model_time = 0
         self.__avg_domino_time = 0
+        self.__energy = energy
         signal.signal(signal.SIGALRM, self.__timeout_handler)
 
     def run_experiments(self):
@@ -33,7 +35,10 @@ class RandomModelExp:
         self.__file.write(f"EXPERIMENTS START: {datetime.datetime.now()}")
         for i in range(self.__exp_count):
             self.__file.write(f"----BEGIN: EXPERIMENT {i}----\n")
-            self._run_experiment()
+            result = self._run_experiment()
+            if result == False:
+                i -= 1
+                continue
             self.__file.write(f"----END: EXPERIMENT {i}----\n")
 
         self.__file.write("------STATISTICS------\n")
@@ -55,7 +60,7 @@ class RandomModelExp:
         self.__file.close()
 
     def _run_experiment(self):
-        random_model = RandomModel(self.__model_size)
+        random_model = DroneModel(1, [self.__energy], MapGenerator(self.__model_size), is_random=True)
         start = time.process_time()
         random_model.generate()
         end = time.process_time()
@@ -63,6 +68,8 @@ class RandomModelExp:
         self.__file.write(f"Model generated in {end - start}s")
         self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
         strategy = self._generate_perfect_information_strategy(random_model)
+        if strategy == None:
+            return False
         self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
         self.__file.write("-------------------BEGIN: SIMPLIFIED STRATEGY-------------------\n")
         simplified_strategy = self._generate_simplified_strategy(random_model, strategy)
@@ -79,8 +86,9 @@ class RandomModelExp:
         self.__file.write("-------------------BEGIN: APPROXIMATIONS-------------------\n")
         self._run_approximations(random_model)
         self.__file.write("-------------------END: APPROXIMATIONS-------------------\n")
+        return True
 
-    def _run_domino_dfs(self, model: RandomModel):
+    def _run_domino_dfs(self, model: DroneModel):
         winning_states = model.get_winning_states("win")
         strategy_comparer = StrategyComparer(model.model, model.get_actions()[0])
         start = time.process_time()
@@ -93,7 +101,7 @@ class RandomModelExp:
         if self.__DEBUG:
             self._print_strategy(strategy)
 
-    def _run_approximations(self, model: RandomModel):
+    def _run_approximations(self, model: DroneModel):
         winning_states = model.get_winning_states("win")
         signal.alarm(self.__timeout)
         start = time.process_time()
@@ -131,13 +139,15 @@ class RandomModelExp:
             if value is not None:
                 self.__file.write(f"{index}: {value}\n")
 
-    def _generate_perfect_information_strategy(self, model: RandomModel):
+    def _generate_perfect_information_strategy(self, model: DroneModel):
         winning_states = model.get_winning_states("win")
         strategy_comparer = StrategyComparer(model.model, model.get_actions()[0])
         start = time.process_time()
         strategy = strategy_comparer.generate_winning_strategy_perfect_information(0, list(winning_states))
         end = time.process_time()
         defined_in = 0
+        if strategy[0] is None:
+            return None
         self.__avg_perfect_time += (end - start)
         self.__file.write(f"Strategy generated in: {end - start}s\n")
         self.__file.write(f"Strategy result: {strategy[0] is not None}\n")
@@ -156,7 +166,7 @@ class RandomModelExp:
         self.__avg_perfect_reachable_states += defined_in
         return strategy
 
-    def _generate_simplified_strategy(self, model: RandomModel, strategy):
+    def _generate_simplified_strategy(self, model: DroneModel, strategy):
         strategy_comparer = StrategyComparer(model.model, model.get_actions()[0])
         start = time.process_time()
         # simplified_strategy = strategy_comparer.simplify_strategy_one_agent(0, strategy, None)
