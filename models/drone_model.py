@@ -3,6 +3,7 @@ from tools.disjoint_set import DisjointSet
 from random import randint
 from typing import List, Set
 from models.model_generator import ModelGenerator
+import math
 
 
 class CracowMap:
@@ -136,13 +137,53 @@ class CracowMap:
 
     def create_epistemic(self):
         self.disjoint_set = DisjointSet(len(self.places))
-        #self.disjoint_set.union(0, 1)
-        #self.disjoint_set.union(1, 3)
+        # self.disjoint_set.union(0, 1)
+        # self.disjoint_set.union(1, 3)
         self.disjoint_set.union(3, 2)
         self.disjoint_set.union(4, 8)
         self.disjoint_set.union(7, 9)
         self.disjoint_set.union(11, 10)
         self.disjoint_set.union(10, 5)
+
+
+class MapGenerator:
+    def __init__(self, size: int):
+        self.__size = size
+        self.places = []
+        self.connections = []
+        next_places = []
+        first_place = {"id": 0, "x": 0, "y": 0, "PM2.5": False}
+        self.places.append(first_place)
+        next_places.append(first_place)
+        X = [-1, 0, 0, 1]
+        Y = [0, -1, 1, 0]
+        id = 1
+        while len(self.places) < size:
+            i = randint(0, len(next_places) - 1)
+            place = next_places.pop(i)
+            neighbors = randint(2, 4)
+            for i in range(0, neighbors):
+                k = randint(0, 3)
+                new_place = {"id": id, "x": place["x"] + X[k], "y": place["y"] + Y[k], "PM2.5": randint(0, 1) == 0}
+                self.places.append(new_place)
+                next_places.append(new_place)
+                self.connections.append([place["id"], id])
+                id += 1
+        epistemic_count = int(size / math.log2(size))
+        self.disjoint_set = DisjointSet(len(self.places))
+        for i in range(epistemic_count):
+            epistemic_size = int(math.log2(size))
+            for j in range(epistemic_size):
+                a = randint(1, size - 1)
+                b = randint(1, size - 1)
+                count = 0
+                while count < size and self.disjoint_set.is_same(a, b):
+                    a = randint(1, size - 1)
+                    b = randint(1, size - 1)
+                    count += 1
+                if count >= size:
+                    break
+                self.disjoint_set.union(a, b)
 
 
 class DroneModel(ModelGenerator):
@@ -154,6 +195,7 @@ class DroneModel(ModelGenerator):
         self.is_random = is_random
         self.drone_actions: List[str] = ['N', 'W', 'S', 'E', 'F']
         self.graph = []
+        self.create_map_graph()
 
     def _generate_initial_states(self):
         places = []
@@ -295,12 +337,11 @@ class DroneModel(ModelGenerator):
                 state['visited'][drone_id] = list(state['visited'][drone_id])
 
     def _get_props_for_state(self, state: hash) -> List[str]:
-        pass
+        if len(state['visited'][0]) >= len(self.graph):
+            return ["win"]
+        return []
 
     def get_props_list(self) -> List[str]:
-        pass
-
-    def get_winning_states(self, prop: str) -> Set[int]:
         pass
 
     @staticmethod

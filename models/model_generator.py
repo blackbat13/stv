@@ -127,6 +127,12 @@ class ModelGenerator(ABC):
     def get_props_list(self) -> List[str]:
         pass
 
-    @abstractmethod
     def get_winning_states(self, prop: str) -> Set[int]:
-        pass
+        result = []
+        state_id = -1
+        for state in self.states:
+            state_id += 1
+            if prop in state['props']:
+                result.append(state_id)
+        return result
+
