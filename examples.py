@@ -22,10 +22,10 @@
 # bridge_model_experiments = BridgeModelExperiments(1)
 # bridge_model_experiments.run_experiments()
 
-# from experiments.approximations.castle_model_experiments import CastleModelExperiments
-#
-# castle_model_experiments = CastleModelExperiments([1, 1, 1])
-# castle_model_experiments.run_experiments()
+from experiments.approximations.castle_model_experiments import CastleModelExperiments
+
+castle_model_experiments = CastleModelExperiments([1, 1, 1])
+castle_model_experiments.run_experiments()
 
 # from experiments.approximations.dining_cryptographers_experiments import DiningCryptographersExperiments
 #
@@ -92,10 +92,10 @@
 #     random_model_exp = DroneModelExp(model_size=model_size, exp_count=10, filename=f"drone_results_{model_size}_v4.txt", timeout=60, energy=model_size * 2)
 #     random_model_exp.run_experiments()
 
-from experiments.strategy_simpl.drone_model_exp2 import DroneModelExp2
-
-# data = [10, 100, 1000, 10000, 100000]
-data = [3, 5]
-for model_size in data:
-    random_model_exp = DroneModelExp2(model_size=model_size, exp_count=5, filename=f"drone2_results_{model_size}_v1.txt", timeout=60, energy=model_size*2)
-    random_model_exp.run_experiments()
+# from experiments.strategy_simpl.drone_model_exp2 import DroneModelExp2
+#
+# # data = [10, 100, 1000, 10000, 100000]
+# data = [3, 5]
+# for model_size in data:
+#     random_model_exp = DroneModelExp2(model_size=model_size, exp_count=5, filename=f"drone2_results_{model_size}_v1.txt", timeout=60, energy=model_size*2)
+#     random_model_exp.run_experiments()
