@@ -32,5 +32,7 @@ class DroneModelExperiments:
         self.model.generate()
         self.atl_imperfect_model = self.model.model.to_atl_imperfect(self.model.get_actions())
 
-# drone_model_experiments = DroneModelExperiments(1, [1], CracowMap())
-# drone_model_experiments.run_experiments()
+
+if __name__ == "__main__":
+    drone_model_experiments = DroneModelExperiments(1, [1], CracowMap())
+    drone_model_experiments.run_experiments()

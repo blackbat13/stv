@@ -6,6 +6,7 @@ class SLIr(ATLIrModel):
     """
     Class for handling Strategy Logic with perfect information and imperfect recall
     """
+
     def __init__(self, number_of_agents):
         """
         Initializes class based on a number of agents
@@ -88,7 +89,8 @@ class SLIr(ATLIrModel):
 
             for action in self.agents_actions[quant_pref_no]:
                 new_result = self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
-                                      self.update(bind_pref, actions, quant_pref[quant_pref_no][1], action), all_quant_ids)
+                                      self.update(bind_pref, actions, quant_pref[quant_pref_no][1], action),
+                                      all_quant_ids)
                 if first and len(new_result) > 0:
                     result.update(new_result)
                     first = False

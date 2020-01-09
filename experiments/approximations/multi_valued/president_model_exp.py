@@ -32,5 +32,7 @@ class PresidentModelExp:
         end = time.clock()
         print("Verif:", end - start, "s")
 
-# president_model_exp = PresidentModelExp(5,1,5)
-# president_model_exp.run_experiments()
+
+if __name__ == "__main__":
+    president_model_exp = PresidentModelExp(5, 1, 5)
+    president_model_exp.run_experiments()

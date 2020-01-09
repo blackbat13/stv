@@ -195,7 +195,7 @@ class CastlesIsplGeneratorObjective(IsplGenerator):
         env_init_states = ""
         for castle_id in range(0, self._no_castles):
             env_init_states += f"\tEnvironment.castle{castle_id + 1}HP={self._castles_life[castle_id]} and\n" \
-                f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n"
+                               f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n"
         return env_init_states
 
     def __create_workers_init_states(self) -> str:
@@ -358,16 +358,16 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
         else:
             protocol += "\t\tEnvironment.decide=true: " + "{wait};\n"
         protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=true and " \
-            f"Environment.decide=false: {{wait}};\n" \
-            f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=true and " \
-            f"Environment.decide=false: {{defend, "
+                    f"Environment.decide=false: {{wait}};\n" \
+                    f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=true and " \
+                    f"Environment.decide=false: {{defend, "
         for castle_id in range(0, self._no_castles):
             if worker_castle_id == castle_id:
                 continue
             protocol += f"attack{castle_id + 1}, "
         protocol += "wait};\n"
         protocol += f"\t\tEnvironment.castle{worker_castle_id + 1}Defeated=false and canDefend=false and " \
-            f"Environment.decide=false: {{"
+                    f"Environment.decide=false: {{"
         for castle_id in range(0, self._no_castles):
             if worker_castle_id == castle_id:
                 continue
@@ -429,8 +429,8 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
         init_states = "InitStates\n"
         for castle_id in range(0, self._no_castles):
             init_states += f"\tEnvironment.castle{castle_id + 1}HP={self._castles_life[castle_id]} and\n" \
-                f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n" \
-                f"\tDecider{castle_id + 1}.decide=true and\n"
+                           f"\tEnvironment.castle{castle_id + 1}Defeated=false and\n" \
+                           f"\tDecider{castle_id + 1}.decide=true and\n"
 
         for worker_id in range(0, self._no_workers):
             init_states += f"\tWorker{worker_id + 1}.canDefend=true and\n"

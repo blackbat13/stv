@@ -70,9 +70,7 @@ class DroneStrExp:
         print("Epistemic mismatch for simplified strategy: ", epistemic_mismatch)
         print("Simpified strategy defined in", defined_in, "states")
 
-        # graphDrawing = GraphDrawing(drone_model.model, strategy)
-        # graphDrawing.draw()
 
-
-drone_str_exp = DroneStrExp(no_drones=1, energies=[3], DEBUG=True)
-drone_str_exp.run_experiments()
+if __name__ == "__main__":
+    drone_str_exp = DroneStrExp(no_drones=1, energies=[3], DEBUG=True)
+    drone_str_exp.run_experiments()

@@ -34,7 +34,7 @@ class SimpleVoting2ModelExperiments:
         sl_model = self.model.model.to_sl_perfect(self.model.get_actions())
 
         start = time.perf_counter()
-        # result = sl_model.verify(winning_states, quant_pref, bind_pref, quant_all_ids)
+        result = sl_model.verify(winning_states, quant_pref, bind_pref, quant_all_ids)
         stop = time.perf_counter()
 
         time_verification = stop - start
@@ -43,11 +43,11 @@ class SimpleVoting2ModelExperiments:
         #     print(simple_voting.states[state_id])
         formula_result = False
 
-        # if 0 in result:
-        #     formula_result = True
-        #     print("True")
-        # else:
-        #     print("False")
+        if 0 in result:
+            formula_result = True
+            print("True")
+        else:
+            print("False")
 
         file = open("results-sv2.txt", "a")
         file.write(f"no_candidates: {self.no_candidates}\n")
@@ -70,5 +70,7 @@ class SimpleVoting2ModelExperiments:
         print(self.time_generation)
         print(len(self.model.states))
 
-# simple_voting2_model_experiments = SimpleVoting2ModelExperiments(2, 5)
-# simple_voting2_model_experiments.run_experiments()
+
+if __name__ == "__main__":
+    simple_voting2_model_experiments = SimpleVoting2ModelExperiments(2, 5)
+    simple_voting2_model_experiments.run_experiments()

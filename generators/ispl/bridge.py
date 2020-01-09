@@ -71,11 +71,11 @@ class BridgeModelIsplGenerator(IsplGenerator):
 
     def _create_environment_obsvars(self) -> str:
         obsvars = f"\tObsvars:\n" \
-            f"\t\tfirstTeamScore: 0..{self._number_of_cards_in_hand};\n" \
-            f"\t\tsecondTeamScore: 0..{self._number_of_cards_in_hand};\n" \
-            f"\t\tbeginningPlayer: 0..3;\n" \
-            f"\t\tcurrentPlayer: 0..4;\n" \
-            f"\t\tclock: 0..4;\n"
+                  f"\t\tfirstTeamScore: 0..{self._number_of_cards_in_hand};\n" \
+                  f"\t\tsecondTeamScore: 0..{self._number_of_cards_in_hand};\n" \
+                  f"\t\tbeginningPlayer: 0..3;\n" \
+                  f"\t\tcurrentPlayer: 0..4;\n" \
+                  f"\t\tclock: 0..4;\n"
         obsvars += self._create_env_player_cards_obsvars()
         obsvars += self._create_env_n_cards_obsvars()
         obsvars += self._create_env_history_cards_obsvars()
@@ -276,10 +276,10 @@ class BridgeModelIsplGenerator(IsplGenerator):
                 player = self.player_names[player_number]
                 if player == self.player_names[2]:
                     evolution += f"\t\t{player}Card={card} if {self.player_names[0]}.Action=Play{card} " \
-                        f"and currentPlayer=2;\n"
+                                 f"and currentPlayer=2;\n"
                 else:
                     evolution += f"\t\t{player}Card={card} if {player}.Action=Play{card} and " \
-                        f"currentPlayer={player_number};\n"
+                                 f"currentPlayer={player_number};\n"
         return evolution
 
     def _create_env_suit_evolution(self) -> str:
@@ -386,12 +386,12 @@ class BridgeModelIsplGenerator(IsplGenerator):
         for i in range(1, self._number_of_cards_in_hand + 1):
             for j in range(0, 4 * self._number_of_cards):
                 protocol += f"\t\t{self.player_names[player_number][0]}card{i}=" \
-                                f"{self.player_names[player_number][0]}{self._cards[j]} and " \
-                                f"Environment.currentPlayer={player_number} and Environment.clock<4 and " \
-                                f"(Environment.suit=None or Environment.suit={self._cards_colors[self._cards[j]]} or " \
-                                f"((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and " \
-                                f"Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or " \
-                                f"(hasHeart<=0 and Environment.suit=Heart))): {{Play" + \
+                            f"{self.player_names[player_number][0]}{self._cards[j]} and " \
+                            f"Environment.currentPlayer={player_number} and Environment.clock<4 and " \
+                            f"(Environment.suit=None or Environment.suit={self._cards_colors[self._cards[j]]} or " \
+                            f"((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and " \
+                            f"Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or " \
+                            f"(hasHeart<=0 and Environment.suit=Heart))): {{Play" + \
                             self._cards[j] + "};\n"
 
         if player_number == 0:
@@ -399,21 +399,21 @@ class BridgeModelIsplGenerator(IsplGenerator):
                 for j in range(0, 4 * self._number_of_cards):
                     protocol += "\t\tEnvironment.cardN" + str(i) + "=N"
                     protocol += f"{self._cards[j]} and Environment.currentPlayer=2 and " \
-                        "Environment.clock<4 and " \
-                        "(Environment.suit=None or Environment.suit=" \
-                        f"{self._cards_colors[self._cards[j]]} or " \
-                        "((Environment.hasSpade<=0 and Environment.suit=Spade) or " \
-                        "(Environment.hasClub<=0 and Environment.suit=Club) or " \
-                        "(Environment.hasDiamond<=0 and Environment.suit=Diamond) or " \
-                        "(Environment.hasHeart<=0 and Environment.suit=Heart))): " \
-                        f"{{Play{self._cards[j]}}};\n"
+                                "Environment.clock<4 and " \
+                                "(Environment.suit=None or Environment.suit=" \
+                                f"{self._cards_colors[self._cards[j]]} or " \
+                                "((Environment.hasSpade<=0 and Environment.suit=Spade) or " \
+                                "(Environment.hasClub<=0 and Environment.suit=Club) or " \
+                                "(Environment.hasDiamond<=0 and Environment.suit=Diamond) or " \
+                                "(Environment.hasHeart<=0 and Environment.suit=Heart))): " \
+                                f"{{Play{self._cards[j]}}};\n"
 
         if player_number != 0:
             protocol += f"\t\t!(Environment.currentPlayer={player_number}) or Environment.clock=4: " \
-                f"{{Wait}};\n"
+                        f"{{Wait}};\n"
         else:
             protocol += f"\t\t(!(Environment.currentPlayer={player_number}) and " \
-                f"!(Environment.currentPlayer=2)) or Environment.clock=4: {{Wait}};\n"
+                        f"!(Environment.currentPlayer=2)) or Environment.clock=4: {{Wait}};\n"
         protocol += "\tend Protocol\n"
         return protocol
 
@@ -424,7 +424,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
             for j in range(0, 4 * self._number_of_cards):
                 card = self._cards[j]
                 evolution += f"\t\t\t({self.player_names[player_number][0]}card{i}=" \
-                    f"{self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
+                             f"{self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -437,7 +437,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
                     if self._cards_colors[card] != color:
                         continue
                     evolution += f"\t\t\t({self.player_names[player_number][0]}card{i}=" \
-                        f"{self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
+                                 f"{self.player_names[player_number][0]}{card} and Action=Play{card}) or\n"
 
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -448,7 +448,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
     def _create_evaluation(self) -> str:
         evaulation = "Evaluation\n" \
                      "\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and " \
-            f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
+                     f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
                      "\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and " \
                      "Environment.firstTeamScore+Environment.secondTeamScore={self.__number_of_cards_in_hand};\n" \
                      "end Evaluation\n\n"
@@ -512,7 +512,7 @@ class BridgeModelIsplGenerator(IsplGenerator):
                         init_states += f" and Environment.cardN{j}=N{self._cards[new_card_ordering[i]]}"
                     else:
                         init_states += f" and {player}.{player[0]}card{j}=" \
-                            f"{player[0]}{self._cards[new_card_ordering[i]]}"
+                                       f"{player[0]}{self._cards[new_card_ordering[i]]}"
 
                     i += 1
 
@@ -568,8 +568,8 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
     def _create_environment_obsvars(self):
         obsvars = "\tObsvars:\n" \
-            f"\t\tfirstTeamScore: 0..{self._number_of_cards_in_hand};\n" \
-            f"\t\tsecondTeamScore: 0..{self._number_of_cards_in_hand};\n" \
+                  f"\t\tfirstTeamScore: 0..{self._number_of_cards_in_hand};\n" \
+                  f"\t\tsecondTeamScore: 0..{self._number_of_cards_in_hand};\n" \
                   "\t\tbeginningPlayer: 0..3;\n" \
                   "\t\tcurrentPlayer: 0..4;\n" \
                   "\t\tclock: 0..5;\n"
@@ -633,7 +633,7 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                 evolution += "\t\tsecondTeamScore=secondTeamScore+1"
 
             evolution += f" and beginningPlayer={winning_player}" \
-                f" and clock=0 and suit=None and currentPlayer={winning_player}"
+                         f" and clock=0 and suit=None and currentPlayer={winning_player}"
 
             for player in self.player_names:
                 evolution += f" and {player}Card=None"
@@ -676,30 +676,30 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
             # Player S plays
             evolution += f"\t\tcurrentPlayer=1 and clock=clock+1 and SPlayerCard={card} and {card}H=true if\n" \
-                f"\t\t\tcurrentPlayer=0 and clock<4 and clock>0 and SPlayer.Action=Play{card};\n" \
-                f"\t\tcurrentPlayer=1 and clock=clock+1 and SPlayerCard={card} and {card}H=true" \
-                f" and suit={self._cards_colors[card]} if\n" \
-                f"\t\t\tcurrentPlayer=0 and clock<4 and clock=0 and SPlayer.Action=Play{card};\n"
+                         f"\t\t\tcurrentPlayer=0 and clock<4 and clock>0 and SPlayer.Action=Play{card};\n" \
+                         f"\t\tcurrentPlayer=1 and clock=clock+1 and SPlayerCard={card} and {card}H=true" \
+                         f" and suit={self._cards_colors[card]} if\n" \
+                         f"\t\t\tcurrentPlayer=0 and clock<4 and clock=0 and SPlayer.Action=Play{card};\n"
 
             # Player S should play, but play Player N card
 
             for j in range(1, self._number_of_cards_in_hand + 1):
                 evolution += f"\t\tNPlayerCard={card} and {card}H=true and currentCardN{j}=None if\n" \
-                    f"\t\t\tcurrentPlayer=0 and clock<4 and SPlayer.Action=PlayN{card} and " \
-                    f"currentCardN{j}={card} and NPlayerCard=None;\n"
+                             f"\t\t\tcurrentPlayer=0 and clock<4 and SPlayer.Action=PlayN{card} and " \
+                             f"currentCardN{j}={card} and NPlayerCard=None;\n"
 
             # Player W plays, Player S Wait
 
             evolution += f"\t\tcurrentPlayer=2 and clock=clock+1 and WPlayerCard={card} and {card}H=true if\n" \
-                f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and NPlayerCard=None;\n" \
-                f"\t\tcurrentPlayer=2 and clock=clock+1 and WPlayerCard={card} and {card}H=true" \
-                f" and suit={self._cards_colors[card]} if\n" \
-                f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and NPlayerCard=None;\n" \
-                f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true if\n" \
-                f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and !(NPlayerCard=None);\n" \
-                f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
-                f" and suit={self._cards_colors[card]} if\n" \
-                f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and !(NPlayerCard=None);\n"
+                         f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and NPlayerCard=None;\n" \
+                         f"\t\tcurrentPlayer=2 and clock=clock+1 and WPlayerCard={card} and {card}H=true" \
+                         f" and suit={self._cards_colors[card]} if\n" \
+                         f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and NPlayerCard=None;\n" \
+                         f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true if\n" \
+                         f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and !(NPlayerCard=None);\n" \
+                         f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
+                         f" and suit={self._cards_colors[card]} if\n" \
+                         f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Wait and !(NPlayerCard=None);\n"
 
             # Player W plays, Player S Play his card
             for i2 in range(0, self._number_of_cards * 4):
@@ -709,13 +709,13 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                     continue
 
                 evolution += f"\t\tcurrentPlayer=2 and clock=clock+1 and WPlayerCard={card} and {card}H=true" \
-                    f" and SPlayerCard={card2} and {card2}H=true" \
-                    f" and suit={self._cards_colors[card]} if\n" \
-                    f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Play{card2} and NPlayerCard=None;\n" \
-                    f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
-                    f" and SPlayerCard={card2} and {card2}H=true" \
-                    f" and suit={self._cards_colors[card]} if\n" \
-                    f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Play{card2} and !(NPlayerCard=None);\n"
+                             f" and SPlayerCard={card2} and {card2}H=true" \
+                             f" and suit={self._cards_colors[card]} if\n" \
+                             f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Play{card2} and NPlayerCard=None;\n" \
+                             f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
+                             f" and SPlayerCard={card2} and {card2}H=true" \
+                             f" and suit={self._cards_colors[card]} if\n" \
+                             f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=Play{card2} and !(NPlayerCard=None);\n"
 
             # Player W plays, Player S Play N card
             for i2 in range(0, self._number_of_cards * 4):
@@ -725,59 +725,59 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
                 for j in range(1, self._number_of_cards_in_hand + 1):
                     evolution += f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
-                        f" and NPlayerCard={card2} and {card2}H=true" \
-                        f" and currentCardN{j}=None if\n" \
-                        f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} " \
-                        f"and SPlayer.Action=PlayN{card2} and NPlayerCard=None" \
-                        f" and currentCardN{j}={card2};\n" \
-                        f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
-                        f" and NPlayerCard={card2} and {card2}H=true" \
-                        f" and currentCardN{j}=None" \
-                        f" and suit={self._cards_colors[card]} if\n" \
-                        f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and " \
-                        f"SPlayer.Action=PlayN{card2} and NPlayerCard=None" \
-                        f" and currentCardN{j}={card2};\n"
+                                 f" and NPlayerCard={card2} and {card2}H=true" \
+                                 f" and currentCardN{j}=None if\n" \
+                                 f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} " \
+                                 f"and SPlayer.Action=PlayN{card2} and NPlayerCard=None" \
+                                 f" and currentCardN{j}={card2};\n" \
+                                 f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
+                                 f" and NPlayerCard={card2} and {card2}H=true" \
+                                 f" and currentCardN{j}=None" \
+                                 f" and suit={self._cards_colors[card]} if\n" \
+                                 f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and " \
+                                 f"SPlayer.Action=PlayN{card2} and NPlayerCard=None" \
+                                 f" and currentCardN{j}={card2};\n"
 
                 evolution += f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true if\n" \
-                    f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
-                    f"and !(NPlayerCard=None);\n" \
-                    f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
-                    f" and suit={self._cards_colors[card]} if\n" \
-                    f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
-                    f"and !(NPlayerCard=None);\n"
+                             f"\t\t\tcurrentPlayer=1 and clock>0 and WPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
+                             f"and !(NPlayerCard=None);\n" \
+                             f"\t\tcurrentPlayer=3 and clock=clock+2 and WPlayerCard={card} and {card}H=true" \
+                             f" and suit={self._cards_colors[card]} if\n" \
+                             f"\t\t\tcurrentPlayer=1 and clock=0 and WPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
+                             f"and !(NPlayerCard=None);\n"
 
             # Player N Plays
 
             for j in range(1, self._number_of_cards_in_hand + 1):
                 evolution += f"\t\tcurrentPlayer=3 and clock=clock+1 and NPlayerCard={card} and {card}H=true " \
-                    f"and currentCardN{j}=None if\n" \
-                    f"\t\t\tcurrentPlayer=2 and clock>0 and clock<4 and SPlayer.Action=PlayN{card} " \
-                    f"and currentCardN{j}={card} and NPlayerCard=None;\n" \
-                    f"\t\tcurrentPlayer=3 and clock=clock+1 and NPlayerCard={card} and {card}H=true and " \
-                    f"currentCardN{j}=None and suit={self._cards_colors[card]} if\n" \
-                    f"\t\t\tcurrentPlayer=2 and clock=0 and SPlayer.Action=PlayN{card} and " \
-                    f"currentCardN{j}={card} and NPlayerCard=None;\n"
+                             f"and currentCardN{j}=None if\n" \
+                             f"\t\t\tcurrentPlayer=2 and clock>0 and clock<4 and SPlayer.Action=PlayN{card} " \
+                             f"and currentCardN{j}={card} and NPlayerCard=None;\n" \
+                             f"\t\tcurrentPlayer=3 and clock=clock+1 and NPlayerCard={card} and {card}H=true and " \
+                             f"currentCardN{j}=None and suit={self._cards_colors[card]} if\n" \
+                             f"\t\t\tcurrentPlayer=2 and clock=0 and SPlayer.Action=PlayN{card} and " \
+                             f"currentCardN{j}={card} and NPlayerCard=None;\n"
 
             # Player N should Play, Player S play his own card
 
             evolution += f"\t\tSPlayerCard={card} and {card}H=true if\n" \
-                f"\t\t\tcurrentPlayer=2 and clock<4 and SPlayer.Action=Play{card};\n"
+                         f"\t\t\tcurrentPlayer=2 and clock<4 and SPlayer.Action=Play{card};\n"
 
             # Player E Plays, Player S Wait
 
             evolution += f"\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard={card} and {card}H=true if\n" \
-                f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait " \
-                f"and SPlayerCard=None;\n" \
-                f"\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard={card} and {card}H=true" \
-                f" and suit={self._cards_colors[card]} if\n" \
-                f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait " \
-                f"and SPlayerCard=None;\n" \
-                f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true if\n" \
-                f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait " \
-                f"and !(SPlayerCard=None);\n" \
-                f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true" \
-                f" and suit={self._cards_colors[card]} if\n" \
-                f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait and !(SPlayerCard=None);\n"
+                         f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait " \
+                         f"and SPlayerCard=None;\n" \
+                         f"\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard={card} and {card}H=true" \
+                         f" and suit={self._cards_colors[card]} if\n" \
+                         f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait " \
+                         f"and SPlayerCard=None;\n" \
+                         f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true if\n" \
+                         f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait " \
+                         f"and !(SPlayerCard=None);\n" \
+                         f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true" \
+                         f" and suit={self._cards_colors[card]} if\n" \
+                         f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} and SPlayer.Action=Wait and !(SPlayerCard=None);\n"
 
             # Player E Plays, Player S Play his card
 
@@ -788,12 +788,12 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                     continue
 
                 evolution += f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true" \
-                    f" and SPlayerCard={card2} and {card2}H=true" \
-                    f" and suit={self._cards_colors[card]} if\n" \
-                    f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} and SPlayer.Action=Play{card2};\n" \
-                    f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true" \
-                    f" and SPlayerCard={card2} and {card2}H=true if\n" \
-                    f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=Play{card2};\n"
+                             f" and SPlayerCard={card2} and {card2}H=true" \
+                             f" and suit={self._cards_colors[card]} if\n" \
+                             f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} and SPlayer.Action=Play{card2};\n" \
+                             f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true" \
+                             f" and SPlayerCard={card2} and {card2}H=true if\n" \
+                             f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=Play{card2};\n"
 
             # Player E Plays, Player S Play N card
 
@@ -804,24 +804,24 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
                 for j in range(1, self._number_of_cards_in_hand + 1):
                     evolution += f"\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard={card} and {card}H=true " \
-                        f"and NPlayerCard={card2} and {card2}H=true and currentCardN{j}=None " \
-                        f"and suit={self._cards_colors[card]} if\n" \
-                        f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} " \
-                        f"and SPlayer.Action=PlayN{card2} and NPlayerCard=None " \
-                        f"and currentCardN{j}={card2} and SPlayerCard=None;\n" \
-                        f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true " \
-                        f"and NPlayerCard={card2} and {card2}H=true " \
-                        f"and currentCardN{j}=None and suit={self._cards_colors[card]} if\n" \
-                        f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} " \
-                        f"and SPlayer.Action=PlayN{card2} and NPlayerCard=None and currentCardN{j}={card2} " \
-                        f"and !(SPlayerCard=None);\n"
+                                 f"and NPlayerCard={card2} and {card2}H=true and currentCardN{j}=None " \
+                                 f"and suit={self._cards_colors[card]} if\n" \
+                                 f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} " \
+                                 f"and SPlayer.Action=PlayN{card2} and NPlayerCard=None " \
+                                 f"and currentCardN{j}={card2} and SPlayerCard=None;\n" \
+                                 f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true " \
+                                 f"and NPlayerCard={card2} and {card2}H=true " \
+                                 f"and currentCardN{j}=None and suit={self._cards_colors[card]} if\n" \
+                                 f"\t\t\tcurrentPlayer=3 and clock=0 and EPlayer.Action=Play{card} " \
+                                 f"and SPlayer.Action=PlayN{card2} and NPlayerCard=None and currentCardN{j}={card2} " \
+                                 f"and !(SPlayerCard=None);\n"
 
                 evolution += f"\t\tcurrentPlayer=0 and clock=clock+1 and EPlayerCard={card} and {card}H=true if\n" \
-                    f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
-                    f"and !(NPlayerCard=None) and SPlayerCard=None;\n" \
-                    f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true if\n" \
-                    f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
-                    f"and !(NPlayerCard=None) and !(SPlayerCard=None);\n"
+                             f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
+                             f"and !(NPlayerCard=None) and SPlayerCard=None;\n" \
+                             f"\t\tcurrentPlayer=1 and clock=clock+2 and EPlayerCard={card} and {card}H=true if\n" \
+                             f"\t\t\tcurrentPlayer=3 and clock>0 and EPlayer.Action=Play{card} and SPlayer.Action=PlayN{card2} " \
+                             f"and !(NPlayerCard=None) and !(SPlayerCard=None);\n"
 
         evolution += "\tend Evolution\n"
         return evolution
@@ -884,10 +884,10 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                 protocol += f"\t\tcard{i}={self._cards[j]}"
                 if player_number != 0:
                     protocol += f" and Environment.currentPlayer={player_number} and Environment.clock<4 and " \
-                        f"(Environment.suit=None or Environment.suit={self._cards_colors[self._cards[j]]} " \
-                        f"or ((hasSpade<=0 and Environment.suit=Spade) or " \
-                        f"(hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and " \
-                        f"Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))):"
+                                f"(Environment.suit=None or Environment.suit={self._cards_colors[self._cards[j]]} " \
+                                f"or ((hasSpade<=0 and Environment.suit=Spade) or " \
+                                f"(hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and " \
+                                f"Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))):"
                 else:
                     protocol += " and Environment.SPlayerCard=None:"
                 protocol += f" {{Play{self._cards[j]}"
@@ -912,7 +912,7 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                 evolution += f"\t\tcard{i}=None"
                 if player_number != 0:
                     evolution += f" and has{self._cards_colors[self._cards[j]]}=" \
-                        f"has{self._cards_colors[self._cards[j]]}-1"
+                                 f"has{self._cards_colors[self._cards[j]]}-1"
                 evolution += f" if card{i}={self._cards[j]} and Action=Play{self._cards[j]}"
                 if player_number == 0:
                     evolution += " and Environment.SPlayerCard=None;\n"
@@ -924,11 +924,11 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
     def _create_evaluation(self) -> str:
         evaulation = f"Evaluation\n" \
-            f"\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore " \
-            f"and Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
-            f"\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and " \
-            f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
-            f"end Evaluation\n\n"
+                     f"\tFirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore " \
+                     f"and Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
+                     f"\tSecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and " \
+                     f"Environment.firstTeamScore+Environment.secondTeamScore={self._number_of_cards_in_hand};\n" \
+                     f"end Evaluation\n\n"
         return evaulation
 
     def _create_init_states(self) -> str:
@@ -984,7 +984,7 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
                 for j in range(1, self._number_of_cards_in_hand + 1):
                     if player == "NPlayer":
                         init_states += f" and Environment.cardN{j}={self._cards[new_card_ordering[i]]}" \
-                            f" and Environment.currentCardN{j}={self._cards[new_card_ordering[i]]}"
+                                       f" and Environment.currentCardN{j}={self._cards[new_card_ordering[i]]}"
                     else:
                         init_states += f" and {player}.card{j}={self._cards[new_card_ordering[i]]}"
                     i += 1

@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class AExperiment(ABC):
+    """Abstract class for the experiments"""
+
     def __init__(self, DEBUG: bool = False):
         self._DEBUG = DEBUG
         self._results_file = None

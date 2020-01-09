@@ -1,6 +1,5 @@
 from models.random_model import *
 from comparing_strats.strat_simpl import StrategyComparer
-from typing import List
 import datetime
 import time
 import signal

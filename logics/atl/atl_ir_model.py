@@ -368,7 +368,7 @@ class ATLirModel(ATLIrModel):
     def finish_model(self):
         self.epistemic_class_membership = ListTools.create_array_of_size(self.number_of_agents,
                                                                          ListTools.create_value_array_of_size(
-                                                                              self.number_of_states, -1))
+                                                                             self.number_of_states, -1))
 
     def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]):
         """Must be called after creating the whole model"""
@@ -524,7 +524,7 @@ class ATLirModelDisjoint(ATLIrModel):
     def finish_model(self):
         self.epistemic_class_membership = ListTools.create_array_of_size(self.number_of_agents,
                                                                          ListTools.create_value_array_of_size(
-                                                                              self.number_of_states, -1))
+                                                                             self.number_of_states, -1))
 
     def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]):
         """Must be called after creating the whole model"""

@@ -2,6 +2,7 @@ from pyparsing import *
 
 __author__ = 'Arthur Queffelec'
 
+
 class AlternatingTimeTemporalLogicParser:
     def __init__(self, lat, props):
         self.lat = lat
@@ -25,11 +26,10 @@ class AlternatingTimeTemporalLogicParser:
         self.until = Keyword("U")
         self.weak = Keyword("W")
         # Unary Connectives
-        self.not_ = Keyword("!") #| Keyword("~")
-        self.next = Keyword("X") #| Keyword("()")
-        self.event = Keyword("F") #| Keyword("<>")
-        self.always = Keyword("G") #| Keyword("[]")
-
+        self.not_ = Keyword("!")  # | Keyword("~")
+        self.next = Keyword("X")  # | Keyword("()")
+        self.event = Keyword("F")  # | Keyword("<>")
+        self.always = Keyword("G")  # | Keyword("[]")
 
     def initializeZeroaryAndAtomicFormulas(self):
         self.lattice = oneOf(self.lat)
@@ -45,8 +45,8 @@ class AlternatingTimeTemporalLogicParser:
         self.unaryFormula = Group(
             self.unaryConnective + self.formula) | \
                             Group(
-            self.left_agents + Group(delimitedList(ZeroOrMore(Word(alphanums)), delim=','))
-            + self.right_agents + self.formula)
+                                self.left_agents + Group(delimitedList(ZeroOrMore(Word(alphanums)), delim=','))
+                                + self.right_agents + self.formula)
         self.binaryFormula = Group(
             self.left_parenthesis
             + self.formula + self.binaryConnective
@@ -65,44 +65,58 @@ class AlternatingTimeTemporalLogicParser:
             print(err)
             return "Error"
 
-def isBinary(formula):
-    return len(formula) == 3
+    @staticmethod
+    def isBinary(formula):
+        return len(formula) == 3
 
-def isUnary(formula):
-    return len(formula) == 2
+    @staticmethod
+    def isUnary(formula):
+        return len(formula) == 2
 
-def isAbility(formula):
-    return len(formula) == 4 and formula[0] == '<<' and formula[2] == '>>'
+    @staticmethod
+    def isAbility(formula):
+        return len(formula) == 4 and formula[0] == '<<' and formula[2] == '>>'
 
-def isOrder(formula):
-    return len(formula) == 3 and formula[1] == '<='
+    @staticmethod
+    def isOrder(formula):
+        return len(formula) == 3 and formula[1] == '<='
 
-def isOr(formula):
-    return len(formula) == 3 and formula[1] == '|'
+    @staticmethod
+    def isOr(formula):
+        return len(formula) == 3 and formula[1] == '|'
 
-def isAnd(formula):
-    return len(formula) == 3 and formula[1] == '&'
+    @staticmethod
+    def isAnd(formula):
+        return len(formula) == 3 and formula[1] == '&'
 
-def isUntil(formula):
-    return len(formula) == 3 and formula[1] == 'U'
+    @staticmethod
+    def isUntil(formula):
+        return len(formula) == 3 and formula[1] == 'U'
 
-def isWeakUntil(formula):
-    return len(formula) == 3 and formula[1] == 'W'
+    @staticmethod
+    def isWeakUntil(formula):
+        return len(formula) == 3 and formula[1] == 'W'
 
-def isNot(formula):
-    return len(formula) == 2 and formula[0] == '!'
+    @staticmethod
+    def isNot(formula):
+        return len(formula) == 2 and formula[0] == '!'
 
-def isNext(formula):
-    return len(formula) == 2 and formula[0] == 'X'
+    @staticmethod
+    def isNext(formula):
+        return len(formula) == 2 and formula[0] == 'X'
 
-def isEventually(formula):
-    return len(formula) == 2 and formula[0] == 'F'
+    @staticmethod
+    def isEventually(formula):
+        return len(formula) == 2 and formula[0] == 'F'
 
-def isAlways(formula):
-    return len(formula) == 2 and formula[0] == 'G'
+    @staticmethod
+    def isAlways(formula):
+        return len(formula) == 2 and formula[0] == 'G'
 
-#props = "In Out Penalty Collision"
-#const = "b n i u s t"
-#ATLparser = AlternatingTimeTemporalLogicParser(const, props)
-#txt = input()
-#print(str(ATLparser.parse(txt)))
+
+if __name__ == "__main__":
+    props = "In Out Penalty Collision"
+    const = "b n i u s t"
+    ATLparser = AlternatingTimeTemporalLogicParser(const, props)
+    txt = input()
+    print(str(ATLparser.parse(txt)))

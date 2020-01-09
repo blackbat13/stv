@@ -144,3 +144,8 @@ class CastleModel(ModelGenerator):
                 result.append(state_id)
 
         return result
+
+
+if __name__ == "__main__":
+    castle_model = CastleModel([1, 1, 1], [3, 3, 3])
+    castle_model.generate()

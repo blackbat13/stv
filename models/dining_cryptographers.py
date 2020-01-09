@@ -74,3 +74,8 @@ class DiningCryptographers(ModelGenerator):
 
     def get_winning_states(self, prop: str) -> List[int]:
         pass
+
+
+if __name__ == "__main__":
+    model = DiningCryptographers(3)
+    model.generate()

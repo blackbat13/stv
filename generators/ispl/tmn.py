@@ -500,12 +500,12 @@ class TmnProtocolIsplGenerator:
         init_states += "\tEnvironment.protocol=false and\n"
 
         for message_no in range(1, self.no_messages + 1):
-            init_states += f"\tEnvironment.message{message_no}Key={keys[message_no-1]}KeyM and\n"
+            init_states += f"\tEnvironment.message{message_no}Key={keys[message_no - 1]}KeyM and\n"
 
         keys = ["alice", "bob", "bob"]
 
         for message_no in range(1, self.no_messages + 1):
-            init_states += f"\tEnvironment.message{message_no}Content={keys[message_no-1]}KeyM and\n"
+            init_states += f"\tEnvironment.message{message_no}Content={keys[message_no - 1]}KeyM and\n"
 
         for agent_name in self.agents:
             agent_name = StringTools.capitalize_first_letter(agent_name)

@@ -66,12 +66,15 @@ class MachineModelExp:
             machine_model = MachineModel(no_robots=no_robots, no_machines=no_machines, map_size=(size, size),
                                          items_limit=self.items_limit,
                                          robot_positions=robot_positions, machine_positions=machine_positions,
-                                         obstacle_positions=obstacle_positions, machine_requirements=machine_requirements,
+                                         obstacle_positions=obstacle_positions,
+                                         machine_requirements=machine_requirements,
                                          production_times=production_times, imperfect=self.imperfect)
         elif self.model_type == self.ModelType.CHARGING:
-            machine_model = MachineModelWithCharging(no_robots=no_robots, no_machines=no_machines, map_size=(size, size),
+            machine_model = MachineModelWithCharging(no_robots=no_robots, no_machines=no_machines,
+                                                     map_size=(size, size),
                                                      items_limit=self.items_limit,
-                                                     robot_positions=robot_positions, machine_positions=machine_positions,
+                                                     robot_positions=robot_positions,
+                                                     machine_positions=machine_positions,
                                                      obstacle_positions=obstacle_positions,
                                                      charging_stations_positions=ch_station_positions,
                                                      machine_requirements=machine_requirements,
@@ -80,7 +83,8 @@ class MachineModelExp:
         elif self.model_type == self.ModelType.STORAGE:
             machine_model = MachineModelWithStorage(no_robots=no_robots, no_machines=no_machines, map_size=(size, size),
                                                     items_limit=self.items_limit,
-                                                    robot_positions=robot_positions, machine_positions=machine_positions,
+                                                    robot_positions=robot_positions,
+                                                    machine_positions=machine_positions,
                                                     obstacle_positions=obstacle_positions,
                                                     machine_requirements=machine_requirements,
                                                     storage_positions=storage_positions,
@@ -157,5 +161,6 @@ class MachineModelExp:
         print(f'Number of reachable states: {len(result)}')
 
 
-# machine_model_exp = MachineModelExp(1, 1, 1)
-# machine_model_exp.run_experiments()
+if __name__ == "__main__":
+    machine_model_exp = MachineModelExp(1, 1, 1)
+    machine_model_exp.run_experiments()

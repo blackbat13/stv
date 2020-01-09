@@ -47,7 +47,7 @@ class SeleneModelIsplGenerator:
     def __create_environment_vars(self):
         vars = "\tVars:\n"
 
-        for i in range(1, self.number_of_voters+1):
+        for i in range(1, self.number_of_voters + 1):
             vars += "\t\ttracker" + str(i) + ": 0.." + str(self.number_of_voters) + ";\n"
             vars += "\t\tvoter" + str(i) + "Voted: boolean;\n"
             vars += "\t\tvoter" + str(i) + "Vote: 0.." + str(self.number_of_candidates) + ";\n"
@@ -76,7 +76,8 @@ class SeleneModelIsplGenerator:
 
         for i in range(1, self.number_of_voters + 1):
             for j in range(1, self.number_of_voters + 1):
-                protocol += "\t\ttracker" + str(i) + "=0 and voter" + str(j) + "TrackerSet=false: {SetTracker" + str(i) + "To" + str(j) + "};\n"
+                protocol += "\t\ttracker" + str(i) + "=0 and voter" + str(j) + "TrackerSet=false: {SetTracker" + str(
+                    i) + "To" + str(j) + "};\n"
 
         protocol += "\t\t"
         for i in range(1, self.number_of_voters + 1):
@@ -106,7 +107,7 @@ class SeleneModelIsplGenerator:
 
         for voter_number in range(1, self.number_of_voters + 1):
             evolution += "\t\tvoter" + str(voter_number) + "Voted=true if\n"
-            for candidate_number in range(1, self.number_of_candidates+1):
+            for candidate_number in range(1, self.number_of_candidates + 1):
                 evolution += "\t\t\tVoter" + str(voter_number) + ".Action=Vote" + str(candidate_number) + " or\n"
             evolution = evolution.rstrip("\nro ")
             evolution += ";\n"
@@ -238,7 +239,8 @@ class SeleneModelIsplGenerator:
 
         protocol += "Wait};\n"
 
-        protocol += "\t\tvote>0 and Environment.voter" + str(voter_number) + "OwnedTracker=0 and Environment.votesPublished=true: {"
+        protocol += "\t\tvote>0 and Environment.voter" + str(
+            voter_number) + "OwnedTracker=0 and Environment.votesPublished=true: {"
         for i in range(1, self.number_of_candidates + 1):
             protocol += "FetchTrackerForVote" + str(i) + ", "
         protocol += "FetchGoodTracker, Wait};\n"
@@ -410,25 +412,25 @@ class SeleneModelMkIsplGenerator:
         txt += "\tvotesPublished = true if Action = PublishVotes;\n\n"
 
         txt += "\n".join([
-                             "\tpublicVote{0} = {2} if Action = PublishVotes and voter{1}Vote = {2} and tracker{0} = {1};".format(
-                                 str(Ntrackr), str(Nvotr), str(Nballot)) \
-                             for Ntrackr in range(1, self.votersNo + 1) \
-                             for Nvotr in range(1, self.votersNo + 1)
-                             for Nballot in range(1, self.ballotsNo + 1)])
+            "\tpublicVote{0} = {2} if Action = PublishVotes and voter{1}Vote = {2} and tracker{0} = {1};".format(
+                str(Ntrackr), str(Nvotr), str(Nballot)) \
+            for Ntrackr in range(1, self.votersNo + 1) \
+            for Nvotr in range(1, self.votersNo + 1)
+            for Nballot in range(1, self.ballotsNo + 1)])
 
         # Evolution: fetching correct trackers
         txt += "\n\n\t-- fetching correct trackers\n"
         txt += "\n".join([
-                             "\tvoter{0}OwnedTracker = {1} if Voter{0}.Action = FetchGoodTracker and tracker{1} = {0};".format(
-                                 str(i), str(j)) \
-                             for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
+            "\tvoter{0}OwnedTracker = {1} if Voter{0}.Action = FetchGoodTracker and tracker{1} = {0};".format(
+                str(i), str(j)) \
+            for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
 
         # Evolution: copying true trackers
         txt += "\n\n\t-- copying true trackers\n"
         txt += "\n".join([
-                             "\tfalseOrCopiedTrackerForVoter{0} = {1} if Voter{0}.Action = CopyRealTracker and tracker{1} = {0};".format(
-                                 str(i), str(j)) \
-                             for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
+            "\tfalseOrCopiedTrackerForVoter{0} = {1} if Voter{0}.Action = CopyRealTracker and tracker{1} = {0};".format(
+                str(i), str(j)) \
+            for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
 
         # Evolution: gathering help requests
         txt += "\n\n\t-- gathering help requests\n"
@@ -440,9 +442,9 @@ class SeleneModelMkIsplGenerator:
         # Evolution: tracker forging, complementary to ElectionDefenseSystem actions
         txt += "\n\n\t-- falsifying trackers\n"
         txt += "\n".join([
-                             "\tfalseOrCopiedTrackerForVoter{0} = {1} if ElectionDefenseSystem.Action = SetFalseTrackerForVoter{0}To{1} and !(Voter{0}.Action = CopyRealTracker);".format(
-                                 str(i), str(j)) \
-                             for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
+            "\tfalseOrCopiedTrackerForVoter{0} = {1} if ElectionDefenseSystem.Action = SetFalseTrackerForVoter{0}To{1} and !(Voter{0}.Action = CopyRealTracker);".format(
+                str(i), str(j)) \
+            for i in range(1, self.votersNo + 1) for j in range(1, self.votersNo + 1)])
 
         # Evolution: finish voting
         txt += "\n\n\t-- end voting\n"
@@ -459,8 +461,8 @@ class SeleneModelMkIsplGenerator:
 
         # mark actions observable by this agent
         txt += "\tLobsvars = {" + ", ".join([
-                                                "tracker{0}, voter{0}Vote, voter{0}TrackerSet, voter{0}OwnedTracker, voteDemandedFromVoter{0}".format(
-                                                    str(i)) for i in range(1, self.votersNo + 1)]) + "};\n"
+            "tracker{0}, voter{0}Vote, voter{0}TrackerSet, voter{0}OwnedTracker, voteDemandedFromVoter{0}".format(
+                str(i)) for i in range(1, self.votersNo + 1)]) + "};\n"
 
         # building Vars
         txt += "\nVars:\n"
@@ -645,9 +647,9 @@ class SeleneModelMkIsplGenerator:
                 cclause = "\t(Coercer.voteDemandedFromVoter{0} = {1} and (\n".format(voter, vote)
                 # ...go through trackers...
                 cclause += " or\n".join([
-                                            "\t\t(Environment.falseOrCopiedTrackerForVoter{voterNb} = {trackerNb} and !(Environment.publicVote{trackerNb} = {voteExpect}))".format(
-                                                voterNb=voter, trackerNb=str(k), voteExpect=vote) \
-                                            for k in range(1, self.votersNo + 1)])
+                    "\t\t(Environment.falseOrCopiedTrackerForVoter{voterNb} = {trackerNb} and !(Environment.publicVote{trackerNb} = {voteExpect}))".format(
+                        voterNb=voter, trackerNb=str(k), voteExpect=vote) \
+                    for k in range(1, self.votersNo + 1)])
 
                 cclause += "\n\t))"
                 if i == self.maxCoerced and j == self.ballotsNo:
@@ -670,9 +672,9 @@ class SeleneModelMkIsplGenerator:
             cclause = "\t(Coercer.voteDemandedFromVoter{0} > 0 and Environment.falseOrCopiedTrackerForVoter{0} > 0 and (\n\t\t".format(
                 voter)
             cclause += "\n\t\tor ".join([
-                                            "(Environment.falseOrCopiedTrackerForVoter{0} = Environment.falseOrCopiedTrackerForVoter{1})".format(
-                                                voter, str(j)) \
-                                            for j in range(1, self.votersNo + 1) if j != i])
+                "(Environment.falseOrCopiedTrackerForVoter{0} = Environment.falseOrCopiedTrackerForVoter{1})".format(
+                    voter, str(j)) \
+                for j in range(1, self.votersNo + 1) if j != i])
             cclause += ")"
 
             if i < self.maxCoerced:
@@ -760,32 +762,36 @@ class SeleneModelMkIsplGenerator:
         return txt
 
 
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser()
-#     votersNo = int(input("Number of voters: "))
-#     ballotsNo = int(input("number of possible ballots: "))
-#     maxCoerced = int(input("number of voters coerced by the coercer: "))
-#     maxWaitingForVotes = int(input("how many steps the environment will wait for votes: "))
-#     maxWaitingForHelp = int(input("how many steps the environment will wait for help requests, after voting is over: "))
-#     coaltionSize = int(input("The size of coalitions in formulae 1 and 2: "))
-#     # parser.add_argument("votersNo", help="the number of voters", type=int)
-#     # parser.add_argument("ballotsNo", help="the number of possible ballots", type=int)
-#     # parser.add_argument("maxCoerced", help="the number of voters coerced by the coercer", type=int)
-#     # parser.add_argument("maxWaitingForVotes", help="how many steps the environment will wait for votes", type=int)
-#     # parser.add_argument("maxWaitingForHelp",
-#     #                     help="how many steps the environment will wait for help requests, after voting is over",
-#     #                     type=int)
-#     # args = parser.parse_args()
-#     #
-#     # if args.maxCoerced > args.votersNo:
-#     #     print("Error: can't coerce more voters than present (maxCoerced too big).")
-#     #     sys.exit()
-#
-#     model = SeleneModelMkIsplGenerator(votersNo, ballotsNo, maxCoerced, maxWaitingForVotes, maxWaitingForHelp, coaltionSize)
-#
-#     f = open(f'selene_model_{votersNo}_{ballotsNo}_{maxCoerced}_{maxWaitingForVotes}_{maxWaitingForHelp}_{coaltionSize}.ispl', "w")
-#     f.write(model.getISPL())
-#     f.close()
-#
-#     # print(model.getISPL())
-#     print(f'Saved model in selene_model_{votersNo}_{ballotsNo}_{maxCoerced}_{maxWaitingForVotes}_{maxWaitingForHelp}_{coaltionSize}.ispl')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    votersNo = int(input("Number of voters: "))
+    ballotsNo = int(input("number of possible ballots: "))
+    maxCoerced = int(input("number of voters coerced by the coercer: "))
+    maxWaitingForVotes = int(input("how many steps the environment will wait for votes: "))
+    maxWaitingForHelp = int(input("how many steps the environment will wait for help requests, after voting is over: "))
+    coaltionSize = int(input("The size of coalitions in formulae 1 and 2: "))
+    # parser.add_argument("votersNo", help="the number of voters", type=int)
+    # parser.add_argument("ballotsNo", help="the number of possible ballots", type=int)
+    # parser.add_argument("maxCoerced", help="the number of voters coerced by the coercer", type=int)
+    # parser.add_argument("maxWaitingForVotes", help="how many steps the environment will wait for votes", type=int)
+    # parser.add_argument("maxWaitingForHelp",
+    #                     help="how many steps the environment will wait for help requests, after voting is over",
+    #                     type=int)
+    # args = parser.parse_args()
+    #
+    # if args.maxCoerced > args.votersNo:
+    #     print("Error: can't coerce more voters than present (maxCoerced too big).")
+    #     sys.exit()
+
+    model = SeleneModelMkIsplGenerator(votersNo, ballotsNo, maxCoerced, maxWaitingForVotes, maxWaitingForHelp,
+                                       coaltionSize)
+
+    f = open(
+        f'selene_model_{votersNo}_{ballotsNo}_{maxCoerced}_{maxWaitingForVotes}_{maxWaitingForHelp}_{coaltionSize}.ispl',
+        "w")
+    f.write(model.getISPL())
+    f.close()
+
+    # print(model.getISPL())
+    print(
+        f'Saved model in selene_model_{votersNo}_{ballotsNo}_{maxCoerced}_{maxWaitingForVotes}_{maxWaitingForHelp}_{coaltionSize}.ispl')

@@ -130,8 +130,7 @@ class MvATLirModel(ATLirModel):
         super(MvATLirModel, self).__init__(number_of_agents)
         self.lattice = lattice
 
-
-    #translate a single state for local model checking
+    # translate a single state for local model checking
     def translate_state(self, l, q):
         state = {}
         j = 0
@@ -180,9 +179,13 @@ class MvATLirModel(ATLirModel):
     def simple_interpreter(self, formula, agent, l, n_s, state):
         if P.isBinary(formula):
             if P.isAnd(formula):
-                return self.simple_interpreter(formula[0], agent, l, n_s, state) and self.simple_interpreter(formula[2], agent, l, n_s, state)
+                return self.simple_interpreter(formula[0], agent, l, n_s, state) and self.simple_interpreter(formula[2],
+                                                                                                             agent, l,
+                                                                                                             n_s, state)
             if P.isOr(formula):
-                return self.simple_interpreter(formula[0], agent, l, n_s, state) or self.simple_interpreter(formula[2], agent, l, n_s, state)
+                return self.simple_interpreter(formula[0], agent, l, n_s, state) or self.simple_interpreter(formula[2],
+                                                                                                            agent, l,
+                                                                                                            n_s, state)
             if P.isUntil(formula):
                 if self.simple_interpreter(formula[2], agent, l, n_s, state):
                     return True
@@ -193,9 +196,11 @@ class MvATLirModel(ATLirModel):
                     return val
                 return False
             if P.isWeakUntil(formula):
-                return self.simple_interpreter(('!', (('!', formula[2]), 'U', (('!', formula[0]), '&', ('!', formula[2])))), agent, l, n_s, state)
+                return self.simple_interpreter(
+                    ('!', (('!', formula[2]), 'U', (('!', formula[0]), '&', ('!', formula[2])))), agent, l, n_s, state)
             if P.isOrder(formula):
-                res = self.lattice.compare(self.order_interpreter(formula[0], agent, n_s), self.order_interpreter(formula[2], agent, n_s))
+                res = self.lattice.compare(self.order_interpreter(formula[0], agent, n_s),
+                                           self.order_interpreter(formula[2], agent, n_s))
                 return res != -2 and res <= 0
         if P.isUnary(formula):
             if P.isNot(formula):
@@ -205,27 +210,29 @@ class MvATLirModel(ATLirModel):
                     if state['Turn'] != agent:
                         val = True
                         for child in self.get_children(n_s):
-                            val = val and self.simple_interpreter(formula[1], agent, l, child, self.translate_state(l, child))
+                            val = val and self.simple_interpreter(formula[1], agent, l, child,
+                                                                  self.translate_state(l, child))
                         return val
                     val = False
                     for child in self.get_children(n_s):
-                        val = val or self.simple_interpreter(formula[1], agent, l, child, self.translate_state(l, child))
+                        val = val or self.simple_interpreter(formula[1], agent, l, child,
+                                                             self.translate_state(l, child))
                     return val
             if P.isAlways(formula):
                 return self.simple_interpreter((formula[1], 'W', self.lattice.bottom), agent, l, n_s, state)
             if P.isEventually(formula):
                 return self.simple_interpreter((self.lattice.top, 'U', formula[1]), agent, l, n_s, state)
-        if P.isAbility(formula):    # Not finished, cannot handle embedded ability formula
+        if P.isAbility(formula):  # Not finished, cannot handle embedded ability formula
             return self.interpreter(formula, n_s)
-            #winning_states = list()
-            #for s in range(0, len(self.states)):
+            # winning_states = list()
+            # for s in range(0, len(self.states)):
             #    c_s = self.translate_state(l, s)
             #    if self.simple_interpreter(formula[3], int(formula[1][0]), l, s, c_s):
             #        winning_states.append(s)
-        if isinstance(formula, str): # If is atomic proposition
-            if '_' in formula:       # If has a subscript
+        if isinstance(formula, str):  # If is atomic proposition
+            if '_' in formula:  # If has a subscript
                 p = formula[:formula.index('_')]
-                n = int(formula[formula.index('_')+1:])# - 1
+                n = int(formula[formula.index('_') + 1:])  # - 1
                 return state[p][n]
             if formula in self.props:
                 return state[formula]
@@ -256,20 +263,22 @@ class MvATLirModel(ATLirModel):
                         if self.simple_interpreter(formula[3][1], None, l, s, state):
                             winning_states.append(s)
                     if P.isAlways(formula[3]):
-                        if len(formula[1]) == 0: # E \phi
+                        if len(formula[1]) == 0:  # E \phi
                             result = self.maximum_formula_no_agents(set(winning_states))
-                        elif len(formula[1]) == 1: # <<a>> \phi
+                        elif len(formula[1]) == 1:  # <<a>> \phi
                             result = self.maximum_formula_one_agent(int(agents[0]), set(winning_states))
-                        else: # <<C>> \phi
-                            result = self.maximum_formula_many_agents(list(map(lambda a: int(a), agents)), set(winning_states))
+                        else:  # <<C>> \phi
+                            result = self.maximum_formula_many_agents(list(map(lambda a: int(a), agents)),
+                                                                      set(winning_states))
                     if P.isEventually(formula[3]):
-                        if len(formula[1]) == 0: # E \phi
+                        if len(formula[1]) == 0:  # E \phi
                             result = self.minimum_formula_no_agents(set(winning_states))
-                        elif len(formula[1]) == 1: # <<a>> \phi
+                        elif len(formula[1]) == 1:  # <<a>> \phi
                             result = self.minimum_formula_one_agent(int(agents[0]), set(winning_states))
-                        else: # <<C>> \phi
+                        else:  # <<C>> \phi
                             result = self.minimum_formula_many_agents(list(map(lambda
-                                                                 a: int(a), agents)), set(winning_states))
+                                                                                   a: int(a), agents)),
+                                                                      set(winning_states))
                     if len(result) > 0 and initial_state in list(result):
                         valid.append(l)
                 return self.lattice.join_list(valid)
@@ -280,7 +289,7 @@ class MvATLirModel(ATLirModel):
         elif P.isOr(formula):
             l1 = self.interpreter(formula[0], initial_state)
             l2 = self.interpreter(formula[2], initial_state)
-            return self.lattice.join(l1,l2)
+            return self.lattice.join(l1, l2)
         elif P.isNot(formula):
             l = self.interpreter(formula[1], initial_state)
             return self.lattice.neg(l)
@@ -302,7 +311,7 @@ def print_create_for_state(state_number, state):
     print(msg)
 
 
-def generate_driving(mv_atl): # generate the driving example of MVVSA (Jamroga:2016)
+def generate_driving(mv_atl):  # generate the driving example of MVVSA (Jamroga:2016)
     state_o = {'Out': ['i', 'i'], 'In': ['i', 'i'], 'Penalty': ['b', 'b'], 'Collision': ['b']}
     state_i = {'Out': ['b', 'b'], 'In': ['t', 't'], 'Penalty': ['b', 'b'], 'Collision': ['b']}
     state_c = {'Out': ['b', 'b'], 'In': ['t', 't'], 'Penalty': ['u', 'u'], 'Collision': ['t']}

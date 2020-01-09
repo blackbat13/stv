@@ -1,14 +1,13 @@
-from models.random_model import *
 from models.drone_model import *
 from comparing_strats.strat_simpl import StrategyComparer
-from typing import List
 import datetime
 import time
 import signal
 
 
 class DroneModelExp:
-    def __init__(self, model_size: int, exp_count: int, filename: str, timeout: int = 60, energy: int = 10, DEBUG: bool = False):
+    def __init__(self, model_size: int, exp_count: int, filename: str, timeout: int = 60, energy: int = 10,
+                 DEBUG: bool = False):
         self.__exp_count = exp_count
         self.__DEBUG = DEBUG
         self.__model_size = model_size
@@ -50,10 +49,12 @@ class DroneModelExp:
         self.__file.write(f"Average domino dfs time: {self.__avg_domino_time / self.__exp_count} s\n")
         self.__file.write(f"Average lower approximation time: {self.__avg_lower_approx_time / self.__exp_count} s\n")
         self.__file.write(f"Average upper approximation time: {self.__avg_upper_approx_time / self.__exp_count} s\n")
-        self.__file.write(f"Average approximation time: {(self.__avg_lower_approx_time + self.__avg_upper_approx_time)/self.__exp_count}\n")
+        self.__file.write(
+            f"Average approximation time: {(self.__avg_lower_approx_time + self.__avg_upper_approx_time) / self.__exp_count}\n")
         self.__file.write(
             f"Average perfect strategy reachable states: {self.__avg_perfect_reachable_states / self.__exp_count}\n")
-        self.__file.write(f"Average simplified strategy reachable states: {self.__avg_simplified_reachable_states / self.__exp_count}\n")
+        self.__file.write(
+            f"Average simplified strategy reachable states: {self.__avg_simplified_reachable_states / self.__exp_count}\n")
         self.__file.write(
             f"Average perfect strategy epistemic mismatch: {self.__avg_perfect_mismatch / self.__exp_count}\n")
         self.__file.write(
@@ -79,7 +80,7 @@ class DroneModelExp:
         simplified_strategy = self._generate_simplified_strategy(random_model, strategy)
         self.__file.write("-------------------END: SIMPLIFIED STRATEGY-------------------\n")
         self.__file.write("-------------------BEGIN: DOMINO DFS-------------------\n")
-        signal.alarm(self.__timeout+30)
+        signal.alarm(self.__timeout + 30)
         try:
             self._run_domino_dfs(random_model)
         except Exception as exc:
@@ -113,7 +114,7 @@ class DroneModelExp:
             result = model.model.to_atl_imperfect(model.get_actions()).minimum_formula_one_agent(0, winning_states)
         except Exception as exc:
             self.__file.write(f"{exc}\n")
-            self.__avg_lower_approx_time  += self.__timeout
+            self.__avg_lower_approx_time += self.__timeout
             return
         signal.alarm(0)
         end = time.process_time()

@@ -16,7 +16,7 @@ class PretAVoterSpthyGenerator:
         self.spthy_model += self.__define_equations()
         self.spthy_model += self.__define_rules()
         self.spthy_model += self.__define_restrictions()
-        #self.spthy_model += self.__define_lemmas()
+        # self.spthy_model += self.__define_lemmas()
 
         self.spthy_model += "end\n"
         return self.spthy_model
@@ -72,8 +72,8 @@ class PretAVoterSpthyGenerator:
         rules = ""
         rules += self.__define_all_ballots_generation_rule()
         rules += self.__define_all_votes_casting_rule()
-        #rules += self.__define_votes_publishing_rule()
-        #rules += self.__define_votes_counting_rule()
+        # rules += self.__define_votes_publishing_rule()
+        # rules += self.__define_votes_counting_rule()
         rules += self.__define_votes_publishing_and_counting_rule()
         return rules
 
@@ -198,7 +198,7 @@ class PretAVoterSpthyGenerator:
         rule += '\n'
         return rule
 
-    def __generate_candidates_facts(self, voter_id = 0):
+    def __generate_candidates_facts(self, voter_id=0):
         facts = ""
         if voter_id == 0:
             for candidate_id in range(1, self.no_candidates + 1):
@@ -264,7 +264,7 @@ class PretAVoterSpthyGenerator:
         for voter_id in range(1, self.no_voters):
             candidate_list = self.__generate_candidate_list(voter_id)
             rule += f'\t\t//--Voter {voter_id}--\n'
-            #rule += f'\t\t!Choice(c{voter_id}),\n'
+            # rule += f'\t\t!Choice(c{voter_id}),\n'
             rule += f'\t\tVoter(V{voter_id}),\n'
             rule += f"\t\tBallotWithOrderAndOnion(B{voter_id}, {candidate_list}, onion{voter_id}),\n"
         rule += f'\t\t//--Coerced Voter--\n'
@@ -478,21 +478,23 @@ class PretAVoterSpthyGenerator:
 
         return lemmas
 
-# voters_no = 2
-# candidates_no = 3
-# pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
-# file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
-# f = open(file_name, "w")
-# f.write(pret_a_voter_spthy_generator.create_spthy_model())
-# f.close()
-#
-# print(f"Done. Created model saved in {file_name}")
-#
-# for candidate_id in range(1, candidates_no + 1):
-#     pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False, candidate_id)
-#     file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}_ic{candidate_id}.spthy"
-#     f = open(file_name, "w")
-#     f.write(pret_a_voter_spthy_generator.create_spthy_model())
-#     f.close()
-#
-#     print(f"Done. Created model saved in {file_name}")
+
+if __name__ == "__main__":
+    voters_no = 2
+    candidates_no = 3
+    pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False)
+    file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}.spthy"
+    f = open(file_name, "w")
+    f.write(pret_a_voter_spthy_generator.create_spthy_model())
+    f.close()
+
+    print(f"Done. Created model saved in {file_name}")
+
+    for candidate_id in range(1, candidates_no + 1):
+        pret_a_voter_spthy_generator = PretAVoterSpthyGenerator(voters_no, candidates_no, False, candidate_id)
+        file_name = f"pret_a_voter_v{voters_no}_c{candidates_no}_ic{candidate_id}.spthy"
+        f = open(file_name, "w")
+        f.write(pret_a_voter_spthy_generator.create_spthy_model())
+        f.close()
+
+        print(f"Done. Created model saved in {file_name}")

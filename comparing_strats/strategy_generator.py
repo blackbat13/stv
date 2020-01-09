@@ -33,15 +33,17 @@ class StrategyGenerator:
                 max_visited = 0
                 for transition in self.model.graph[state]:
                     actions_tr[transition['actions'][agent]] += 1
-                    visited_tr[transition['actions'][agent]] += self.count_visited_places_for_state(self.model.states[transition['next_state']])
+                    visited_tr[transition['actions'][agent]] += self.count_visited_places_for_state(
+                        self.model.states[transition['next_state']])
                     # if actions_tr[transition['actions'][agent]] > actions_tr[max_tr] or (
                     #         actions_tr[transition['actions'][agent]] == actions_tr[max_tr] and transition['actions'][
                     #     agent] != 'Wait'):
                     #     max_tr = transition['actions'][agent]
                     if actions_tr[transition['actions'][agent]] >= actions_tr[max_tr]:
                         if visited_tr[transition['actions'][agent]] >= max_visited:
-                            if transition['actions'][agent] != 'Wait' or visited_tr[transition['actions'][agent]] > max_visited:
-                                max_visited =  visited_tr[transition['actions'][agent]]
+                            if transition['actions'][agent] != 'Wait' or visited_tr[
+                                transition['actions'][agent]] > max_visited:
+                                max_visited = visited_tr[transition['actions'][agent]]
                                 max_tr = transition['actions'][agent]
                                 # print(max_visited)
 

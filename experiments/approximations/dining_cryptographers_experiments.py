@@ -19,5 +19,7 @@ class DiningCryptographersExperiments:
         self.model = DiningCryptographers(self.n)
         self.model.generate()
 
-# dining_cryptographers_experiments = DiningCryptographersExperiments(5)
-# dining_cryptographers_experiments.run_experiments()
+
+if __name__ == "__main__":
+    dining_cryptographers_experiments = DiningCryptographersExperiments(5)
+    dining_cryptographers_experiments.run_experiments()

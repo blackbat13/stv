@@ -200,7 +200,6 @@ class PresidentModel:
                     new_actions = actions[:]
                     new_actions[state['Turn']] = 'Clear'
                     self.model.add_transition(state_number, len(self.states), new_actions)
-                    # print_create_for_state(len(self.states), child)
                     self.states.append(child)
                     states_to_process.append((child, len(self.states) - 1))
                     continue
@@ -222,7 +221,6 @@ class PresidentModel:
                             new_actions = actions[:]
                             new_actions[state['Turn']] = card
                             self.model.add_transition(state_number, len(self.states) - 1, new_actions)
-                            # print_create_for_state(len(self.states) - 1, child)
                             states_to_process.append((child, len(self.states) - 1))
 
                 if children == 0:  # Cannot play so I pass
@@ -234,7 +232,6 @@ class PresidentModel:
                     new_actions = actions[:]
                     new_actions[state['Turn']] = 'Pass'
                     self.model.add_transition(state_number, len(self.states) - 1, new_actions)
-                    # print_create_for_state(len(self.states) - 1, child)
                     states_to_process.append((child, len(self.states) - 1))
             else:
                 for nb_cards in range(1, 4 * self.number_of_decks):
@@ -252,47 +249,4 @@ class PresidentModel:
                             new_actions = actions[:]
                             new_actions[state['Turn']] = card
                             self.model.add_transition(state_number, len(self.states) - 1, new_actions)
-                            # print_create_for_state(len(self.states) - 1, child)
                             states_to_process.append((child, len(self.states) - 1))
-
-
-def print_create_for_state(state_number, state):
-    return
-    # msg = "CREATE (S" + str(state_number) + ":State { "
-    # i = 1
-    # TODO: Are they all prop ?
-    # for prop in state:
-    #    if isinstance( state[prop], int ):
-    #        msg +=  "[" + prop + "]" + "=" + str(state[prop]) + " "
-    #    elif prop == 'Table' or prop == 'Hierarchy':
-    #        msg +=  "[" + prop + "]" + "=" + str(state[prop]) + " "
-    #    elif len(state[prop]) > 1:
-    #        for val in state[prop]:
-    #            msg += "[" + prop + str(i) + "]" + " = " + str(val) + " "
-    #            i += 1
-    #        i = 1
-    #    else:
-    #        msg += "[" + prop + "]" + " = " + str(state[prop]) + " "
-    # msg += "]}"
-    # print(msg)
-
-# def print_automata(f):
-#     i = 0
-#     f.write("#states\n")
-#     for s in test.states:
-#         f.write("s" + str(i) + "\n")
-#         i += 1
-#     f.write("#initial\n")
-#     f.write("s0\n")
-#     f.write("#accepting\n")
-#     f.write("#alphabet\n")
-#     f.write("Wait\nPass\nClear\nTwo\nAs\nKing\nQueen\nJack\nTen\nNine\nEight\nSeven\nSix\nFive\nFour\nThree\n")
-#     f.write("#transitions\n")
-#     i = 0
-#     for s1 in test.model.transitions:
-#         for t in s1:
-#             s2 = t['nextState']
-#             for a in t['actions']:
-#                 if isinstance(a, str):
-#                     f.write("s" + str(i) + ":" + a + ">s" + str(s2) + "\n")
-#         i += 1

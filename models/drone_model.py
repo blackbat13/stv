@@ -356,3 +356,8 @@ class DroneModel(ModelGenerator):
             return 0
         if y == -1:
             return 2
+
+
+if __name__ == "__main__":
+    model = DroneModel(2, [2, 2], CracowMap())
+    model.generate()
