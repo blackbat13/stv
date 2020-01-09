@@ -1,4 +1,5 @@
 import json
+import ast
 from typing import List, Set
 from logics.atl.atl_ir_model import ATLIrModel, ATLirModel
 from logics.atl.mv.mvatl_model import MvATLirModel
@@ -440,3 +441,84 @@ class SimpleModel:
         else:
             links.append(
                 {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+
+    @staticmethod
+    def load_from_json(json_str: str, no_agents: int, DEBUG: bool = False):
+        simple_model = SimpleModel(no_agents)
+
+        json_obj = json.loads(json_str)
+        no_states = len(json_obj['nodes'])
+        simple_model.states = [None for _ in range(no_states)]
+        simple_model.no_states = no_states
+        simple_model.resize_to_state(no_states - 1)
+        actions = [set() for _ in range(no_agents)]
+        for node in json_obj['nodes']:
+            if DEBUG:
+                print(node)
+            id = int(node['id'])
+            label = node['label']
+            props = node['props']
+            simple_model.states[id] = {'label': label, 'props': props}
+
+        for transition in json_obj['links']:
+            if DEBUG:
+                print(transition)
+            source = transition['source']
+            target = transition['target']
+            label = ast.literal_eval(transition['label'])
+            for agent_id in range(no_agents):
+                actions[agent_id].add(label[agent_id])
+            simple_model.add_transition(from_state_id=source, to_state_id=target, actions=label)
+
+        formula = json_obj['formula']['form']
+        # print(formula)
+        coalition = formula['group']
+        formula = formula['operand1']['form']
+        if formula['op'] == 'F':
+            formula = formula['operand1']
+            expression = formula
+            winning_states = set()
+            for state_id in range(len(simple_model.states)):
+                state = simple_model.states[state_id]
+                if simple_model.evaluate_on_state(expression, state):
+                    winning_states.add(state_id)
+                    # print(state)
+
+            atl_Ir_model = simple_model.to_atl_perfect(actions)
+            result = atl_Ir_model.minimum_formula_many_agents(coalition, winning_states)
+            # print(result)
+
+        elif formula['op'] == 'G':
+            formula = formula['operand1']
+            expression = formula
+            winning_states = set()
+            for state_id in range(len(simple_model.states)):
+                state = simple_model.states[state_id]
+                if simple_model.evaluate_on_state(expression, state):
+                    winning_states.add(state_id)
+                    # print(state)
+
+            atl_Ir_model = simple_model.to_atl_perfect(actions)
+            result = atl_Ir_model.maximum_formula_many_agents(coalition, winning_states)
+            # print(result)
+
+
+        return result
+
+    def evaluate_on_state(self, expression, state) -> bool:
+        if 'op' not in expression:
+            expression = expression['form']
+
+        operator = expression['op']
+        if operator[0] == 'p':
+            id = int(operator[1:])
+            return id in state['props']
+
+        if operator == 'and':
+            return self.evaluate_on_state(expression['operand1'], state) and self.evaluate_on_state(expression['operand2'], state)
+
+        if operator == 'or':
+            return self.evaluate_on_state(expression['operand1'], state) or self.evaluate_on_state(expression['operand2'], state)
+
+        if operator == 'not':
+            return not self.evaluate_on_state(expression['operand1'], state)
