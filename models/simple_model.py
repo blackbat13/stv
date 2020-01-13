@@ -443,9 +443,11 @@ class SimpleModel:
                 {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
 
     @staticmethod
-    def load_from_json(json_str: str, no_agents: int, DEBUG: bool = False) -> [int]:
-        simple_model = SimpleModel(no_agents)
+    def load_from_json(json_str: str, DEBUG: bool = False) -> [int]:
         json_obj = json.loads(json_str)
+        label = ast.literal_eval(json_obj['links'][0]['label'])
+        no_agents = len(label)
+        simple_model = SimpleModel(no_agents)
         no_states = len(json_obj['nodes'])
         simple_model.states = [{} for _ in range(no_states)]
         simple_model.no_states = no_states
