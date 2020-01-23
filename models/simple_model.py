@@ -443,7 +443,7 @@ class SimpleModel:
                 {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
 
     @staticmethod
-    def load_from_json(json_str: str, DEBUG: bool = False) -> [int]:
+    def load_from_json(json_str: str, imperfect: bool, DEBUG: bool = False) -> [int]:
         json_obj = json.loads(json_str)
         label = ast.literal_eval(json_obj['links'][0]['label'])
         no_agents = len(label)
@@ -471,6 +471,24 @@ class SimpleModel:
                 actions[agent_id].add(label[agent_id])
             simple_model.add_transition(from_state_id=source, to_state_id=target, actions=label)
 
+        if imperfect:
+            observables = json_obj['observables']
+            for agent_id in range(no_agents):
+                epistemic_dict = dict()
+                state_id = -1
+                for state in simple_model.states:
+                    state_id += 1
+                    props = set()
+                    for prop in state['props']:
+                        if prop in observables[agent_id]:
+                            props.add(prop)
+                    if str(props) in epistemic_dict:
+                        epistemic_dict[str(props)].add(state_id)
+                    else:
+                        epistemic_dict[str(props)] = {state_id}
+                for epistemic_class in epistemic_dict.values():
+                    simple_model.add_epistemic_class(agent_id, epistemic_class)
+
         formula = json_obj['formula']['form']
         coalition = formula['group']
         formula = formula['operand1']['form']
@@ -484,8 +502,17 @@ class SimpleModel:
                 if simple_model.evaluate_on_state(expression, state):
                     winning_states.add(state_id)
 
-            atl_perfect = simple_model.to_atl_perfect(actions)
-            result = atl_perfect.minimum_formula_many_agents(coalition, winning_states)
+            if imperfect:
+                atl_perfect = simple_model.to_atl_perfect(actions)
+                result_p = atl_perfect.minimum_formula_many_agents(coalition, winning_states)
+
+                atl_imperfect = simple_model.to_atl_imperfect(actions)
+                result_ip = atl_imperfect.minimum_formula_many_agents(coalition, winning_states)
+
+                result = result_ip.intersection(result_p)
+            else:
+                atl_perfect = simple_model.to_atl_perfect(actions)
+                result = atl_perfect.minimum_formula_many_agents(coalition, winning_states)
 
         elif formula['op'] == 'G':
             formula = formula['operand1']
@@ -496,8 +523,17 @@ class SimpleModel:
                 if simple_model.evaluate_on_state(expression, state):
                     winning_states.add(state_id)
 
-            atl_perfect = simple_model.to_atl_perfect(actions)
-            result = atl_perfect.maximum_formula_many_agents(coalition, winning_states)
+            if imperfect:
+                atl_perfect = simple_model.to_atl_perfect(actions)
+                result_p = atl_perfect.maximum_formula_many_agents(coalition, winning_states)
+
+                atl_imperfect = simple_model.to_atl_imperfect(actions)
+                result_ip = atl_imperfect.maximum_formula_many_agents(coalition, winning_states)
+
+                result = result_ip.intersection(result_p)
+            else:
+                atl_perfect = simple_model.to_atl_perfect(actions)
+                result = atl_perfect.maximum_formula_many_agents(coalition, winning_states)
 
         return result
 

@@ -9,7 +9,10 @@ if __name__ == '__main__':
     file = open(file_name, 'r')
     json_str = file.read()
     file.close()
-    result = SimpleModel.load_from_json(json_str)
+    imperfect = False
+    if len(sys.argv) > 2 and sys.argv[2] == "-i":
+        imperfect = True
+    result = SimpleModel.load_from_json(json_str, imperfect)
     output_file = open('out.txt', 'w')
     for i in result:
         output_file.write(f'{i} ')
