@@ -17,6 +17,18 @@ class LocalTransition:
     def state_to(self):
         return self._state_to
 
+    @property
+    def props(self):
+        return self._props
+
+    @property
+    def action(self):
+        return self._action
+
+    @property
+    def shared(self):
+        return self._shared
+
     def parse(self, transition_str: str):
         if transition_str[0:6] == "shared":
             self._shared = True
@@ -24,17 +36,22 @@ class LocalTransition:
 
         self._action, transition_str = transition_str.split(":")
         self._state_from, transition_str = transition_str.split("->")
-        self._state_to, transition_str = transition_str.split("[")
+        if transition_str.find("[") != -1:
+            self._state_to, transition_str = transition_str.split("[")
+            transition_str = transition_str.split("]")[0]
+            variables = transition_str.split(",")
+            for variable in variables:
+                prop, val = variable.split("=")
+                if val.casefold() == "true":
+                    val = True
+                else:
+                    val = False
+                self._props[prop] = val
+        else:
+            self._state_to = transition_str
 
         self._state_from = self._state_from.strip()
         self._state_to = self._state_to.strip()
 
-        transition_str = transition_str.split("]")[0]
-        variables = transition_str.split(",")
-        for variable in variables:
-            prop, val = variable.split("=")
-            if val.casefold() == "true":
-                val = True
-            else:
-                val = False
-            self._props[prop] = val
+    def print(self):
+        print(f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]")
