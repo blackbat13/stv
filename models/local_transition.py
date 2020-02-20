@@ -12,7 +12,7 @@ class LocalTransition:
         self._props: Dict[str, bool] = {}
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
     @id.setter
@@ -20,7 +20,7 @@ class LocalTransition:
         self._id = val
 
     @property
-    def agent_id(self):
+    def agent_id(self) -> int:
         return self._agent_id
 
     @agent_id.setter
@@ -28,23 +28,27 @@ class LocalTransition:
         self._agent_id = val
 
     @property
-    def state_from(self):
+    def state_from(self) -> str:
         return self._state_from
 
     @property
-    def state_to(self):
+    def state_to(self) -> str:
         return self._state_to
 
     @property
-    def props(self):
+    def props(self) -> Dict[str, bool]:
         return self._props
 
     @property
-    def action(self):
+    def action(self) -> str:
         return self._action
 
+    @action.setter
+    def action(self, val: str):
+        self._action = val
+
     @property
-    def shared(self):
+    def shared(self) -> bool:
         return self._shared
 
     def parse(self, transition_str: str):

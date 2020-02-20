@@ -29,6 +29,8 @@ class LocalModel:
             local_transition.id = transition_id
             local_transition.agent_id = self._agent_id
             transition_id += 1
+            if not local_transition.shared:
+                local_transition.action += f"_{self._agent_name}"
             self._actions.add(local_transition.action)
             state_from = local_transition.state_from
             state_to = local_transition.state_to

@@ -410,8 +410,8 @@ class GlobalModel:
 
 
 model = GlobalModel()
-# model.parse("train_controller.txt")
-model.parse("voting.txt")
+model.parse("train_controller.txt")
+# model.parse("voting.txt")
 model.print()
 # model.compute()
 model.compute_reduced([2])
