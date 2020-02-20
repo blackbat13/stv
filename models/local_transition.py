@@ -3,11 +3,29 @@ from typing import Dict
 
 class LocalTransition:
     def __init__(self):
+        self._id: int = -1
+        self._agent_id = -1
         self._action: str = ""
         self._shared: bool = False
         self._state_from: str = ""
         self._state_to: str = ""
         self._props: Dict[str, bool] = {}
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, val: int):
+        self._id = val
+
+    @property
+    def agent_id(self):
+        return self._agent_id
+
+    @agent_id.setter
+    def agent_id(self, val: int):
+        self._agent_id = val
 
     @property
     def state_from(self):
