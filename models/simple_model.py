@@ -556,3 +556,36 @@ class SimpleModel:
 
         if operator == 'not':
             return not self.evaluate_on_state(expression['operand1'], state)
+
+    def join_to_sink(self, sink_states: Set[int]):
+        new_model: SimpleModel = SimpleModel(self.no_agents)
+        states_mapping: List[int] = []
+        new_id: int = 0
+        sink_id: int = len(self.states) - len(sink_states)
+        for i in range(0, len(self.states)):
+            if i in sink_states:
+                states_mapping.append(sink_id)
+            else:
+                states_mapping.append(new_id)
+                new_id += 1
+                new_model.states.append(self.states[i])
+
+        new_model.states.append({'props': [], 'sink': True})
+
+        # Transitions
+        for state_id in range(0, len(self.graph)):
+            if states_mapping[state_id] == sink_id:
+                continue
+            for transition in self.graph[state_id]:
+                new_model.add_transition(states_mapping[state_id], states_mapping[transition.next_state], transition.actions)
+
+        new_model.add_transition(sink_id, sink_id, [])
+
+        # Epistemic Classes
+        for agent_id in range(0, len(self.epistemic_classes)):
+            for epistemic_class in self.epistemic_classes[agent_id]:
+                new_epistemic_class = set()
+                for state_id in epistemic_class:
+                    if states_mapping[state_id] != sink_id:
+                        new_epistemic_class.add(states_mapping[state_id])
+                new_model.add_epistemic_class(agent_id, new_epistemic_class)
