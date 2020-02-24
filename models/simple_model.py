@@ -557,7 +557,7 @@ class SimpleModel:
         if operator == 'not':
             return not self.evaluate_on_state(expression['operand1'], state)
 
-    def join_to_sink(self, sink_states: Set[int]):
+    def join_to_sink(self, sink_states: Set[int]) -> SimpleModel:
         new_model: SimpleModel = SimpleModel(self.no_agents)
         states_mapping: List[int] = []
         new_id: int = 0
@@ -589,3 +589,5 @@ class SimpleModel:
                     if states_mapping[state_id] != sink_id:
                         new_epistemic_class.add(states_mapping[state_id])
                 new_model.add_epistemic_class(agent_id, new_epistemic_class)
+
+        return new_model
