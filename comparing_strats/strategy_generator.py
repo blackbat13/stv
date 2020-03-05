@@ -17,7 +17,7 @@ class StrategyGenerator:
         strategy = []
         for state in range(0, self.model.no_states):
             strategy.append([])
-            for _ in range(0, self.model.no_agents):
+            for _ in range(0, self.model._no_agents):
                 strategy[state].append(None)
 
         for state in range(0, self.model.no_states):
@@ -26,7 +26,7 @@ class StrategyGenerator:
 
             if strategy[state][0] is not None:
                 continue
-            for agent in range(0, self.model.no_agents):
+            for agent in range(0, self.model._no_agents):
                 actions_tr = {'N': 0, 'E': 0, 'W': 0, 'S': 0, 'Wait': 0, 'F': 0}
                 visited_tr = {'N': 0, 'E': 0, 'W': 0, 'S': 0, 'Wait': 0, 'F': 0}
                 max_tr = 'F'

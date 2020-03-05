@@ -46,6 +46,9 @@ class LocalModel:
 
             self._transitions[self._states[state_from]].append(local_transition)
 
+        while len(self._transitions) < len(self._states):
+            self._transitions.append([])
+
     def transitions_from_state(self, state_id: int) -> List[LocalTransition]:
         return self._transitions[state_id]
 

@@ -58,13 +58,14 @@ class RandomModelExp:
         start = time.process_time()
         random_model.generate()
         end = time.process_time()
+        simplified_model = self._simplify_model(random_model)
         self.__avg_model_time += (end - start)
         self.__file.write(f"Model generated in {end - start}s")
         self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
-        strategy = self._generate_perfect_information_strategy(random_model)
-        self.__file.write("-------------------BEGIN: PERFECT INFORMATION STRATEGY-------------------\n")
+        strategy = self._generate_perfect_information_strategy(simplified_model)
+        self.__file.write("-------------------END: PERFECT INFORMATION STRATEGY-------------------\n")
         self.__file.write("-------------------BEGIN: SIMPLIFIED STRATEGY-------------------\n")
-        simplified_strategy = self._generate_simplified_strategy(random_model, strategy)
+        simplified_strategy = self._generate_simplified_strategy(simplified_model, strategy)
         self.__file.write("-------------------END: SIMPLIFIED STRATEGY-------------------\n")
         self.__file.write("-------------------BEGIN: DOMINO DFS-------------------\n")
         signal.alarm(self.__timeout+30)
@@ -129,6 +130,20 @@ class RandomModelExp:
         for index, value in enumerate(strategy):
             if value is not None:
                 self.__file.write(f"{index}: {value}\n")
+
+    def _simplify_model(self, model: RandomModel):
+        winning_states = model.get_winning_states("win")
+        model.model = model.model.join_to_sink(winning_states, ["win"])
+        winning_states = model.get_winning_states("win")
+        result = model.model.to_atl_perfect(model.get_actions()).minimum_formula_one_agent(0, winning_states)
+        all_states = set()
+        for i in range(0, model.model.no_states):
+            all_states.add(i)
+
+        all_states = all_states.difference(result)
+        model.model = model.model.join_to_sink(all_states, ["sink"])
+        return model
+
 
     def _generate_perfect_information_strategy(self, model: RandomModel):
         winning_states = model.get_winning_states("win")

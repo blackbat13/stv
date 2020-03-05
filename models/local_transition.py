@@ -9,7 +9,7 @@ class LocalTransition:
         self._shared: bool = False
         self._state_from: str = ""
         self._state_to: str = ""
-        self._props: Dict[str, bool] = {}
+        self._props: dict = {}
 
     @property
     def id(self) -> int:
@@ -36,7 +36,7 @@ class LocalTransition:
         return self._state_to
 
     @property
-    def props(self) -> Dict[str, bool]:
+    def props(self) -> dict:
         return self._props
 
     @property
@@ -66,8 +66,10 @@ class LocalTransition:
                 prop, val = variable.split("=")
                 if val.casefold() == "true":
                     val = True
-                else:
+                elif val.casefold() == "false":
                     val = False
+                else:
+                    val = int(val)
                 self._props[prop] = val
         else:
             self._state_to = transition_str

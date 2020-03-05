@@ -5,47 +5,67 @@ from logics.atl.atl_ir_model import ATLIrModel, ATLirModel
 from logics.atl.mv.mvatl_model import MvATLirModel
 from logics.sl.strategy_logic import SLIr
 from logics.atl.transition import Transition
+import itertools
 
 
 class SimpleModel:
+    def __init__(self, no_agents: int):
+        self._no_states: int = 0
+        self._no_transitions: int = 0
+        self._first_state_id: int = 0
+        self._no_agents: int = no_agents
+        self._graph: List[List[Transition]] = []
+        self._pre_image: List[List[int]] = []
+        self._epistemic_classes: List[List[Set[int]]] = []
+        self._epistemic_class_membership: List[List[int]] = []
+        self._states: List[{}] = []
+        for _ in range(0, self._no_agents):
+            self._epistemic_classes.append([])
+            self._epistemic_class_membership.append([])
+
     @property
     def graph(self) -> List[List[Transition]]:
-        return self.__graph
+        return self._graph
 
     @graph.setter
     def graph(self, value: List[List[Transition]]):
-        self.__graph = value
+        self._graph = value
 
-    no_states = 0
-    no_agents = 0
-    no_transitions = 0
-    epistemic_classes = []
-    epistemic_class_membership = []
-    states = []
-    first_state_id = 0
-    pre_image = []
+    @property
+    def no_states(self) -> int:
+        return self._no_states
 
-    def __init__(self, no_agents: int):
-        self.prepare_variables()
-        self.no_agents = no_agents
-        for _ in range(0, self.no_agents):
-            self.epistemic_classes.append([])
-            self.epistemic_class_membership.append([])
+    @property
+    def no_transitions(self) -> int:
+        return self._no_transitions
 
-    def prepare_variables(self) -> None:
-        """
-        Sets default values for used variables
-        :return: None
-        """
-        self.graph = []
-        self.pre_image = []
-        self.no_states = 0
-        self.no_agents = 0
-        self.no_transitions = 0
-        self.epistemic_classes = []
-        self.epistemic_class_membership = []
-        self.states = []
-        self.first_state_id = 0
+    @property
+    def first_state_id(self) -> int:
+        return self._first_state_id
+
+    @property
+    def no_agents(self) -> int:
+        return self._no_agents
+
+    @property
+    def pre_image(self) -> List[List[int]]:
+        return self._pre_image
+
+    @property
+    def epistemic_classes(self) -> List[List[Set[int]]]:
+        return self._epistemic_classes
+
+    @property
+    def epistemic_class_membership(self) -> List[List[int]]:
+        return self._epistemic_class_membership
+
+    @property
+    def states(self) -> List:
+        return self._states
+
+    @states.setter
+    def states(self, value: List):
+        self._states = value
 
     def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]) -> None:
         """
@@ -57,12 +77,12 @@ class SimpleModel:
         """
         self.resize_to_state(max(from_state_id, to_state_id))
         # if self.is_unique_transition(Transition(to_state_id, actions), from_state_id):
-        self.graph[from_state_id].append(Transition(to_state_id, actions))
-        self.pre_image[to_state_id].append(from_state_id)
-        self.no_transitions += 1
+        self._graph[from_state_id].append(Transition(to_state_id, actions))
+        self._pre_image[to_state_id].append(from_state_id)
+        self._no_transitions += 1
 
     def is_unique_transition(self, transition: Transition, state_id: int) -> bool:
-        for tr in self.graph[state_id]:
+        for tr in self._graph[state_id]:
             if tr.actions == transition.actions and tr.next_state == transition.next_state:
                 return False
 
@@ -74,15 +94,15 @@ class SimpleModel:
         :param state_id:
         :return:
         """
-        while len(self.graph) <= state_id:
-            self.graph.append([])
-            self.pre_image.append([])
+        while len(self._graph) <= state_id:
+            self._graph.append([])
+            self._pre_image.append([])
 
-        for agent_number in range(0, self.no_agents):
-            while len(self.epistemic_class_membership[agent_number]) <= state_id:
-                self.epistemic_class_membership[agent_number].append(-1)
+        for agent_number in range(0, self._no_agents):
+            while len(self._epistemic_class_membership[agent_number]) <= state_id:
+                self._epistemic_class_membership[agent_number].append(-1)
 
-        self.no_states = max(self.no_states, state_id + 1)
+        self._no_states = max(self._no_states, state_id + 1)
 
     def add_epistemic_relation(self, state_id_1: int, state_id_2: int, agent_number: int) -> None:
         """
@@ -92,21 +112,21 @@ class SimpleModel:
         :param agent_number:
         :return: None
         """
-        if self.epistemic_class_membership[agent_number][state_id_1] != -1:
-            self.epistemic_classes[agent_number][self.epistemic_class_membership[agent_number][state_id_1]].append(
+        if self._epistemic_class_membership[agent_number][state_id_1] != -1:
+            self._epistemic_classes[agent_number][self._epistemic_class_membership[agent_number][state_id_1]].add(
                 state_id_2)
-            self.epistemic_class_membership[agent_number][state_id_2] = self.epistemic_class_membership[agent_number][
+            self._epistemic_class_membership[agent_number][state_id_2] = self._epistemic_class_membership[agent_number][
                 state_id_1]
-        elif self.epistemic_class_membership[agent_number][state_id_2] != -1:
-            self.epistemic_classes[agent_number][self.epistemic_class_membership[agent_number][state_id_2]].append(
+        elif self._epistemic_class_membership[agent_number][state_id_2] != -1:
+            self._epistemic_classes[agent_number][self._epistemic_class_membership[agent_number][state_id_2]].add(
                 state_id_1)
-            self.epistemic_class_membership[agent_number][state_id_1] = self.epistemic_class_membership[agent_number][
+            self._epistemic_class_membership[agent_number][state_id_1] = self._epistemic_class_membership[agent_number][
                 state_id_2]
         else:
-            self.epistemic_classes[agent_number].append([state_id_1, state_id_2])
-            self.epistemic_class_membership[agent_number][state_id_1] = len(
-                self.epistemic_class_membership[agent_number]) - 1
-            self.epistemic_class_membership[agent_number][state_id_2] = self.epistemic_class_membership[agent_number][
+            self._epistemic_classes[agent_number].append({state_id_1, state_id_2})
+            self._epistemic_class_membership[agent_number][state_id_1] = len(
+                self._epistemic_class_membership[agent_number]) - 1
+            self._epistemic_class_membership[agent_number][state_id_2] = self._epistemic_class_membership[agent_number][
                 state_id_1]
 
     def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]) -> None:
@@ -116,10 +136,10 @@ class SimpleModel:
         :param epistemic_class: Set of states ids in the epistemic class
         :return: None
         """
-        self.epistemic_classes[agent_id].append(epistemic_class)
-        epistemic_class_number = len(self.epistemic_classes[agent_id]) - 1
+        self._epistemic_classes[agent_id].append(epistemic_class)
+        epistemic_class_number = len(self._epistemic_classes[agent_id]) - 1
         for state in epistemic_class:
-            self.epistemic_class_membership[agent_id][state] = epistemic_class_number
+            self._epistemic_class_membership[agent_id][state] = epistemic_class_number
 
     def epistemic_class_for_state(self, state_id: int, agent_id: int) -> Set[int]:
         """
@@ -128,10 +148,10 @@ class SimpleModel:
         :param agent_id:
         :return: Set of states ids in the epistemic class
         """
-        if self.epistemic_class_membership[agent_id][state_id] == -1:
+        if self._epistemic_class_membership[agent_id][state_id] == -1:
             return {state_id}
 
-        return self.epistemic_classes[agent_id][self.epistemic_class_membership[agent_id][state_id]]
+        return self._epistemic_classes[agent_id][self._epistemic_class_membership[agent_id][state_id]]
 
     def epistemic_class_for_state_and_coalition(self, state_id: int, coalition: List[int]) -> Set[int]:
         """
@@ -142,11 +162,11 @@ class SimpleModel:
         """
         epistemic_class = set()
         for agent_number in coalition:
-            if self.epistemic_class_membership[agent_number][state_id] == -1:
+            if self._epistemic_class_membership[agent_number][state_id] == -1:
                 epistemic_class.add(state_id)
             else:
                 epistemic_class.update(
-                    self.epistemic_classes[agent_number][self.epistemic_class_membership[agent_number][state_id]])
+                    self._epistemic_classes[agent_number][self._epistemic_class_membership[agent_number][state_id]])
 
         return epistemic_class
 
@@ -157,10 +177,31 @@ class SimpleModel:
         :return: List of possible strategies
         """
         possible_actions = set()
-        for transition in self.graph[state_id]:
+        for transition in self._graph[state_id]:
             possible_actions.add(tuple(transition.actions))
 
         return list(possible_actions)
+
+    def get_possible_strategies_for_set(self, states: List[int]) -> List[List]:
+        """
+        Returns a list of possible strategies for a set of states
+        :param states:
+        :return:
+        """
+        possible_actions = []
+        for state in states:
+            possible_actions.append(self.get_possible_strategies(state))
+
+        strategies = []
+        for pr in itertools.product(*possible_actions):
+            strat = []
+
+            for i in range(len(pr)):
+                strat.append(pr[i])
+
+            strategies.append(strat)
+
+        return strategies
 
     def get_possible_strategies_for_coalition(self, state_id: int, coalition: List[int]) -> List[tuple]:
         """
@@ -171,7 +212,7 @@ class SimpleModel:
         :return: List of possible strategies
         """
         possible_actions = set()
-        for transition in self.graph[state_id]:
+        for transition in self._graph[state_id]:
             actions = []
             for agent_id in coalition:
                 actions.append(transition.actions[agent_id])
@@ -185,14 +226,8 @@ class SimpleModel:
         :param actions:
         :return: ATLIr model
         """
-        atl_model = ATLIrModel(self.no_agents)
-        for i in range(0, len(actions)):
-            for action in actions[i]:
-                atl_model.add_action(i, action)
-        for state_id in range(0, len(self.graph)):
-            for transition in self.graph[state_id]:
-                atl_model.add_transition(state_id, transition.next_state, transition.actions)
-        atl_model.states = self.states
+        atl_model = ATLIrModel(self._no_agents)
+        atl_model = self._copy_model(atl_model, actions, epistemic=False)
         return atl_model
 
     def to_atl_imperfect(self, actions) -> ATLirModel:
@@ -201,17 +236,8 @@ class SimpleModel:
         :param actions:
         :return: ATLir model
         """
-        atl_model = ATLirModel(self.no_agents)
-        for i in range(0, len(actions)):
-            for action in actions[i]:
-                atl_model.add_action(i, action)
-        for state_id in range(0, len(self.graph)):
-            for transition in self.graph[state_id]:
-                atl_model.add_transition(state_id, transition.next_state, transition.actions)
-        for i in range(0, len(self.epistemic_classes)):
-            for epistemic_class in self.epistemic_classes[i]:
-                atl_model.add_epistemic_class(i, epistemic_class)
-        atl_model.states = self.states
+        atl_model = ATLirModel(self._no_agents)
+        atl_model = self._copy_model(atl_model, actions, epistemic=True)
         return atl_model
 
     def to_mvatl_imperfect(self, actions, lattice) -> MvATLirModel:
@@ -221,17 +247,8 @@ class SimpleModel:
         :param lattice:
         :return: MvATLir model
         """
-        mvatl_model = MvATLirModel(self.no_agents, lattice)
-        for i in range(0, len(actions)):
-            for action in actions[i]:
-                mvatl_model.add_action(i, action)
-        for state_id in range(0, len(self.graph)):
-            for transition in self.graph[state_id]:
-                mvatl_model.add_transition(state_id, transition.next_state, transition.actions)
-        for i in range(0, len(self.epistemic_classes)):
-            for epistemic_class in self.epistemic_classes[i]:
-                mvatl_model.add_epistemic_class(i, epistemic_class)
-        mvatl_model.states = self.states
+        mvatl_model = MvATLirModel(self._no_agents, lattice)
+        mvatl_model = self._copy_model(mvatl_model, actions, epistemic=True)
         return mvatl_model
 
     def to_sl_perfect(self, actions) -> SLIr:
@@ -240,15 +257,38 @@ class SimpleModel:
         :param actions:
         :return: SLIr model
         """
-        sl_model = SLIr(self.no_agents)
+        sl_model = SLIr(self._no_agents)
+        sl_model = self._copy_model(sl_model, actions, epistemic=False)
+        return sl_model
+
+    def _copy_model(self, model, actions, epistemic: bool):
+        model = self._add_actions_to_model(actions, model)
+        model = self._add_transitions_to_model(model)
+        if epistemic:
+            model = self._add_epistemic_classes_to_model(model)
+        model.states = self._states
+        return model
+
+    def _add_actions_to_model(self, actions, model):
         for i in range(0, len(actions)):
             for action in actions[i]:
-                sl_model.add_action(i, action)
-        for state_id in range(0, len(self.graph)):
-            for transition in self.graph[state_id]:
-                sl_model.add_transition(state_id, transition.next_state, transition.actions)
-        sl_model.states = self.states
-        return sl_model
+                model.add_action(i, action)
+
+        return model
+
+    def _add_transitions_to_model(self, model):
+        for state_id in range(0, len(self._graph)):
+            for transition in self._graph[state_id]:
+                model.add_transition(state_id, transition.next_state, transition.actions)
+
+        return model
+
+    def _add_epistemic_classes_to_model(self, model):
+        for i in range(0, len(self._epistemic_classes)):
+            for epistemic_class in self._epistemic_classes[i]:
+                model.add_epistemic_class(i, epistemic_class)
+
+        return model
 
     def to_subjective(self, coalition: List[int]) -> None:
         """
@@ -258,15 +298,15 @@ class SimpleModel:
         :return: None
         """
         first_state_epistemic_class = self.epistemic_class_for_state_and_coalition(0, coalition)
-        state_id = len(self.states)
+        state_id = len(self._states)
         actions = []
-        for _ in range(0, self.no_agents):
+        for _ in range(0, self._no_agents):
             actions.append('Wait')
         for epistemic_state_id in first_state_epistemic_class:
             self.add_transition(state_id, epistemic_state_id, actions)
 
-        self.first_state_id = state_id
-        self.states.append(self.states[0])
+        self._first_state_id = state_id
+        self._states.append(self._states[0])
 
     def simulate(self, agent_number: int) -> None:
         print("----SIMULATION START-----")
@@ -275,7 +315,7 @@ class SimpleModel:
             print()
             self.simulate_print_current_state(current_state)
             self.simulate_print_epistemic_states(current_state, agent_number)
-            if len(self.graph[current_state]) == 0:
+            if len(self._graph[current_state]) == 0:
                 break
 
             self.simulate_print_transitions(current_state)
@@ -283,30 +323,30 @@ class SimpleModel:
             if choice == -1:
                 break
 
-            current_state = self.graph[current_state][choice].next_state
+            current_state = self._graph[current_state][choice].next_state
 
         print("----SIMULATION END-----")
 
     def simulate_print_current_state(self, current_state: int) -> None:
         print("Current state:")
-        print(self.states[current_state])
+        print(self._states[current_state])
 
     def simulate_print_epistemic_states(self, current_state: int, agent_number: int) -> None:
         print("Epistemic states:")
         for state in self.epistemic_class_for_state(current_state, agent_number):
-            print(self.states[state])
+            print(self._states[state])
 
     def simulate_print_transitions(self, current_state: int) -> None:
         print('Transitions:')
         i = 0
-        for transition in self.graph[current_state]:
+        for transition in self._graph[current_state]:
             print(str(i) + ":", transition.to_str())
             i += 1
 
     def dump(self) -> str:
         result = ""
-        result += f"{self.no_states}\n"
-        result += f"{self.no_agents}\n"
+        result += f"{self._no_states}\n"
+        result += f"{self._no_agents}\n"
         result += self.dump_states()
         result += self.dump_transitions()
         result += self.dump_epistemic_classes()
@@ -314,24 +354,24 @@ class SimpleModel:
 
     def dump_states(self) -> str:
         result = ""
-        for state in self.states:
+        for state in self._states:
             result += f"{json.dumps(state)}\n"
 
         return result
 
     def dump_transitions(self) -> str:
-        result = f"{self.no_transitions}\n"
-        for state_id in range(0, self.no_states):
-            for transition in self.graph[state_id]:
+        result = f"{self._no_transitions}\n"
+        for state_id in range(0, self._no_states):
+            for transition in self._graph[state_id]:
                 result += f"{state_id} {transition.next_state} {json.dumps(transition.actions)}\n"
 
         return result
 
     def dump_epistemic_classes(self) -> str:
         result = ""
-        for agent_id in range(0, self.no_agents):
-            result += f"{len(self.epistemic_classes[agent_id])}\n"
-            for epistemic_class in self.epistemic_classes[agent_id]:
+        for agent_id in range(0, self._no_agents):
+            result += f"{len(self._epistemic_classes[agent_id])}\n"
+            for epistemic_class in self._epistemic_classes[agent_id]:
                 result += f"{len(epistemic_class)}"
                 for state_id in epistemic_class:
                     result += f" {state_id}"
@@ -347,7 +387,7 @@ class SimpleModel:
     def fill_nodes_model(self) -> List[hash]:
         nodes = []
         state_id = 0
-        for state in self.states:
+        for state in self._states:
             nodes.append({"T": state, "id": state_id, "bgn": 0})
             state_id += 1
 
@@ -358,14 +398,14 @@ class SimpleModel:
 
     def fill_links_model(self) -> List[hash]:
         links = []
-        id = 0
-        for state_id in range(0, self.no_states):
-            for transition in self.graph[state_id]:
+        transition_id = 0
+        for state_id in range(0, self._no_states):
+            for transition in self._graph[state_id]:
                 if transition.next_state == state_id:
                     continue
                 links.append(
-                    {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
-                id += 1
+                    {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+                transition_id += 1
 
         return links
 
@@ -377,7 +417,7 @@ class SimpleModel:
     def fill_nodes_strategy_objective(self) -> List[hash]:
         nodes = []
         state_id = 0
-        for state in self.states:
+        for state in self._states:
             nodes.append({"T": state, "id": state_id, "str": 0})
             state_id += 1
 
@@ -385,14 +425,14 @@ class SimpleModel:
 
     def fill_links_strategy_objective(self, nodes, strategy) -> List[hash]:
         links = []
-        id = 0
-        for state_id in range(0, self.no_states):
-            for transition in self.graph[state_id]:
+        transition_id = 0
+        for state_id in range(0, self._no_states):
+            for transition in self._graph[state_id]:
                 if transition.next_state == state_id:
                     continue
 
-                self.js_dump_transition(transition, state_id, strategy, links, nodes, id)
-                id += 1
+                self.js_dump_transition(transition, state_id, strategy, links, nodes, transition_id)
+                transition_id += 1
 
         return links
 
@@ -404,8 +444,8 @@ class SimpleModel:
     def fill_nodes_strategy_subjective(self) -> List[hash]:
         nodes = []
         state_id = 0
-        for state in self.states:
-            if state_id != self.first_state_id:
+        for state in self._states:
+            if state_id != self._first_state_id:
                 nodes.append({"T": state, "id": state_id, "str": 0})
             state_id += 1
 
@@ -414,10 +454,10 @@ class SimpleModel:
     def fill_links_strategy_subjective(self, nodes, strategy) -> List[hash]:
         links = []
         id = 0
-        for state_id in range(0, self.no_states):
-            if state_id == self.first_state_id:
+        for state_id in range(0, self._no_states):
+            if state_id == self._first_state_id:
                 continue
-            for transition in self.graph[state_id]:
+            for transition in self._graph[state_id]:
                 if transition.next_state == state_id:
                     continue
 
@@ -426,7 +466,7 @@ class SimpleModel:
 
         return links
 
-    def js_dump_transition(self, transition, state_id, strategy, links, nodes, id) -> None:
+    def js_dump_transition(self, transition, state_id, strategy, links, nodes, transition_id) -> None:
         actions = []
         ln = 0
         if strategy[state_id] is not None:
@@ -435,12 +475,12 @@ class SimpleModel:
             actions.append(transition.actions[i])
         if strategy[state_id] == actions:
             links.append(
-                {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 1})
+                {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 1})
             nodes[state_id]["str"] = 1
             nodes[transition.next_state]["str"] = 1
         else:
             links.append(
-                {"id": id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+                {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
 
     @staticmethod
     def load_from_json(json_str: str, imperfect: bool, DEBUG: bool = False) -> [int]:
@@ -450,7 +490,7 @@ class SimpleModel:
         simple_model = SimpleModel(no_agents)
         no_states = len(json_obj['nodes'])
         simple_model.states = [{} for _ in range(no_states)]
-        simple_model.no_states = no_states
+        simple_model._no_states = no_states
         simple_model.resize_to_state(no_states - 1)
         actions = [set() for _ in range(no_agents)]
         for node in json_obj['nodes']:
@@ -557,33 +597,43 @@ class SimpleModel:
         if operator == 'not':
             return not self.evaluate_on_state(expression['operand1'], state)
 
-    def join_to_sink(self, sink_states: Set[int]) -> SimpleModel:
-        new_model: SimpleModel = SimpleModel(self.no_agents)
+    def join_to_sink(self, sink_states: Set[int], props: list):
+        new_model, states_mapping, sink_id = self._join_states(sink_states, props)
+        new_model = self._join_transitions(states_mapping, new_model, sink_id)
+        new_model = self._join_epistemic_classes(states_mapping, new_model, sink_id)
+        return new_model
+
+    def _join_states(self, sink_states, props) -> (object, List[int], int):
+        new_model: SimpleModel = SimpleModel(self._no_agents)
         states_mapping: List[int] = []
         new_id: int = 0
-        sink_id: int = len(self.states) - len(sink_states)
-        for i in range(0, len(self.states)):
+        sink_id: int = len(self._states) - len(sink_states)
+        for i in range(0, len(self._states)):
             if i in sink_states:
                 states_mapping.append(sink_id)
             else:
                 states_mapping.append(new_id)
                 new_id += 1
-                new_model.states.append(self.states[i])
+                new_model.states.append(self._states[i])
 
-        new_model.states.append({'props': [], 'sink': True})
+        new_model.states.append({'props': props})
 
-        # Transitions
-        for state_id in range(0, len(self.graph)):
+        return new_model, states_mapping, sink_id
+
+    def _join_transitions(self, states_mapping: List[int], new_model, sink_id: int):
+        for state_id in range(0, len(self._graph)):
             if states_mapping[state_id] == sink_id:
                 continue
-            for transition in self.graph[state_id]:
-                new_model.add_transition(states_mapping[state_id], states_mapping[transition.next_state], transition.actions)
+            for transition in self._graph[state_id]:
+                new_model.add_transition(states_mapping[state_id], states_mapping[transition.next_state],
+                                         transition.actions)
 
-        new_model.add_transition(sink_id, sink_id, [])
+        new_model.add_transition(sink_id, sink_id, ["-1" for _ in range(self.no_agents)])
+        return new_model
 
-        # Epistemic Classes
-        for agent_id in range(0, len(self.epistemic_classes)):
-            for epistemic_class in self.epistemic_classes[agent_id]:
+    def _join_epistemic_classes(self, states_mapping: List[int], new_model, sink_id: int):
+        for agent_id in range(0, len(self._epistemic_classes)):
+            for epistemic_class in self._epistemic_classes[agent_id]:
                 new_epistemic_class = set()
                 for state_id in epistemic_class:
                     if states_mapping[state_id] != sink_id:
