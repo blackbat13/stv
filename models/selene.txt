@@ -11,8 +11,8 @@ generateTrackers_2: ea_init -> ea_gen [t1=2, t2=1]
 shared publishTrackers: ea_gen -> ea_pub_t
 shared startVoting: ea_pub_t -> ea_start
 shared finishVoting: ea_start -> ea_finish
-shared publishVotes: ea_finish -> ea_pub_v
-shared sendAlphaTerm: ea_pub_v -> ea_send
+shared publishVotes: ea_finish -> ea_pub_v [published=true]
+shared sendAlphaTerm: ea_pub_v -> ea_send [end=true] # przesylac tracker do glosujacego
 # Może dodać współdzielone akcje z głosującymi, żeby EA wiedziało, kto na kogo głosował
 
 Agent Voter[2]:
@@ -24,7 +24,7 @@ PROTOCOL v_init: [[requestVoteForA_aID, requestVoteForB_aID, leave_aID]]  # DODA
 shared startVoting: v_request -> v_start
 createCommitment: v_start -> v_commit
 fillVoteA: v_commit -> v_fill [v_aid=1]
-fillVoteB: v_commit -> v_fill [v_aid=2]
+fillVoteB: v_commit -> v_fill [v_aid=2] # moze synchronizowac z telerami?
 encryptVote: v_fill -> v_encrypt
 sendVote: v_encrypt -> v_send
 shared finishVoting: v_send -> v_finish
@@ -61,4 +61,10 @@ shared punish_Voter2: c_init -> c_init [pun2=true]
 shared no_punish_Voter1: c_init -> c_init [pun1=false]
 shared no_punish_Voter2: c_init -> c_init [pun2=false]
 
+
+Agent WBB - voter synchronizuje sie na akcjach glosowania, dostaje swoj sledzik
+
 REDUCTION: [pun1, pun2, ...] # DODAC DO PARSERA!!!
+
+
+# <<Coercer>>G( (end and not v_1=1) --> K_Coercer (not v_1=1) )

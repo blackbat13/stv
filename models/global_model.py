@@ -24,7 +24,7 @@ class GlobalModel:
 
         i = 0
         while i < len(lines):
-            if len(lines[i].strip()) == 0:
+            if StringTools.is_blank_line(lines[i]):
                 i += 1
                 continue
 
@@ -37,6 +37,7 @@ class GlobalModel:
                     local_model = LocalModel(len(self._local_models))
                     local_model.parse("".join(lines[line_from:line_to]), agent_id)
                     self._local_models.append(local_model)
+
         self._agents_count = len(self._local_models)
 
     def _find_agent_end(self, lines: List[str], line_index: int):
