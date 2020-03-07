@@ -220,5 +220,6 @@ class Menu:
         return option
 
 
-menu = Menu()
-menu.start()
+if __name__ == "__main__":
+    menu = Menu()
+    menu.start()

@@ -63,16 +63,14 @@ class StrategyComparer:
         self.__dfs_visited_states = val
 
     def __init__(self, model: SimpleModel, possible_actions: list):
-        self.set_defaults()
-        self.model = model
-        self.possible_actions = possible_actions
-
-    def set_defaults(self):
         self.model = None
         self.possible_actions = []
         self.winning_states = []
         self.current_heuristic = None
         self.dfs_visited_states = []
+        self.current_coalition = []
+        self.model = model
+        self.possible_actions = possible_actions
 
     def domino_dfs(self, initial_state: int, winning_states: Set[int], coalition: List[int], heuristic) -> (
             bool, List):
@@ -431,23 +429,9 @@ class StrategyComparer:
 
         start = time.process_time()
         old_strategy = strategy[:]
-        while (True):
+        while True:
             for agent_id in coalition:
-                information_sets = []
-                for state_id in range(0, self.model.no_states):
-                    epistemic_class = self.model.epistemic_class_for_state(state_id, agent_id)
-                    next = False
-                    i_set = []
-                    for epistemic_state_id in epistemic_class:
-                        if epistemic_state_id < state_id:
-                            next = True
-
-                        if not next and strategy[epistemic_state_id] is not None:
-                            i_set.append(epistemic_state_id)
-                    if next or len(i_set) == 0:
-                        continue
-
-                    information_sets.append(i_set[:])
+                information_sets = self.generate_information_sets(agent_id, strategy)
 
                 for i_set in information_sets:
                     conflicts = 0
@@ -547,13 +531,7 @@ class StrategyComparer:
         strategy_generator = StrategyGenerator(self.model)
         return strategy_generator.cut_to_reachable(self.strategy)
 
-    def simplify_strategy_one_agent_imperfect_info(self, agent_id: int, strategy: list, timeout: int):
-        self.strategy = strategy
-        actions = []
-        for _ in range(0, self.model.no_agents):
-            actions.append(self.possible_actions[:])
-
-        old_strategy = strategy[:]
+    def generate_information_sets(self, agent_id: int, strategy: list):
         information_sets = []
         for state_id in range(0, self.model.no_states):
             epistemic_class = self.model.epistemic_class_for_state(state_id, agent_id)
@@ -569,8 +547,171 @@ class StrategyComparer:
                 continue
 
             information_sets.append(i_set[:])
+        return information_sets
+
+    def conflicts_in_i_set(self, i_set, strategy) -> int:
+        """
+        Count number of conflicts in information set for the given strategy
+        :param i_set:
+        :param strategy:
+        :return:
+        """
+        conflicts = 0
+        for i in range(1, len(i_set)):
+            if strategy[i_set[i]] != strategy[i_set[0]]:
+                conflicts += 1
+
+        return conflicts
+
+    def simplify_strategy_one_agent_imperfect_info_clusters(self, agent_id: int, strategy: list, timeout: int, cluster_size: int):
+        self.strategy = strategy
+        actions = []
+        for _ in range(0, self.model.no_agents):
+            actions.append(self.possible_actions[:])
+
+        old_strategy = strategy[:]
+        information_sets = self.generate_information_sets(agent_id, strategy)
         start = time.process_time()
-        while (True):
+        while True:
+            for i_set_id in range(len(information_sets), cluster_size):
+                conflicts = 0
+                root_states = []
+                current_strategy = []
+                given_strategy = []
+                for j in range(cluster_size):
+                    conflicts += self.conflicts_in_i_set(information_sets[i_set_id + j], strategy)
+                    root_states.append(information_sets[i_set_id + j][0])
+                    current_strategy.append(strategy[information_sets[i_set_id + j][0]])
+                    given_strategy.append(strategy[information_sets[i_set_id + j][0]])
+
+
+                # current_strategy = strategy[i_set[0]]
+                replace = False
+                good_strategies = []
+
+                for strat in self.model.get_possible_strategies_for_set(root_states):
+                    if strat == given_strategy:
+                        continue
+                    ok = True
+
+                    strat_result = set()
+                    for j in range(cluster_size):
+                        for state_id in information_sets[i_set_id + j]:
+                            strat_result.update(set(self.get_action_result(state_id, strat[j])))
+
+                    current_strat_result = set()
+                    for j in range(cluster_size):
+                        for state_id in information_sets[i_set_id + j]:
+                            current_strat_result.update(set(self.get_action_result(state_id, current_strategy[j])))
+
+                    comp_res = self.compare_result(current_strat_result, strat_result)
+                    if not (
+                            comp_res == self.CompareResult.EQUAL or comp_res == self.CompareResult.SECOND_BETTER):
+                        ok = False
+
+
+
+                for strat in self.model.get_possible_strategies(i_set[0]):
+                    if strat == strategy[i_set[0]]:
+                        continue
+                    ok = True
+                    for state_id in i_set:
+                        compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                        if not (
+                                compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.SECOND_BETTER):
+                            ok = False
+                    if not ok:
+                        for state_id in i_set:
+                            compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                            if not (
+                                    compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.SECOND_BETTER):
+                                continue
+                            new_conflicts = 0
+                            for i in range(0, len(i_set)):
+                                if i_set[i] == state_id:
+                                    continue
+                                if strategy[i_set[i]] != strategy[state_id]:
+                                    new_conflicts += 1
+                            if new_conflicts < conflicts:
+                                strategy[state_id] = list(strat)
+                                conflicts = new_conflicts
+                        continue
+                    current_strategy = list(strat)
+                    replace = True
+                    conflicts = 0
+                    good_strategies.append(current_strategy[:])
+                if replace:
+                    for state_id in i_set:
+                        strategy[state_id] = current_strategy
+                current_strategy = strategy[i_set[0]]
+                replace = False
+                for strat in good_strategies:
+                    if strat == strategy[i_set[0]]:
+                        continue
+                    ok = True
+                    better = False
+                    for state_id in i_set:
+                        compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                        if not (
+                                compare_result == self.CompareResult.EQUAL or compare_result == self.CompareResult.SECOND_BETTER):
+                            ok = False
+                        if compare_result == self.CompareResult.SECOND_BETTER:
+                            better = True
+
+                    if not ok:
+                        continue
+                    if better:
+                        current_strategy = list(strat)
+                        replace = True
+                if replace:
+                    for state_id in i_set:
+                        strategy[state_id] = current_strategy
+                if len(good_strategies) > 0:
+                    continue
+                current_strategy = strategy[i_set[0]]
+                for strat in self.model.get_possible_strategies(i_set[0]):
+                    if strat == strategy[i_set[0]]:
+                        continue
+                    for state_id in i_set:
+                        compare_result = self.basic_h(state_id, current_strategy, list(strat))
+                        if not (compare_result == self.CompareResult.SECOND_BETTER):
+                            continue
+                        new_conflicts = 0
+                        for i in range(0, len(i_set)):
+                            if i_set[i] == state_id:
+                                continue
+                            if strategy[i_set[i]] != strategy[state_id]:
+                                new_conflicts += 1
+                        if new_conflicts < conflicts:
+                            strategy[state_id] = list(strat)
+                            conflicts = new_conflicts
+
+            if strategy == old_strategy:
+                break
+
+            # print(strategy)
+            strategy_generator = StrategyGenerator(self.model)
+            strategy = strategy_generator.cut_to_reachable(self.strategy)
+            old_strategy = strategy[:]
+            # print(strategy)
+            end = time.process_time()
+            if (end - start) >= timeout:
+                break
+
+        self.strategy = strategy[:]
+        strategy_generator = StrategyGenerator(self.model)
+        return strategy_generator.cut_to_reachable(self.strategy)
+
+    def simplify_strategy_one_agent_imperfect_info(self, agent_id: int, strategy: list, timeout: int):
+        self.strategy = strategy
+        actions = []
+        for _ in range(0, self.model._no_agents):
+            actions.append(self.possible_actions[:])
+
+        old_strategy = strategy[:]
+        information_sets = self.generate_information_sets(agent_id, strategy)
+        start = time.process_time()
+        while True:
             for i_set in information_sets:
                 conflicts = 0
                 for i in range(1, len(i_set)):
@@ -674,7 +815,7 @@ class StrategyComparer:
     def simplify_strategy_one_agent(self, agent_id: int, strategy: list, heuristic):
         self.strategy = strategy
         actions = []
-        for _ in range(0, self.model.no_agents):
+        for _ in range(0, self.model._no_agents):
             actions.append(self.possible_actions[:])
 
         for state in range(0, self.model.no_states):
@@ -759,6 +900,29 @@ class StrategyComparer:
                     added[j] = True
 
         return new_states
+
+    def compare_result(self, result1: Set[int], result2: Set[int]) -> CompareResult:
+        if len(result1) == 0 or len(result2) == 0:
+            return self.CompareResult.NOT_COMPARABLE
+
+        result = 1
+
+        for state in result2:
+            if not (state in result1):
+                result = -1
+                break
+
+        if result == 1:
+            if len(result2) < len(result1):
+                return self.CompareResult.SECOND_BETTER
+            else:
+                return self.CompareResult.EQUAL
+
+        for state in result1:
+            if state not in result2:
+                return self.CompareResult.NOT_COMPARABLE
+
+        return self.CompareResult.FIRST_BETTER
 
     def basic_h(self, state: int, strategy1: list, strategy2: list) -> CompareResult:
         strategy1_result = self.get_actions_result(state, strategy1)

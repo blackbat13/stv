@@ -24,8 +24,8 @@ class SimpleVotingModelIsplGenerator(IsplGenerator):
         vars = "\tVars:\n"
         for voter_number in range(1, self._number_of_voters + 1):
             vars += f"\t\tvoter{voter_number}Voted: boolean;\n" \
-                f"\t\tvoter{voter_number}Decided: boolean;\n" \
-                f"\t\tvoter{voter_number}Pun: {{pun, np, None}};\n"
+                    f"\t\tvoter{voter_number}Decided: boolean;\n" \
+                    f"\t\tvoter{voter_number}Pun: {{pun, np, None}};\n"
         vars += "\tend Vars\n"
         return vars
 
@@ -47,12 +47,12 @@ class SimpleVotingModelIsplGenerator(IsplGenerator):
             evolution += ";\n"
         for voter_number in range(1, self._number_of_voters + 1):
             evolution += f"\t\tvoter{voter_number}Decided=true if\n" \
-                f"\t\t\tVoter{voter_number}.Action=Give or\n" \
-                f"\t\t\tVoter{voter_number}.Action=Ng;\n" \
-                f"\t\tvoter{voter_number}Pun=pun if\n" \
-                f"\t\t\tCoercer.Action=Pun{voter_number};\n" \
-                f"\t\tvoter{voter_number}Pun=np if\n" \
-                f"\t\t\tCoercer.Action=Np{voter_number};\n"
+                         f"\t\t\tVoter{voter_number}.Action=Give or\n" \
+                         f"\t\t\tVoter{voter_number}.Action=Ng;\n" \
+                         f"\t\tvoter{voter_number}Pun=pun if\n" \
+                         f"\t\t\tCoercer.Action=Pun{voter_number};\n" \
+                         f"\t\tvoter{voter_number}Pun=np if\n" \
+                         f"\t\t\tCoercer.Action=Np{voter_number};\n"
         evolution += "\tend Evolution\n"
         return evolution
 
@@ -90,8 +90,8 @@ class SimpleVotingModelIsplGenerator(IsplGenerator):
         protocol = "\tProtocol:\n"
         for voter_number in range(1, self._number_of_voters + 1):
             protocol += f"\t\tEnvironment.voter{voter_number}Voted=true and " \
-                f"Environment.voter{voter_number}Pun=None and " \
-                f"Environment.voter{voter_number}Decided=true: {{Pun{voter_number}, Np{voter_number}, Wait}};\n"
+                        f"Environment.voter{voter_number}Pun=None and " \
+                        f"Environment.voter{voter_number}Decided=true: {{Pun{voter_number}, Np{voter_number}, Wait}};\n"
         protocol += "\t\tOther: {Wait};\n" \
                     "\tend Protocol\n"
         return protocol
@@ -161,8 +161,8 @@ class SimpleVotingModelIsplGenerator(IsplGenerator):
                       "\t\t"
         for voter_number in range(1, self._number_of_voters + 1):
             init_states += f"Voter{voter_number}.vote=0 and Voter{voter_number}.decision=None " \
-                f"and Environment.voter{voter_number}Voted=false and Environment.voter{voter_number}Pun=None " \
-                f"and Environment.voter{voter_number}Decided=false and "
+                           f"and Environment.voter{voter_number}Voted=false and Environment.voter{voter_number}Pun=None " \
+                           f"and Environment.voter{voter_number}Decided=false and "
         init_states += "Coercer.x=false;\n" \
                        "end InitStates\n\n"
         return init_states
@@ -204,9 +204,9 @@ class SimpleVotingModel2IsplGenerator(SimpleVotingModelIsplGenerator):
         vars = "\tVars:\n"
         for voter_number in range(1, self._number_of_voters + 1):
             vars += f"\t\tvoter{voter_number}Voted: boolean;\n" \
-                f"\t\tvoter{voter_number}Decided: boolean;\n" \
-                f"\t\tvoter{voter_number}Pun: {{pun, np, None}};\n" \
-                f"\t\tvoter{voter_number}Decision: {{give, ng, None}};\n"
+                    f"\t\tvoter{voter_number}Decided: boolean;\n" \
+                    f"\t\tvoter{voter_number}Pun: {{pun, np, None}};\n" \
+                    f"\t\tvoter{voter_number}Decision: {{give, ng, None}};\n"
         vars += "\tend Vars\n"
         return vars
 
@@ -220,19 +220,19 @@ class SimpleVotingModel2IsplGenerator(SimpleVotingModelIsplGenerator):
             evolution += ";\n"
         for voter_number in range(1, self._number_of_voters + 1):
             evolution += f"\t\tvoter{voter_number}Decided=true if\n" \
-                f"\t\t\tVoter{voter_number}.Action=Give or\n" \
-                f"\t\t\tVoter{voter_number}.Action=Ng;\n" \
-                f"\t\tvoter{voter_number}Decision=give if\n" \
-                f"\t\t\tVoter{voter_number}.Action=Give;\n" \
-                f"\t\tvoter{voter_number}Decision=ng if\n" \
-                f"\t\t\tVoter{voter_number}.Action=Ng;\n" \
-                f"\t\tvoter{voter_number}Pun=pun if\n" \
-                f"\t\t\tCoercer.Action=Pun{voter_number} and (protection=low or voter{voter_number}Decision=give);\n" \
-                f"\t\tvoter{voter_number}Pun=np if\n" \
-                f"\t\t\tCoercer.Action=Np{voter_number} or (protection=high and voter{voter_number}Decision=ng);\n"
+                         f"\t\t\tVoter{voter_number}.Action=Give or\n" \
+                         f"\t\t\tVoter{voter_number}.Action=Ng;\n" \
+                         f"\t\tvoter{voter_number}Decision=give if\n" \
+                         f"\t\t\tVoter{voter_number}.Action=Give;\n" \
+                         f"\t\tvoter{voter_number}Decision=ng if\n" \
+                         f"\t\t\tVoter{voter_number}.Action=Ng;\n" \
+                         f"\t\tvoter{voter_number}Pun=pun if\n" \
+                         f"\t\t\tCoercer.Action=Pun{voter_number} and (protection=low or voter{voter_number}Decision=give);\n" \
+                         f"\t\tvoter{voter_number}Pun=np if\n" \
+                         f"\t\t\tCoercer.Action=Np{voter_number} or (protection=high and voter{voter_number}Decision=ng);\n"
         evolution += f"\t\tprotection=low if\nEA.Action=Low;\n" \
-            f"\t\tprotection=high if\nEA.Action=High;\n" \
-            f"\tend Evolution\n"
+                     f"\t\tprotection=high if\nEA.Action=High;\n" \
+                     f"\tend Evolution\n"
         return evolution
 
     def _create_election_authority(self):
@@ -278,10 +278,10 @@ class SimpleVotingModel2IsplGenerator(SimpleVotingModelIsplGenerator):
         init_states = "InitStates\n\t\t"
         for voter_number in range(1, self._number_of_voters + 1):
             init_states += f"Voter{voter_number}.vote=0 and Voter{voter_number}.decision=None and " \
-                               f"Environment.voter{voter_number}Voted=false and " \
-                               f"Environment.voter{voter_number}Pun=None and " \
-                               f"Environment.voter{voter_number}Decided=false and " \
-                               f"Environment.voter{voter_number}Decision=None and "
+                           f"Environment.voter{voter_number}Voted=false and " \
+                           f"Environment.voter{voter_number}Pun=None and " \
+                           f"Environment.voter{voter_number}Decided=false and " \
+                           f"Environment.voter{voter_number}Decision=None and "
         init_states += "Coercer.x=false and EA.init=true and Environment.protection=None;\n" \
                        "end InitStates\n\n"
         return init_states

@@ -24,8 +24,8 @@ class BridgeDfsExp(AExperiment):
         start = time.process_time()
         self._model = BridgeModel(no_cards_available=self.__n, no_end_cards=self.__n,
                                   first_state={'board': [-1, -1, -1, -1], 'lefts': [0, 0],
-                                              'hands': self.__hands, 'next': 0, 'history': [],
-                                              'beginning': 0, 'clock': 0, 'suit': -1})
+                                               'hands': self.__hands, 'next': 0, 'history': [],
+                                               'beginning': 0, 'clock': 0, 'suit': -1})
         self._model.generate()
         end = time.process_time()
         self._results_file.write(f'Model generated in: {end - start} seconds\n')
@@ -58,5 +58,7 @@ class BridgeDfsExp(AExperiment):
                     print(
                         f"{BridgeModel.board_to_readable(self._model.model.states[index]['board'])}: {BridgeModel.card_to_readable(value[0])}")
 
-# bridge_dfs_exp = BridgeDfsExp(1, True)
-# bridge_dfs_exp.run_experiments()
+
+if __name__ == "__main__":
+    bridge_dfs_exp = BridgeDfsExp(1, True)
+    bridge_dfs_exp.run_experiments()

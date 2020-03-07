@@ -128,11 +128,10 @@ class ModelGenerator(ABC):
         pass
 
     def get_winning_states(self, prop: str) -> Set[int]:
-        result = []
+        result = set()
         state_id = -1
         for state in self.states:
             state_id += 1
             if prop in state['props']:
-                result.append(state_id)
+                result.add(state_id)
         return result
-

@@ -13,7 +13,8 @@ class CracowPollutionModelExp(AExperiment):
     based on a (small part of) Cracow locations.
     """
 
-    def __init__(self, n_agent: int, energy: int, radius: int, selected_place: int, first_place_id: int, formula_id: int = 1,
+    def __init__(self, n_agent: int, energy: int, radius: int, selected_place: int, first_place_id: int,
+                 formula_id: int = 1,
                  DEBUG: bool = False):
         super().__init__(DEBUG)
         self._file_name = "results-f2-perf.txt"
@@ -234,5 +235,7 @@ class CracowPollutionModelExp(AExperiment):
             return self.dformula2string(conj[i], 0)
         return "(" + self.dformula2string(conj[i], 0) + " | " + self.cformula2string(conj, i + 1) + ")"
 
-# cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5, 1, False)
-# cracow_pollution_model_exp.run_experiments()
+
+if __name__ == "__main__":
+    cracow_pollution_model_exp = CracowPollutionModelExp(1, 3, 1, 7, 5, 1, False)
+    cracow_pollution_model_exp.run_experiments()

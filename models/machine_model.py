@@ -362,7 +362,8 @@ class MachineModelWithCharging(MachineModel):
                          obstacle_positions, machine_requirements, production_times, imperfect)
         self.name: str = "Machine Model With Charging"
         self.max_charge = 10
-        self.map_item_symbols = {self.MapItems.EMPTY: '.', self.MapItems.OBSTACLE: '#', self.MapItems.CHARGING_STATION: 'C'}
+        self.map_item_symbols = {self.MapItems.EMPTY: '.', self.MapItems.OBSTACLE: '#',
+                                 self.MapItems.CHARGING_STATION: 'C'}
 
     def prepare_map(self):
         super().prepare_map()

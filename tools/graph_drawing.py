@@ -35,7 +35,7 @@ class GraphDrawing:
                     continue
                 if self.strategy[state] == transition.actions:
                     graph.add_edges_from([(state, next_state)],
-                                     label=transition.actions, color='green')
+                                         label=transition.actions, color='green')
                 else:
                     graph.add_edges_from([(state, next_state)],
                                          label=transition.actions, color='red')
@@ -46,7 +46,9 @@ class GraphDrawing:
         pos = networkx.drawing.nx_agraph.graphviz_layout(graph, prog='neato', root=0)
 
         labels = networkx.get_edge_attributes(graph, 'label')
-        networkx.draw(graph, pos=pos, node_size=16500, with_labels=False, font_weight='bold', node_color=list(networkx.get_node_attributes(graph, 'color').values()), edge_color=list(networkx.get_edge_attributes(graph, 'color').values()), arrows=True, arrowsize=30)
+        networkx.draw(graph, pos=pos, node_size=16500, with_labels=False, font_weight='bold',
+                      node_color=list(networkx.get_node_attributes(graph, 'color').values()),
+                      edge_color=list(networkx.get_edge_attributes(graph, 'color').values()), arrows=True, arrowsize=30)
         networkx.draw_networkx_edge_labels(graph, pos=pos, edge_labels=labels, label_pos=0.4)
         networkx.draw_networkx_labels(graph, pos=pos, labels=networkx.get_node_attributes(graph, 'label'))
         plt.autoscale()

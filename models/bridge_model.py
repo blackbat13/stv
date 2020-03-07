@@ -319,3 +319,12 @@ class BridgeModel(ModelGenerator):
                 readable_board.append(cards_dictionary[card])
 
         return readable_board
+
+
+if __name__ == "__main__":
+    n = 2
+    model = BridgeModel(n, n, {'board': [-1, -1, -1, -1], 'lefts': [0, 0],
+                               'hands': BridgeModel.generate_random_hands(n, n), 'next': 0,
+                               'history': [],
+                               'beginning': 0, 'clock': 0, 'suit': -1})
+    model.generate()

@@ -107,3 +107,8 @@ class SimpleVotingModel(ModelGenerator):
 
     def get_winning_states(self, prop: str) -> List[int]:
         pass
+
+
+if __name__ == "__main__":
+    model = SimpleVotingModel(number_of_candidates=2, number_of_voters=2)
+    model.generate()

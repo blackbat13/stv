@@ -1,7 +1,5 @@
-from models.random_model import *
 from models.drone_model import *
 from comparing_strats.strat_simpl import StrategyComparer
-from typing import List
 import datetime
 import time
 import signal
@@ -166,7 +164,9 @@ class DroneModelExp2:
         for index, value in enumerate(strategy):
             if value is not None:
                 defined_in += 1
-        epistemic_mismatch = strategy_comparer.count_epistemic_mismatch(0, strategy) + strategy_comparer.count_epistemic_mismatch(1, strategy)
+        epistemic_mismatch = strategy_comparer.count_epistemic_mismatch(0,
+                                                                        strategy) + strategy_comparer.count_epistemic_mismatch(
+            1, strategy)
         self.__file.write(
             f"Non control states in strategy: {strategy_comparer.count_non_control_states(0, strategy)}\n")
         self.__file.write(f"Epistemic mismatch for random strategy: {epistemic_mismatch}\n")
@@ -195,7 +195,9 @@ class DroneModelExp2:
                     print(f"{index}: {value}\n")
                 defined_in += 1
 
-        epistemic_mismatch = strategy_comparer.count_epistemic_mismatch(0, simplified_strategy) + strategy_comparer.count_epistemic_mismatch(1, simplified_strategy)
+        epistemic_mismatch = strategy_comparer.count_epistemic_mismatch(0,
+                                                                        simplified_strategy) + strategy_comparer.count_epistemic_mismatch(
+            1, simplified_strategy)
         self.__file.write(
             f"Non control states in strategy: {strategy_comparer.count_non_control_states(0, simplified_strategy)}\n")
         self.__file.write(f"Epistemic mismatch for simplified strategy: {epistemic_mismatch}\n")

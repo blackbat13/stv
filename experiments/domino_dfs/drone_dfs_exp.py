@@ -4,9 +4,6 @@ from typing import List
 import datetime
 
 
-# from comparing_strats.graph_drawing import GraphDrawing
-
-
 class DroneDfsExp:
     def __init__(self, no_drones: int, energies: List[int], DEBUG: bool = False):
         self.no_drones = no_drones
@@ -53,8 +50,7 @@ class DroneDfsExp:
             if value is not None:
                 print(f"{index}: {value}")
 
-        # graphDrawing = GraphDrawing(drone_model.model, strategy)
-        # graphDrawing.draw()
 
-# drone_dfs_exp = DroneDfsExp(no_drones=1, energies=[3], DEBUG=True)
-# drone_dfs_exp.run_experiments()
+if __name__ == "__main__":
+    drone_dfs_exp = DroneDfsExp(no_drones=1, energies=[3], DEBUG=True)
+    drone_dfs_exp.run_experiments()

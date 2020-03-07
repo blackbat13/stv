@@ -15,5 +15,7 @@ class SimpleVotingModelExperiments:
         self.model = SimpleVotingModel(self.no_candidates, self.no_voters)
         self.model.generate()
 
-# simple_voting_model_experiments = SimpleVotingModelExperiments(2, 2)
-# simple_voting_model_experiments.run_experiments()
+
+if __name__ == "__main__":
+    simple_voting_model_experiments = SimpleVotingModelExperiments(2, 2)
+    simple_voting_model_experiments.run_experiments()

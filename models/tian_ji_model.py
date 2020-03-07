@@ -77,3 +77,8 @@ class TianJiModel(ModelGenerator):
 
     def get_winning_states(self, prop: str) -> Set[int]:
         pass
+
+
+if __name__ == "__main__":
+    model = TianJiModel(no_horses=3)
+    model.generate()

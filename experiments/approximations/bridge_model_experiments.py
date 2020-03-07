@@ -20,8 +20,8 @@ class BridgeModelExperiments:
                                                   'history': [],
                                                   'beginning': 0, 'clock': 0, 'suit': -1})
         self.model.generate()
-        print(self.model.model.js_dump_model())
 
-# bridge_model_experiments = BridgeModelExperiments(1)
-# bridge_model_experiments.generate_model()
-# bridge_model_experiments.run_experiments()
+
+if __name__ == "__main__":
+    bridge_model_experiments = BridgeModelExperiments(1)
+    bridge_model_experiments.run_experiments()

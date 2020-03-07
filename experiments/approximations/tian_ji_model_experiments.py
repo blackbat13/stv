@@ -27,5 +27,7 @@ class TianJiModelExperiments:
         self.model = TianJiModel(self.no_horses)
         self.model.generate()
 
-# tian_ji_model_experiments = TianJiModelExperiments(4)
-# tian_ji_model_experiments.run_experiments()
+
+if __name__ == "__main__":
+    tian_ji_model_experiments = TianJiModelExperiments(4)
+    tian_ji_model_experiments.run_experiments()

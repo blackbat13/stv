@@ -17,7 +17,7 @@ class StrategyGenerator:
         strategy = []
         for state in range(0, self.model.no_states):
             strategy.append([])
-            for _ in range(0, self.model.no_agents):
+            for _ in range(0, self.model._no_agents):
                 strategy[state].append(None)
 
         for state in range(0, self.model.no_states):
@@ -26,22 +26,24 @@ class StrategyGenerator:
 
             if strategy[state][0] is not None:
                 continue
-            for agent in range(0, self.model.no_agents):
+            for agent in range(0, self.model._no_agents):
                 actions_tr = {'N': 0, 'E': 0, 'W': 0, 'S': 0, 'Wait': 0, 'F': 0}
                 visited_tr = {'N': 0, 'E': 0, 'W': 0, 'S': 0, 'Wait': 0, 'F': 0}
                 max_tr = 'F'
                 max_visited = 0
                 for transition in self.model.graph[state]:
                     actions_tr[transition['actions'][agent]] += 1
-                    visited_tr[transition['actions'][agent]] += self.count_visited_places_for_state(self.model.states[transition['next_state']])
+                    visited_tr[transition['actions'][agent]] += self.count_visited_places_for_state(
+                        self.model.states[transition['next_state']])
                     # if actions_tr[transition['actions'][agent]] > actions_tr[max_tr] or (
                     #         actions_tr[transition['actions'][agent]] == actions_tr[max_tr] and transition['actions'][
                     #     agent] != 'Wait'):
                     #     max_tr = transition['actions'][agent]
                     if actions_tr[transition['actions'][agent]] >= actions_tr[max_tr]:
                         if visited_tr[transition['actions'][agent]] >= max_visited:
-                            if transition['actions'][agent] != 'Wait' or visited_tr[transition['actions'][agent]] > max_visited:
-                                max_visited =  visited_tr[transition['actions'][agent]]
+                            if transition['actions'][agent] != 'Wait' or visited_tr[
+                                transition['actions'][agent]] > max_visited:
+                                max_visited = visited_tr[transition['actions'][agent]]
                                 max_tr = transition['actions'][agent]
                                 # print(max_visited)
 

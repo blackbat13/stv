@@ -5,6 +5,7 @@ class Transition:
     """
     Class for expressing the transitions in the model
     """
+
     @property
     def next_state(self) -> int:
         return self.__next_state

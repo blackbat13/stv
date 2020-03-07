@@ -121,3 +121,8 @@ class RandomModel(ModelGenerator):
 
     def get_props_list(self) -> List[str]:
         return ["win"]
+
+
+if __name__ == "__main__":
+    model = RandomModel(100)
+    model.generate()

@@ -9,6 +9,7 @@ class CastleDfsExp:
     """
     Class for running experiments with DominoDFS on Castles model
     """
+
     def __init__(self, castle_sizes: List[int], castle_lifes: List[int], DEBUG: bool = False):
         """
 
@@ -87,7 +88,8 @@ class CastleDfsExp:
 
     def generate_strategy(self):
         start = time.process_time()
-        (self.result, self.strategy) = self.strategy_comparer.domino_dfs(self.castle_model.model.first_state_id, set(self.winning_states),
+        (self.result, self.strategy) = self.strategy_comparer.domino_dfs(self.castle_model.model.first_state_id,
+                                                                         set(self.winning_states),
                                                                          self.coalition,
                                                                          self.strategy_comparer.visited_states_h)
         end = time.process_time()
@@ -102,5 +104,6 @@ class CastleDfsExp:
         return strategy_defined_count
 
 
-# castle_dfs_test = CastleDfsExp(castle_sizes=[1, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
-# castle_dfs_test.run_experiments()
+if __name__ == "__main__":
+    castle_dfs_test = CastleDfsExp(castle_sizes=[1, 1, 1], castle_lifes=[3, 3, 3], DEBUG=False)
+    castle_dfs_test.run_experiments()

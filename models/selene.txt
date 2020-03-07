@@ -1,0 +1,64 @@
+Agent Teller[2]:
+init: t_init
+shared finishVoting: t_init -> t_finish
+shared decryptVotes: t_finish -> t_decrypt
+shared publishVotes: t_decrypt -> t_publish
+
+Agent ElectionAuthority[1]:
+init: ea_init
+generateTrackers_1: ea_init -> ea_gen [t1=1, t2=2]
+generateTrackers_2: ea_init -> ea_gen [t1=2, t2=1]
+shared publishTrackers: ea_gen -> ea_pub_t
+shared startVoting: ea_pub_t -> ea_start
+shared finishVoting: ea_start -> ea_finish
+shared publishVotes: ea_finish -> ea_pub_v
+shared sendAlphaTerm: ea_pub_v -> ea_send
+# Może dodać współdzielone akcje z głosującymi, żeby EA wiedziało, kto na kogo głosował
+
+Agent Voter[2]:
+init: v_init
+shared requestVoteForA_aID: v_init -> v_request [req_aID=1]
+shared requestVoteForB_aID: v_init -> v_request [req_aID=2]
+shared leave_aID: v_init -> v_request
+PROTOCOL v_init: [[requestVoteForA_aID, requestVoteForB_aID, leave_aID]]  # DODAC!!! do parsera
+shared startVoting: v_request -> v_start
+createCommitment: v_start -> v_commit
+fillVoteA: v_commit -> v_fill [v_aid=1]
+fillVoteB: v_commit -> v_fill [v_aid=2]
+encryptVote: v_fill -> v_encrypt
+sendVote: v_encrypt -> v_send
+shared finishVoting: v_send -> v_finish
+shared publishVotes: v_finish -> v_publish
+verifyElectionResults: v_publish -> v_publish
+computeFalseAlphaTerm_1: v_publish -> v_false_a [false_a_aID=1]
+computeFalseAlphaTerm_2: v_publish -> v_false_a [false_a_aID=2]
+computeFalseTracker1: v_false_a -> v_false_tr [false_tr_aID=1]
+computeFalseTracker2: v_false_a -> v_false_tr [false_tr_aID=2]
+dontComputeFalseAlphaTerm: v_publish -> v_false_tr
+shared sendAlphaTerm: v_false_tr -> v_send_a
+computeCorrectTracker: v_send_a -> v_comp_tr
+verifyVote: v_comp_tr -> v_comp_tr
+wait1: v_comp_tr -> v_comp_tr
+shared showTrackerFor1_aID: v_comp_tr -> v_show [v_show_aID=1]
+shared showTrackerFor2_aID: v_comp_tr -> v_show [v_show_aID=1]
+shared punish_aID: v_show -> v_show
+shared no_punish_aID: v_show -> v_show
+
+Agent Coercer[1]:
+init: c_init
+shared leave_Voter1: c_init -> c_init [req1=0]
+shared leave_Voter2: c_init -> c_init [req2=0]
+shared requestVoteFor1_Voter1: c_init -> c_init [req1=1]
+shared requestVoteFor2_Voter1: c_init -> c_init [req1=2]
+shared requestVoteFor1_Voter2: c_init -> c_init [req2=1]
+shared requestVoteFor2_Voter2: c_init -> c_init [req2=2]
+shared showTrackerFor1_Voter1: c_init -> c_init [v1_show=1]
+shared showTrackerFor2_Voter1: c_init -> c_init [v1_show=2]
+shared showTrackerFor1_Voter2: c_init -> c_init [v2_show=1]
+shared showTrackerFor2_Voter2: c_init -> c_init [v2_show=2]
+shared punish_Voter1: c_init -> c_init [pun1=true]
+shared punish_Voter2: c_init -> c_init [pun2=true]
+shared no_punish_Voter1: c_init -> c_init [pun1=false]
+shared no_punish_Voter2: c_init -> c_init [pun2=false]
+
+REDUCTION: [pun1, pun2, ...] # DODAC DO PARSERA!!!

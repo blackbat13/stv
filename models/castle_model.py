@@ -52,7 +52,7 @@ class CastleModel(ModelGenerator):
                 break
 
         defend = state['defend'][castle_id][agent_no]
-        epistemic_state = {'defend': defend, 'defeated': state['defeated']}
+        epistemic_state = {'defend': defend, 'defeated': state['defeated'], 'life': state['lifes'][castle_id]}
 
         return epistemic_state
 
@@ -144,3 +144,8 @@ class CastleModel(ModelGenerator):
                 result.append(state_id)
 
         return result
+
+
+if __name__ == "__main__":
+    castle_model = CastleModel([1, 1, 1], [3, 3, 3])
+    castle_model.generate()
