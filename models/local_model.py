@@ -9,6 +9,7 @@ class LocalModel:
         self._states: Dict[str, int] = {}
         self._transitions: List[List[LocalTransition]] = []
         self._actions: Set[str] = set()
+        self._protocols: Dict[str, List[List[str]]] = {}
 
     @property
     def agent_name(self):
@@ -22,8 +23,12 @@ class LocalModel:
         state_num = 1
         transition_id = 0
         for i in range(2, len(lines)):
-            line = lines[i]
+            line = lines[i].strip()
             line = line.replace("aID", self._agent_name)
+            if self._is_protocol_line(line):
+                state, prot = self._parse_protocol(line)
+                self._protocols[state] = prot
+                continue
             local_transition = LocalTransition()
             local_transition.parse(line)
             local_transition.id = transition_id
@@ -48,6 +53,26 @@ class LocalModel:
 
         while len(self._transitions) < len(self._states):
             self._transitions.append([])
+
+    def _is_protocol_line(self, line: str) -> bool:
+        return line[:8] == "PROTOCOL"
+
+    def _parse_protocol(self, line: str) -> (str, List[List[str]]):
+        line = line.split(":")
+        state = line[0].split(" ")[1]
+        prot = self._parse_protocol_array(line[1])
+        return state, prot
+
+    def _parse_protocol_array(self, line: str) -> List[List[str]]:
+        prot = []
+        line = line.strip().lstrip("[").rstrip("]")
+        for arr in line.split("],"):
+            arr = arr.strip().lstrip("[").rstrip("]")
+            lst = []
+            for el in arr.split(","):
+                lst.append(el.strip())
+            prot.append(lst)
+        return prot
 
     def transitions_from_state(self, state_id: int) -> List[LocalTransition]:
         return self._transitions[state_id]

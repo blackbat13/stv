@@ -12,6 +12,7 @@ class GlobalModel:
         self._dependent: List[List[List[int]]] = []
         self._pre: List[List[List[LocalTransition]]] = []
         self._agents_count: int = 0
+        self._reduction: List[str] = []
 
     @property
     def states_count(self):
@@ -37,6 +38,8 @@ class GlobalModel:
                     local_model = LocalModel(len(self._local_models))
                     local_model.parse("".join(lines[line_from:line_to]), agent_id)
                     self._local_models.append(local_model)
+            elif self._is_reduction_header(lines[i]):
+                self._reduction = self._parse_reduction(lines[i])
 
         self._agents_count = len(self._local_models)
 
@@ -49,6 +52,17 @@ class GlobalModel:
 
     def _is_agent_header(self, line: str):
         return line[0:5] == "Agent"
+
+    def _is_reduction_header(self, line: str):
+        return line[0:5] == "REDUCTION"
+
+    def _parse_reduction(self, line: str) -> List[str]:
+        line = line.split(":")[1]
+        line = line.strip().strip("[").strip("]")
+        red = []
+        for el in line.split(","):
+            red.append(el.strip())
+        return red
 
     def _parse_agent_max(self, line: str):
         if len(line.split("[")) > 1:

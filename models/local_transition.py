@@ -63,6 +63,9 @@ class LocalTransition:
             transition_str = transition_str.split("]")[0]
             variables = transition_str.split(",")
             for variable in variables:
+                if variable.find("=") == -1:
+                    self._props[variable] = "?"
+                    continue
                 prop, val = variable.split("=")
                 if val.casefold() == "true":
                     val = True
