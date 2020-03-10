@@ -79,7 +79,10 @@ class LocalTransition:
                 elif val.casefold() == "false":
                     val = False
                 else:
-                    val = int(val)
+                    try:
+                        val = int(val)
+                    except ValueError:
+                        pass
                 self._props[prop] = val
         else:
             self._state_to = transition_str
