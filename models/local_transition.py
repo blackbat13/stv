@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 
 class LocalTransition:
@@ -10,6 +10,7 @@ class LocalTransition:
         self._state_from: str = ""
         self._state_to: str = ""
         self._props: dict = {}
+        self._cond: List[(str, int)] = []
 
     @property
     def id(self) -> int:
@@ -57,7 +58,13 @@ class LocalTransition:
             transition_str = transition_str[7:]
 
         self._action, transition_str = transition_str.split(":")
-        self._state_from, transition_str = transition_str.split("->")
+        if transition_str.find("->") == -1:
+            self._state_from, transition_str = transition_str.split("-[")
+            conditions, transition_str = transition_str.split("]>")
+            cond_var, cond_val = conditions.split("==")
+            self._cond.append((cond_var, int(cond_val)))
+        else:
+            self._state_from, transition_str = transition_str.split("->")
         if transition_str.find("[") != -1:
             self._state_to, transition_str = transition_str.split("[")
             transition_str = transition_str.split("]")[0]
