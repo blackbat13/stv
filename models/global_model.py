@@ -13,6 +13,7 @@ class GlobalModel:
         self._pre: List[List[List[LocalTransition]]] = []
         self._agents_count: int = 0
         self._reduction: List[str] = []
+        self._unique_states = []
 
     @property
     def states_count(self):
@@ -28,7 +29,8 @@ class GlobalModel:
             if StringTools.is_blank_line(lines[i]):
                 i += 1
                 continue
-
+            # print(i)
+            # print(lines[i])
             if self._is_agent_header(lines[i]):
                 line_from = i
                 i = self._find_agent_end(lines, i + 1)
@@ -40,6 +42,8 @@ class GlobalModel:
                     self._local_models.append(local_model)
             elif self._is_reduction_header(lines[i]):
                 self._reduction = self._parse_reduction(lines[i])
+                i += 1
+                # print("Hello")
 
         self._agents_count = len(self._local_models)
 
@@ -54,7 +58,7 @@ class GlobalModel:
         return line[0:5] == "Agent"
 
     def _is_reduction_header(self, line: str):
-        return line[0:5] == "REDUCTION"
+        return line[0:9] == "REDUCTION"
 
     def _parse_reduction(self, line: str) -> List[str]:
         line = line.split(":")[1]
@@ -81,6 +85,54 @@ class GlobalModel:
             agent_ids.append(self.agent_name_to_id(agent_name))
         return agent_ids
 
+    def _enabled_transitions_in_state_for_agent(self, state: {}, agent_id: int) -> List[LocalTransition]:
+        agent_state_id = state['val'][agent_id]
+        all_transitions = self._local_models[agent_id].private_transitions_from_state(agent_state_id)
+        all_transitions += self._local_models[agent_id].shared_transitions_from_state(agent_state_id)
+        result = []
+        for transition in all_transitions:
+            ok = True
+            if transition.conditions:
+                for cond in transition.conditions:
+                    if cond[2] == "==" and ((cond[0] not in state['props']) or (state['props'][cond[0]] != cond[1])):
+                        ok = False
+                        break
+                    elif cond[2] == "!=" and cond[0] in state['props'] and state['props'][cond[0]] == cond[1]:
+                        ok = False
+                        break
+
+            if ok:
+                result.append(transition)
+        return result
+
+    def _enabled_transitions_in_state(self, state: {}) -> List[List[LocalTransition]]:
+        all_transitions = []
+        for agent_id in range(len(self._local_models)):
+            all_transitions.append(self._enabled_transitions_in_state_for_agent(state, agent_id))
+
+        result = []
+        for agent_id in range(len(self._local_models)):
+            result.append([])
+            for transition in all_transitions[agent_id]:
+                if not transition.shared:
+                    result[agent_id].append(transition)
+                    continue
+                ok = True
+                for a_id in range(len(self._local_models)):
+                    if a_id == agent_id:
+                        continue
+                    if self._local_models[a_id].has_action(transition.action):
+                        ok = False
+                        for tr in all_transitions[a_id]:
+                            if tr.action == transition.action:
+                                ok = True
+                                break
+                    if not ok:
+                        break
+                if ok:
+                    result[agent_id].append(transition)
+        return result
+
     def compute_reduced(self, coalition: List[int]):
         self.compute_dependent_transitions()
         self.compute_pre_transitions()
@@ -92,14 +144,15 @@ class GlobalModel:
         i = 0
         while i < len(self._states):
             state = self._states[i]
+            # print(state)
             current_state_id = i
             i += 1
 
             ok = False
+            enabled_transitions = self._enabled_transitions_in_state(state)
+
             for agent_id in range(0, len(self._local_models)):
-                transition_candidates = self._local_models[agent_id].private_transitions_from_state(
-                    state['val'][agent_id])
-                transition_candidates.extend(self.shared_available_transitions(agent_id, state['val']))
+                transition_candidates = enabled_transitions[agent_id]
 
                 if not self.check2(agent_id, transition_candidates, coalition):
                     continue
@@ -115,28 +168,23 @@ class GlobalModel:
                     continue
 
                 ok = True
-                for tr in transition_candidates:
-                    new_state = {'val': state['val'][:], 'props': {}, 'counters': state['counters'][:]}
-                    new_state['val'][agent_id] = self._local_models[agent_id].get_state_id(tr.state_to)
-                    agents = []
-                    if tr.shared:
-                        for agent2_id in range(self._agents_count):
-                            if self._local_models[agent2_id].has_action(tr.action):
-                                state['counters'][agent2_id] += 1
-                                agents.append(agent2_id)
-                    else:
-                        state['counters'][agent_id] += 1
-                        agents.append(agent_id)
-
-                    for prop in tr.props:
-                        new_state['props'][prop] = tr.props[prop]
-
-                    new_state_id = self.state_find(new_state)
-                    if new_state_id == -1:
-                        self._states.append(new_state)
-                        new_state_id = len(self._states) - 1
-
-                    self.add_transition(current_state_id, new_state_id, tr.action, agents)
+                self.compute_next_for_state_for_agent(state, current_state_id, agent_id, [], enabled_transitions)
+                # for tr in transition_candidates:
+                #     new_state = {'val': state['val'][:], 'props': state['props'].copy(), 'counters': state['counters'][:]}
+                #     new_state['val'][agent_id] = self._local_models[agent_id].get_state_id(tr.state_to)
+                #     agents = []
+                #     if tr.shared:
+                #         for agent2_id in range(self._agents_count):
+                #             if self._local_models[agent2_id].has_action(tr.action):
+                #                 state['counters'][agent2_id] += 1
+                #                 agents.append(agent2_id)
+                #     else:
+                #         state['counters'][agent_id] += 1
+                #         agents.append(agent_id)
+                #
+                #     new_state = self.copy_props_to_state(new_state, tr)
+                #     new_state_id = self.add_state(new_state)
+                #     self.add_transition(current_state_id, new_state_id, tr.action, agents)
 
                 break
 
@@ -160,7 +208,7 @@ class GlobalModel:
                 self.add_transition(current_state_id, new_state_id, transition.action, [model_id])
 
     def new_state_after_private_transition(self, state: {}, transition: LocalTransition, agent_id: int):
-        new_state = {'val': state['val'][:], 'props': {}, 'counters': state['counters'][:]}
+        new_state = {'val': state['val'][:], 'props': state['props'].copy(), 'counters': state['counters'][:]}
         new_state['val'][agent_id] = self._local_models[agent_id].get_state_id(transition.state_to)
         new_state['counters'][agent_id] += 1
         new_state = self.copy_props_to_state(new_state, transition)
@@ -170,6 +218,7 @@ class GlobalModel:
         state_id = self.state_find(state)
         if state_id == -1:
             self._states.append(state)
+            self._unique_states.append({'val': state['val'], 'props': state['props']})
             state_id = len(self._states) - 1
 
         return state_id
@@ -202,7 +251,7 @@ class GlobalModel:
         return ok, actual_transition
 
     def new_state_after_shared_transition(self, state: {}, actual_transition):
-        new_state = {'val': state['val'][:], 'props': {}, 'counters': state['counters'][:]}
+        new_state = {'val': state['val'][:], 'props': state['props'].copy(), 'counters': state['counters'][:]}
         agents = []
         for act_tran in actual_transition:
             new_state['counters'][act_tran[0]] += 1
@@ -226,12 +275,44 @@ class GlobalModel:
                 self.add_transition(current_state_id, new_state_id, transition.action, agents)
 
     def compute_next_for_state(self, state: {}, current_state_id: int):
-        self.compute_private_next_for_state(state, current_state_id)
-        self.compute_shared_next_for_state(state, current_state_id)
+        all_transitions = self._enabled_transitions_in_state(state)
+        visited = []
+        for agent_id in range(len(self._local_models)):
+            self.compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions)
+
+        # self.compute_private_next_for_state(state, current_state_id)
+        # self.compute_shared_next_for_state(state, current_state_id)
+
+    def compute_next_for_state_for_agent(self, state: {}, current_state_id: int, agent_id: int, visited: [], all_transitions: []):
+        for transition in all_transitions[agent_id]:
+            if transition.shared and transition.action not in visited:
+                # print(transition.action)
+                visited.append(transition.action)
+                # print(visited)
+                actual_transition = [(agent_id, transition)]
+                for n_a_id in range(agent_id + 1, len(self._local_models)):
+                    for n_tr in all_transitions[n_a_id]:
+                        if n_tr.shared and n_tr.action == transition.action:
+                            actual_transition.append((n_a_id, n_tr))
+                            break
+                new_state, agents = self.new_state_after_shared_transition(state, actual_transition)
+                new_state_id = self.add_state(new_state)
+                self.add_transition(current_state_id, new_state_id, transition.action, agents)
+            elif not transition.shared:
+                new_state = self.new_state_after_private_transition(state, transition, agent_id)
+                new_state_id = self.add_state(new_state)
+                self.add_transition(current_state_id, new_state_id, transition.action, [agent_id])
 
     def copy_props_to_state(self, state: {}, transition: LocalTransition):
         for prop in transition.props:
-            state['props'][prop] = transition.props[prop]
+            if transition.props[prop] == "?":
+                pass
+            elif type(transition.props[prop]) is str:
+                if transition.props[prop] in state['props']:
+                    state['props'][prop] = state['props'][transition.props[prop]]
+            else:
+                state['props'][prop] = transition.props[prop]
+            # state['props'][prop] = transition.props[prop]
         return state
 
     def state_find(self, state):
@@ -243,6 +324,13 @@ class GlobalModel:
         for i in range(len(self._states)):
             if self._states[i]['val'] == state['val'] and self._states[i]['props'] == state['props']:
                 return i
+
+        # u_state = {'val': state['val'], 'props': state['props']}
+        # if u_state not in self._unique_states:
+        #     return -1
+        # else:
+        #     return self._unique_states.index(u_state)
+
         return -1
 
     def print_dependent_transitions(self):
@@ -327,8 +415,11 @@ class GlobalModel:
             return False
 
         for transition in transition_candidates:
-            if len(transition.props) > 0:
-                return False
+            for prop in transition.props:
+                if prop in self._reduction:
+                    return False
+            # if len(transition.props) > 0:
+            #     return False
 
         return True
 
@@ -360,67 +451,74 @@ class GlobalModel:
         return result
 
     def compute(self):
-        state = {'val': [0 for _ in self._local_models], 'props': {}}
+        state = {'val': [0 for _ in self._local_models], 'props': {}, 'counters': [0 for _ in self._local_models]}
+        self._unique_states.append({'val': [0 for _ in self._local_models], 'props': {}})
         self._states.append(state)
         i = 0
         while i < len(self._states):
             state = self._states[i]
             current_state_id = i
             i += 1
-            private_transitions = []
-            for model_id in range(0, len(self._local_models)):
-                private_transitions.append(
-                    self._local_models[model_id].private_transitions_from_state(state['val'][model_id]))
-
-            for model_id in range(0, len(self._local_models)):
-                for transition in private_transitions[model_id]:
-                    # new_state = self.new_state_after_private_transition(state, transition, model_id)
-                    new_state = {'val': state['val'][:], 'props': {}}
-                    new_state['val'][model_id] = self._local_models[model_id].get_state_id(transition.state_to)
-                    new_state = self.copy_props_to_state(new_state, transition)
-
-                    new_state_id = self.add_state(new_state)
-
-                    self.add_transition(current_state_id, new_state_id, transition.action, [model_id])
-
-            shared_transitions = []
-            for model_id in range(0, len(self._local_models)):
-                shared_transitions.append(
-                    self._local_models[model_id].shared_transitions_from_state(state['val'][model_id]))
-
-            for model_id in range(0, len(self._local_models)):
-                for transition in shared_transitions[model_id]:
-                    actual_transition = [(model_id, transition, model_id)]
-                    ok = True
-                    for model_id2 in range(0, len(self._local_models)):
-                        if model_id2 == model_id:
-                            continue
-                        if self._local_models[model_id2].has_action(transition.action):
-                            ok = False
-                            if model_id2 < model_id:
-                                break
-                            for transition2 in shared_transitions[model_id2]:
-                                if transition2.action == transition.action:
-                                    actual_transition.append((model_id2, transition2, model_id2))
-                                    ok = True
-                                    break
-                        if not ok:
-                            break
-
-                    if not ok:
-                        continue
-
-                    new_state = {'val': state['val'][:], 'props': {}}
-                    agents = []
-                    for act_tran in actual_transition:
-                        new_state['val'][act_tran[0]] = self._local_models[act_tran[0]].get_state_id(
-                            act_tran[1].state_to)
-                        new_state = self.copy_props_to_state(new_state, act_tran[1])
-                        agents.append(act_tran[2])
-
-                    new_state_id = self.add_state(new_state)
-
-                    self.add_transition(current_state_id, new_state_id, transition.action, agents)
+            # print(current_state_id, state)
+            # if i % 1000 == 0:
+            #     print(i)
+            # if state['val'] == [4, 6, 3, 13, 0]:
+            #     print(state)
+            self.compute_next_for_state(state, current_state_id)
+            # private_transitions = []
+            # for model_id in range(0, len(self._local_models)):
+            #     private_transitions.append(
+            #         self._local_models[model_id].private_transitions_from_state(state['val'][model_id]))
+            #
+            # for model_id in range(0, len(self._local_models)):
+            #     for transition in private_transitions[model_id]:
+            #         # new_state = self.new_state_after_private_transition(state, transition, model_id)
+            #         new_state = {'val': state['val'][:], 'props': {}}
+            #         new_state['val'][model_id] = self._local_models[model_id].get_state_id(transition.state_to)
+            #         new_state = self.copy_props_to_state(new_state, transition)
+            #
+            #         new_state_id = self.add_state(new_state)
+            #
+            #         self.add_transition(current_state_id, new_state_id, transition.action, [model_id])
+            #
+            # shared_transitions = []
+            # for model_id in range(0, len(self._local_models)):
+            #     shared_transitions.append(
+            #         self._local_models[model_id].shared_transitions_from_state(state['val'][model_id]))
+            #
+            # for model_id in range(0, len(self._local_models)):
+            #     for transition in shared_transitions[model_id]:
+            #         actual_transition = [(model_id, transition, model_id)]
+            #         ok = True
+            #         for model_id2 in range(0, len(self._local_models)):
+            #             if model_id2 == model_id:
+            #                 continue
+            #             if self._local_models[model_id2].has_action(transition.action):
+            #                 ok = False
+            #                 if model_id2 < model_id:
+            #                     break
+            #                 for transition2 in shared_transitions[model_id2]:
+            #                     if transition2.action == transition.action:
+            #                         actual_transition.append((model_id2, transition2, model_id2))
+            #                         ok = True
+            #                         break
+            #             if not ok:
+            #                 break
+            #
+            #         if not ok:
+            #             continue
+            #
+            #         new_state = {'val': state['val'][:], 'props': {}}
+            #         agents = []
+            #         for act_tran in actual_transition:
+            #             new_state['val'][act_tran[0]] = self._local_models[act_tran[0]].get_state_id(
+            #                 act_tran[1].state_to)
+            #             new_state = self.copy_props_to_state(new_state, act_tran[1])
+            #             agents.append(act_tran[2])
+            #
+            #         new_state_id = self.add_state(new_state)
+            #
+            #         self.add_transition(current_state_id, new_state_id, transition.action, agents)
 
     def add_transition(self, state_from: int, state_to: int, action: str, agents: List[int]):
         while len(self._transitions) <= state_from:
@@ -451,9 +549,10 @@ model = GlobalModel()
 model.parse("selene.txt")
 model.print()
 # model.compute()
-coalition = model.agent_name_coalition_to_ids(["Voter1", "Voter2"])
+coalition = model.agent_name_coalition_to_ids(["Coercer1"])
 # coalition = model.agent_name_coalition_to_ids(["Coercer1"])
 print(f"Coalition: {coalition}")
+# model.compute()
 model.compute_reduced(coalition)
 print()
 print(f"Model has {model.states_count} states.")

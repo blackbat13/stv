@@ -10,7 +10,16 @@ class LocalTransition:
         self._state_from: str = ""
         self._state_to: str = ""
         self._props: dict = {}
-        self._cond: List[(str, int)] = []
+        self._cond: List = []
+        self._is_dependent: bool = False
+
+    @property
+    def is_dependent(self):
+        return self._is_dependent
+
+    @property
+    def conditions(self) -> List:
+        return self._cond
 
     @property
     def id(self) -> int:
@@ -61,8 +70,14 @@ class LocalTransition:
         if transition_str.find("->") == -1:
             self._state_from, transition_str = transition_str.split("-[")
             conditions, transition_str = transition_str.split("]>")
-            cond_var, cond_val = conditions.split("==")
-            self._cond.append((cond_var, int(cond_val)))
+            if conditions.find("==") != -1:
+                cond_var, cond_val = conditions.split("==")
+                self._cond.append((cond_var, int(cond_val), "=="))
+            elif conditions.find("!=") != -1:
+                cond_var, cond_val = conditions.split("!=")
+                self._cond.append((cond_var, int(cond_val), "!="))
+            else:
+                raise Exception
         else:
             self._state_from, transition_str = transition_str.split("->")
         if transition_str.find("[") != -1:
@@ -72,6 +87,7 @@ class LocalTransition:
             for variable in variables:
                 if variable.find("=") == -1:
                     self._props[variable] = "?"
+                    self._is_dependent = True
                     continue
                 prop, val = variable.split("=")
                 if val.casefold() == "true":

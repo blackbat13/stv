@@ -1,12 +1,3 @@
-Agent Teller[2]:
-init: t_init
-shared sendVote_Voter1: t_init -> t_init [v_Voter1]
-shared sendVote_Voter2: t_init -> t_init [v_Voter2]
-shared finishVoting: t_init -> t_finish
-shared decryptVotes: t_finish -> t_decrypt
-shared sendToWBB: t_decrypt -> t_send [v_Voter1, v_Voter2]
-shared publishVotes: t_send -> t_publish
-
 Agent ElectionAuthority[1]:
 init: ea_init
 shared generateTrackers_1: ea_init -> ea_gen [t1=1, t2=2]
@@ -15,43 +6,7 @@ shared publishTrackers: ea_gen -> ea_pub_t
 shared startVoting: ea_pub_t -> ea_start
 shared finishVoting: ea_start -> ea_finish
 shared publishVotes: ea_finish -> ea_pub_v [published=true]
-shared sendTracker_Voter1: ea_pub_v -[t1==1]> ea_pub_v [t_Voter1=1]
-shared sendTracker_Voter1: ea_pub_v -[t2==1]> ea_pub_v [t_Voter1=2]
-shared sendTracker_Voter2: ea_pub_v -[t1==2]> ea_pub_v [t_Voter2=1]
-shared sendTracker_Voter2: ea_pub_v -[t2==2]> ea_pub_v [t_Voter2=2]
 shared allTackerSend: ea_pub_v -> ea_send [end=true]
-
-Agent WBB[1]:
-init: wbb_init
-shared generateTrackers_1: wbb_init -> wbb_gen1 [t1=1, t2=2]
-shared generateTrackers_2: wbb_init -> wbb_gen2 [t1=2, t2=1]
-PROTOCOL wbb_init: [[generateTrackers_1,generateTrackers_2]]
-shared sendToWBB: wbb_gen1 -> wbb_send [wbb_t1=v_Voter1, wbb_t2=v_Voter2]
-shared sendToWBB: wbb_gen2 -> wbb_send [wbb_t2=v_Voter1, wbb_t1=v_Voter2]
-shared coercerWBB11true: wbb_send -[wbb_t1==1]> wbb_send
-shared coercerWBB11false: wbb_send -[wbb_t1!=1]> wbb_send
-shared coercerWBB12true: wbb_send -[wbb_t1==2]> wbb_send
-shared coercerWBB12false: wbb_send -[wbb_t1!=2]> wbb_send
-shared coercerWBB21true: wbb_send -[wbb_t2==1]> wbb_send
-shared coercerWBB21false: wbb_send -[wbb_t2!=1]> wbb_send
-shared coercerWBB22true: wbb_send -[wbb_t2==2]> wbb_send
-shared coercerWBB22false: wbb_send -[wbb_t2!=2]> wbb_send
-shared Voter1_WBB11true: wbb_send -[wbb_t1==1]> wbb_send
-shared Voter1_WBB11false: wbb_send -[wbb_t1!=1]> wbb_send
-shared Voter1_WBB12true: wbb_send -[wbb_t1==2]> wbb_send
-shared Voter1_WBB12false: wbb_send -[wbb_t1!=2]> wbb_send
-shared Voter1_WBB21true: wbb_send -[wbb_t2==1]> wbb_send
-shared Voter1_WBB21false: wbb_send -[wbb_t2!=1]> wbb_send
-shared Voter1_WBB22true: wbb_send -[wbb_t2==2]> wbb_send
-shared Voter1_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
-shared Voter2_WBB11true: wbb_send -[wbb_t1==1]> wbb_send
-shared Voter2_WBB11false: wbb_send -[wbb_t1!=1]> wbb_send
-shared Voter2_WBB12true: wbb_send -[wbb_t1==2]> wbb_send
-shared Voter2_WBB12false: wbb_send -[wbb_t1!=2]> wbb_send
-shared Voter2_WBB21true: wbb_send -[wbb_t2==1]> wbb_send
-shared Voter2_WBB21false: wbb_send -[wbb_t2!=1]> wbb_send
-shared Voter2_WBB22true: wbb_send -[wbb_t2==2]> wbb_send
-shared Voter2_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
 
 Agent Voter[2]:
 init: v_init
@@ -75,14 +30,6 @@ computeFalseTracker2: v_false_a -> v_false_tr [false_tr_aID=2]
 dontComputeFalseAlphaTerm: v_publish -> v_false_tr
 shared sendTracker_aID: v_false_tr -> v_send_tr [tr_aID]
 shared allTackerSend: v_send_tr -> v_wbb
-shared aID_WBB11true: v_wbb -> v_wbb [t1_aID=1]
-shared aID_WBB11false: v_wbb -> v_wbb
-shared aID_WBB12true: v_wbb -> v_wbb [t1_aID=2]
-shared aID_WBB12false: v_wbb -> v_wbb
-shared aID_WBB21true: v_wbb -> v_wbb [t2_aID=1]
-shared aID_WBB21false: v_wbb -> v_wbb
-shared aID_WBB22true: v_wbb -> v_wbb [t2_aID=2]
-shared aID_WBB22false: v_wbb -> v_wbb
 verifyVote: v_wbb -> v_wbb
 wait: v_wbb -> v_wbb
 PROTOCOL v_wbb: [[aID_WBB11true,aID_WBB11false],[aID_WBB12true,aID_WBB12false],[aID_WBB21true,aID_WBB21false],[aID_WBB22true,aID_WBB22false],[verifyVote],[wait]]
@@ -107,14 +54,6 @@ shared punish_Voter1: c_init -> c_init [pun1=true]
 shared punish_Voter2: c_init -> c_init [pun2=true]
 shared no_punish_Voter1: c_init -> c_init [pun1=false]
 shared no_punish_Voter2: c_init -> c_init [pun2=false]
-shared coercerWBB11true: c_init -> c_init [t1_c=1]
-shared coercerWBB11false: c_init -> c_init
-shared coercerWBB12true: c_init -> c_init [t1_c=2]
-shared coercerWBB12false: c_init -> c_init
-shared coercerWBB21true: c_init -> c_init [t2_c=1]
-shared coercerWBB21false: c_init -> c_init
-shared coercerWBB22true: c_init -> c_init [t2_c=2]
-shared coercerWBB22false: c_init -> c_init
 PROTOCOL c_init: [[leave_Voter1],[leave_Voter2],[requestVoteFor1_Voter1],[requestVoteFor2_Voter1],[requestVoteFor1_Voter2],[requestVoteFor2_Voter2],[showTrackerFor1_Voter1,showTrackerFor2_Voter1],[showTrackerFor1_Voter2,showTrackerFor2_Voter2],[punish_Voter1],[punish_Voter2],[no_punish_Voter1],[no_punish_Voter2],[coercerWBB11true,coercerWBB11false],[coercerWBB12true,coercerWBB12false],[coercerWBB21true,coercerWBB21false],[coercerWBB22true,coercerWBB22false]]
 
 REDUCTION: [pun1]
