@@ -38,22 +38,4 @@ shared showTrackerFor2_aID: v_wbb -> v_show [v_show_aID=2]
 shared punish_aID: v_show -> v_show
 shared no_punish_aID: v_show -> v_show
 
-Agent Coercer[1]:
-init: c_init
-shared leave_Voter1: c_init -> c_init [req1=0]
-shared leave_Voter2: c_init -> c_init [req2=0]
-shared requestVoteFor1_Voter1: c_init -> c_init [req1=1]
-shared requestVoteFor2_Voter1: c_init -> c_init [req1=2]
-shared requestVoteFor1_Voter2: c_init -> c_init [req2=1]
-shared requestVoteFor2_Voter2: c_init -> c_init [req2=2]
-shared showTrackerFor1_Voter1: c_init -> c_init [v1_show=1]
-shared showTrackerFor2_Voter1: c_init -> c_init [v1_show=2]
-shared showTrackerFor1_Voter2: c_init -> c_init [v2_show=1]
-shared showTrackerFor2_Voter2: c_init -> c_init [v2_show=2]
-shared punish_Voter1: c_init -> c_init [pun1=true]
-shared punish_Voter2: c_init -> c_init [pun2=true]
-shared no_punish_Voter1: c_init -> c_init [pun1=false]
-shared no_punish_Voter2: c_init -> c_init [pun2=false]
-PROTOCOL c_init: [[leave_Voter1],[leave_Voter2],[requestVoteFor1_Voter1],[requestVoteFor2_Voter1],[requestVoteFor1_Voter2],[requestVoteFor2_Voter2],[showTrackerFor1_Voter1,showTrackerFor2_Voter1],[showTrackerFor1_Voter2,showTrackerFor2_Voter2],[punish_Voter1],[punish_Voter2],[no_punish_Voter1],[no_punish_Voter2],[coercerWBB11true,coercerWBB11false],[coercerWBB12true,coercerWBB12false],[coercerWBB21true,coercerWBB21false],[coercerWBB22true,coercerWBB22false]]
-
 REDUCTION: [pun1]

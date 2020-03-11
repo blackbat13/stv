@@ -1,4 +1,4 @@
-from models.local_transition import LocalTransition
+from models.asynchronous.local_transition import LocalTransition
 from typing import List, Dict, Set
 
 
