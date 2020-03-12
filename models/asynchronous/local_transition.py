@@ -11,11 +11,6 @@ class LocalTransition:
         self._state_to: str = ""
         self._props: dict = {}
         self._cond: List = []
-        self._is_dependent: bool = False
-
-    @property
-    def is_dependent(self):
-        return self._is_dependent
 
     @property
     def conditions(self) -> List:
@@ -87,7 +82,6 @@ class LocalTransition:
             for variable in variables:
                 if variable.find("=") == -1:
                     self._props[variable] = "?"
-                    self._is_dependent = True
                     continue
                 prop, val = variable.split("=")
                 if val.casefold() == "true":

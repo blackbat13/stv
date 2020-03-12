@@ -14,6 +14,7 @@ class GlobalState:
 
     @classmethod
     def copy_state(cls, state):
+        # return cls(state.local_states, {}, state.counters)
         return cls(state.local_states, state.props, state.counters)
 
     @property
@@ -42,6 +43,10 @@ class GlobalState:
     def set_prop(self, key: str, value):
         self._props[key] = value
 
+    def remove_prop(self, key: str):
+        if key in self._props:
+            self._props.pop(key)
+
     def set_counter(self, index: int, value: int):
         return
         self._counters[index] = value
@@ -58,3 +63,6 @@ class GlobalState:
 
     def print(self):
         print(f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}, Counters: {self._counters}")
+
+    def equals(self, state):
+        return self._props == state.props and self._local_states == state.local_states
