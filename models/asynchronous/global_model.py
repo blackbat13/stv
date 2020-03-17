@@ -321,9 +321,11 @@ class GlobalModel:
                 for a in en_g:  # 10. for all a in en(g)
                     if not self._is_visible(a) and self._is_independent(a[0], en_g):  # 11. if a not in Vis and...
                         E_g = [a]  # 11. E(g) = {a}
+                        # E_g.append(a)  # 11. E(g) = E(g)u {a}
                         print(a[0].print())
                         break
             if len(E_g) == 0:  # 14. if E(g) is empty
+            # if len(E_g) != 1:  # 14. if |E(g)| != 1
                 E_g = en_g  # 14. E(g) = en(g)
             if E_g == en_g:  # 15. if E(g) = en(g)
                 self._stack2.append(len(self._stack1))  # 15. Push(Stack2,Depth(Stack1))
@@ -340,6 +342,35 @@ class GlobalModel:
         if depth == len(self._stack1):  # 19. if depth = Depth(Stack1)
             self._stack2.pop()  # 19. Pop(Stack2)
         self._stack1.pop()  # 20. Pop(Stack1)
+
+    # def _ample(self, s: GlobalState):
+    #     V = self._enabled_transitions_in_state_single_list(s)
+    #     while len(V) > 0:
+    #         alpha = V[0] # choose some alpha in V
+    #         X = [alpha]
+    #         U = [alpha]
+    #         DIS = []
+    #         while len(X) > 0: #and X in V
+    #             DIS = DIS + list(self._enabled_for_x(X))
+    #             X =
+    #
+    # def _enabled_for_x(self, X):
+    #     result = set()
+    #     for transitions in X:
+    #         for transition in transitions:
+    #             for tr in self._local_models[transition.agent_id]:
+    #                 if tr.state_from != transition.state_from:
+    #                     result.add(tr)
+    #     return result
+    #
+    # def _dependent_for_x(self, X, DIS, U): # !!!!
+    #     result = set()
+    #     for transitions in X:
+    #         for transition in transitions:
+    #             for tr in self._local_models[transition.agent_id]:
+    #                 if tr not in DIS and tr not in U:
+    #                     result.add(tr)
+    #     return result
 
     def _is_independent(self, transition: LocalTransition, en_g: List[List[LocalTransition]]):
         for tr_list in en_g:
@@ -484,11 +515,11 @@ class GlobalModel:
 
 if __name__ == "__main__":
     model = GlobalModel()
-    model.parse("train_controller.txt")
-    # model.parse("voting.txt")
+    # model.parse("train_controller.txt")
+    model.parse("voting.txt")
     # model.parse("selene.txt")
     model.print()
-    coalition = ["Controller1"]
+    coalition = ["Coercer1"]
     model.set_coalition(coalition)
     print(f"Coalition: {coalition}")
     start = time.process_time()
