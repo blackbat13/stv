@@ -63,6 +63,3 @@ class GlobalState:
 
     def print(self):
         print(f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}, Counters: {self._counters}")
-
-    def equals(self, state):
-        return self._props == state.props and self._local_states == state.local_states

@@ -2,7 +2,7 @@ from typing import List, Dict
 from tools import StringTools
 from models.asynchronous.global_state import GlobalState
 from models.asynchronous.local_model import LocalModel
-from models.asynchronous.local_transition import LocalTransition
+from models.asynchronous.local_transition import LocalTransition, SharedTransition
 import time
 
 
@@ -50,7 +50,42 @@ class GlobalModel:
 
         self._agents_count = len(self._local_models)
         self._stack1.append(GlobalState.initial_state(self._agents_count))
+        self._add_index_to_transitions()
         self._compute_dependent_transitions()
+        self._compute_shared_transitions()
+
+    def _add_index_to_transitions(self):
+        for agent_id in range(self._agents_count):
+            for i in range(len(self._local_models[agent_id].transitions)):
+                for j in range(len(self._local_models[agent_id].transitions[i])):
+                    self._local_models[agent_id].transitions[i][j].i = i
+                    self._local_models[agent_id].transitions[i][j].j = j
+
+    def _compute_shared_transitions(self):
+        replace = []
+        for agent_id in range(self._agents_count):
+            for i in range(len(self._local_models[agent_id].transitions)):
+                for j in range(len(self._local_models[agent_id].transitions[i])):
+                    transition = self._local_models[agent_id].transitions[i][j]
+                    if not transition.shared:
+                        continue
+
+                    shared_transition = SharedTransition(transition)
+                    for agent_id2 in range(self._agents_count):
+                        if agent_id == agent_id2:
+                            continue
+                        if self._local_models[agent_id2].has_action(transition.action):
+                            for tr in self._local_models[agent_id2].get_transitions():
+                                if tr.action == transition.action:
+                                    shared_transition.add_transition(tr)
+                                    break
+
+                    shared_transition.transition_list.sort(key=lambda tr: tr.agent_id)
+
+                    replace.append((agent_id, i, j, shared_transition))
+        for r in replace:
+            agent_id, i, j, shared_transition = r
+            self._local_models[agent_id].transitions[i][j] = shared_transition
 
     def _find_agent_end(self, lines: List[str], line_index: int):
         while line_index < len(lines) and not StringTools.is_blank_line(
@@ -138,6 +173,23 @@ class GlobalModel:
                     for transition2 in enabled[agent_id2]:
                         if transition2.shared and transition2.action == transition.action:
                             result[-1].append(transition2)
+                            enabled[agent_id2].pop(i)
+                            break
+                        i += 1
+        return result
+
+    def _enabled_transitions_in_state_single_item_set(self, state: GlobalState):
+        enabled = self._enabled_transitions_in_state(state)
+        result = set()
+        for agent_id in range(self._agents_count):
+            for transition in enabled[agent_id]:
+                result.add(transition.to_tuple())
+                if not transition.shared:
+                    continue
+                for agent_id2 in range(agent_id + 1, self._agents_count):
+                    i = 0
+                    for transition2 in enabled[agent_id2]:
+                        if transition2.shared and transition2.action == transition.action:
                             enabled[agent_id2].pop(i)
                             break
                         i += 1
@@ -294,16 +346,25 @@ class GlobalModel:
 
     def _is_in_G(self, state: GlobalState):
         for st in self._G:
-            if st.equals(state):
+            if st.equal(state):
                 return True
         return False
+
+    def _find_state_on_stack1(self, state: GlobalState):
+        for i in range(0, len(self._stack1) - 1):
+            if state.equal(self._stack1[i]):
+                return i
+        return -1
 
     def dfs_por(self):
         g = self._stack1[-1]  # 1. g = Top(Stack1)
         reexplore = False  # 1. reexplore = false
         for i in range(0, len(self._stack1) - 1):
-            if g.equals(self._stack1[i]):  # 2. if g = Element(Stack1,i) then
-                depth = self._stack2[-1]  # 3. depth = Top(Stack2)
+            if g.equal(self._stack1[i]):  # 2. if g = Element(Stack1,i) then
+                if len(self._stack2) == 0:
+                    depth = 0
+                else:
+                    depth = self._stack2[-1]  # 3. depth = Top(Stack2)
                 if i > depth:  # 4. if i > depth then
                     reexplore = True  # 4. reexplore = true
                 else:  # 4. else
@@ -315,24 +376,33 @@ class GlobalModel:
         self._G.append(g)  # 7. G = G u g
         g_state_id = self._add_state(g)
         E_g = []  # 7. E(g) = empty
-        en_g = self._enabled_transitions_in_state_single_list(g)
+        en_g = self._enabled_transitions_in_state_single_item_set(g)
         if len(en_g) > 0:  # 8. if en(g) not empty
             if not reexplore:  # 9. if reexplore = false
-                for a in en_g:  # 10. for all a in en(g)
-                    if not self._is_visible(a) and self._is_independent(a[0], en_g):  # 11. if a not in Vis and...
-                        E_g = [a]  # 11. E(g) = {a}
-                        # E_g.append(a)  # 11. E(g) = E(g)u {a}
-                        print(a[0].print())
-                        break
+                E_g = self._ample(g)
+                # print()
+                # for tup in E_g:
+                #     a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+                #     a.print()
+                # print()
+                # print(E_g)
+                # for a in en_g:  # 10. for all a in en(g)
+                #     if not self._is_visible(a) and self._is_independent(a[0], en_g):  # 11. if a not in Vis and...
+                #         E_g = [a]  # 11. E(g) = {a}
+                #         # E_g.append(a)  # 11. E(g) = E(g)u {a}
+                #         print(a[0].print())
+                #         break
             if len(E_g) == 0:  # 14. if E(g) is empty
             # if len(E_g) != 1:  # 14. if |E(g)| != 1
                 E_g = en_g  # 14. E(g) = en(g)
             if E_g == en_g:  # 15. if E(g) = en(g)
                 self._stack2.append(len(self._stack1))  # 15. Push(Stack2,Depth(Stack1))
-            for a in E_g:  # 16. for all a in E(g)
+            for tup in E_g:  # 16. for all a in E(g)
+                a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
                 g_p = self._successor(g, a)  # 16. g' = Successor(g,a)
                 g_p_state_id = self._add_state(g_p)
-                self._add_transition(g_state_id, g_p_state_id, a[0].action, [a[0].agent_id])  # TODO agents ids
+                # print(f"Add transition: {g_state_id}, {g_p_state_id}, {a.action}, {[a.agent_id]}")
+                self._add_transition(g_state_id, g_p_state_id, a.action, [a.agent_id])  # TODO agents ids
                 self._stack1.append(g_p)  # 16. Push(Stack1, g')
                 self.dfs_por()  # 16. DFS-POR()
         if len(self._stack2) == 0:
@@ -343,34 +413,63 @@ class GlobalModel:
             self._stack2.pop()  # 19. Pop(Stack2)
         self._stack1.pop()  # 20. Pop(Stack1)
 
-    # def _ample(self, s: GlobalState):
-    #     V = self._enabled_transitions_in_state_single_list(s)
-    #     while len(V) > 0:
-    #         alpha = V[0] # choose some alpha in V
-    #         X = [alpha]
-    #         U = [alpha]
-    #         DIS = []
-    #         while len(X) > 0: #and X in V
-    #             DIS = DIS + list(self._enabled_for_x(X))
-    #             X =
-    #
-    # def _enabled_for_x(self, X):
-    #     result = set()
-    #     for transitions in X:
-    #         for transition in transitions:
-    #             for tr in self._local_models[transition.agent_id]:
-    #                 if tr.state_from != transition.state_from:
-    #                     result.add(tr)
-    #     return result
-    #
-    # def _dependent_for_x(self, X, DIS, U): # !!!!
-    #     result = set()
-    #     for transitions in X:
-    #         for transition in transitions:
-    #             for tr in self._local_models[transition.agent_id]:
-    #                 if tr not in DIS and tr not in U:
-    #                     result.add(tr)
-    #     return result
+    def _ample(self, s: GlobalState):
+        V = self._enabled_transitions_in_state_single_item_set(s)
+        while len(V) > 0:
+            alpha = V.pop() # choose some alpha in V
+            V.add(alpha)
+            X = {alpha}
+            U = {alpha}
+            DIS = set()
+            while len(X) > 0 and len(X.difference(V)) == 0:
+                DIS = DIS.union(self._enabled_for_x(X))
+                X = self._dependent_for_x(X, DIS, U)
+                U = U.union(X)
+            # cycle
+            if len(X) == 0 and not self._check_for_cycle(s, X):
+                return U
+            V = V.difference(U)
+        return {}
+
+    def _check_for_cycle(self, state: GlobalState, X: set):
+        for tup in X:
+            transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+            if self._find_state_on_stack1(self._successor(state, transition)) != -1:
+                return True
+        return False
+
+    def _enabled_for_x(self, X):
+        result = set()
+
+        for tup in X:
+            transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+            if isinstance(transition, SharedTransition):
+                for transition2 in transition.transition_list:
+                    for tr in self._local_models[transition2.agent_id].get_transitions():
+                        if tr.state_from != transition2.state_from:
+                            result.add(tr.to_tuple())
+            else:
+                for tr in self._local_models[transition.agent_id].get_transitions():
+                    if tr.state_from != transition.state_from:
+                        result.add(tr.to_tuple())
+
+        return result
+
+    def _dependent_for_x(self, X, DIS, U):  # !!!!
+        result = set()
+        for tup in X:
+            transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+            if isinstance(transition, SharedTransition):
+                for transition2 in transition.transition_list:
+                    for tr in self._local_models[transition2.agent_id].get_transitions():
+                        if tr.to_tuple() not in DIS and tr.to_tuple() not in U:
+                            result.add(tr.to_tuple())
+            else:
+                for tr in self._local_models[transition.agent_id].get_transitions():
+                    if tr.to_tuple() not in DIS and tr.to_tuple() not in U:
+                        result.add(tr.to_tuple())
+
+        return result
 
     def _is_independent(self, transition: LocalTransition, en_g: List[List[LocalTransition]]):
         for tr_list in en_g:
@@ -390,11 +489,11 @@ class GlobalModel:
                     return True
         return False
 
-    def _successor(self, state: GlobalState, transitions: [LocalTransition]):
-        if len(transitions) == 1:
-            return self._new_state_after_private_transition(state, transitions[0])
+    def _successor(self, state: GlobalState, transition: LocalTransition):
+        if not isinstance(transition, SharedTransition):
+            return self._new_state_after_private_transition(state, transition)
         else:
-            return self._new_state_after_shared_transitions_list(state, transitions)
+            return self._new_state_after_shared_transitions_list(state, transition.transition_list)
 
     def _add_state(self, state: GlobalState):
         state_id = self._state_find(state)
@@ -515,11 +614,11 @@ class GlobalModel:
 
 if __name__ == "__main__":
     model = GlobalModel()
-    # model.parse("train_controller.txt")
-    model.parse("voting.txt")
+    model.parse("train_controller.txt")
+    # model.parse("voting.txt")
     # model.parse("selene.txt")
     model.print()
-    coalition = ["Coercer1"]
+    coalition = ["Controller1"]
     model.set_coalition(coalition)
     print(f"Coalition: {coalition}")
     start = time.process_time()

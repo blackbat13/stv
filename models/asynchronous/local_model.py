@@ -15,6 +15,10 @@ class LocalModel:
     def agent_name(self):
         return self._agent_name
 
+    @property
+    def transitions(self):
+        return self._transitions
+
     def parse(self, model_str: str, agent_no: int):
         lines = model_str.splitlines()
         self._agent_name = lines[0].split(" ")[1].split("[")[0] + str(agent_no)

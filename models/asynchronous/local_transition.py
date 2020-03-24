@@ -11,6 +11,13 @@ class LocalTransition:
         self._state_to: str = ""
         self._props: dict = {}
         self._cond: List = []
+        self.i: int = -1
+        self.j: int = -1
+
+    def __eq__(self, other):
+        if isinstance(other, LocalTransition):
+            return self._agent_id == other._agent_id and self._action == other._action
+        return False
 
     @property
     def conditions(self) -> List:
@@ -102,3 +109,37 @@ class LocalTransition:
 
     def print(self):
         print(f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]")
+
+    def to_tuple(self):
+        return self._agent_id, self.i, self.j
+
+
+class SharedTransition(LocalTransition):
+    def __init__(self, local_transition: LocalTransition):
+        super().__init__()
+        self._id: int = local_transition._id
+        self._agent_id = local_transition._agent_id
+        self._action: str = local_transition._action
+        self._shared: bool = True
+        self._state_from: str = local_transition._state_from
+        self._state_to: str = local_transition._state_to
+        self._props: dict = local_transition._props
+        self._cond: List = local_transition._cond
+        self._transition_list = [local_transition]
+        self.i = local_transition.i
+        self.j = local_transition.j
+
+    def __eq__(self, other):
+        if isinstance(other, SharedTransition):
+            return self._transition_list == other._transition_list
+        return False
+
+    @property
+    def transition_list(self):
+        return self._transition_list
+
+    def add_transition(self, local_transition: LocalTransition):
+        self._transition_list.append(local_transition)
+
+    def to_tuple(self):
+        return self._transition_list[0].to_tuple()
