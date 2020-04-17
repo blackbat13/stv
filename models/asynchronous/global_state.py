@@ -14,8 +14,8 @@ class GlobalState:
 
     @classmethod
     def copy_state(cls, state):
-        # return cls(state.local_states, {}, state.counters)
-        return cls(state.local_states, state.props, state.counters)
+        return cls(state.local_states, {}, state.counters)
+        # return cls(state.local_states, state.props, state.counters)
 
     @property
     def local_states(self):

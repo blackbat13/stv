@@ -20,10 +20,16 @@ class GlobalModel:
         self._stack2 = []
         self._G = []
         self.coalition = []
+        self._stack1_dict: Dict[str, int] = dict()
+        self._transitions_count = 0
 
     @property
     def states_count(self):
         return len(self._states)
+
+    @property
+    def transitions_count(self):
+        return self._transitions_count
 
     def parse(self, file_name: str):
         input_file = open(file_name, "r")
@@ -49,7 +55,7 @@ class GlobalModel:
                 i += 1
 
         self._agents_count = len(self._local_models)
-        self._stack1.append(GlobalState.initial_state(self._agents_count))
+        self._add_to_stack(GlobalState.initial_state(self._agents_count))
         self._add_index_to_transitions()
         self._compute_dependent_transitions()
         self._compute_shared_transitions()
@@ -351,27 +357,48 @@ class GlobalModel:
         return False
 
     def _find_state_on_stack1(self, state: GlobalState):
-        for i in range(0, len(self._stack1) - 1):
-            if state.equal(self._stack1[i]):
-                return i
+        str_state = state.to_str()
+
+        if str_state in self._stack1_dict:
+            return self._stack1_dict[str_state]
+
         return -1
+
+    def _add_to_stack(self, state: GlobalState):
+        str_state = state.to_str()
+
+        if str_state in self._stack1_dict:
+            return False
+        else:
+            self._stack1.append(state)
+            self._stack1_dict[state.to_str()] = len(self._stack1) - 1
+            return True
+
+    def _pop_from_stack(self):
+        self._stack1_dict[self._stack1[-1].to_str()] = -1
+        self._stack1.pop()
 
     def dfs_por(self):
         g = self._stack1[-1]  # 1. g = Top(Stack1)
         reexplore = False  # 1. reexplore = false
-        for i in range(0, len(self._stack1) - 1):
-            if g.equal(self._stack1[i]):  # 2. if g = Element(Stack1,i) then
-                if len(self._stack2) == 0:
-                    depth = 0
-                else:
-                    depth = self._stack2[-1]  # 3. depth = Top(Stack2)
-                if i > depth:  # 4. if i > depth then
-                    reexplore = True  # 4. reexplore = true
-                else:  # 4. else
-                    self._stack1.pop()  # 4. Pop(Stack1)
-                    return  # 4. return
+
+        i = self._find_state_on_stack1(g)
+
+        if i != -1 and i != len(self._stack1) - 1:
+            if len(self._stack2) == 0:
+                depth = 0
+            else:
+                depth = self._stack2[-1]  # 3. depth = Top(Stack2)
+            if i > depth:  # 4. if i > depth then
+                reexplore = True  # 4. reexplore = true
+            else:  # 4. else
+                self._pop_from_stack()
+                # self._stack1.pop()  # 4. Pop(Stack1)
+                return  # 4. return
+
         if not reexplore and self._is_in_G(g):  # 6. if reexplore = false and g in G
-            self._stack1.pop()  # 6. Pop(Stack1)
+            # self._stack1.pop()  # 6. Pop(Stack1)
+            self._pop_from_stack()
             return  # 6. return
         self._G.append(g)  # 7. G = G u g
         g_state_id = self._add_state(g)
@@ -380,7 +407,7 @@ class GlobalModel:
         if len(en_g) > 0:  # 8. if en(g) not empty
             if not reexplore:  # 9. if reexplore = false
                 E_g = self._ample(g)
-                # print()
+                # print("E_g:")
                 # for tup in E_g:
                 #     a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
                 #     a.print()
@@ -401,40 +428,44 @@ class GlobalModel:
                 a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
                 g_p = self._successor(g, a)  # 16. g' = Successor(g,a)
                 g_p_state_id = self._add_state(g_p)
-                # print(f"Add transition: {g_state_id}, {g_p_state_id}, {a.action}, {[a.agent_id]}")
                 self._add_transition(g_state_id, g_p_state_id, a.action, [a.agent_id])  # TODO agents ids
-                self._stack1.append(g_p)  # 16. Push(Stack1, g')
-                self.dfs_por()  # 16. DFS-POR()
+                # self._stack1.append(g_p)  # 16. Push(Stack1, g')
+                if self._add_to_stack(g_p):
+                    self.dfs_por()  # 16. DFS-POR()
         if len(self._stack2) == 0:
             depth = 0
         else:
             depth = self._stack2[-1]  # 18. depth = Top(Stack2)
         if depth == len(self._stack1):  # 19. if depth = Depth(Stack1)
             self._stack2.pop()  # 19. Pop(Stack2)
-        self._stack1.pop()  # 20. Pop(Stack1)
+        self._pop_from_stack()
+        # self._stack1.pop()  # 20. Pop(Stack1)
 
     def _ample(self, s: GlobalState):
         V = self._enabled_transitions_in_state_single_item_set(s)
         while len(V) > 0:
-            alpha = V.pop() # choose some alpha in V
+            alpha = V.pop()  # choose some alpha in V
             V.add(alpha)
             X = {alpha}
             U = {alpha}
             DIS = set()
             while len(X) > 0 and len(X.difference(V)) == 0:
-                DIS = DIS.union(self._enabled_for_x(X))
+                # DIS = DIS.union(self._enabled_for_x(X))
+                DIS.update(self._enabled_for_x(X))
                 X = self._dependent_for_x(X, DIS, U)
-                U = U.union(X)
-            # cycle
-            if len(X) == 0 and not self._check_for_cycle(s, X):
+                # U = U.union(X)
+                U.update(X)
+            if len(X) == 0 and not self._check_for_cycle(s, U):
                 return U
-            V = V.difference(U)
+            V.difference_update(U)
+            # V = V.difference(U)
         return {}
 
     def _check_for_cycle(self, state: GlobalState, X: set):
         for tup in X:
             transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
-            if self._find_state_on_stack1(self._successor(state, transition)) != -1:
+            successor_state = self._successor(state, transition)
+            if self._find_state_on_stack1(successor_state) != -1:
                 return True
         return False
 
@@ -503,6 +534,7 @@ class GlobalModel:
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
 
+        state.id = state_id
         return state_id
 
     def _add_transition(self, state_from: int, state_to: int, action: str, agents: List[int]):
@@ -510,6 +542,7 @@ class GlobalModel:
             self._transitions.append([])
 
         self._transitions[state_from].append({'from': state_from, 'to': state_to, 'action': action, 'agents': agents})
+        self._transitions_count += 1
 
     def compute(self):
         state = GlobalState.initial_state(len(self._local_models))
@@ -526,8 +559,6 @@ class GlobalModel:
         self._compute_dependent_transitions()
         self._compute_pre_transitions()
 
-        self.print_dependent_transitions()
-
         state = GlobalState.initial_state(len(self._local_models))
         self._states.append(state)
         i = 0
@@ -535,9 +566,6 @@ class GlobalModel:
             state = self._states[i]
             current_state_id = i
             i += 1
-
-            if i % 1000 == 0:
-                print(i)
 
             ok = False
             enabled_transitions = self._enabled_transitions_in_state(state)
@@ -615,19 +643,20 @@ class GlobalModel:
 if __name__ == "__main__":
     model = GlobalModel()
     model.parse("train_controller.txt")
-    # model.parse("voting.txt")
+    # model.parse("voting_1_2.txt")
     # model.parse("selene.txt")
-    model.print()
+    # model.print()
     coalition = ["Controller1"]
     model.set_coalition(coalition)
     print(f"Coalition: {coalition}")
     start = time.process_time()
-    # model.compute()
     # model.compute_reduced(coalition)
+    # model.compute()
     model.dfs_por()
     end = time.process_time()
     print()
     print(f"Model generated in {end - start} seconds.")
     print(f"Model has {model.states_count} states.")
+    print(f"Model has {model.transitions_count} transitions.")
     print()
-    model.walk()
+    # model.walk()

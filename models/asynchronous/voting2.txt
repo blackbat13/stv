@@ -1,0 +1,67 @@
+Agent Voter[3]:
+init: q0
+voteA: q0 -> q1
+voteB: q0 -> q2
+shared gvA_aID: q1 -> q3  [aID_revealedA=true]
+shared ngA_aID: q1 -> q4
+shared gvB_aID: q2 -> q5  [aID_revealedB=true]
+shared ngB_aID: q2 -> q6
+repeatGA: q3 -> q0
+repeatNA: q4 -> q0
+repeatGB: q5 -> q0
+repeatNB: q6 -> q0
+shared stopGA_aID: q3 -> q3s [aID_votedA=true]
+shared stopNA_aID: q4 -> q4s [aID_votedA=true]
+shared stopGB_aID: q5 -> q5s [aID_votedB=true]
+shared stopNB_aID: q6 -> q6s [aID_votedB=true]
+loopGA: q3s -> q3s
+loopNA: q4s -> q4s
+loopGB: q5s -> q5s
+loopNB: q6s -> q6s
+
+Agent Coercer[1]:
+init_aID: q0
+shared gvA_Voter1: q0 -> q0
+shared ngA_Voter1: q0 -> q0
+shared gvB_Voter1: q0 -> q0
+shared ngB_Voter1: q0 -> q0
+shared gvA_Voter2: q0 -> q0
+shared ngA_Voter2: q0 -> q0
+shared gvB_Voter2: q0 -> q0
+shared ngB_Voter2: q0 -> q0
+shared gvA_Voter3: q0 -> q0
+shared ngA_Voter3: q0 -> q0
+shared gvB_Voter3: q0 -> q0
+shared ngB_Voter3: q0 -> q0
+shared stopGA_Voter1: q0 -> qA_Voter1
+shared stopNA_Voter1: q0 -> qA_Voter1
+shared stopGB_Voter1: q0 -> qB_Voter1
+shared stopNB_Voter1: q0 -> qB_Voter1
+shared stopGA_Voter2: q0 -> qA_Voter2
+shared stopNA_Voter2: q0 -> qA_Voter2
+shared stopGB_Voter2: q0 -> qB_Voter2
+shared stopNB_Voter2: q0 -> qB_Voter2
+shared stopGA_Voter3: q0 -> qA_Voter3
+shared stopNA_Voter3: q0 -> qA_Voter3
+shared stopGB_Voter3: q0 -> qB_Voter3
+shared stopNB_Voter3: q0 -> qB_Voter3
+npA_Voter1: qA_Voter1 -> q0
+npA_Voter2: qA_Voter2 -> q0
+npA_Voter3: qA_Voter3 -> q0
+npB_Voter1: qB_Voter1 -> q0
+npB_Voter2: qB_Voter2 -> q0
+npB_Voter3: qB_Voter3 -> q0
+punA_Voter1: qA_Voter1 -> qAp_Voter1 [punA=true]
+punA_Voter2: qA_Voter2 -> qAp_Voter2 [punA=true]
+punA_Voter3: qA_Voter3 -> qAp_Voter3 [punA=true]
+punB_Voter1: qB_Voter1 -> qBp_Voter1 [punB=true]
+punB_Voter2: qB_Voter2 -> qBp_Voter2 [punB=true]
+punB_Voter3: qB_Voter3 -> qBp_Voter3 [punB=true]
+returnA_Voter1: qAp_Voter1 -> q0
+returnA_Voter2: qAp_Voter2 -> q0
+returnA_Voter3: qAp_Voter3 -> q0
+returnB_Voter1: qBp_Voter1 -> q0
+returnB_Voter2: qBp_Voter2 -> q0
+returnB_Voter3: qBp_Voter3 -> q0
+
+REDUCTION: [punA, punB, Voter1_revealedA, Voter1_revealedB, Voter1_votedA, Voter1_votedB, Voter2_revealedA, Voter2_revealedB, Voter2_votedA, Voter2_votedB, Voter3_revealedA, Voter3_revealedB, Voter3_votedA, Voter3_votedB]
