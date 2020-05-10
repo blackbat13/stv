@@ -563,7 +563,8 @@ class StrategyComparer:
 
         return conflicts
 
-    def simplify_strategy_one_agent_imperfect_info_clusters(self, agent_id: int, strategy: list, timeout: int, cluster_size: int):
+    def simplify_strategy_one_agent_imperfect_info_clusters(self, agent_id: int, strategy: list, timeout: int,
+                                                            cluster_size: int):
         self.strategy = strategy
         actions = []
         for _ in range(0, self.model.no_agents):
@@ -583,7 +584,6 @@ class StrategyComparer:
                     root_states.append(information_sets[i_set_id + j][0])
                     current_strategy.append(strategy[information_sets[i_set_id + j][0]])
                     given_strategy.append(strategy[information_sets[i_set_id + j][0]])
-
 
                 # current_strategy = strategy[i_set[0]]
                 replace = False
@@ -608,8 +608,6 @@ class StrategyComparer:
                     if not (
                             comp_res == self.CompareResult.EQUAL or comp_res == self.CompareResult.SECOND_BETTER):
                         ok = False
-
-
 
                 for strat in self.model.get_possible_strategies(i_set[0]):
                     if strat == strategy[i_set[0]]:
@@ -886,11 +884,10 @@ class StrategyComparer:
 
     def group_by_epistemic_classes(self, states: List[int]) -> List[List[int]]:
         new_states = []
-        added = ListTools.create_value_list_of_size(len(states), False)
-        for i in range(0, len(states)):
+        added = [False for _ in range(len(states))]
+        for i, state_id in enumerate(states):
             if added[i]:
                 continue
-            state_id = states[i]
             new_states.append([state_id])
             added[i] = True
             epistemic_class = self.model.epistemic_class_for_state_and_coalition(state_id, self.current_coalition)

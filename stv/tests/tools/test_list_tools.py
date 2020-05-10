@@ -3,11 +3,6 @@ import unittest
 
 
 class ArrayToolsTestSuite(unittest.TestCase):
-    def test_create_integer_array_of_size(self):
-        array = ListTools.create_value_list_of_size(10, 1)
-        self.assertEqual(len(array), 10)
-        self.assertEqual(array[0], 1)
-
     def test_unique(self):
         array = [1, 2, 3, 1, 2, 3]
         ListTools.unique(array)

@@ -13,7 +13,7 @@ class TianJiModel(ModelGenerator):
         tian_ji_horses = list(range(0, self.no_horses))
         first_state = {'king_score': 0, 'tian_ji_score': 0, 'king_horses': king_horses,
                        'tian_ji_horses': tian_ji_horses,
-                       'results': ListTools.create_value_list_of_size(self.no_horses, 0), 'king_choice': -1}
+                       'results': [0 for _ in range(self.no_horses)], 'king_choice': -1}
         self._add_state(first_state)
 
     def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:

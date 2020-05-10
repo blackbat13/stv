@@ -7,22 +7,9 @@ class ListTools:
     """
 
     @staticmethod
-    def create_value_list_of_size(size: int, basic_value) -> list:
-        """
-        Creates array of given size containing given value
-        :param size:
-        :param basic_value:
-        :return:
-        """
-        array = []
-        for _ in range(0, size):
-            array.append(basic_value)
-        return array[:]
-
-    @staticmethod
     def unique(l: list) -> None:
         """
-        Removes all duplicates from list
+        Removes all duplicates from the list.
         :param l:
         :return:
         """
@@ -38,7 +25,7 @@ class ListTools:
     @staticmethod
     def count_not_none(l: list) -> int:
         """
-        Counts elements with value != None
+        Counts elements with value != None.
         :param l:
         :return:
         """
