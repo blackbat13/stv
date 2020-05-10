@@ -1,5 +1,5 @@
 from models.dining_cryptographers import DiningCryptographers
-from tools.graph_drawing import GraphDrawing
+from deprecated.graph_drawing import GraphDrawing
 
 
 class DiningCryptographersExperiments:

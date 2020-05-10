@@ -23,7 +23,7 @@ class SLIr(ATLIrModel):
             next_current_len = len(current_states)
             pre_states = self.get_pre_states(next_states)
             next_states = set(self.pre(quant_pref, 0, bind_pref, pre_states, next_states,
-                                       ListTools.create_value_array_of_size(self.number_of_agents, ''), all_quant_ids))
+                                       ListTools.create_value_list_of_size(self.number_of_agents, ''), all_quant_ids))
             current_states.update(next_states)
             current_states_len = len(current_states)
 

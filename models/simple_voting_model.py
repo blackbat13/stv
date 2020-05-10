@@ -12,8 +12,8 @@ class SimpleVotingModel(ModelGenerator):
         self._number_of_voters = number_of_voters
 
     def _generate_initial_states(self):
-        initial_array = ListTools.create_value_array_of_size(self._number_of_voters, '')
-        initial_array_minus_one = ListTools.create_value_array_of_size(self._number_of_voters, -1)
+        initial_array = ListTools.create_value_list_of_size(self._number_of_voters, '')
+        initial_array_minus_one = ListTools.create_value_list_of_size(self._number_of_voters, -1)
         first_state = {'voted': initial_array_minus_one[:], 'voters_action': initial_array[:],
                        'coercer_actions': initial_array[:], 'finish': initial_array_minus_one[:]}
         self._add_state(first_state)
@@ -40,7 +40,7 @@ class SimpleVotingModel(ModelGenerator):
             voting_product_array.append(coercer_possible_actions)
 
             for possibility in itertools.product(*voting_product_array):
-                action = ListTools.create_value_array_of_size(self._number_of_voters + 1, '')
+                action = ListTools.create_value_list_of_size(self._number_of_voters + 1, '')
                 new_state = {'voted': state['voted'][:], 'voters_action': state['voters_action'][:],
                              'coercer_actions': state['coercer_actions'][:], 'finish': state['finish'][:]}
 

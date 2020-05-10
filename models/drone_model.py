@@ -177,7 +177,7 @@ class MapGenerator:
                 a = randint(1, size - 1)
                 b = randint(1, size - 1)
                 count = 0
-                while count < size and self.disjoint_set.is_same(a, b):
+                while count < size and self.disjoint_set.is_in_union(a, b):
                     a = randint(1, size - 1)
                     b = randint(1, size - 1)
                     count += 1

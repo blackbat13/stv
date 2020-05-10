@@ -1,28 +1,52 @@
+"""Module for the disjoint-set-union structure."""
+
+
 class DisjointSet:
-    subsets = []
+    """
+    Class representing Disjoint-Set-Union structure.
+    :param number_of_nodes: how many elements should be store in the structure.
+    :ivar _subsets: information about subsets
+    """
 
-    def __init__(self, number_of_nodes):
-        self.subsets = []
+    def __init__(self, number_of_nodes: int):
+        self._subsets = []
         for i in range(0, number_of_nodes):
-            self.subsets.append({'parent': i, 'rank': 0})
+            self._subsets.append({'parent': i, 'rank': 0})
 
-    def find(self, node_number):
-        if self.subsets[node_number]['parent'] != node_number:
-            self.subsets[node_number]['parent'] = self.find(self.subsets[node_number]['parent'])
+    def union(self, el1: int, el2: int) -> None:
+        """
+        Union two elements.
+        :param el1: First element.
+        :param el2: Second element.
+        :return: None
+        """
+        x_root = self._find(el1)
+        y_root = self._find(el2)
 
-        return self.subsets[node_number]['parent']
-
-    def union(self, x, y):
-        x_root = self.find(x)
-        y_root = self.find(y)
-
-        if self.subsets[x_root]['rank'] < self.subsets[y_root]['rank']:
-            self.subsets[x_root]['parent'] = y_root
-        elif self.subsets[x_root]['rank'] > self.subsets[y_root]['rank']:
-            self.subsets[y_root]['parent'] = x_root
+        if self._subsets[x_root]['rank'] < self._subsets[y_root]['rank']:
+            self._subsets[x_root]['parent'] = y_root
+        elif self._subsets[x_root]['rank'] > self._subsets[y_root]['rank']:
+            self._subsets[y_root]['parent'] = x_root
         else:
-            self.subsets[y_root]['parent'] = x_root
-            self.subsets[x_root]['rank'] += 1
+            self._subsets[y_root]['parent'] = x_root
+            self._subsets[x_root]['rank'] += 1
 
-    def is_same(self, x, y):
-        return self.find(x) == self.find(y)
+    def is_in_union(self, el1: int, el2: int) -> bool:
+        """
+        Checks if two elements are in union i.e. have the same representative.
+        :param el1: First element.
+        :param el2: Second element.
+        :return: True if x and y are in union, False otherwise.
+        """
+        return self._find(el1) == self._find(el2)
+
+    def _find(self, node_number: int):
+        """
+        Find the representative of a given element.
+        :param node_number: element to check
+        :return: Representative of the node_number element in the structure.
+        """
+        if self._subsets[node_number]['parent'] != node_number:
+            self._subsets[node_number]['parent'] = self._find(self._subsets[node_number]['parent'])
+
+        return self._subsets[node_number]['parent']

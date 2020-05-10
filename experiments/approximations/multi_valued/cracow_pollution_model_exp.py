@@ -23,7 +23,7 @@ class CracowPollutionModelExp(AExperiment):
         self.__radius = radius
         self.__selected_place = selected_place
         self.__first_place_id = first_place_id
-        self.__energies = ListTools.create_value_array_of_size(n_agent, energy)
+        self.__energies = ListTools.create_value_list_of_size(n_agent, energy)
         self.__map, self.__connections = self.__create_map()
         self.__result = None
         self.__formula_id = formula_id

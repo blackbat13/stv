@@ -1,23 +1,44 @@
+"""Module for list tools."""
+
+
 class ListTools:
+    """
+    Collection of methods to simplify working with lists.
+    """
+
     @staticmethod
-    def create_array_of_size(size: int, basic_item) -> list:
-        """Creates array of given size containing copies of given items"""
+    def create_list_of_size(size: int, basic_item) -> list:
+        """
+        Creates array of given size containing copies of given items
+        :param size:
+        :param basic_item:
+        :return:
+        """
         array = []
-        for i in range(0, size):
+        for _ in range(0, size):
             array.append(basic_item.copy())
         return array[:]
 
     @staticmethod
-    def create_value_array_of_size(size: int, basic_value):
-        """Creates array of given size containing given value"""
+    def create_value_list_of_size(size: int, basic_value) -> list:
+        """
+        Creates array of given size containing given value
+        :param size:
+        :param basic_value:
+        :return:
+        """
         array = []
-        for i in range(0, size):
+        for _ in range(0, size):
             array.append(basic_value)
         return array[:]
 
     @staticmethod
-    def unique(l: list):
-        """Removes all duplicates from list"""
+    def unique(l: list) -> None:
+        """
+        Removes all duplicates from list
+        :param l:
+        :return:
+        """
         s = set()
         n = 0
         for x in l:
@@ -29,7 +50,11 @@ class ListTools:
 
     @staticmethod
     def count_not_none(l: list) -> int:
-        """Counts elements with value != None"""
+        """
+        Counts elements with value != None
+        :param l:
+        :return:
+        """
         count = 0
         for item in l:
             if item is not None:

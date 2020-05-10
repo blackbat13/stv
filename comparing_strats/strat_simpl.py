@@ -886,7 +886,7 @@ class StrategyComparer:
 
     def group_by_epistemic_classes(self, states: List[int]) -> List[List[int]]:
         new_states = []
-        added = ListTools.create_value_array_of_size(len(states), False)
+        added = ListTools.create_value_list_of_size(len(states), False)
         for i in range(0, len(states)):
             if added[i]:
                 continue

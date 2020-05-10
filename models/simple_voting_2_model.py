@@ -16,10 +16,10 @@ class SimpleVoting2Model(ModelGenerator):
         self._generate_model()
 
     def _generate_initial_states(self):
-        first_state = {'vote': ListTools.create_value_array_of_size(self._no_voters, -1),
-                       'voter_action': ListTools.create_value_array_of_size(self._no_voters, ''),
-                       'pun': ListTools.create_value_array_of_size(self._no_voters, None),
-                       'finish': ListTools.create_value_array_of_size(self._no_voters, False),
+        first_state = {'vote': ListTools.create_value_list_of_size(self._no_voters, -1),
+                       'voter_action': ListTools.create_value_list_of_size(self._no_voters, ''),
+                       'pun': ListTools.create_value_list_of_size(self._no_voters, None),
+                       'finish': ListTools.create_value_list_of_size(self._no_voters, False),
                        'ea_action': ''}
         self._add_state(first_state)
 
@@ -55,7 +55,7 @@ class SimpleVoting2Model(ModelGenerator):
                              'finish': state['finish'][:],
                              'ea_action': state['ea_action']}
 
-                actions = ListTools.create_value_array_of_size(self._no_voters + 2, 'Wait')
+                actions = ListTools.create_value_list_of_size(self._no_voters + 2, 'Wait')
 
                 if coercer_action != 'Wait':
                     voter_id = coercer_action[1]
@@ -118,7 +118,7 @@ class SimpleVoting2Model(ModelGenerator):
                          'finish': state['finish'][:],
                          'ea_action': f'{level}'}
             new_state_id = self._add_state(new_state)
-            actions = ListTools.create_value_array_of_size(self._no_voters + 2, 'Wait')
+            actions = ListTools.create_value_list_of_size(self._no_voters + 2, 'Wait')
             actions[0] = f'{level} protection'
             self.model.add_transition(current_state_id, new_state_id, actions)
 
