@@ -1,4 +1,4 @@
-from stv.generators.ispl import IsplGenerator
+from stv.generators.ispl.ispl_generator import IsplGenerator
 from typing import List
 import itertools
 

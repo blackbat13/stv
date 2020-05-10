@@ -20,8 +20,8 @@ class DisjointSet:
         :param el2: Second element.
         :return: None
         """
-        x_root = self._find(el1)
-        y_root = self._find(el2)
+        x_root = self.find(el1)
+        y_root = self.find(el2)
 
         if self._subsets[x_root]['rank'] < self._subsets[y_root]['rank']:
             self._subsets[x_root]['parent'] = y_root
@@ -38,15 +38,15 @@ class DisjointSet:
         :param el2: Second element.
         :return: True if x and y are in union, False otherwise.
         """
-        return self._find(el1) == self._find(el2)
+        return self.find(el1) == self.find(el2)
 
-    def _find(self, node_number: int):
+    def find(self, node_number: int):
         """
         Find the representative of a given element.
         :param node_number: element to check
         :return: Representative of the node_number element in the structure.
         """
         if self._subsets[node_number]['parent'] != node_number:
-            self._subsets[node_number]['parent'] = self._find(self._subsets[node_number]['parent'])
+            self._subsets[node_number]['parent'] = self.find(self._subsets[node_number]['parent'])
 
         return self._subsets[node_number]['parent']

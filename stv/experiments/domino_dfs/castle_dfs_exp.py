@@ -1,5 +1,5 @@
 from stv.models.castle_model import *
-from stv.comparing_strats.strat_simpl import StrategyComparer
+from stv.comparing_strats.strategy_comparer import StrategyComparer
 from typing import List
 import time
 import datetime

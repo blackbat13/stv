@@ -1,5 +1,5 @@
 from stv.models.bridge_model import *
-from stv.comparing_strats.strat_simpl import StrategyComparer
+from stv.comparing_strats.strategy_comparer import StrategyComparer
 from stv.experiments.aexperiment import AExperiment
 from stv.tools.list_tools import ListTools
 import time

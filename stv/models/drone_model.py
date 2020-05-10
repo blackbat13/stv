@@ -9,7 +9,7 @@ import math
 class CracowMap:
     places = []
     connections = []
-    disjoint_set = None
+    disjoint_set: DisjointSet = None
 
     def __init__(self):
         self.create_places()

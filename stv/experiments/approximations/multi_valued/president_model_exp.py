@@ -1,6 +1,6 @@
-from models.mv.president_model import PresidentModel
-import time
 from stv.logics.atl.mv import mvatl_parser
+from stv.models.mv import PresidentModel
+import time
 
 
 class PresidentModelExp:

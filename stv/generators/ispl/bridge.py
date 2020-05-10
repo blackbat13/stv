@@ -1,4 +1,4 @@
-from stv.generators.ispl import IsplGenerator
+from stv.generators.ispl.ispl_generator import IsplGenerator
 import itertools
 import random
 
