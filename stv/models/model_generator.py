@@ -4,130 +4,156 @@ from typing import List, Dict, Set
 
 
 class ModelGenerator(ABC):
+    """
+    Abstract class for defining new model classes.
 
-    def __init__(self, no_agents: int):
-        self.model: SimpleModel = SimpleModel(no_agents)
-        self.states_dictionary: Dict[hash, int] = {}
-        self.state_number: int = 0
-        self.epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
-        self.no_agents: int = no_agents
-        self._prepare_epistemic_dictionaries()
+    :param agents_count: number of agents in the model.
+
+    :ivar _model: SimpleModel object, used for storing generated model.
+    :ivar _states_dictionary:
+    :ivar _state_number:
+    :ivar _epistemic_states_dictionaries:
+    :ivar _agents_count:
+    """
+
+    def __init__(self, agents_count: int):
+        self._model: SimpleModel = SimpleModel(agents_count)
+        self._states_dictionary: Dict[hash, int] = {}
+        self._state_number: int = 0
+        self._agents_count: int = agents_count
+        self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = [{} for _ in range(self._agents_count)]
 
     @property
     def states(self) -> List[hash]:
+        """List of states in the model."""
         return self.model.states
 
     @property
     def model(self) -> SimpleModel:
-        return self.__model
+        """Model object."""
+        return self._model
 
     @model.setter
     def model(self, value: SimpleModel):
-        self.__model = value
+        self._model = value
 
     @property
-    def states_dictionary(self) -> Dict[hash, int]:
-        return self.__states_dictionary
+    def agents_count(self) -> int:
+        """Number of agents in the model."""
+        return self._agents_count
 
-    @states_dictionary.setter
-    def states_dictionary(self, value: Dict[hash, int]):
-        self.__states_dictionary = value
-
-    @property
-    def state_number(self) -> int:
-        return self.__state_number
-
-    @state_number.setter
-    def state_number(self, value: int):
-        self.__state_number = value
-
-    @property
-    def epistemic_states_dictionaries(self) -> List[Dict[str, Set[int]]]:
-        return self.__epistemic_states_dictionaries
-
-    @epistemic_states_dictionaries.setter
-    def epistemic_states_dictionaries(self, value: List[Dict[str, Set[int]]]):
-        self.__epistemic_states_dictionaries = value
-
-    @property
-    def no_agents(self) -> int:
-        return self.__no_agents
-
-    @no_agents.setter
-    def no_agents(self, value: int):
-        self.__no_agents = value
-
-    def _prepare_epistemic_dictionaries(self):
-        self.epistemic_states_dictionaries.clear()
-        for _ in range(0, self.no_agents):
-            self.epistemic_states_dictionaries.append({})
+    @agents_count.setter
+    def agents_count(self, value: int):
+        self._agents_count = value
 
     def _add_state(self, state: hash) -> int:
+        """
+        Adds new state to the model, if not already added.
+        :param state: New state to add to the model.
+        :return: Id of the passed state.
+        """
         state['props'] = self._get_props_for_state(state)
-        new_state_number = self._get_state_number(state)
-        for i in range(0, self.no_agents):
+        new_state_id = self._get_state_id(state)
+        for i in range(0, self.agents_count):
             epistemic_state = self._get_epistemic_state(state, i)
-            self._add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
-        return new_state_number
+            self._add_to_epistemic_dictionary(epistemic_state, new_state_id, i)
+        return new_state_id
 
     @abstractmethod
     def _get_props_for_state(self, state: hash) -> List[str]:
         """
-        Compute propositions for the given state
-        :param state: State for which propositions should be computed
+        Compute propositions for the given state.
+        :param state: State for which propositions should be computed.
+        :return: List of propositions for the given state.
         """
-        pass
 
-    def _get_state_number(self, state: hash) -> int:
+    def _get_state_id(self, state: hash) -> int:
+        """
+        Gets state id if already present, or adds it to the model and returns its new id.
+        :param state: State.
+        :return: Id of the given state.
+        """
         state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.states_dictionary:
-            self.states_dictionary[state_str] = self.state_number
-            new_state_number = self.state_number
+        if state_str not in self._states_dictionary:
+            self._states_dictionary[state_str] = self._state_number
+            new_state_number = self._state_number
             self.model.states.append(state)
-            self.state_number += 1
+            self._state_number += 1
         else:
-            new_state_number = self.states_dictionary[state_str]
+            new_state_number = self._states_dictionary[state_str]
 
         return new_state_number
 
     @abstractmethod
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
-        pass
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
+        """
+        Compute epistemic representation of the given state.
+        :param state: State to compute.
+        :param agent_id: Id of the agent for which epistemic representation should be computed.
+        :return: Epistemic representation of the given state.
+        """
 
-    def _add_to_epistemic_dictionary(self, state: hash, new_state_number: int, agent_number: int):
+    def _add_to_epistemic_dictionary(self, state: hash, new_state_id: int, agent_id: int):
+        """
+        Adds state to the epistemic dictionary.
+        :param state:
+        :param new_state_id:
+        :param agent_id:
+        :return: None
+        """
         state_str = ' '.join(str(state[e]) for e in state)
-        if state_str not in self.epistemic_states_dictionaries[agent_number]:
-            self.epistemic_states_dictionaries[agent_number][state_str] = {new_state_number}
+        if state_str not in self._epistemic_states_dictionaries[agent_id]:
+            self._epistemic_states_dictionaries[agent_id][state_str] = {new_state_id}
         else:
-            self.epistemic_states_dictionaries[agent_number][state_str].add(new_state_number)
+            self._epistemic_states_dictionaries[agent_id][state_str].add(new_state_id)
 
     def _prepare_epistemic_relation(self):
-        for i in range(0, self.no_agents):
-            for state, epistemic_class in self.epistemic_states_dictionaries[i].items():
+        """
+        Prepares epistemic relation for the model.
+        Should be called after creating the model.
+        :return: None
+        """
+        for i in range(0, self.agents_count):
+            for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
                 self.model.add_epistemic_class(i, epistemic_class)
 
     def generate(self):
+        """
+        Generate model.
+        :return: None
+        """
         self._generate_initial_states()
         self._generate_model()
         self._prepare_epistemic_relation()
 
     @abstractmethod
     def _generate_initial_states(self):
-        pass
+        """Generates initial states of the model."""
 
     @abstractmethod
     def _generate_model(self):
-        pass
+        """Generates rest of the model."""
 
     @abstractmethod
     def get_actions(self) -> List[List[str]]:
-        pass
+        """
+        Return list of actions in the model.
+        :return: List of actions for each agent.
+        """
 
     @abstractmethod
     def get_props_list(self) -> List[str]:
-        pass
+        """
+        Returns list of propositions in the model.
+        :return: List of propositions in the model.
+        """
 
     def get_winning_states(self, prop: str) -> Set[int]:
+        """
+        Compute set of winning states for given proposition.
+        :param prop: Proposition.
+        :return: Set of states identifiers.
+        """
         result = set()
         state_id = -1
         for state in self.states:

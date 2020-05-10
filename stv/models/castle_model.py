@@ -6,12 +6,12 @@ import itertools
 
 class CastleModel(ModelGenerator):
 
-    def __init__(self, castle_sizes: List[int], castle_lifes: List[int]):
-        assert len(castle_sizes) == len(castle_lifes)
-        super().__init__(no_agents=sum(castle_sizes))
+    def __init__(self, castle_sizes: List[int], castles_life: List[int]):
+        assert len(castle_sizes) == len(castles_life)
+        super().__init__(agents_count=sum(castle_sizes))
         self._castle_sizes = castle_sizes
-        self._castle_lifes = castle_lifes
-        self._castles_no = len(castle_lifes)
+        self._castles_life = castles_life
+        self._castles_no = len(castles_life)
 
     def _generate_initial_states(self):
         defend = []
@@ -21,7 +21,7 @@ class CastleModel(ModelGenerator):
             defend.append([])
             for i in range(0, self._castle_sizes[castle_id]):
                 defend[castle_id].append(False)
-        first_state = {'lifes': self._castle_lifes[:], 'defend': defend, 'defeated': defeated}
+        first_state = {'lifes': self._castles_life[:], 'defend': defend, 'defeated': defeated}
         self._add_state(first_state)
 
     def _get_props_for_state(self, state: hash) -> List[str]:

@@ -21,7 +21,7 @@ class MachineModel(ModelGenerator):
     def __init__(self, no_robots: int, no_machines: int, map_size: (int, int), items_limit: int,
                  robot_positions: List, machine_positions: List,
                  obstacle_positions: List, machine_requirements: List, production_times: List, imperfect: bool):
-        super().__init__(no_agents=no_robots + no_machines)
+        super().__init__(agents_count=no_robots + no_machines)
 
         self.no_robots = no_robots
         self.no_machines = no_machines
@@ -267,14 +267,14 @@ class MachineModel(ModelGenerator):
 
         return True
 
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
-        if agent_number >= self.no_robots:
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
+        if agent_id >= self.no_robots:
             return state
 
         robot_positions = state['r_pos'][:]
         robot_items = state['r_items'][:]
         for i in range(0, self.no_robots):
-            if i == agent_number:
+            if i == agent_id:
                 continue
 
             robot_positions[i] = -1
@@ -427,15 +427,15 @@ class MachineModelWithCharging(MachineModel):
 
         return available_actions[:]
 
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
-        if agent_number >= self.no_robots:
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
+        if agent_id >= self.no_robots:
             return state
 
         robot_positions = state['r_pos'][:]
         robot_items = state['r_items'][:]
         robot_charges = state['r_charge'][:]
         for i in range(0, self.no_robots):
-            if i == agent_number:
+            if i == agent_id:
                 continue
 
             robot_positions[i] = -1
@@ -554,14 +554,14 @@ class MachineModelWithStorage(MachineModel):
 
         return available_actions[:]
 
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
-        if agent_number >= self.no_robots:
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
+        if agent_id >= self.no_robots:
             return state
 
         robot_positions = state['r_pos'][:]
         robot_items = state['r_items'][:]
         for i in range(0, self.no_robots):
-            if i == agent_number:
+            if i == agent_id:
                 continue
 
             robot_positions[i] = -1
@@ -622,14 +622,14 @@ class MachineModelWaiting(MachineModel):
 
         return new_state, actions
 
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
-        if agent_number >= self.no_robots:
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
+        if agent_id >= self.no_robots:
             return state
 
         robot_positions = state['r_pos'][:]
         robot_items = state['r_items'][:]
         for i in range(0, self.no_robots):
-            if i == agent_number:
+            if i == agent_id:
                 continue
 
             robot_positions[i] = -1

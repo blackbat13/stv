@@ -12,7 +12,7 @@ class PollutionModel(ModelGenerator):
     lattice = None
 
     def __init__(self, model_map, connections, no_drones, energies, comm_radius, first_place_id=0):
-        super().__init__(no_agents=no_drones)
+        super().__init__(agents_count=no_drones)
         self.model_map = model_map
         self.comm_radius = comm_radius  # Communication radius for drones
         self.prepare_lattice()
@@ -23,7 +23,7 @@ class PollutionModel(ModelGenerator):
     def _generate_initial_states(self):
         places = []
         visited = []
-        for _ in range(0, self.no_agents):
+        for _ in range(0, self.agents_count):
             places.append(self.first_place_id)
             visited.append({self.first_place_id})
 
@@ -117,7 +117,7 @@ class PollutionModel(ModelGenerator):
 
     def prepare_available_actions(self, state):
         available_actions = []
-        for drone_number in range(0, self.no_agents):
+        for drone_number in range(0, self.agents_count):
             available_actions.append([])
             available_actions[drone_number].append(-1)  # Wait
             drone_energy = state["energy"][drone_number]
@@ -162,7 +162,7 @@ class PollutionModel(ModelGenerator):
 
     def readings_for_state(self, state):
         readings = []
-        for drone in range(0, self.no_agents):
+        for drone in range(0, self.agents_count):
             drone_reading = self.drone_reading_for_place(drone, state['place'][drone])
             prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone]]['PM2.5'])
             readings.append(prop)
@@ -172,12 +172,12 @@ class PollutionModel(ModelGenerator):
         # TODO: improve
         return self.model_map[place]["d_PM2.5"]
 
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
-        drone_place = state['place'][agent_number]
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
+        drone_place = state['place'][agent_id]
         epistemic_state = {'place': state['place'][:], 'energy': state['energy'][:],
                            'visited': copy.deepcopy(state['visited'])}
-        for coal_drone in range(0, self.no_agents):
-            if coal_drone == agent_number:
+        for coal_drone in range(0, self.agents_count):
+            if coal_drone == agent_id:
                 continue
             coal_drone_place = state['place'][coal_drone]
             if self.is_within_radius(drone_place, coal_drone_place):
@@ -199,8 +199,8 @@ class PollutionModel(ModelGenerator):
         # TODO modify that
         self.add_props_to_state(state)
         # state['props'] = self._get_props_for_state(state)
-        new_state_number = self._get_state_number(state)
-        for i in range(0, self.no_agents):
+        new_state_number = self._get_state_id(state)
+        for i in range(0, self.agents_count):
             epistemic_state = self._get_epistemic_state(state, i)
             self._add_to_epistemic_dictionary(epistemic_state, new_state_number, i)
         return new_state_number
@@ -232,7 +232,7 @@ class PollutionModel(ModelGenerator):
 
     def pol_new_in_state(self, state) -> []:
         pol_prop = []
-        for drone_number in range(0, self.no_agents):
+        for drone_number in range(0, self.agents_count):
             drone_reading = self.drone_reading_for_place(drone_number, state['place'][drone_number])
             prop = self.value_for_prop(drone_reading, self.model_map[state['place'][drone_number]]['PM2.5'])
             pol_prop.append(prop)
@@ -241,7 +241,7 @@ class PollutionModel(ModelGenerator):
 
     def pol_prop_in_state(self, state, place_number) -> []:
         pol_prop = []
-        for drone_number in range(0, self.no_agents):
+        for drone_number in range(0, self.agents_count):
             if state['place'][drone_number] != place_number:
                 pol_prop.append('f')
                 continue
@@ -254,7 +254,7 @@ class PollutionModel(ModelGenerator):
     def pol_propD_in_state(self, state, place_number) -> []:
         pol_prop = []
         return_prop = 'f'
-        for drone_number in range(0, self.no_agents):
+        for drone_number in range(0, self.agents_count):
             if state['place'][drone_number] != place_number:
                 continue
             drone_reading = self.drone_reading_for_place(drone_number, state['place'][drone_number])
@@ -283,7 +283,7 @@ class PollutionModel(ModelGenerator):
 
     def loc_prop_in_state(self, state, place_number):
         loc_prop = []
-        for drone_number in range(0, self.no_agents):
+        for drone_number in range(0, self.agents_count):
             prop = 'f'
             if state['place'][drone_number] == place_number:
                 prop = 't'
@@ -293,7 +293,7 @@ class PollutionModel(ModelGenerator):
 
     def loc_all_prop_in_state(self, state):
         loc_prop = []
-        for drone_number in range(0, self.no_agents):
+        for drone_number in range(0, self.agents_count):
             if len(state['visited'][drone_number]) == len(self.model_map):
                 prop = 't'
             else:
@@ -309,7 +309,7 @@ class PollutionModel(ModelGenerator):
     def get_actions(self) -> List[List[str]]:
         drone_actions = ['N', 'E', 'S', 'W', 'Wait']
         actions = []
-        for drone in range(0, self.no_agents):
+        for drone in range(0, self.agents_count):
             actions.append(drone_actions[:])
 
         return actions

@@ -15,16 +15,16 @@ class DiningCryptographers(ModelGenerator):
         ODD = 1
         EVEN = 2
 
-    def __init__(self, no_agents: int):
-        super().__init__(no_agents=no_agents)
+    def __init__(self, agents_count: int):
+        super().__init__(agents_count=agents_count)
 
     def _generate_initial_states(self):
         available_coins = []
-        for _ in range(0, self.no_agents):
+        for _ in range(0, self.agents_count):
             available_coins.append([self.Coin.HEAD, self.Coin.TAIL])
 
         for coins in itertools.product(*available_coins):
-            for paying in range(-1, self.no_agents):
+            for paying in range(-1, self.agents_count):
                 state = {'number_of_odd': self.NumberOfOdd.NONE, 'coins': list(coins), 'paying': paying}
                 self._add_state(state)
 
@@ -37,7 +37,7 @@ class DiningCryptographers(ModelGenerator):
 
             actions = []
             number = 0
-            for agent_no in range(0, self.no_agents):
+            for agent_no in range(0, self.agents_count):
                 if state['coins'][agent_no] == state['coins'][agent_no - 1]:
                     actions.append('say_equal')
                     number += 1
@@ -55,7 +55,7 @@ class DiningCryptographers(ModelGenerator):
 
     def _get_epistemic_state(self, state, agent_no):
         epistemic_coins = state['coins'][:]
-        for i in range(0, self.no_agents):
+        for i in range(0, self.agents_count):
             if i == agent_no or i == agent_no - 1:
                 continue
 

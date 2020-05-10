@@ -7,7 +7,7 @@ import itertools
 class SimpleVotingModel(ModelGenerator):
 
     def __init__(self, number_of_candidates: int, number_of_voters: int):
-        super().__init__(no_agents=(number_of_candidates + 1))
+        super().__init__(agents_count=(number_of_candidates + 1))
         self._number_of_candidates = number_of_candidates
         self._number_of_voters = number_of_voters
 
@@ -66,8 +66,8 @@ class SimpleVotingModel(ModelGenerator):
 
                 self.model.add_transition(current_state_number, new_state_id, action)
 
-    def _get_epistemic_state(self, state: hash, agent_number: int):
-        if agent_number == 0:
+    def _get_epistemic_state(self, state: hash, agent_id: int):
+        if agent_id == 0:
             epistemic_state = {'coercer_actions': state['coercer_actions'][:], 'voted': state['voted'][:],
                                'voters_action': state['voters_action'][:], 'finish': state['finish'][:]}
             for voter_number in range(0, self._number_of_voters):

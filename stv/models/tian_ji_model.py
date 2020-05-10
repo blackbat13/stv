@@ -5,7 +5,7 @@ from typing import Set, List
 
 class TianJiModel(ModelGenerator):
     def __init__(self, no_horses: int):
-        super().__init__(no_agents=2)
+        super().__init__(agents_count=2)
         self.no_horses = no_horses
 
     def _generate_initial_states(self):
@@ -16,7 +16,7 @@ class TianJiModel(ModelGenerator):
                        'results': [0 for _ in range(self.no_horses)], 'king_choice': -1}
         self._add_state(first_state)
 
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
         epistemic_state = {'king_score': state['king_score'], 'tian_ji_score': state['tian_ji_score'],
                            'tian_ji_horses': state['tian_ji_horses'], 'king_choice': state['king_choice']}
         return epistemic_state

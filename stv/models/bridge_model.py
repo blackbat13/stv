@@ -5,17 +5,18 @@ import random
 
 
 class BridgeModel(ModelGenerator):
-    @property
-    def initial_states_count(self) -> int:
-        return self._initial_states_count
 
     def __init__(self, no_cards_available: int, no_end_cards: int, first_state: hash):
-        super().__init__(no_agents=4)
+        super().__init__(agents_count=4)
         self._no_cards_available = no_cards_available
         self._no_end_cards = no_end_cards
         self._first_state = first_state
         self._initial_states_count = 0
         self._cards_available = []
+
+    @property
+    def initial_states_count(self) -> int:
+        return self._initial_states_count
 
     def generate(self):
         self._generate_available_cards()
@@ -107,8 +108,8 @@ class BridgeModel(ModelGenerator):
             new_state_number = self._add_state(new_state)
             self.model.add_transition(current_state_number, new_state_number, actions)
 
-    def _get_epistemic_state(self, state, agent_number: int) -> hash:
-        if agent_number != 0:
+    def _get_epistemic_state(self, state, agent_id: int) -> hash:
+        if agent_id != 0:
             return {}
         epistemic_hands = state['hands'][:]
         epistemic_hands[1] = self._keep_values_in_list(epistemic_hands[1], -1)
@@ -175,8 +176,8 @@ class BridgeModel(ModelGenerator):
     def _new_suit(state, card):
         if state['next'] == state['beginning']:
             return card % 10
-        else:
-            return state['suit']
+
+        return state['suit']
 
     @staticmethod
     def _new_board_after_play(state, card):

@@ -7,7 +7,7 @@ import itertools
 class SimpleVoting2Model(ModelGenerator):
 
     def __init__(self, no_voters: int, no_candidates: int):
-        super().__init__(no_agents=no_voters + no_candidates)
+        super().__init__(agents_count=no_voters + no_candidates)
         self._no_voters = no_voters
         self._no_candidates = no_candidates
 
@@ -129,7 +129,7 @@ class SimpleVoting2Model(ModelGenerator):
 
         return True
 
-    def _get_epistemic_state(self, state: hash, agent_number: int):
+    def _get_epistemic_state(self, state: hash, agent_id: int):
         return state
 
     def get_actions(self) -> list:

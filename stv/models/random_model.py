@@ -6,7 +6,7 @@ import math
 
 class RandomModel(ModelGenerator):
     def __init__(self, max_states: int = 20):
-        super().__init__(no_agents=2)
+        super().__init__(agents_count=2)
         self.__max_states = max_states
         # self.__max_epistemic_classes = random.randint(self.__max_states // 4, self.__max_states // 2)
         self.__max_epistemic_classes = int(self.__max_states // math.log2(self.__max_states))

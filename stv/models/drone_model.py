@@ -188,7 +188,7 @@ class MapGenerator:
 
 class DroneModel(ModelGenerator):
     def __init__(self, no_drones: int, energies: List[int], map, is_random: bool = False):
-        super().__init__(no_agents=no_drones)
+        super().__init__(agents_count=no_drones)
         self.energies = energies
         self.map = map
         self.create_map_graph()
@@ -198,11 +198,8 @@ class DroneModel(ModelGenerator):
         self.create_map_graph()
 
     def _generate_initial_states(self):
-        places = []
-        visited = []
-        for i in range(0, self.no_agents):
-            places.append(0)
-            visited.append({0})
+        places = [0 for _ in range(self._agents_count)]
+        visited = [{0} for _ in range(self._agents_count)]
 
         first_state = {
             "place": places,
@@ -229,7 +226,7 @@ class DroneModel(ModelGenerator):
 
             available_actions = []
 
-            for drone_number in range(0, self.no_agents):
+            for drone_number in range(0, self.agents_count):
                 available_actions.append([])
                 available_actions[drone_number].append(-1)  # Wait
                 drone_energy = state["energy"][drone_number]
@@ -276,7 +273,7 @@ class DroneModel(ModelGenerator):
                 energies = state["energy"][:]
                 visited = state["visited"][:]
                 actions = []
-                for _ in range(0, self.no_agents):
+                for _ in range(0, self.agents_count):
                     actions.append(None)
                 drone_number = -1
                 for d_action in drone_actions:
@@ -305,12 +302,12 @@ class DroneModel(ModelGenerator):
                 new_state_number = self._add_state(new_state)
                 self.model.add_transition(current_state_number, new_state_number, actions)
 
-    def _get_epistemic_state(self, state: hash, agent_number: int) -> hash:
+    def _get_epistemic_state(self, state: hash, agent_id: int) -> hash:
         new_places = state['place'][:]
-        for i in range(0, len(new_places)):
+        for i in range(len(new_places)):
             new_places[i] = self.map.disjoint_set.find(new_places[i])
         new_visited = []
-        for i in range(0, len(state['visited'])):
+        for i in range(len(state['visited'])):
             new_visited.append(set())
             for place in state['visited'][i]:
                 new_visited[i].add(self.map.disjoint_set.find(place))
@@ -327,13 +324,13 @@ class DroneModel(ModelGenerator):
 
     def get_actions(self):
         result = []
-        for i in range(0, self.no_agents):
+        for i in range(self._agents_count):
             result.append(self.drone_actions)
         return result
 
     def listify_states(self):
         for state in self.states:
-            for drone_id in range(0, self.no_agents):
+            for drone_id in range(self._agents_count):
                 state['visited'][drone_id] = list(state['visited'][drone_id])
 
     def _get_props_for_state(self, state: hash) -> List[str]:
