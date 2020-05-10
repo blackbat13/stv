@@ -2,7 +2,6 @@ import itertools
 import copy
 from typing import List, Set
 from tools.number_tools import NumberTools
-from tools.list_tools import ListTools
 from tools.disjoint_set import DisjointSet
 from logics.atl.transition import Transition
 
@@ -90,7 +89,7 @@ class ATLIrModel:
         self.reverse_transitions = []
 
     def init_agent_actions(self):
-        self.agents_actions = ListTools.create_list_of_size(self.number_of_agents, set())
+        self.agents_actions = [set() for _ in range(self.number_of_agents)]
 
     def init_states(self):
         self.pre_states = []
@@ -123,7 +122,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ListTools.create_value_list_of_size(self.number_of_states, None)
+        self.strategy = [None for _ in range(self.number_of_states)]
         while True:
             current_states = self.basic_formula_one_agent(agent_id, current_states, is_winning_state)
             result_states.update(current_states)
@@ -140,7 +139,7 @@ class ATLIrModel:
         return result_states
 
     def marked_winning_states(self, winning_states: Set[int]) -> List[bool]:
-        is_winning_state = ListTools.create_value_list_of_size(self.number_of_states, False)
+        is_winning_state = [False for _ in range(self.number_of_states)]
         for state_id in winning_states:
             is_winning_state[state_id] = True
 
@@ -194,7 +193,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ListTools.create_value_list_of_size(self.number_of_states, None)
+        self.strategy = [None for _ in range(self.number_of_states)]
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             result_states.update(current_states)
@@ -210,7 +209,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ListTools.create_value_list_of_size(self.number_of_states, None)
+        self.strategy = [None for _ in range(self.number_of_states)]
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             to_remove = result_states.difference(current_states)
@@ -275,7 +274,7 @@ class ATLIrModel:
         result_states_length = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
-        self.strategy = ListTools.create_value_list_of_size(self.number_of_states, None)
+        self.strategy = [None for _ in range(self.number_of_states)]
         while True:
             current_states = self.basic_formula_no_agents(current_states, is_winning_state)
             result_states.update(current_states)
@@ -363,12 +362,11 @@ class ATLirModel(ATLIrModel):
         self.finish_model_called = False
 
     def init_epistemic_relation(self):
-        self.imperfect_information = ListTools.create_list_of_size(self.number_of_agents, [])
+        self.imperfect_information = [[] for _ in range(self.number_of_agents)]
 
     def finish_model(self):
-        self.epistemic_class_membership = ListTools.create_list_of_size(self.number_of_agents,
-                                                                        ListTools.create_value_list_of_size(
-                                                                             self.number_of_states, -1))
+        self.epistemic_class_membership = [[-1 for _ in range(self.number_of_states)] for _ in
+                                           range(self.number_of_agents)]
 
     def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]):
         """Must be called after creating the whole model"""
@@ -516,15 +514,14 @@ class ATLirModelDisjoint(ATLIrModel):
         self.finish_model_called = False
 
     def init_epistemic_relation(self):
-        self.imperfect_information = ListTools.create_list_of_size(self.number_of_agents, [])
+        self.imperfect_information = [[] for _ in range(self.number_of_agents)]
         self.epistemic_class_disjoint = [DisjointSet(self.number_of_states) for _ in
                                          itertools.repeat(None, self.number_of_agents)]
-        self.can_go_there = ListTools.create_list_of_size(self.number_of_agents, [])
+        self.can_go_there = [[] for _ in range(self.number_of_agents)]
 
     def finish_model(self):
-        self.epistemic_class_membership = ListTools.create_list_of_size(self.number_of_agents,
-                                                                        ListTools.create_value_list_of_size(
-                                                                             self.number_of_states, -1))
+        self.epistemic_class_membership = [[-1 for _ in range(self.number_of_states)] for _ in
+                                           range(self.number_of_agents)]
 
     def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]):
         """Must be called after creating the whole model"""
@@ -566,7 +563,7 @@ class ATLirModelDisjoint(ATLIrModel):
     def minimum_formula_one_agent(self, agent_id: int, winning_states: Set[int]) -> Set[int]:
         result_states = self.prepare_result_states(winning_states)
         current_states = winning_states.copy()
-        self.strategy = ListTools.create_value_list_of_size(self.number_of_states, None)
+        self.strategy = [None for _ in range(self.number_of_states)]
         winning_states_disjoint = DisjointSet(0)
         winning_states_disjoint.subsets = copy.deepcopy(self.epistemic_class_disjoint[agent_id].subsets)
         first_winning = winning_states_disjoint.find(iter(next(winning_states)))

@@ -3,11 +3,6 @@ from ..context import tools
 
 
 class ArrayToolsTestSuite(unittest.TestCase):
-    def test_create_array_of_size(self):
-        array = tools.ListTools.create_list_of_size(10, [])
-        self.assertEqual(len(array), 10)
-        self.assertEqual(len(array[0]), 0)
-
     def test_create_integer_array_of_size(self):
         array = tools.ListTools.create_value_list_of_size(10, 1)
         self.assertEqual(len(array), 10)

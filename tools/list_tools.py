@@ -7,19 +7,6 @@ class ListTools:
     """
 
     @staticmethod
-    def create_list_of_size(size: int, basic_item) -> list:
-        """
-        Creates array of given size containing copies of given items
-        :param size:
-        :param basic_item:
-        :return:
-        """
-        array = []
-        for _ in range(0, size):
-            array.append(basic_item.copy())
-        return array[:]
-
-    @staticmethod
     def create_value_list_of_size(size: int, basic_value) -> list:
         """
         Creates array of given size containing given value
