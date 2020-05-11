@@ -1010,3 +1010,12 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
         formulae += "\t<g1>F FirstTeamWin;\n"
         formulae += "end Formulae\n\n"
         return formulae
+
+
+if __name__ == "__main__":
+    n = 2
+    ispl_generator = BridgeModelIsplGenerator(n, n)
+    model_txt = ispl_generator.create_model()
+    file = open("bridge.ispl", "w")
+    file.write(model_txt)
+    file.close()

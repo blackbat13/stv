@@ -438,3 +438,14 @@ class CastlesIsplGeneratorSubjective(CastlesIsplGeneratorObjective):
         init_states += "\tEnvironment.decide=true;\n" \
                        "end InitStates\n\n"
         return init_states
+
+
+if __name__ == "__main__":
+    workers = [1, 1, 1]
+    castles = 3
+    castles_life = [1, 1, 1]
+    ispl_generator = CastlesIsplGeneratorObjective(workers, castles, castles_life)
+    model_txt = ispl_generator.create_model()
+    file = open("castles.ispl", "w")
+    file.write(model_txt)
+    file.close()

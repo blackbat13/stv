@@ -294,3 +294,13 @@ class SimpleVotingModel2IsplGenerator(SimpleVotingModelIsplGenerator):
         formulae += "F (Voter1Voted1 and Voter1Finish and !Voter1Punished);\n" \
                     "end Formulae\n\n"
         return formulae
+
+
+if __name__ == "__main__":
+    candidates = 2
+    voters = 3
+    ispl_generator = SimpleVotingModelIsplGenerator(candidates, voters)
+    model_txt = ispl_generator.create_model()
+    file = open("simple_voting.ispl", "w")
+    file.write(model_txt)
+    file.close()

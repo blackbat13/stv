@@ -441,6 +441,60 @@ class GlobalModel:
         self._pop_from_stack()
         # self._stack1.pop()  # 20. Pop(Stack1)
 
+    def iter_por(self):
+        dfs_stack = [1]
+        while len(dfs_stack) > 0:
+            dfs = dfs_stack.pop()
+            if dfs == 1:
+                g = self._stack1[-1]  # 1. g = Top(Stack1)
+                reexplore = False  # 1. reexplore = false
+
+                i = self._find_state_on_stack1(g)
+
+                if i != -1 and i != len(self._stack1) - 1:
+                    if len(self._stack2) == 0:
+                        depth = 0
+                    else:
+                        depth = self._stack2[-1]  # 3. depth = Top(Stack2)
+                    if i > depth:  # 4. if i > depth then
+                        reexplore = True  # 4. reexplore = true
+                    else:  # 4. else
+                        self._pop_from_stack()
+                        # self._stack1.pop()  # 4. Pop(Stack1)
+                        return  # 4. return
+
+                if not reexplore and self._is_in_G(g):  # 6. if reexplore = false and g in G
+                    # self._stack1.pop()  # 6. Pop(Stack1)
+                    self._pop_from_stack()
+                    return  # 6. return
+                self._G.append(g)  # 7. G = G u g
+                g_state_id = self._add_state(g)
+                E_g = []  # 7. E(g) = empty
+                en_g = self._enabled_transitions_in_state_single_item_set(g)
+                if len(en_g) > 0:  # 8. if en(g) not empty
+                    if not reexplore:  # 9. if reexplore = false
+                        E_g = self._ample(g)
+                    if len(E_g) == 0:  # 14. if E(g) is empty
+                        E_g = en_g  # 14. E(g) = en(g)
+                    if E_g == en_g:  # 15. if E(g) = en(g)
+                        self._stack2.append(len(self._stack1))  # 15. Push(Stack2,Depth(Stack1))
+                    dfs_stack.append(-1)
+                    for tup in E_g:  # 16. for all a in E(g)
+                        a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+                        g_p = self._successor(g, a)  # 16. g' = Successor(g,a)
+                        g_p_state_id = self._add_state(g_p)
+                        self._add_transition(g_state_id, g_p_state_id, a.action, [a.agent_id])
+                        if self._add_to_stack(g_p):
+                            dfs_stack.append(1)
+            elif dfs == -1:
+                if len(self._stack2) == 0:
+                    depth = 0
+                else:
+                    depth = self._stack2[-1]  # 18. depth = Top(Stack2)
+                if depth == len(self._stack1):  # 19. if depth = Depth(Stack1)
+                    self._stack2.pop()  # 19. Pop(Stack2)
+                self._pop_from_stack()
+
     def _ample(self, s: GlobalState):
         V = self._enabled_transitions_in_state_single_item_set(s)
         while len(V) > 0:
@@ -642,17 +696,18 @@ class GlobalModel:
 
 if __name__ == "__main__":
     model = GlobalModel()
-    model.parse("train_controller.txt")
-    # model.parse("voting_1_2.txt")
+    # model.parse("train_controller.txt")
+    model.parse("voting_4_2.txt")
     # model.parse("selene.txt")
     # model.print()
-    coalition = ["Controller1"]
+    coalition = ["Coercer1"]
     model.set_coalition(coalition)
     print(f"Coalition: {coalition}")
     start = time.process_time()
     # model.compute_reduced(coalition)
     # model.compute()
-    model.dfs_por()
+    # model.dfs_por()
+    model.iter_por()
     end = time.process_time()
     print()
     print(f"Model generated in {end - start} seconds.")
