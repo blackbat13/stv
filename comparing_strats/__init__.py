@@ -1,2 +1,0 @@
-from .strat_simpl import StrategyComparer
-from .strategy_generator import StrategyGenerator

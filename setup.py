@@ -12,8 +12,7 @@ setup(
     download_url='https://github.com/blackbat13/stv/archive/v_01.tar.gz',  # I explain this later on
     keywords=['atl', 'model-checking', 'logics'],  # Keywords that define your package best
     install_requires=[  # I get to this in a second
-        'validators',
-        'beautifulsoup4',
+        'pyparsing'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -23,5 +22,6 @@ setup(
         'License :: OSI Approved :: MIT License',  # Again, pick a license
         'Programming Language :: Python :: 3',  # Specify which pyhton versions that you want to support
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
 )

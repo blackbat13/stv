@@ -1,8 +1,7 @@
-from generators.ispl.castles import CastlesIsplGeneratorObjective, CastlesIsplGeneratorSubjective
-from generators.ispl.bridge import BridgeModelIsplGenerator, AbsentMindedBridgeModelIsplGenerator
-from generators.ispl.selene import SeleneModelIsplGenerator, SeleneModelMkIsplGenerator
-from generators.ispl.simple_voting import SimpleVotingModelIsplGenerator, SimpleVotingModel2IsplGenerator
-from tools.file_tools import FileTools
+from stv.generators.ispl import CastlesIsplGeneratorObjective, CastlesIsplGeneratorSubjective
+from stv.generators.ispl import BridgeModelIsplGenerator, AbsentMindedBridgeModelIsplGenerator
+from stv.generators.ispl import SimpleVotingModelIsplGenerator, SimpleVotingModel2IsplGenerator
+from stv.tools import FileTools
 
 
 class Menu:

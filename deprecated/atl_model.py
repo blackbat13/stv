@@ -161,7 +161,7 @@ class ATLModel:
         for transition in self.transitions[from_state]:
             if transition['actions'][agent] == action:
                 action_ok = True
-                if not winning_states_disjoint.is_same(first_winning, transition['nextState']):
+                if not winning_states_disjoint.is_in_union(first_winning, transition['nextState']):
                     return False
 
         return action_ok
