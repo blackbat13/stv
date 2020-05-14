@@ -1,0 +1,19 @@
+{
+  "name": "atlmodelchecker",
+  "version": "0.0.1",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "bootstrap": "^4.4.1",
+    "d3": "^5.16.0",
+    "electron": "^8.2.5",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.5.1",
+    "lodash": "^4.17.15",
+    "popper.js": "^1.16.1",
+    "python-shell": "^2.0.0"
+  }
+}
