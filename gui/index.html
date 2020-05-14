@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STV v0.0.1</title>
+    <script>if (typeof module === 'object') {
+        window.module = module;
+        module = undefined;
+    }</script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>if (window.module) module = window.module;</script>
+    <link href="css/main.css" type="text/css" rel="stylesheet"/>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet">
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/d3/dist/d3.js"></script>
+    <script src="node_modules/lodash/lodash.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <!-- Modal -->
+    <div class="modal fade" id="upperApproxModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verification finished</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>The formula: <span id="lowerApproxModalFormula"></span></p>
+                    <p>Verification result: the formula <span id="upperApproxTrue">might hold</span><span
+                            id="upperApproxFalse">does not hold</span> in the model</p>
+                    <p>Number of states where formula might hold: <span id="upperApproxNoStates"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="lowerApproxModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verification finished</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>The formula: <span id="upperApproxModalFormula"></span></p>
+                    <p>Verification result: the formula <span id="lowerApproxTrue">holds</span><span
+                            id="lowerApproxFalse">does not have to hold</span> in the model</p>
+                    <p>Number of states where formula holds: <span id="lowerApproxNoStates"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="dominoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">DominoDFS finished</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>The formula: <span id="dominoFormula"></span></p>
+                    <p>Result: strategy <span><span id="stratFalse">not</span> found</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="div_graph" class="col-8">
+            <svg id="graph" width="10000" height="10000">
+            </svg>
+        </div>
+        <div class="col-4">
+            <form>
+                <div>
+                    <select name="models" id="models">
+                        <option value="none">Select model</option>
+                        <option value="tianji">Tian Ji</option>
+                        <option value="castles">Castles</option>
+                        <option value="bridge">Bridge Endplay</option>
+                        <option value="drone">Drones</option>
+                        <option value="voting">Simple Voting</option>
+                    </select>
+                </div>
+                <div id="model_options">
+                    <div id="param1div" class="form-group" style="visibility: hidden;">
+                        <label id="param1Label" class="form-label" for="param1Input"></label>
+                        <input class="form-control" type="number" min="1" max="5" id="param1Input" value="1"
+                               step="1"/>
+
+                    </div>
+                    <div id="param2div" class="form-group" style="visibility: hidden;">
+                        <label id="param2Label" class="form-label" for="param2Input"></label>
+
+                        <input class="form-control" type="number" min="1" max="5" id="param2Input" value="1"
+                               step="1"/>
+
+                    </div>
+                    <div id="param3div" class="form-group" style="visibility: hidden;">
+                        <label id="param3Label" class="form-label" for="param3Input"></label>
+
+                        <input class="form-control" type="number" min="1" max="5" id="param3Input" value="1"
+                               step="1"/>
+
+                    </div>
+                    <div id="param4div" class="form-group" style="visibility: hidden;">
+                        <label id="param4Label" class="form-label" for="param4Input"></label>
+
+                        <input class="form-control" type="number" min="1" max="5" id="param4Input" value="1"
+                               step="1"/>
+
+                    </div>
+                </div>
+                <div>
+                    <p id="pFormula" style="visibility: hidden">Formula to be verified:</p>
+                    <pre id="formula"></pre>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-lg btn-primary" id="btn_generate">Generate</button>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-primary" id="btn_lower_approx">Lower approx.
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-primary" id="btn_upper_approx">Upper approx.
+                        </button>
+                    </div>
+                </div>
+                <hr/>
+                <div>
+                    <select name="heuristic" id="heuristic">
+                        <option value="0">Basic heuristic</option>
+                        <option value="1">Control heuristic</option>
+                        <option value="2">Epistemic heuristic</option>
+                        <option value="3">Visited states heuristic</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-lg btn-primary" id="btn_domino_dfs">Domino DFS</button>
+                </div>
+                <hr/>
+                <div class="custom-control custom-checkbox">
+                    <input id="showNodeLabels" type="checkbox" class="custom-control-input"/>
+                    <label id="showNodeLabelsLabel" class="custom-control-label" for="showNodeLabels">Show State
+                        Labels</label>
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input id="showLabels" type="checkbox" class="custom-control-input"/>
+                    <label id="showLabelsLabel" class="custom-control-label" for="showLabels">Show Actions</label>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-primary" id="btn_zoom_out"><i
+                                class="fa fa-search-minus"></i></button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-lg btn-primary" id="btn_zoom_in"><i
+                                class="fa fa-search-plus"></i></button>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-lg btn-primary" id="btn_freeze">Freeze</button>
+                </div>
+                <div>
+                    <a href="https://github.com/blackbat13/StraTegicVerifier" target="_blank">
+                        <button type="button" class="btn btn-lg btn-info" id="btn_source">Source</button>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        let $modelList = $("#models");
+        let $modelOptions = $("#model_options");
+        let $generateButton = $("#btn_generate");
+        let $buttonLowerApprox = $("#btn_lower_approx");
+        let $buttonUpperApprox = $("#btn_upper_approx");
+        let $buttonDominoDFS = $("#btn_domino_dfs");
+        let $buttonZoomIn = $("#btn_zoom_in");
+        let $buttonZoomOut = $("#btn_zoom_out");
+        let $buttonFreeze = $("#btn_freeze");
+        let $param1Label = $("#param1Label");
+        let $param1Input = $("#param1Input");
+        let $param2Label = $("#param2Label");
+        let $param2Input = $("#param2Input");
+        let $param3Label = $("#param3Label");
+        let $param3Input = $("#param3Input");
+        let $param4Label = $("#param4Label");
+        let $param4Input = $("#param4Input");
+        let $param1div = $('#param1div');
+        let $param2div = $('#param2div');
+        let $param3div = $('#param3div');
+        let $param4div = $('#param4div');
+        let $svgGraph = $('#graph');
+        let pyshell = require('python-shell').PythonShell;
+        pyshell.defaultOptions = { pythonPath: '../venv/Scripts/python.exe' };
+        let $divGraph = $('#div_graph');
+        let $pFormula = $('#formula');
+        let scale = 1;
+        let $dominoModal = $("#dominoModal");
+        let $dominoFormula = $("#dominoFormula");
+        let $stratFalse = $("#stratFalse");
+        let $selectHeuristic = $("#heuristic");
+
+        let $upperApproxModal = $("#upperApproxModal");
+        let $lowerApproxModal = $("#lowerApproxModal");
+        let $upperApproxModalFormula = $("#upperApproxModalFormula");
+        let $lowerApproxModalFormula = $("#lowerApproxModalFormula");
+        let $upperApproxTrue = $('#upperApproxTrue');
+        let $lowerApproxTrue = $('#lowerApproxTrue');
+        let $upperApproxFalse = $('#upperApproxFalse');
+        let $lowerApproxFalse = $('#lowerApproxFalse');
+        let $upperApproxNoStates = $('#upperApproxNoStates');
+        let $lowerApproxNoStates = $('#lowerApproxNoStates');
+
+        window.scrollTo(3800, 3800);
+
+        function hideParams() {
+            $param1div.css('visibility', 'hidden');
+            $param2div.css('visibility', 'hidden');
+            $param3div.css('visibility', 'hidden');
+            $param4div.css('visibility', 'hidden');
+        }
+
+        $buttonZoomIn.on('click', function () {
+            scale += 0.1;
+            $("svg").attr('transform', "scale(" + scale + ")");
+        });
+
+        $buttonZoomOut.on('click', function () {
+            if (scale <= 0.1) {
+                return;
+            }
+
+            scale -= 0.1;
+            $("svg").attr('transform', "scale(" + scale + ")");
+        });
+
+        $("#showLabels").change(function () {
+            if (this.checked) {
+                $(".edgeLabel").removeClass('display_none');
+            } else {
+                $(".edgeLabel").addClass('display_none');
+            }
+        });
+
+        $("#showNodeLabels").change(function () {
+            if (this.checked) {
+                $(".node_label").removeClass('display_none');
+                $(".node_props").removeClass('display_none');
+            } else {
+                $(".node_label").addClass('display_none');
+                $(".node_props").addClass('display_none');
+            }
+        });
+
+        $modelList.on('change', function () {
+            $("#pFormula").css("visibility", "visible");
+            let selection = $("#models option:selected").val();
+            if (selection === "tianji") {
+                selectionTianJi();
+            } else if (selection === "castles") {
+                selectionCastles()
+            } else if (selection === "bridge") {
+                selectionBridge();
+            } else if (selection === "drone") {
+                selectionDrone();
+            } else if (selection === "voting") {
+                selectionVoting();
+            }
+        });
+
+        function resetGraph() {
+            $svgGraph.empty();
+            window.scrollTo(4500, 4500);
+        }
+
+        function loadUpperApproxModal(results) {
+            let formulaResult = results[results.length - 3];
+            if (formulaResult === "1") {
+                $upperApproxFalse.addClass('display_none');
+                $upperApproxTrue.removeClass('display_none');
+            } else {
+                $upperApproxFalse.removeClass('display_none');
+                $upperApproxTrue.addClass('display_none');
+            }
+
+            let noStates = results[results.length - 2];
+            $upperApproxNoStates.text(noStates);
+
+            $upperApproxModal.modal('show');
+        }
+
+        function loadLowerApproxModal(results) {
+            let formulaResult = results[results.length - 3];
+            if (formulaResult === "1") {
+                $lowerApproxFalse.addClass('display_none');
+                $lowerApproxTrue.removeClass('display_none');
+            } else {
+                $lowerApproxFalse.removeClass('display_none');
+                $lowerApproxTrue.addClass('display_none');
+            }
+
+            let noStates = results[results.length - 2];
+            $lowerApproxNoStates.text(noStates);
+
+            $lowerApproxModal.modal('show');
+        }
+
+        function loadDominoResults(results) {
+            let strategyResult = results[results.length - 2];
+            if (strategyResult === "1") {
+                $stratFalse.addClass('display_none');
+            } else {
+                $stratFalse.removeClass('display_none');
+            }
+
+            $dominoModal.modal('show');
+        }
+
+        function setFormula(formula) {
+            $pFormula.text(formula);
+            $upperApproxModalFormula.text(formula);
+            $lowerApproxModalFormula.text(formula);
+            $dominoFormula.text(formula);
+        }
+
+        function selectionTianJi() {
+            hideParams();
+            $param1div.css('visibility', 'visible');
+            $param1Label.empty();
+            $param1Label.html("Horses:");
+
+            setFormula('<<TianJi>>F Win');
+
+            $generateButton.off('click');
+            $generateButton.on('click', function () {
+                let horses = $param1Input.val();
+                resetGraph();
+                pyshell.run('../gui.py', {args: [horses]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('run_tian_ji.py finished.');
+                    loadGraph(JSON.parse(results[0]));
+                });
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let horses = $param1Input.val();
+
+                pyshell.run('python_module/verify_tian_ji.py', {args: [horses, 1]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_tian_ji.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadLowerApproxModal(results);
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let horses = $param1Input.val();
+
+                pyshell.run('python_module/verify_tian_ji.py', {args: [horses, 0]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_tian_ji.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadUpperApproxModal(results);
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let horses = $param1Input.val();
+                let heuristic = $("#heuristic option:selected").val();
+
+                pyshell.run('python_module/domino_tian_ji.py', {args: [horses, heuristic]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('domino_tian_ji.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadDominoResults(results);
+                });
+            });
+        }
+
+        function selectionCastles() {
+            hideParams();
+            $param1div.css('visibility', 'visible');
+            $param2div.css('visibility', 'visible');
+            $param3div.css('visibility', 'visible');
+            $param4div.css('visibility', 'visible');
+            $param1Label.empty();
+            $param1Label.html("Castle 1 size:");
+            $param2Label.empty();
+            $param2Label.html("Castle 2 size:");
+            $param3Label.empty();
+            $param3Label.html("Castle 3 size:");
+            $param4Label.empty();
+            $param4Label.html("Life:");
+
+            setFormula('<<C1>>F Castle3Defeated');
+
+            $generateButton.off('click');
+            $generateButton.on('click', function () {
+                let castle1Size = $param1Input.val();
+                let castle2Size = $param2Input.val();
+                let castle3Size = $param3Input.val();
+                let life = $param4Input.val();
+                resetGraph();
+
+                pyshell.run('python_module/run_castles.py', {args: [castle1Size, castle2Size, castle3Size, life]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('run_castles.py finished.');
+                    loadGraph(JSON.parse(results[0]));
+                });
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let castle1Size = $param1Input.val();
+                let castle2Size = $param2Input.val();
+                let castle3Size = $param3Input.val();
+                let life = $param4Input.val();
+
+                pyshell.run('python_module/verify_castles.py', {args: [castle1Size, castle2Size, castle3Size, life, 1]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_castles.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadLowerApproxModal(results);
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let castle1Size = $param1Input.val();
+                let castle2Size = $param2Input.val();
+                let castle3Size = $param3Input.val();
+                let life = $param4Input.val();
+
+                pyshell.run('python_module/verify_castles.py', {args: [castle1Size, castle2Size, castle3Size, life, 0]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_castles.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadUpperApproxModal(results);
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let castle1Size = $param1Input.val();
+                let castle2Size = $param2Input.val();
+                let castle3Size = $param3Input.val();
+                let life = $param4Input.val();
+                let heuristic = $("#heuristic option:selected").val();
+
+                pyshell.run('python_module/domino_castles.py', {args: [castle1Size, castle2Size, castle3Size, life, heuristic]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('domino_castles.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadDominoResults(results);
+                });
+            });
+        }
+
+        function selectionBridge() {
+            hideParams();
+            $param1div.css('visibility', 'visible');
+            $param2div.css('visibility', 'visible');
+            $param1Label.empty();
+            $param1Label.html("Deck size (cards per player):");
+            $param2Label.empty();
+            $param2Label.html("Cards in hand:");
+
+            setFormula('<<N>>F win');
+
+            $generateButton.off('click');
+            $generateButton.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+
+                resetGraph();
+
+                pyshell.run('python_module/run_bridge.py', {args: [n, k]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('run_bridge.py finished.');
+                    loadGraph(JSON.parse(results[results.length - 1]));
+                });
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+
+                pyshell.run('python_module/verify_bridge.py', {args: [n, k, 1]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_bridge.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadLowerApproxModal(results);
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+
+                pyshell.run('python_module/verify_bridge.py', {args: [n, k, 0]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_bridge.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadUpperApproxModal(results);
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+                let heuristic = $("#heuristic option:selected").val();
+
+                pyshell.run('python_module/domino_bridge.py', {args: [n, k, heuristic]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('domino_bridge.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadDominoResults(results);
+                });
+            });
+        }
+
+        function selectionDrone() {
+            hideParams();
+            $param1div.css('visibility', 'visible');
+            $param2div.css('visibility', 'visible');
+            $param1Label.empty();
+            $param1Label.html("Number of drones:");
+            $param2Label.empty();
+            $param2Label.html("Initial energy:");
+
+            setFormula('<<D>>F visited>=2');
+
+            $generateButton.off('click');
+            $generateButton.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+
+                resetGraph();
+
+                pyshell.run('python_module/run_drone.py', {args: [n, k]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('run_drone.py finished.');
+                    loadGraph(JSON.parse(results[results.length - 1]));
+                });
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+
+                pyshell.run('python_module/verify_drone.py', {args: [n, k, 1]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_drone.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadLowerApproxModal(results);
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+
+                pyshell.run('python_module/verify_drone.py', {args: [n, k, 2]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_drone.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadUpperApproxModal(results);
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let n = $param1Input.val();
+                let k = $param2Input.val();
+                let heuristic = $("#heuristic option:selected").val();
+
+                pyshell.run('python_module/domino_drone.py', {args: [n, k, heuristic]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('domino_drone.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadDominoResults(results);
+                });
+            });
+        }
+
+        function selectionVoting() {
+            hideParams();
+            $param1div.css('visibility', 'visible');
+            $param1Label.empty();
+            $param1Label.html("Voters:");
+            $param2div.css('visibility', 'visible');
+            $param2Label.empty();
+            $param2Label.html("Candidates:");
+
+            setFormula('<<Voter_1>>F (finish_1 & ~pun_1 & ~vote_{1,1})');
+
+            $generateButton.off('click');
+            $generateButton.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+                resetGraph();
+
+                pyshell.run('python_module/run_simple_voting.py', {args: [voters, candidates]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('run_simple_voting.py finished.');
+                    loadGraph(JSON.parse(results[0]));
+                });
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                pyshell.run('python_module/verify_simple_voting.py', {args: [voters, candidates, 1]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_simple_voting.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadLowerApproxModal(results);
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                pyshell.run('python_module/verify_simple_voting.py', {args: [voters, candidates, 0]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_simple_voting.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadUpperApproxModal(results);
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+                let heuristic = $("#heuristic option:selected").val();
+
+                pyshell.run('python_module/domino_simple_voting.py', {args: [voters, candidates, heuristic]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('domino_simple_voting.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadDominoResults(results);
+                });
+            });
+        }
+
+        function recolorGraph(graph) {
+            let nodes = graph.nodes;
+            let links = graph.links;
+            clearGraphColor();
+            colorLinks(links);
+            colorNodes(nodes);
+        }
+
+        function colorLinks(links) {
+            for (let i = 0; i < links.length; i++) {
+                if (links[i]['str'] === 1) {
+                    let id = links[i]['id'];
+                    $('#link_' + id).attr('stroke', '#F00');
+                }
+            }
+        }
+
+        function colorNodes(nodes) {
+            for (let i = 0; i < nodes.length; i++) {
+                if (nodes[i]['str'] === 1) {
+                    let id = nodes[i]['id'];
+                    $('#node_' + id).attr('fill', '#0F0');
+                }
+            }
+
+            $('.node[initial=true]').attr('fill', '#00F');
+            $('.node[winning=true]').attr('fill', '#F0F');
+        }
+
+        function clearGraphColor() {
+            clearNodesColor();
+            clearLinkColor();
+        }
+
+        function clearNodesColor() {
+            $('g circle').attr('fill', '#CCC');
+            $('#node_0').attr('fill', '#00F');
+        }
+
+        function clearLinkColor() {
+            $('.link').attr('stroke', '#CCC');
+        }
+
+        function loadGraph(graph) {
+            let tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+            let currNodes = graph.nodes;
+            let currLinks = graph.links;
+
+            const svg = d3.select('svg');
+            const width = 10000;
+            const height = 10000;
+
+            svg.append('defs').append('marker')
+                .attr("id", 'arrowhead')
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 19)
+                .attr("refY", 0)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .attr('xoverflow', 'visible')
+                .append('svg:path')
+                .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+                .style('fill', '#999')
+                .style('stroke', 'none');
+
+
+            let simulation = d3.forceSimulation()
+                .force("link", d3.forceLink().id(function (d) {
+                    return d.id;
+                }).distance(100).strength(1))
+                .force("charge", d3.forceManyBody().strength(-500))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            update(currLinks, currNodes);
+
+            function update(links, nodes) {
+                link = svg.selectAll(".link")
+                    .data(links)
+                    .enter()
+                    .append("path")
+                    .attr("class", "link")
+                    .attr('marker-end', function (d) {
+                        if (d.str === 3) {
+                            return '';
+                        }
+
+                        return 'url(#arrowhead)'
+                    });
+
+                link.append("title")
+                    .text(function (d) {
+                        return d.type;
+                    });
+
+                //Add mouseover events to links
+                link.attr('class', 'link')
+                    .attr('id', function (d) {
+                        return 'link_' + d.id;
+                    })
+                    .on('mouseover.fade', linkFade(0.1))
+                    .on('mouseover.tooltip', function (d) {
+                        tooltip.transition()
+                            .duration(300)
+                            .style("opacity", .8);
+                        tooltip.html("Source:" + d.source.id +
+                            "<p/>Target:" + d.target.id +
+                            "<p/>T:" + d.T)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY + 10) + "px");
+                    })
+                    .on("mouseout.tooltip", function () {
+                        tooltip.transition()
+                            .duration(100)
+                            .style("opacity", 0);
+                    })
+                    .on('mouseout.fade', linkFade(1))
+                    .on("mousemove", function () {
+                        tooltip.style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY + 10) + "px");
+                    });
+
+                link.transition().attr('stroke', function (d) {
+                    if (d.str === 1) {
+                        return "#F00";
+                    }
+
+                    return "#CCC";
+                }).attr('stroke-width', '10px').attr('stroke-dasharray', function (d) {
+                    if (d.str === 3) {
+                        return "5,5";
+                    }
+
+                    return '0,0';
+                });
+
+                edgepaths = svg.selectAll(".edgepath")
+                    .data(links)
+                    .enter()
+                    .append('path')
+                    .attr('class', 'edgepath')
+                    .attr('fill-opacity', 1)
+                    .attr('stroke-opacity', 1)
+                    .attr('id', function (d, i) {
+                        return 'edgepath' + i
+                    })
+                    .style("pointer-events", "none");
+
+                edgelabels = svg.selectAll(".edgelabel")
+                    .data(links)
+                    .enter()
+                    .append('text')
+                    .style("pointer-events", "none")
+                    .attr('class', function () {
+                        if ($("#showLabels").prop('checked')) {
+                            return "edgeLabel";
+                        } else {
+                            return "edgeLabel display_none";
+                        }
+                    })
+                    .attr('id', function (d, i) {
+                        return 'edgelabel' + i
+                    })
+                    .attr('font-size', 20)
+                    .attr('fill', '#666');
+
+                edgelabels.append('textPath')
+                    .attr('xlink:href', function (d, i) {
+                        return '#link_' + d.id
+                    })
+                    .style("text-anchor", "middle")
+                    .style("pointer-events", "none")
+                    .attr("startOffset", "50%")
+                    .text(function (d) {
+                        return d.T;
+                    });
+
+                node = svg.selectAll(".node")
+                    .data(nodes)
+                    .enter()
+                    .append("g")
+                    .attr("class", "node")
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                    );
+
+                node.append("circle")
+                    .attr('class', 'node')
+                    .attr('id', function (d) {
+                        return "node_" + d.id
+                    })
+                    .attr('initial', function (d) {
+                        return d.bgn === 1;
+                    })
+                    .attr('winning', function (d) {
+                        return d.win === 1;
+                    })
+                    .attr("r", 20)
+                    .attr("fill", function (d, i) {
+                        if (d.id === 0) {
+                            return "#00F";
+                        }
+                        if (d.str === 1) {
+                            return "#0F0";
+                        }
+                        if (d.bgn === 1) {
+                            return "#00F";
+                        }
+                        if (d.win === 1) {
+                            return '#F0F';
+                        }
+                        return "#CCC";
+                    })
+                    .on('mouseover.tooltip', function (d) {
+                        tooltip.transition()
+                            .duration(300)
+                            .style("opacity", .8);
+                        tooltip.html("Node:" + d.id + "<p/>T:" + JSON.stringify(d.T))
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY + 10) + "px");
+                    })
+                    .on('mouseover.fade', fade(0.1))
+                    .on("mouseout.tooltip", function () {
+                        tooltip.transition()
+                            .duration(100)
+                            .style("opacity", 0);
+                    })
+                    .on('mouseout.fade', fade(1))
+                    .on("mousemove", function () {
+                        tooltip.style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY + 10) + "px");
+                    });
+
+                node.append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("dy", ".3em").text(function (d) {
+                    return d.id
+                });
+
+                node.append("text")
+                    .attr("dy", 35)
+                    .attr('dx', -20)
+                    .attr('class', function () {
+                        if ($("#showNodeLabels").prop('checked')) {
+                            return "node_label";
+                        } else {
+                            return "node_label display_none";
+                        }
+                    })
+                    .html(function (d) {
+                        return "Label: " + JSON.stringify(d.T);
+                    });
+
+                node.append("text")
+                    .attr("dy", 55)
+                    .attr('dx', -20)
+                    .attr('class', function () {
+                        if ($("#showNodeLabels").prop('checked')) {
+                            return "node_props";
+                        } else {
+                            return "node_props display_none";
+                        }
+                    })
+                    .html(function (d) {
+                        if (d.props === undefined) {
+                            return "";
+                        }
+
+                        return "Props: [" + d.props + "]";
+                    });
+
+                _.each(links, function (link) {
+
+                    // find other links with same target+source or source+target
+                    let same = _.filter(links, {
+                        'source': link.source,
+                        'target': link.target
+                    });
+                    let sameAlt = _.filter(links, {
+                        'source': link.target,
+                        'target': link.source
+                    });
+                    let sameAll = same.concat(sameAlt);
+
+                    _.each(sameAll, function (s, i) {
+                        s.sameIndex = (i + 1);
+                        s.sameTotal = sameAll.length;
+                        s.sameTotalHalf = (s.sameTotal / 2);
+                        s.sameUneven = ((s.sameTotal % 2) !== 0);
+                        s.sameMiddleLink = ((s.sameUneven === true) &&
+                            (Math.ceil(s.sameTotalHalf) === s.sameIndex));
+                        s.sameLowerHalf = (s.sameIndex <= s.sameTotalHalf);
+                        s.sameArcDirection = s.sameLowerHalf ? 0 : 1;
+                        s.sameIndexCorrected = s.sameLowerHalf ? s.sameIndex : (s.sameIndex - Math.ceil(s.sameTotalHalf));
+                    });
+                });
+
+                let maxSame = _.chain(links)
+                    .sortBy(function (x) {
+                        return x.sameTotal;
+                    })
+                    .last()
+                    .value().sameTotal;
+
+                _.each(links, function (link) {
+                    link.maxSameHalf = Math.round(maxSame / 2);
+                });
+
+                simulation
+                    .nodes(nodes)
+                    .on("tick", ticked);
+
+                simulation.force("link")
+                    .links(links);
+            }
+
+            function dragstarted(d) {
+                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(d) {
+                d.fx = d3.event.x;
+                d.fy = d3.event.y;
+            }
+
+            function ticked() {
+                link.attr("d", linkArc);
+
+                node
+                    .attr("transform", function (d) {
+                        return "translate(" + d.x + ", " + d.y + ")";
+                    });
+
+                edgepaths.attr('d', function (d) {
+                    return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
+                });
+
+                edgelabels.attr('transform', function (d) {
+                    if (d.target.x < d.source.x) {
+                        var bbox = this.getBBox();
+
+                        rx = bbox.x + bbox.width / 2;
+                        ry = bbox.y + bbox.height / 2;
+                        return 'rotate(180 ' + rx + ' ' + ry + ')';
+                    } else {
+                        return 'rotate(0)';
+                    }
+                });
+            }
+
+            function linkArc(d) {
+                var dx = (d.target.x - d.source.x),
+                    dy = (d.target.y - d.source.y),
+                    dr = Math.sqrt(dx * dx + dy * dy),
+                    unevenCorrection = (d.sameUneven ? 0 : 0.5);
+                var curvature = 2,
+                    arc = (1.0 / curvature) * ((dr * d.maxSameHalf) / (d.sameIndexCorrected - unevenCorrection));
+
+                if (d.sameMiddleLink) {
+                    arc = 0;
+                }
+
+                return "M" + d.source.x + "," + d.source.y + "A" + arc + "," + arc + " 0 0," + d.sameArcDirection + " " + d.target.x + "," + d.target.y;
+            }
+
+            const linkedByIndex = {};
+            currLinks.forEach(d => {
+                linkedByIndex[`${d.source.index},${d.target.index}`] = 1;
+            });
+
+            function isConnected(a, b) {
+                return linkedByIndex[`${a.index},${b.index}`] || linkedByIndex[`${b.index},${a.index}`] || a.index === b.index;
+            }
+
+            function fade(opacity) {
+                return d => {
+                    node.style('stroke-opacity', function (o) {
+                        const thisOpacity = isConnected(d, o) ? 1 : opacity;
+                        this.setAttribute('fill-opacity', thisOpacity);
+                        return thisOpacity;
+                    });
+
+                    link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
+
+                };
+            }
+
+            function linkFade(opacity) {
+                return d => {
+                    node.style('stroke-opacity', function (o) {
+                        const thisOpacity = isConnected(d.source, o) && isConnected(d.target, o) ? 1 : opacity;
+                        this.setAttribute('fill-opacity', thisOpacity);
+                        return thisOpacity;
+                    });
+
+                    link.style('stroke-opacity', o => (o.source === d.source && o.target === d.target ? 1 : opacity));
+                }
+            }
+
+            $buttonFreeze.off('click');
+            $buttonFreeze.on('click', function () {
+                _.each(currNodes, function (nd) {
+                    nd.fx = nd.x;
+                    nd.fy = nd.y;
+                });
+            });
+        }
+    });
+
+
+</script>
+</body>
+</html>

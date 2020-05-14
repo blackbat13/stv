@@ -378,20 +378,23 @@ class SimpleModel:
 
         return result
 
-    def js_dump_model(self) -> str:
-        nodes = self.fill_nodes_model()
+    def js_dump_model(self, winning: List = []) -> str:
+        nodes = self.fill_nodes_model(winning)
         links = self.fill_links_model()
         return json.dumps({"nodes": nodes, "links": links})
 
-    def fill_nodes_model(self) -> List[hash]:
+    def fill_nodes_model(self, winning: List = []) -> List[hash]:
         nodes = []
         state_id = 0
-        for state in self._states:
+        for state in self.states:
             nodes.append({"T": state, "id": state_id, "bgn": 0})
             state_id += 1
 
         for state_id in self.epistemic_class_for_state(0, 0):
             nodes[state_id]["bgn"] = 1
+
+        for state_id in winning:
+            nodes[state_id]["win"] = 1
 
         return nodes
 
@@ -403,8 +406,11 @@ class SimpleModel:
                 if transition.next_state == state_id:
                     continue
                 links.append(
-                    {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+                    {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions,
+                     "str": 0})
                 transition_id += 1
+
+        links += self._create_epistemic_links(transition_id)
 
         return links
 
@@ -433,6 +439,8 @@ class SimpleModel:
                 self.js_dump_transition(transition, state_id, strategy, links, nodes, transition_id)
                 transition_id += 1
 
+        links += self._create_epistemic_links(transition_id)
+
         return links
 
     def js_dump_strategy_subjective(self, strategy) -> str:
@@ -452,7 +460,7 @@ class SimpleModel:
 
     def fill_links_strategy_subjective(self, nodes, strategy) -> List[hash]:
         links = []
-        id = 0
+        transition_id: int = 0
         for state_id in range(0, self._no_states):
             if state_id == self._first_state_id:
                 continue
@@ -460,9 +468,23 @@ class SimpleModel:
                 if transition.next_state == state_id:
                     continue
 
-                self.js_dump_transition(transition, state_id, strategy, links, nodes, id)
-                id += 1
+                self.js_dump_transition(transition, state_id, strategy, links, nodes, transition_id)
+                transition_id += 1
 
+        links += self._create_epistemic_links(transition_id)
+
+        return links
+
+    def _create_epistemic_links(self, link_id: int) -> list:
+        links = []
+        for agent_id in range(1):  # range(self.no_agents):
+            for state_id_1 in range(self.no_states):
+                for state_id_2 in range(state_id_1 + 1, self.no_states):
+                    if self.epistemic_class_membership[agent_id][state_id_1] == \
+                            self.epistemic_class_membership[agent_id][state_id_2]:
+                        links.append(
+                            {'id': link_id, "source": state_id_1, "target": state_id_2, "T": agent_id, "str": 3})
+                        link_id += 1
         return links
 
     def js_dump_transition(self, transition, state_id, strategy, links, nodes, transition_id) -> None:
@@ -474,12 +496,14 @@ class SimpleModel:
             actions.append(transition.actions[i])
         if strategy[state_id] == actions:
             links.append(
-                {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 1})
+                {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions,
+                 "str": 1})
             nodes[state_id]["str"] = 1
             nodes[transition.next_state]["str"] = 1
         else:
             links.append(
-                {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions, "str": 0})
+                {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions,
+                 "str": 0})
 
     @staticmethod
     def load_from_json(json_str: str, imperfect: bool, DEBUG: bool = False) -> [int]:

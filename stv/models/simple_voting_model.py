@@ -71,7 +71,7 @@ class SimpleVotingModel(ModelGenerator):
             epistemic_state = {'coercer_actions': state['coercer_actions'][:], 'voted': state['voted'][:],
                                'voters_action': state['voters_action'][:], 'finish': state['finish'][:]}
             for voter_number in range(0, self._number_of_voters):
-                if state['voters_action'][voter_number] == -1 and state['voted'][voter_number] != -1:
+                if state['voters_action'][voter_number] == '' and state['voted'][voter_number] != -1:
                     epistemic_state['voted'][voter_number] = -2
                 elif state['voters_action'][voter_number] == 'ng':
                     epistemic_state['voted'][voter_number] = -1
