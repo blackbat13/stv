@@ -1,16 +1,32 @@
-from typing import Dict, List
+from stv.models.asynchronous.global_state import GlobalState
+from typing import List
 
 
 class LocalTransition:
-    def __init__(self):
+    """
+    Class representing local transition.
+
+    :ivar _id: Transition identifier.
+    :ivar _agent_id: Agent identifier.
+    :ivar _action: Action string.
+    :ivar _shared: True if transition is a shared transition, false otherwise.
+    :ivar _state_from:
+    :ivar _state_to:
+    :ivar _props:
+    :ivar _conditions:
+    :ivar i:
+    :ivar j:
+    """
+
+    def __init__(self, state_from: str, state_to: str, action: str, shared: bool, cond: List, props: dict):
         self._id: int = -1
         self._agent_id = -1
-        self._action: str = ""
-        self._shared: bool = False
-        self._state_from: str = ""
-        self._state_to: str = ""
-        self._props: dict = {}
-        self._cond: List = []
+        self._action: str = action
+        self._shared: bool = shared
+        self._state_from: str = state_from
+        self._state_to: str = state_to
+        self._props: dict = props
+        self._conditions: List = cond
         self.i: int = -1
         self.j: int = -1
 
@@ -21,10 +37,12 @@ class LocalTransition:
 
     @property
     def conditions(self) -> List:
-        return self._cond
+        """List of conditions."""
+        return self._conditions
 
     @property
     def id(self) -> int:
+        """Identifier of the transition."""
         return self._id
 
     @id.setter
@@ -33,6 +51,7 @@ class LocalTransition:
 
     @property
     def agent_id(self) -> int:
+        """Agent identifier."""
         return self._agent_id
 
     @agent_id.setter
@@ -49,10 +68,12 @@ class LocalTransition:
 
     @property
     def props(self) -> dict:
+        """Dictionary of propositions modified by this transition."""
         return self._props
 
     @property
     def action(self) -> str:
+        """Agent action assigned to this transition."""
         return self._action
 
     @action.setter
@@ -61,70 +82,41 @@ class LocalTransition:
 
     @property
     def shared(self) -> bool:
+        """True if transition is a shared transition, False otherwise."""
         return self._shared
 
-    def parse(self, transition_str: str):
-        if transition_str[0:6] == "shared":
-            self._shared = True
-            transition_str = transition_str[7:]
+    def check_conditions(self, state: GlobalState) -> bool:
+        """
+        Checks if transition conditions are met in a given state.
+        :param state: Global state.
+        :return: True if conditions are met, False otherwise.
+        """
+        for cond in self.conditions:
+            if (cond[2] == "==" and ((cond[0] not in state.props) or (state.props[cond[0]] != cond[1]))) or (
+                    cond[2] == "!=" and cond[0] in state.props and state.props[cond[0]] == cond[1]):
+                return False
 
-        self._action, transition_str = transition_str.split(":")
-        if transition_str.find("->") == -1:
-            self._state_from, transition_str = transition_str.split("-[")
-            conditions, transition_str = transition_str.split("]>")
-            if conditions.find("==") != -1:
-                cond_var, cond_val = conditions.split("==")
-                self._cond.append((cond_var, int(cond_val), "=="))
-            elif conditions.find("!=") != -1:
-                cond_var, cond_val = conditions.split("!=")
-                self._cond.append((cond_var, int(cond_val), "!="))
-            else:
-                raise Exception
-        else:
-            self._state_from, transition_str = transition_str.split("->")
-        if transition_str.find("[") != -1:
-            self._state_to, transition_str = transition_str.split("[")
-            transition_str = transition_str.split("]")[0]
-            variables = transition_str.split(",")
-            for variable in variables:
-                if variable.find("=") == -1:
-                    self._props[variable] = "?"
-                    continue
-                prop, val = variable.split("=")
-                if val.casefold() == "true":
-                    val = True
-                elif val.casefold() == "false":
-                    val = False
-                else:
-                    try:
-                        val = int(val)
-                    except ValueError:
-                        pass
-                self._props[prop] = val
-        else:
-            self._state_to = transition_str
-
-        self._state_from = self._state_from.strip()
-        self._state_to = self._state_to.strip()
+        return True
 
     def print(self):
+        """Print transition in readable form."""
         print(f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]")
 
     def to_tuple(self):
+        """Converts transition to tuple."""
         return self._agent_id, self.i, self.j
 
 
 class SharedTransition(LocalTransition):
+    """
+    Represents shared transition.
+    """
+
     def __init__(self, local_transition: LocalTransition):
-        super().__init__()
-        self._id: int = local_transition._id
-        self._agent_id = local_transition._agent_id
-        self._action: str = local_transition._action
-        self._shared: bool = True
-        self._state_from: str = local_transition._state_from
-        self._state_to: str = local_transition._state_to
-        self._props: dict = local_transition._props
-        self._cond: List = local_transition._cond
+        super().__init__(local_transition.state_from, local_transition.state_to, local_transition.action,
+                         True, local_transition.conditions, local_transition.props)
+        self._id: int = local_transition.id
+        self._agent_id = local_transition.agent_id
         self._transition_list = [local_transition]
         self.i = local_transition.i
         self.j = local_transition.j
@@ -136,10 +128,20 @@ class SharedTransition(LocalTransition):
 
     @property
     def transition_list(self):
+        """List of local transitions."""
         return self._transition_list
 
     def add_transition(self, local_transition: LocalTransition):
+        """
+        Adds new local transition to the list.
+        :param local_transition: Local transition to add.
+        :return: None
+        """
         self._transition_list.append(local_transition)
 
     def to_tuple(self):
+        """
+        Converts transition to tuple.
+        :return:
+        """
         return self._transition_list[0].to_tuple()

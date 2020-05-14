@@ -3,80 +3,35 @@ from typing import List, Dict, Set
 
 
 class LocalModel:
-    def __init__(self, agent_id: int):
+    """
+    Represents local model of the agent.
+
+    :ivar _agent_id: Agent identifier.
+    :ivar _agent_name: Agent name.
+    :ivar _states: Dictionary of states, assigns unique identifier to each state name.
+    :ivar _transition: List of local transitions in a form of a graph.
+    :ivar _actions: Set of agent actions.
+    :ivar _protocols:
+    """
+
+    def __init__(self, agent_id: int, agent_name: str, states: Dict[str, int], transitions: List[List[LocalTransition]],
+                 protocols: Dict[str, List[List[str]]], actions: Set[str]):
         self._agent_id = agent_id
-        self._agent_name: str = ""
-        self._states: Dict[str, int] = {}
-        self._transitions: List[List[LocalTransition]] = []
-        self._actions: Set[str] = set()
-        self._protocols: Dict[str, List[List[str]]] = {}
+        self._agent_name: str = agent_name
+        self._states: Dict[str, int] = states
+        self._transitions: List[List[LocalTransition]] = transitions
+        self._actions: Set[str] = actions
+        self._protocols: Dict[str, List[List[str]]] = protocols
 
     @property
     def agent_name(self):
+        """Agent name."""
         return self._agent_name
 
     @property
     def transitions(self):
+        """Transitions."""
         return self._transitions
-
-    def parse(self, model_str: str, agent_no: int):
-        lines = model_str.splitlines()
-        self._agent_name = lines[0].split(" ")[1].split("[")[0] + str(agent_no)
-        init_state = lines[1].split(" ")[1]
-        self._states[init_state] = 0
-        state_num = 1
-        transition_id = 0
-        for i in range(2, len(lines)):
-            line = lines[i].strip()
-            line = line.replace("aID", self._agent_name)
-            if self._is_protocol_line(line):
-                state, prot = self._parse_protocol(line)
-                self._protocols[state] = prot
-                continue
-            local_transition = LocalTransition()
-            local_transition.parse(line)
-            local_transition.id = transition_id
-            local_transition.agent_id = self._agent_id
-            transition_id += 1
-            if not local_transition.shared:
-                local_transition.action += f"_{self._agent_name}"
-            self._actions.add(local_transition.action)
-            state_from = local_transition.state_from
-            state_to = local_transition.state_to
-            if state_from not in self._states:
-                self._states[state_from] = state_num
-                state_num += 1
-            if state_to not in self._states:
-                self._states[state_to] = state_num
-                state_num += 1
-
-            while len(self._transitions) <= self._states[state_from]:
-                self._transitions.append([])
-
-            self._transitions[self._states[state_from]].append(local_transition)
-
-        while len(self._transitions) < len(self._states):
-            self._transitions.append([])
-
-    def _is_protocol_line(self, line: str) -> bool:
-        return line[:8] == "PROTOCOL"
-
-    def _parse_protocol(self, line: str) -> (str, List[List[str]]):
-        line = line.split(":")
-        state = line[0].split(" ")[1]
-        prot = self._parse_protocol_array(line[1])
-        return state, prot
-
-    def _parse_protocol_array(self, line: str) -> List[List[str]]:
-        prot = []
-        line = line.strip().lstrip("[").rstrip("]")
-        for arr in line.split("],"):
-            arr = arr.strip().lstrip("[").rstrip("]")
-            lst = []
-            for el in arr.split(","):
-                lst.append(el.strip())
-            prot.append(lst)
-        return prot
 
     def transitions_from_state(self, state_id: int) -> List[LocalTransition]:
         return self._transitions[state_id]

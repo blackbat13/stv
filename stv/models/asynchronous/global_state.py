@@ -2,6 +2,10 @@ from typing import List, Dict
 
 
 class GlobalState:
+    """
+    Represents global state of the model.
+    """
+
     def __init__(self, local_states: List[int], props: Dict, counters: List[int], id: int = -1):
         self._id = id
         self._local_states: List[int] = local_states[:]
