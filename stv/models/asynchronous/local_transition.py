@@ -1,5 +1,5 @@
-from stv.models.asynchronous.global_state import GlobalState
 from typing import List
+from stv.models.asynchronous.global_state import GlobalState
 
 
 class LocalTransition:

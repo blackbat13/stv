@@ -1,9 +1,9 @@
+from typing import List, Dict, Any
+import time
 from stv.models.asynchronous.global_state import GlobalState
 from stv.models.asynchronous.local_model import LocalModel
 from stv.models.asynchronous.local_transition import LocalTransition, SharedTransition
 from stv.models import SimpleModel
-from typing import List, Dict, Any
-import time
 
 
 class GlobalModel:
@@ -570,6 +570,7 @@ class GlobalModel:
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
+
     file_name = "voting.txt"
     model = GlobalModelParser().parse(file_name)
     # model.parse("train_controller.txt")

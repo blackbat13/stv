@@ -1,5 +1,5 @@
-from stv.models.asynchronous.local_transition import LocalTransition
 from typing import List, Dict, Set
+from stv.models.asynchronous.local_transition import LocalTransition
 
 
 class LocalModel:
