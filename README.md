@@ -3,6 +3,10 @@
 #### Collection of algorithms for verification of ATLir (and ATLIr) models
 
 ## Currently implemented models
+Currently there are several models implemented in the tool. 
+It is also possible to define other models using simple input language.
+
+Available models:
 + Bridge scenario
 + Castles
 + Dining Cryptographers
@@ -11,6 +15,19 @@
 + Drones and pollution
 + Random model
 + Asynchronous models
++ Selene e-voting protocol
+
+## Other models
+To create some of the models used in a various experiments, other model-checker tools were used.
+Here is the list of created models.
+
+Tamarin:
++ Prêt à Voter voting system
++ TMN protocol
+
+UPPAAL:
++ Prêt à Voter voting system
++ vVote voting system
 
 ## Implemented algorithms
 + Fixpoint approximation (http://www.ifaamas.org/Proceedings/aamas2017/pdfs/p1241.pdf)
