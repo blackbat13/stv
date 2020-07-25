@@ -7,15 +7,16 @@ Currently there are several models implemented in the tool.
 It is also possible to define other models using simple input language.
 
 Available models:
-+ Bridge scenario
++ Bridge scenario (two versions)
 + Castles
 + Dining Cryptographers
-+ Machines and Robots in the factory
++ Machines and Robots in the factory (several versions)
 + Tian Ji
 + Drones and pollution
 + Random model
 + Asynchronous models
 + Selene e-voting protocol
++ Simple voting model (two versions)
 
 ## Other models
 To create some of the models used in a various experiments, other model-checker tools were used.
