@@ -1,0 +1,16 @@
+Agent Teller[1]:
+init: t_init
+
+Agent ElectionAuthority[1]:
+init: ea_init
+
+Agent WBB[1]:
+init: wbb_init
+
+Agent Voter[2]:
+init: v_init
+
+Agent Coercer[1]:
+init: c_init
+
+REDUCTION: []

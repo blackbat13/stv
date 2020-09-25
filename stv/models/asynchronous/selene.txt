@@ -1,7 +1,7 @@
 Agent Teller[2]:
 init: t_init
-shared sendVote_Voter1: t_init -> t_init [v_Voter1]
-shared sendVote_Voter2: t_init -> t_init [v_Voter2]
+shared sendVote_Voter1: t_init -> t_init [v_Voter1?]
+shared sendVote_Voter2: t_init -> t_init [v_Voter2?]
 shared finishVoting: t_init -> t_finish
 shared decryptVotes: t_finish -> t_decrypt
 shared sendToWBB: t_decrypt -> t_send [v_Voter1, v_Voter2]
@@ -19,7 +19,7 @@ shared sendTracker_Voter1: ea_pub_v -[t1==1]> ea_pub_v [t_Voter1=1]
 shared sendTracker_Voter1: ea_pub_v -[t2==1]> ea_pub_v [t_Voter1=2]
 shared sendTracker_Voter2: ea_pub_v -[t1==2]> ea_pub_v [t_Voter2=1]
 shared sendTracker_Voter2: ea_pub_v -[t2==2]> ea_pub_v [t_Voter2=2]
-shared allTackerSend: ea_pub_v -> ea_send [end=true]
+shared allTrackerSend: ea_pub_v -> ea_send [end=true]
 
 Agent WBB[1]:
 init: wbb_init
@@ -55,10 +55,10 @@ shared Voter2_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
 
 Agent Voter[2]:
 init: v_init
-shared requestVoteForA_aID: v_init -> v_request [req_aID=1]
-shared requestVoteForB_aID: v_init -> v_request [req_aID=2]
+shared requestVoteFor1_aID: v_init -> v_request [req_aID=1]
+shared requestVoteFor2_aID: v_init -> v_request [req_aID=2]
 shared leave_aID: v_init -> v_request
-PROTOCOL v_init: [[requestVoteForA_aID, requestVoteForB_aID, leave_aID]]
+PROTOCOL v_init: [[requestVoteFor1_aID, requestVoteFor2_aID, leave_aID]]
 shared startVoting: v_request -> v_start
 createCommitment: v_start -> v_commit
 fillVoteA: v_commit -> v_fill [v_aID=1]
@@ -74,7 +74,7 @@ computeFalseTracker1: v_false_a -> v_false_tr [false_tr_aID=1]
 computeFalseTracker2: v_false_a -> v_false_tr [false_tr_aID=2]
 dontComputeFalseAlphaTerm: v_publish -> v_false_tr
 shared sendTracker_aID: v_false_tr -> v_send_tr [tr_aID]
-shared allTackerSend: v_send_tr -> v_wbb
+shared allTrackerSend: v_send_tr -> v_wbb
 shared aID_WBB11true: v_wbb -> v_wbb [t1_aID=1]
 shared aID_WBB11false: v_wbb -> v_wbb
 shared aID_WBB12true: v_wbb -> v_wbb [t1_aID=2]

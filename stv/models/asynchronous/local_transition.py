@@ -100,7 +100,7 @@ class LocalTransition:
 
     def print(self):
         """Print transition in readable form."""
-        print(f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]")
+        print(f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]; conditions: {self._conditions}")
 
     def to_tuple(self):
         """Converts transition to tuple."""
