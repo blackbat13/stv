@@ -1,0 +1,39 @@
+Agent Voter[1]:
+init: v_init
+shared requestVoteFor1_aID: v_init -> v_request [req_aID=1]
+shared requestVoteFor2_aID: v_init -> v_request [req_aID=2]
+shared leave_aID: v_init -> v_request
+PROTOCOL v_init: [[requestVoteFor1_aID, requestVoteFor2_aID, leave_aID]]
+shared startVoting: v_request -> v_start
+createCommitment: v_start -> v_commit
+fillVoteA: v_commit -> v_fill [v_aID=1]
+fillVoteB: v_commit -> v_fill [v_aID=2]
+encryptVote: v_fill -> v_encrypt
+shared sendVote_aID: v_encrypt -> v_send [v_aID]
+shared finishVoting: v_send -> v_finish
+shared publishVotes: v_finish -> v_publish
+verifyElectionResults: v_publish -> v_publish
+computeFalseAlphaTerm_1: v_publish -> v_false_a [false_a_aID=1]
+computeFalseAlphaTerm_2: v_publish -> v_false_a [false_a_aID=2]
+computeFalseTracker1: v_false_a -> v_false_tr [false_tr_aID=1]
+computeFalseTracker2: v_false_a -> v_false_tr [false_tr_aID=2]
+dontComputeFalseAlphaTerm: v_publish -> v_false_tr
+shared sendTracker_aID: v_false_tr -> v_send_tr [tr_aID]
+shared allTrackerSend: v_send_tr -> v_wbb
+shared aID_WBB11true: v_wbb -> v_wbb [t1_aID=1]
+shared aID_WBB11false: v_wbb -> v_wbb
+shared aID_WBB12true: v_wbb -> v_wbb [t1_aID=2]
+shared aID_WBB12false: v_wbb -> v_wbb
+shared aID_WBB21true: v_wbb -> v_wbb [t2_aID=1]
+shared aID_WBB21false: v_wbb -> v_wbb
+shared aID_WBB22true: v_wbb -> v_wbb [t2_aID=2]
+shared aID_WBB22false: v_wbb -> v_wbb
+verifyVote: v_wbb -> v_wbb
+wait: v_wbb -> v_wbb
+PROTOCOL v_wbb: [[aID_WBB11true,aID_WBB11false],[aID_WBB12true,aID_WBB12false],[aID_WBB21true,aID_WBB21false],[aID_WBB22true,aID_WBB22false],[verifyVote],[wait]]
+shared showTrackerFor1_aID: v_wbb -> v_show [v_show_aID=1]
+shared showTrackerFor2_aID: v_wbb -> v_show [v_show_aID=2]
+shared punish_aID: v_show -> v_show
+shared no_punish_aID: v_show -> v_show
+
+REDUCTION: [v_Voter1]

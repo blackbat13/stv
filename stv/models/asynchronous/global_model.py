@@ -517,7 +517,6 @@ class GlobalModel:
         i = 0
         while i < len(self._states):
             state = self._states[i]
-            state.print()
             current_state_id = i
             i += 1
 
@@ -580,7 +579,7 @@ class GlobalModel:
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
 
-    file_name = "selene.txt"
+    file_name = "selene_slim.txt"
     model = GlobalModelParser().parse(file_name)
     model.generate(reduction=False)
     print(f"Model has {model.states_count} states.")
