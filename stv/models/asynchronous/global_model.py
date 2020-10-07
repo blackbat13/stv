@@ -16,11 +16,13 @@ class GlobalModel:
     :ivar _model:
     :ivar _local_models:
     :ivar _reduction:
+    :ivar _persistent:
     :ivar _states:
     :ivar _transitions:
     :ivar _dependent:
     :ivar _pre:
     :ivar _agents_count:
+    :ivar _states_dict:
     :ivar _stack1:
     :ivar _stack2:
     :ivar _G:
@@ -29,10 +31,11 @@ class GlobalModel:
     :ivar _transitions_count
     """
 
-    def __init__(self, local_models: List[LocalModel], reduction: List[str]):
+    def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str]):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
+        self._persistent: List[str] = persistent
         self._states: List[GlobalState] = []
         self._transitions: List = []
         self._dependent: List[List[List[int]]] = []
@@ -199,14 +202,14 @@ class GlobalModel:
 
     def _new_state_after_private_transition(self, state: GlobalState, transition: LocalTransition):
         agent_id = transition.agent_id
-        new_state = GlobalState.copy_state(state)
+        new_state = GlobalState.copy_state(state, self._persistent)
         new_state.set_local_state(agent_id, self._local_models[agent_id].get_state_id(transition.state_to))
         new_state.increment_counter(agent_id)
         new_state = self._copy_props_to_state(new_state, transition)
         return new_state
 
     def _new_state_after_shared_transition(self, state: GlobalState, actual_transition):
-        new_state = GlobalState.copy_state(state)
+        new_state = GlobalState.copy_state(state, self._persistent)
         agents = []
         for act_tran in actual_transition:
             new_state.increment_counter(act_tran[0])
@@ -217,7 +220,7 @@ class GlobalModel:
         return new_state, agents
 
     def _new_state_after_shared_transitions_list(self, state: GlobalState, transitions: List[LocalTransition]):
-        new_state = GlobalState.copy_state(state)
+        new_state = GlobalState.copy_state(state, self._persistent)
         for transition in transitions:
             new_state.set_local_state(transition.agent_id,
                                       self._local_models[transition.agent_id].get_state_id(transition.state_to))
@@ -579,9 +582,11 @@ class GlobalModel:
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
 
-    file_name = "selene_slim.txt"
+    file_name = "selene.txt"
     model = GlobalModelParser().parse(file_name)
-    model.generate(reduction=False)
+    # coalition = ["Coercer1"]
+    # model.set_coalition(coalition)
+    model.generate(reduction=True)
     print(f"Model has {model.states_count} states.")
     print(f"Model has {model.transitions_count} transitions.")
     model.walk()

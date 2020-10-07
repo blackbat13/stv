@@ -17,9 +17,12 @@ class GlobalState:
         return cls([0 for _ in range(agent_count)], {}, [0 for _ in range(agent_count)], 0)
 
     @classmethod
-    def copy_state(cls, state):
-        # return cls(state.local_states, {}, state.counters)
-        return cls(state.local_states, state.props, state.counters)
+    def copy_state(cls, state, persistent: List[str]):
+        new_props = {}
+        for prop in state.props:
+            if prop in persistent:
+                new_props[prop] = state.props[prop]
+        return cls(state.local_states, new_props, state.counters)
 
     @property
     def local_states(self):

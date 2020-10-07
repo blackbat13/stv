@@ -118,3 +118,4 @@ shared coercerWBB22false: c_init -> c_init
 PROTOCOL c_init: [[leave_Voter1],[leave_Voter2],[requestVoteFor1_Voter1],[requestVoteFor2_Voter1],[requestVoteFor1_Voter2],[requestVoteFor2_Voter2],[showTrackerFor1_Voter1,showTrackerFor2_Voter1],[showTrackerFor1_Voter2,showTrackerFor2_Voter2],[punish_Voter1],[punish_Voter2],[no_punish_Voter1],[no_punish_Voter2],[coercerWBB11true,coercerWBB11false],[coercerWBB12true,coercerWBB12false],[coercerWBB21true,coercerWBB21false],[coercerWBB22true,coercerWBB22false]]
 
 REDUCTION: [pun1]
+PERSISTENT: [v_Voter1, v_Voter2, wbb_t1, wbb_t2, t1, t2]

@@ -23,6 +23,7 @@ class GlobalModelParser:
         input_file.close()
         local_models = []
         reduction = []
+        persistent = []
         i = 0
         while i < len(lines):
             if StringTools.is_blank_line(lines[i]):
@@ -41,8 +42,11 @@ class GlobalModelParser:
             elif self._is_reduction_header(lines[i]):
                 reduction = self._parse_reduction(lines[i])
                 i += 1
+            elif self._is_persistent_header(lines[i]):
+                persistent = self._parse_persistent(lines[i])
+                i += 1
 
-        return GlobalModel(local_models, reduction)
+        return GlobalModel(local_models, reduction, persistent)
 
     @staticmethod
     def _is_agent_header(line: str):
@@ -53,6 +57,10 @@ class GlobalModelParser:
         return line[0:9] == "REDUCTION"
 
     @staticmethod
+    def _is_persistent_header(line: str):
+        return line[0:10] == "PERSISTENT"
+
+    @staticmethod
     def _parse_reduction(line: str) -> List[str]:
         line = line.split(":")[1]
         line = line.strip().strip("[").strip("]")
@@ -60,6 +68,15 @@ class GlobalModelParser:
         for element in line.split(","):
             red.append(element.strip())
         return red
+
+    @staticmethod
+    def _parse_persistent(line: str) -> List[str]:
+        line = line.split(":")[1]
+        line = line.strip().strip("[").strip("]")
+        pers = []
+        for element in line.split(","):
+            pers.append(element.strip())
+        return pers
 
     @staticmethod
     def _parse_agent_max(line: str):
