@@ -1,0 +1,178 @@
+Agent Teller[2]:
+init: t_init
+shared sendVote_Voter1: t_init -> t_init [v_Voter1?]
+shared sendVote_Voter2: t_init -> t_init [v_Voter2?]
+shared sendVote_Voter3: t_init -> t_init [v_Voter3?]
+shared finishVoting: t_init -> t_finish
+shared decryptVotes: t_finish -> t_decrypt
+shared sendToWBB: t_decrypt -> t_send [v_Voter1, v_Voter2, v_Voter3]
+shared publishVotes: t_send -> t_publish
+
+Agent ElectionAuthority[1]:
+init: ea_init
+shared generateTrackers_1: ea_init -> ea_gen [t1=1, t2=2, t3=3]
+shared generateTrackers_2: ea_init -> ea_gen [t1=1, t2=3, t3=2]
+shared generateTrackers_3: ea_init -> ea_gen [t1=2, t2=1, t3=3]
+shared generateTrackers_4: ea_init -> ea_gen [t1=2, t2=3, t3=1]
+shared generateTrackers_5: ea_init -> ea_gen [t1=3, t2=1, t3=2]
+shared generateTrackers_6: ea_init -> ea_gen [t1=3, t2=2, t3=1]
+shared publishTrackers: ea_gen -> ea_pub_t
+shared startVoting: ea_pub_t -> ea_start
+shared finishVoting: ea_start -> ea_finish
+shared publishVotes: ea_finish -> ea_pub_v [published=true]
+shared sendTracker_Voter1: ea_pub_v -[t1==1]> ea_pub_v [t_Voter1=1]
+shared sendTracker_Voter1: ea_pub_v -[t2==1]> ea_pub_v [t_Voter1=2]
+shared sendTracker_Voter1: ea_pub_v -[t3==1]> ea_pub_v [t_Voter1=3]
+shared sendTracker_Voter2: ea_pub_v -[t1==2]> ea_pub_v [t_Voter2=1]
+shared sendTracker_Voter2: ea_pub_v -[t2==2]> ea_pub_v [t_Voter2=2]
+shared sendTracker_Voter2: ea_pub_v -[t3==2]> ea_pub_v [t_Voter2=3]
+shared sendTracker_Voter3: ea_pub_v -[t1==3]> ea_pub_v [t_Voter3=1]
+shared sendTracker_Voter3: ea_pub_v -[t2==3]> ea_pub_v [t_Voter3=2]
+shared sendTracker_Voter3: ea_pub_v -[t3==3]> ea_pub_v [t_Voter3=3]
+shared allTrackerSend: ea_pub_v -> ea_send [end=true]
+
+Agent WBB[1]:
+init: wbb_init
+shared generateTrackers_1: wbb_init -> wbb_gen1 [t1=1, t2=2, t3=3]
+shared sendToWBB: wbb_gen1 -> wbb_send [wbb_t1=v_Voter1, wbb_t2=v_Voter2, wbb_t3=v_Voter3]
+shared generateTrackers_2: wbb_init -> wbb_gen2 [t1=1, t2=3, t3=2]
+shared sendToWBB: wbb_gen2 -> wbb_send [wbb_t1=v_Voter1, wbb_t2=v_Voter3, wbb_t3=v_Voter2]
+shared generateTrackers_3: wbb_init -> wbb_gen3 [t1=2, t2=1, t3=3]
+shared sendToWBB: wbb_gen3 -> wbb_send [wbb_t1=v_Voter2, wbb_t2=v_Voter1, wbb_t3=v_Voter3]
+shared generateTrackers_4: wbb_init -> wbb_gen4 [t1=2, t2=3, t3=1]
+shared sendToWBB: wbb_gen4 -> wbb_send [wbb_t1=v_Voter2, wbb_t2=v_Voter3, wbb_t3=v_Voter1]
+shared generateTrackers_5: wbb_init -> wbb_gen5 [t1=3, t2=1, t3=2]
+shared sendToWBB: wbb_gen5 -> wbb_send [wbb_t1=v_Voter3, wbb_t2=v_Voter1, wbb_t3=v_Voter2]
+shared generateTrackers_6: wbb_init -> wbb_gen6 [t1=3, t2=2, t3=1]
+shared sendToWBB: wbb_gen6 -> wbb_send [wbb_t1=v_Voter3, wbb_t2=v_Voter2, wbb_t3=v_Voter1]
+PROTOCOL wbb_init: [[generateTrackers_1]]
+shared coercerWBB11true: wbb_send -[wbb_t1==1]> wbb_send
+shared coercerWBB11false: wbb_send -[wbb_t1!=1]> wbb_send
+shared Voter1_WBB11true: wbb_send -[wbb_t1==1]> wbb_send
+shared Voter1_WBB11false: wbb_send -[wbb_t1!=1]> wbb_send
+shared Voter2_WBB11true: wbb_send -[wbb_t1==1]> wbb_send
+shared Voter2_WBB11false: wbb_send -[wbb_t1!=1]> wbb_send
+shared Voter3_WBB11true: wbb_send -[wbb_t1==1]> wbb_send
+shared Voter3_WBB11false: wbb_send -[wbb_t1!=1]> wbb_send
+shared coercerWBB21true: wbb_send -[wbb_t2==1]> wbb_send
+shared coercerWBB21false: wbb_send -[wbb_t2!=1]> wbb_send
+shared Voter1_WBB21true: wbb_send -[wbb_t2==1]> wbb_send
+shared Voter1_WBB21false: wbb_send -[wbb_t2!=1]> wbb_send
+shared Voter2_WBB21true: wbb_send -[wbb_t2==1]> wbb_send
+shared Voter2_WBB21false: wbb_send -[wbb_t2!=1]> wbb_send
+shared Voter3_WBB21true: wbb_send -[wbb_t2==1]> wbb_send
+shared Voter3_WBB21false: wbb_send -[wbb_t2!=1]> wbb_send
+shared coercerWBB31true: wbb_send -[wbb_t3==1]> wbb_send
+shared coercerWBB31false: wbb_send -[wbb_t3!=1]> wbb_send
+shared Voter1_WBB31true: wbb_send -[wbb_t3==1]> wbb_send
+shared Voter1_WBB31false: wbb_send -[wbb_t3!=1]> wbb_send
+shared Voter2_WBB31true: wbb_send -[wbb_t3==1]> wbb_send
+shared Voter2_WBB31false: wbb_send -[wbb_t3!=1]> wbb_send
+shared Voter3_WBB31true: wbb_send -[wbb_t3==1]> wbb_send
+shared Voter3_WBB31false: wbb_send -[wbb_t3!=1]> wbb_send
+shared coercerWBB12true: wbb_send -[wbb_t1==2]> wbb_send
+shared coercerWBB12false: wbb_send -[wbb_t1!=2]> wbb_send
+shared Voter1_WBB12true: wbb_send -[wbb_t1==2]> wbb_send
+shared Voter1_WBB12false: wbb_send -[wbb_t1!=2]> wbb_send
+shared Voter2_WBB12true: wbb_send -[wbb_t1==2]> wbb_send
+shared Voter2_WBB12false: wbb_send -[wbb_t1!=2]> wbb_send
+shared Voter3_WBB12true: wbb_send -[wbb_t1==2]> wbb_send
+shared Voter3_WBB12false: wbb_send -[wbb_t1!=2]> wbb_send
+shared coercerWBB22true: wbb_send -[wbb_t2==2]> wbb_send
+shared coercerWBB22false: wbb_send -[wbb_t2!=2]> wbb_send
+shared Voter1_WBB22true: wbb_send -[wbb_t2==2]> wbb_send
+shared Voter1_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
+shared Voter2_WBB22true: wbb_send -[wbb_t2==2]> wbb_send
+shared Voter2_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
+shared Voter3_WBB22true: wbb_send -[wbb_t2==2]> wbb_send
+shared Voter3_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
+shared coercerWBB32true: wbb_send -[wbb_t3==2]> wbb_send
+shared coercerWBB32false: wbb_send -[wbb_t3!=2]> wbb_send
+shared Voter1_WBB32true: wbb_send -[wbb_t3==2]> wbb_send
+shared Voter1_WBB32false: wbb_send -[wbb_t3!=2]> wbb_send
+shared Voter2_WBB32true: wbb_send -[wbb_t3==2]> wbb_send
+shared Voter2_WBB32false: wbb_send -[wbb_t3!=2]> wbb_send
+shared Voter3_WBB32true: wbb_send -[wbb_t3==2]> wbb_send
+shared Voter3_WBB32false: wbb_send -[wbb_t3!=2]> wbb_send
+
+Agent Voter[3]:
+init: v_init
+shared requestVoteFor1_aID: v_init -> v_request [req_aID=1]
+shared requestVoteFor2_aID: v_init -> v_request [req_aID=2]
+shared leave_aID: v_init -> v_request
+PROTOCOL v_init: [[leave_aID, requestVoteFor1_aID, requestVoteFor2_aID]]
+shared startVoting: v_request -> v_start
+createCommitment: v_start -> v_commit
+fillVote1: v_commit -> v_fill [v_aID=1]
+fillVote2: v_commit -> v_fill [v_aID=2]
+encryptVote: v_fill -> v_encrypt
+shared sendVote_aID: v_encrypt -> v_send [v_aID]
+shared finishVoting: v_send -> v_finish
+shared publishVotes: v_finish -> v_publish
+verifyElectionResults: v_publish -> v_publish
+computeFalseAlphaTerm_1: v_publish -> v_false_a [false_a_aID=1]
+computeFalseTracker1: v_false_a -> v_false_tr [false_tr_aID=1]
+computeFalseAlphaTerm_2: v_publish -> v_false_a [false_a_aID=2]
+computeFalseTracker2: v_false_a -> v_false_tr [false_tr_aID=2]
+dontComputeFalseAlphaTerm: v_publish -> v_false_tr
+shared sendTracker_aID: v_false_tr -> v_send_tr [tr_aID]
+shared allTrackerSend: v_send_tr -> v_wbb
+shared aID_WBB11true: v_wbb -> v_wbb [t1_aID=1]
+shared aID_WBB11false: v_wbb -> v_wbb
+shared aID_WBB21true: v_wbb -> v_wbb [t2_aID=1]
+shared aID_WBB21false: v_wbb -> v_wbb
+shared aID_WBB31true: v_wbb -> v_wbb [t3_aID=1]
+shared aID_WBB31false: v_wbb -> v_wbb
+shared aID_WBB12true: v_wbb -> v_wbb [t1_aID=2]
+shared aID_WBB12false: v_wbb -> v_wbb
+shared aID_WBB22true: v_wbb -> v_wbb [t2_aID=2]
+shared aID_WBB22false: v_wbb -> v_wbb
+shared aID_WBB32true: v_wbb -> v_wbb [t3_aID=2]
+shared aID_WBB32false: v_wbb -> v_wbb
+verifyVote: v_wbb -> v_wbb
+wait: v_wbb -> v_wbb
+PROTOCOL v_wbb: [[verifyVote],[wait],[aID_WBB11true,aID_WBB11false],[aID_WBB21true,aID_WBB21false],[aID_WBB31true,aID_WBB31false],[aID_WBB12true,aID_WBB12false],[aID_WBB22true,aID_WBB22false],[aID_WBB32true,aID_WBB32false]]
+shared showTrackerFor1_aID: v_wbb -> v_show [v_show_aID=1]
+shared showTrackerFor2_aID: v_wbb -> v_show [v_show_aID=2]
+shared punish_aID: v_show -> v_show
+shared no_punish_aID: v_show -> v_show
+
+Agent Coercer[1]:
+init: c_init
+shared leave_Voter1: c_init -> c_init [req1=0]
+shared punish_Voter1: c_init -> c_init [pun1=true]
+shared no_punish_Voter1: c_init -> c_init [pun1=false]
+shared requestVoteFor1_Voter1: c_init -> c_init [req1=1]
+shared showTrackerFor1_Voter1: c_init -> c_init [v1_show=1]
+shared coercerWBB11true: c_init -> c_init [t1_c=1]
+shared coercerWBB11false: c_init -> c_init
+shared requestVoteFor2_Voter1: c_init -> c_init [req1=2]
+shared showTrackerFor2_Voter1: c_init -> c_init [v1_show=2]
+shared coercerWBB12true: c_init -> c_init [t1_c=2]
+shared coercerWBB12false: c_init -> c_init
+shared leave_Voter2: c_init -> c_init [req2=0]
+shared punish_Voter2: c_init -> c_init [pun2=true]
+shared no_punish_Voter2: c_init -> c_init [pun2=false]
+shared requestVoteFor1_Voter2: c_init -> c_init [req2=1]
+shared showTrackerFor1_Voter2: c_init -> c_init [v2_show=1]
+shared coercerWBB21true: c_init -> c_init [t2_c=1]
+shared coercerWBB21false: c_init -> c_init
+shared requestVoteFor2_Voter2: c_init -> c_init [req2=2]
+shared showTrackerFor2_Voter2: c_init -> c_init [v2_show=2]
+shared coercerWBB22true: c_init -> c_init [t2_c=2]
+shared coercerWBB22false: c_init -> c_init
+shared leave_Voter3: c_init -> c_init [req3=0]
+shared punish_Voter3: c_init -> c_init [pun3=true]
+shared no_punish_Voter3: c_init -> c_init [pun3=false]
+shared requestVoteFor1_Voter3: c_init -> c_init [req3=1]
+shared showTrackerFor1_Voter3: c_init -> c_init [v3_show=1]
+shared coercerWBB31true: c_init -> c_init [t3_c=1]
+shared coercerWBB31false: c_init -> c_init
+shared requestVoteFor2_Voter3: c_init -> c_init [req3=2]
+shared showTrackerFor2_Voter3: c_init -> c_init [v3_show=2]
+shared coercerWBB32true: c_init -> c_init [t3_c=2]
+shared coercerWBB32false: c_init -> c_init
+PROTOCOL c_init: [[leave_Voter1],[punish_Voter1],[no_punish_Voter1],[requestVoteFor1_Voter1],[requestVoteFor2_Voter1],[showTrackerFor1_Voter1,showTrackerFor2_Voter1],[coercerWBB11true,coercerWBB11false],[coercerWBB12true,coercerWBB12false],[leave_Voter2],[punish_Voter2],[no_punish_Voter2],[requestVoteFor1_Voter2],[requestVoteFor2_Voter2],[showTrackerFor1_Voter2,showTrackerFor2_Voter2],[coercerWBB21true,coercerWBB21false],[coercerWBB22true,coercerWBB22false],[leave_Voter3],[punish_Voter3],[no_punish_Voter3],[requestVoteFor1_Voter3],[requestVoteFor2_Voter3],[showTrackerFor1_Voter3,showTrackerFor2_Voter3],[coercerWBB31true,coercerWBB31false],[coercerWBB32true,coercerWBB32false]]
+
+REDUCTION: [pun1]
+PERSISTENT: [v_Voter1, wbb_t1, t1, v_Voter2, wbb_t2, t2, v_Voter3, wbb_t3, t3]

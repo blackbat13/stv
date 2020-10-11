@@ -582,7 +582,7 @@ class GlobalModel:
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
 
-    file_name = "selene.txt"
+    file_name = "Selene_2_3_2.txt"
     model = GlobalModelParser().parse(file_name)
     # coalition = ["Coercer1"]
     # model.set_coalition(coalition)
