@@ -604,9 +604,9 @@ if __name__ == "__main__":
     results_file.write(f"Voter Count: {voter_count}\n")
     results_file.write(f"Candidates Count: {cand_count}\n")
     results_file.write(f"Reduction: {reduction == 1}\n")
-    results_file.write(f"Model generated in {end - start} seconds.")
-    results_file.write(f"Model has {model.states_count} states.")
-    results_file.write(f"Model has {model.transitions_count} transitions.")
+    results_file.write(f"Model generated in {end - start} seconds.\n")
+    results_file.write(f"Model has {model.states_count} states.\n")
+    results_file.write(f"Model has {model.transitions_count} transitions.\n")
     results_file.write("\n\n")
     results_file.close()
 
