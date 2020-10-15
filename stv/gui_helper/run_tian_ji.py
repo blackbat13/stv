@@ -2,8 +2,7 @@ import json
 import sys
 from stv.models import TianJiModel
 
-
-horses = int(sys.argv[1])
+horses = int(sys.argv[3])
 
 tian_ji_model = TianJiModel(horses)
 tian_ji_model.generate()

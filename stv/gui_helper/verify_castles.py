@@ -2,13 +2,15 @@ import sys
 from stv.models import CastleModel
 
 
-castle1_size = int(sys.argv[1])
-castle2_size = int(sys.argv[2])
-castle3_size = int(sys.argv[3])
-life = int(sys.argv[4])
-v = int(sys.argv[5])
+castle1_size = int(sys.argv[3])
+castle2_size = int(sys.argv[4])
+castle3_size = int(sys.argv[5])
+life = int(sys.argv[6])
+v = int(sys.argv[7])
 
 castle_model = CastleModel([castle1_size, castle2_size, castle3_size], [life, life, life])
+castle_model.generate()
+
 print(castle_model.model.js_dump_model())
 
 if v == 1:
@@ -16,14 +18,14 @@ if v == 1:
 else:
     atl_model = castle_model.model.to_atl_perfect(castle_model.get_actions())
 
-winning = []
+winning = set()
 
 state_id = -1
 
 for state in castle_model.states:
     state_id += 1
     if state['lifes'][2] == 0:
-        winning.append(state_id)
+        winning.add(state_id)
 
 agents = []
 for i in range(0, castle1_size):

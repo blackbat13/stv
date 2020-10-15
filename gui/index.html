@@ -361,9 +361,10 @@
             $generateButton.on('click', function () {
                 let horses = $param1Input.val();
                 resetGraph();
-                pyshell.run('../gui.py', {args: [horses]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['tian_ji', 'run', horses]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_tian_ji.py finished.');
+                    console.log(results);
                     loadGraph(JSON.parse(results[0]));
                 });
             });
@@ -372,7 +373,7 @@
             $buttonLowerApprox.on('click', function () {
                 let horses = $param1Input.val();
 
-                pyshell.run('python_module/verify_tian_ji.py', {args: [horses, 1]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['tian_ji', 'verify', horses, 1]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_tian_ji.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -385,7 +386,7 @@
             $buttonUpperApprox.on('click', function () {
                 let horses = $param1Input.val();
 
-                pyshell.run('python_module/verify_tian_ji.py', {args: [horses, 0]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['tian_ji', 'verify', horses, 0]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_tian_ji.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -399,7 +400,7 @@
                 let horses = $param1Input.val();
                 let heuristic = $("#heuristic option:selected").val();
 
-                pyshell.run('python_module/domino_tian_ji.py', {args: [horses, heuristic]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['tian_ji', 'domino', horses, heuristic]}, function (err, results) {
                     if (err) throw err;
                     console.log('domino_tian_ji.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -434,7 +435,7 @@
                 let life = $param4Input.val();
                 resetGraph();
 
-                pyshell.run('python_module/run_castles.py', {args: [castle1Size, castle2Size, castle3Size, life]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['castles', 'run', castle1Size, castle2Size, castle3Size, life]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_castles.py finished.');
                     loadGraph(JSON.parse(results[0]));
@@ -448,7 +449,7 @@
                 let castle3Size = $param3Input.val();
                 let life = $param4Input.val();
 
-                pyshell.run('python_module/verify_castles.py', {args: [castle1Size, castle2Size, castle3Size, life, 1]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['castles', 'verify', castle1Size, castle2Size, castle3Size, life, 1]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_castles.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -464,7 +465,7 @@
                 let castle3Size = $param3Input.val();
                 let life = $param4Input.val();
 
-                pyshell.run('python_module/verify_castles.py', {args: [castle1Size, castle2Size, castle3Size, life, 0]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['castles', 'verify', castle1Size, castle2Size, castle3Size, life, 0]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_castles.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -481,7 +482,7 @@
                 let life = $param4Input.val();
                 let heuristic = $("#heuristic option:selected").val();
 
-                pyshell.run('python_module/domino_castles.py', {args: [castle1Size, castle2Size, castle3Size, life, heuristic]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['castles', 'domino', castle1Size, castle2Size, castle3Size, life, heuristic]}, function (err, results) {
                     if (err) throw err;
                     console.log('domino_castles.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -509,7 +510,7 @@
 
                 resetGraph();
 
-                pyshell.run('python_module/run_bridge.py', {args: [n, k]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['bridge', 'run', n, k]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_bridge.py finished.');
                     loadGraph(JSON.parse(results[results.length - 1]));
@@ -521,9 +522,10 @@
                 let n = $param1Input.val();
                 let k = $param2Input.val();
 
-                pyshell.run('python_module/verify_bridge.py', {args: [n, k, 1]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['bridge', 'verify', n, k, 1]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_bridge.py finished.');
+                    console.log(results);
                     let graph = JSON.parse(results[results.length - 1]);
                     recolorGraph(graph);
                     loadLowerApproxModal(results);
@@ -535,7 +537,7 @@
                 let n = $param1Input.val();
                 let k = $param2Input.val();
 
-                pyshell.run('python_module/verify_bridge.py', {args: [n, k, 0]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['bridge', 'verify', n, k, 0]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_bridge.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -550,7 +552,7 @@
                 let k = $param2Input.val();
                 let heuristic = $("#heuristic option:selected").val();
 
-                pyshell.run('python_module/domino_bridge.py', {args: [n, k, heuristic]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['bridge', 'domino', n, k, heuristic]}, function (err, results) {
                     if (err) throw err;
                     console.log('domino_bridge.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -578,7 +580,7 @@
 
                 resetGraph();
 
-                pyshell.run('python_module/run_drone.py', {args: [n, k]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['drone', 'run', n, k]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_drone.py finished.');
                     loadGraph(JSON.parse(results[results.length - 1]));
@@ -590,7 +592,7 @@
                 let n = $param1Input.val();
                 let k = $param2Input.val();
 
-                pyshell.run('python_module/verify_drone.py', {args: [n, k, 1]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['drone', 'verify', n, k, 1]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_drone.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -604,7 +606,7 @@
                 let n = $param1Input.val();
                 let k = $param2Input.val();
 
-                pyshell.run('python_module/verify_drone.py', {args: [n, k, 2]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['drone', 'verify', n, k, 2]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_drone.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -619,7 +621,7 @@
                 let k = $param2Input.val();
                 let heuristic = $("#heuristic option:selected").val();
 
-                pyshell.run('python_module/domino_drone.py', {args: [n, k, heuristic]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['drone', 'domino', n, k, heuristic]}, function (err, results) {
                     if (err) throw err;
                     console.log('domino_drone.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -646,7 +648,7 @@
                 let candidates = $param2Input.val();
                 resetGraph();
 
-                pyshell.run('python_module/run_simple_voting.py', {args: [voters, candidates]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['voting', 'run', voters, candidates]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_simple_voting.py finished.');
                     loadGraph(JSON.parse(results[0]));
@@ -658,7 +660,7 @@
                 let voters = $param1Input.val();
                 let candidates = $param2Input.val();
 
-                pyshell.run('python_module/verify_simple_voting.py', {args: [voters, candidates, 1]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['voting', 'verify', voters, candidates, 1]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_simple_voting.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -672,7 +674,7 @@
                 let voters = $param1Input.val();
                 let candidates = $param2Input.val();
 
-                pyshell.run('python_module/verify_simple_voting.py', {args: [voters, candidates, 0]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['voting', 'verify', voters, candidates, 0]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_simple_voting.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
@@ -687,7 +689,7 @@
                 let candidates = $param2Input.val();
                 let heuristic = $("#heuristic option:selected").val();
 
-                pyshell.run('python_module/domino_simple_voting.py', {args: [voters, candidates, heuristic]}, function (err, results) {
+                pyshell.run('../gui.py', {args: ['voting', 'domino', voters, candidates, heuristic]}, function (err, results) {
                     if (err) throw err;
                     console.log('domino_simple_voting.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);

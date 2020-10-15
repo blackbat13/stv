@@ -2,14 +2,15 @@ import sys
 from stv.models import DroneModel, CracowMap
 
 
-n = int(sys.argv[1])
-k = int(sys.argv[2])
+n = int(sys.argv[3])
+k = int(sys.argv[4])
 
 energies = []
 for _ in range(0, n):
     energies.append(k)
 
 drone_model = DroneModel(n, energies, CracowMap())
+drone_model.generate()
 
 winning = []
 
