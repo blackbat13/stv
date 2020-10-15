@@ -172,9 +172,9 @@ class SeleneModelGenerator:
 
 
 if __name__ == "__main__":
-    teller_count = 2
-    voter_count = 3
-    cand_count = 2
+    teller_count = int(input("Teller Count: "))
+    voter_count = int(input("Voter Count: "))
+    cand_count = int(input("Candidates Count: "))
     selene_model_generator = SeleneModelGenerator(teller_count, voter_count, cand_count)
     model = selene_model_generator.generate()
     file = open(f"Selene_{teller_count}_{voter_count}_{cand_count}.txt", "w")

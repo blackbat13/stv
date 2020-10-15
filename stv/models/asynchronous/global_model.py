@@ -553,7 +553,7 @@ class GlobalModel:
             current_state_id = self._transitions[current_state_id][id]['to']
 
     def _pretty_print_transition(self, t):
-        print(f"{t['from']} -({t['action']})-> {t['to']}, agents: ",end="")
+        print(f"{t['from']} -({t['action']})-> {t['to']}, agents: ", end="")
         for ag in t['agents']:
             print(f"{self._local_models[ag].agent_name}, ", end="")
         print()
@@ -582,15 +582,35 @@ class GlobalModel:
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
 
-    file_name = "Selene_2_3_2.txt"
+    results_file = open("selene_results.txt", "a")
+
+    teller_count = int(input("Teller Count: "))
+    voter_count = int(input("Voter Count: "))
+    cand_count = int(input("Candidates Count: "))
+    reduction = int(input("Reduction: "))
+
+    file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}.txt"
     model = GlobalModelParser().parse(file_name)
     # coalition = ["Coercer1"]
     # model.set_coalition(coalition)
-    model.generate(reduction=True)
+    start = time.process_time()
+    model.generate(reduction=(reduction == 1))
+    end = time.process_time()
+    print(f"Model generated in {end - start} seconds.")
     print(f"Model has {model.states_count} states.")
     print(f"Model has {model.transitions_count} transitions.")
-    model.walk()
 
+    results_file.write(f"Teller Count: {teller_count}\n")
+    results_file.write(f"Voter Count: {voter_count}\n")
+    results_file.write(f"Candidates Count: {cand_count}\n")
+    results_file.write(f"Reduction: {reduction == 1}\n")
+    results_file.write(f"Model generated in {end - start} seconds.\n")
+    results_file.write(f"Model has {model.states_count} states.\n")
+    results_file.write(f"Model has {model.transitions_count} transitions.\n")
+    results_file.write("\n\n")
+    results_file.close()
+
+    # model.walk()
 
     # model.print()
     # model.parse("train_controller.txt")
@@ -599,11 +619,11 @@ if __name__ == "__main__":
     # coalition = ["Coercer1"]
     # model.set_coalition(coalition)
     # print(f"Coalition: {coalition}")
-    # start = time.process_time()
+
     # model.generate(reduction=True)
-    # end = time.process_time()
+
     # print()
-    # print(f"Model generated in {end - start} seconds.")
+    #
     # print(f"Model has {model.states_count} states.")
     # print(f"Model has {model.transitions_count} transitions.")
     # print()
