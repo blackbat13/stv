@@ -364,7 +364,6 @@
                 pyshell.run('../gui.py', {args: ['tian_ji', 'run', horses]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_tian_ji.py finished.');
-                    console.log(results);
                     loadGraph(JSON.parse(results[0]));
                 });
             });
@@ -525,7 +524,6 @@
                 pyshell.run('../gui.py', {args: ['bridge', 'verify', n, k, 1]}, function (err, results) {
                     if (err) throw err;
                     console.log('verify_bridge.py finished.');
-                    console.log(results);
                     let graph = JSON.parse(results[results.length - 1]);
                     recolorGraph(graph);
                     loadLowerApproxModal(results);
@@ -804,15 +802,15 @@
                         return 'link_' + d.id;
                     })
                     .on('mouseover.fade', linkFade(0.1))
-                    .on('mouseover.tooltip', function (d) {
+                    .on('mouseover.tooltip', function (event, d) {
                         tooltip.transition()
                             .duration(300)
                             .style("opacity", .8);
                         tooltip.html("Source:" + d.source.id +
                             "<p/>Target:" + d.target.id +
                             "<p/>T:" + d.T)
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY + 10) + "px");
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY + 10) + "px");
                     })
                     .on("mouseout.tooltip", function () {
                         tooltip.transition()
@@ -820,9 +818,9 @@
                             .style("opacity", 0);
                     })
                     .on('mouseout.fade', linkFade(1))
-                    .on("mousemove", function () {
-                        tooltip.style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY + 10) + "px");
+                    .on("mousemove", function (event) {
+                        tooltip.style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY + 10) + "px");
                     });
 
                 link.transition().attr('stroke', function (d) {
@@ -917,13 +915,13 @@
                         }
                         return "#CCC";
                     })
-                    .on('mouseover.tooltip', function (d) {
+                    .on('mouseover.tooltip', function (event, d) {
                         tooltip.transition()
                             .duration(300)
                             .style("opacity", .8);
                         tooltip.html("Node:" + d.id + "<p/>T:" + JSON.stringify(d.T))
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY + 10) + "px");
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY + 10) + "px");
                     })
                     .on('mouseover.fade', fade(0.1))
                     .on("mouseout.tooltip", function () {
@@ -932,9 +930,9 @@
                             .style("opacity", 0);
                     })
                     .on('mouseout.fade', fade(1))
-                    .on("mousemove", function () {
-                        tooltip.style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY + 10) + "px");
+                    .on("mousemove", function (event) {
+                        tooltip.style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY + 10) + "px");
                     });
 
                 node.append("text")
@@ -1020,15 +1018,15 @@
                     .links(links);
             }
 
-            function dragstarted(d) {
-                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
                 d.fx = d.x;
                 d.fy = d.y;
             }
 
-            function dragged(d) {
-                d.fx = d3.event.x;
-                d.fy = d3.event.y;
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
             }
 
             function ticked() {
@@ -1081,7 +1079,7 @@
             }
 
             function fade(opacity) {
-                return d => {
+                return (event, d) => {
                     node.style('stroke-opacity', function (o) {
                         const thisOpacity = isConnected(d, o) ? 1 : opacity;
                         this.setAttribute('fill-opacity', thisOpacity);
@@ -1094,7 +1092,7 @@
             }
 
             function linkFade(opacity) {
-                return d => {
+                return (event, d) => {
                     node.style('stroke-opacity', function (o) {
                         const thisOpacity = isConnected(d.source, o) && isConnected(d.target, o) ? 1 : opacity;
                         this.setAttribute('fill-opacity', thisOpacity);
