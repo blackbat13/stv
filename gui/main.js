@@ -1,17 +1,21 @@
-const {app, BrowserWindow} = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 // Zachowaj globalną referencję obiektu okna, jeśli tego nie zrobisz, okno
 // zostanie zamknięte automatycznie, gdy obiekt JavaScript odśmieci pamięć.
 let win;
 
 function createWindow() {
     // Stwórz okno przeglądarki.
+    let rect = getWindowRect();
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y,
         webPreferences: {
-            nodeIntegration: true
-        }
+            nodeIntegration: true,
+        },
     });
+    win.setSize(rect.width, rect.height);
 
     // i ładowanie index.html aplikacji.
     win.loadFile('index.html');
@@ -20,15 +24,38 @@ function createWindow() {
     // win.webContents.openDevTools();
 
 
-    win.maximize();
-
     // Emitowane, gdy okno jest zamknięte.
     win.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         win = null;
-    })
+    });
+    
+    ipcMain.on("toggle-devtools", () => toggleDevTools());
+}
+
+function toggleDevTools() {
+    if (win) {
+        win.webContents.toggleDevTools();
+    }
+}
+
+function getWindowRect() {
+    const { x, y } = screen.getCursorScreenPoint();
+    const currentDisplay = screen.getDisplayNearestPoint({ x, y });
+    
+    let windowWidth = Math.round(currentDisplay.workArea.width * 0.75);
+    let windowHeight = Math.round(currentDisplay.workArea.height * 0.75);
+    let windowX = Math.round(currentDisplay.workArea.x + (currentDisplay.workArea.width - windowWidth) / 2);
+    let windowY = Math.round(currentDisplay.workArea.y + (currentDisplay.workArea.height - windowHeight) / 2);
+    
+    return {
+        x: windowX,
+        y: windowY,
+        width: windowWidth,
+        height: windowHeight,
+    }
 }
 
 // This method will be called when Electron has finished
