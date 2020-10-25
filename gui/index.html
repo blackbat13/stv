@@ -109,6 +109,7 @@
                         <option value="bridge">Bridge Endplay</option>
                         <option value="drone">Drones</option>
                         <option value="voting">Simple Voting</option>
+                        <option value="global">Global</option>
                     </select>
                 </div>
                 <div id="model_options">
@@ -302,6 +303,8 @@
                 selectionDrone();
             } else if (selection === "voting") {
                 selectionVoting();
+            } else if (selection == "global") {
+                selectionGlobal();
             }
         });
 
@@ -701,6 +704,66 @@
                 pyshell.run('../gui.py', {args: ['voting', 'domino', voters, candidates, heuristic]}, function (err, results) {
                     if (err) throw err;
                     console.log('domino_simple_voting.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadDominoResults(results);
+                });
+            });
+        }
+
+        function selectionGlobal() {
+            hideParams();
+
+            setFormula('');
+
+            $generateButton.off('click');
+            $generateButton.on('click', function () {
+                resetGraph();
+
+                pyshell.run('../gui.py', {args: ['global', 'run']}, function (err, results) {
+                    if (err) throw err;
+                    console.log('run_global.py finished.');
+                    loadGraph(JSON.parse(results[0]));
+                });
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                pyshell.run('../gui.py', {args: ['global', 'verify', voters, candidates, 1]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_global.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadLowerApproxModal(results);
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                pyshell.run('../gui.py', {args: ['global', 'verify', voters, candidates, 0]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('verify_global.py finished.');
+                    let graph = JSON.parse(results[results.length - 1]);
+                    recolorGraph(graph);
+                    loadUpperApproxModal(results);
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+                let heuristic = $("#heuristic option:selected").val();
+
+                pyshell.run('../gui.py', {args: ['global', 'domino', voters, candidates, heuristic]}, function (err, results) {
+                    if (err) throw err;
+                    console.log('domino_global.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
                     recolorGraph(graph);
                     loadDominoResults(results);

@@ -39,3 +39,10 @@ if __name__ == "__main__":
             import stv.gui_helper.verify_simple_voting
         elif method == 'domino':
             import stv.gui_helper.domino_simple_voting
+    elif model == 'global':
+        if method == 'run':
+            import stv.gui_helper.asynchronous.run_global
+        elif method == 'verify':
+            import stv.gui_helper.asynchronous.verify_global
+        elif method == 'domino':
+            import stv.gui_helper.asynchronous.domino_global

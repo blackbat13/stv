@@ -492,6 +492,7 @@ class GlobalModel:
             state.id = state_id
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
+            self.model.states.append(state.to_str())
 
         state.id = state_id
         return state_id
@@ -517,6 +518,7 @@ class GlobalModel:
         """
         state = GlobalState.initial_state(len(self._local_models))
         self._states.append(state)
+        self.model.states.append(state.to_str())
         i = 0
         while i < len(self._states):
             state = self._states[i]
