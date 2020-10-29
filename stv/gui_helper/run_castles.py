@@ -2,12 +2,13 @@ import sys
 from stv.models import CastleModel
 
 
-castle1_size = int(sys.argv[1])
-castle2_size = int(sys.argv[2])
-castle3_size = int(sys.argv[3])
-life = int(sys.argv[4])
+castle1_size = int(sys.argv[3])
+castle2_size = int(sys.argv[4])
+castle3_size = int(sys.argv[5])
+life = int(sys.argv[6])
 
 castle_model = CastleModel([castle1_size, castle2_size, castle3_size], [life, life, life])
+castle_model.generate()
 
 winning = []
 

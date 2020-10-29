@@ -2,10 +2,11 @@ import sys
 from stv.models import SimpleVotingModel
 
 
-no_voters = int(sys.argv[1])
-no_candidates = int(sys.argv[2])
+no_voters = int(sys.argv[3])
+no_candidates = int(sys.argv[4])
 
 simple_voting = SimpleVotingModel(no_candidates, no_voters)
+simple_voting.generate()
 
 winning = []
 

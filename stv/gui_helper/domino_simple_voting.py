@@ -3,11 +3,13 @@ from stv.models import SimpleVotingModel
 from stv.comparing_strats import StrategyComparer
 
 
-no_voters = int(sys.argv[1])
-no_candidates = int(sys.argv[2])
-heuristic = int(sys.argv[3])
+no_voters = int(sys.argv[3])
+no_candidates = int(sys.argv[4])
+heuristic = int(sys.argv[5])
 
 simple_voting = SimpleVotingModel(no_candidates, no_voters)
+simple_voting.generate()
+
 print(simple_voting.model.js_dump_model())
 
 winning = []
@@ -25,13 +27,13 @@ agents = [1]
 
 strategy_comparer = StrategyComparer(simple_voting.model, simple_voting.get_actions()[1])
 if heuristic == 0:
-    (result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning), agents, strategy_comparer.basic_h)
+    (result, strategy) = strategy_comparer.domino_dfs(0, set(winning), agents, strategy_comparer.basic_h)
 elif heuristic == 1:
-    (result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning), agents, strategy_comparer.control_h)
+    (result, strategy) = strategy_comparer.domino_dfs(0, set(winning), agents, strategy_comparer.control_h)
 elif heuristic == 2:
-    (result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning), agents, strategy_comparer.epistemic_h)
+    (result, strategy) = strategy_comparer.domino_dfs(0, set(winning), agents, strategy_comparer.epistemic_h)
 elif heuristic == 3:
-    (result, strategy) = strategy_comparer.generate_strategy_dfs(0, set(winning), agents, strategy_comparer.visited_states_h)
+    (result, strategy) = strategy_comparer.domino_dfs(0, set(winning), agents, strategy_comparer.visited_states_h)
 
 if result:
     print("1")
