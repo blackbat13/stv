@@ -628,3 +628,5 @@ if __name__ == "__main__":
     # print(f"Model has {model.transitions_count} transitions.")
     # print()
     # model.walk()
+
+# Question: does the reduction work for the approximations methods?
