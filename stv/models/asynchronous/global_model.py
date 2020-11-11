@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Set
 import time
 from stv.models.asynchronous.global_state import GlobalState
 from stv.models.asynchronous.local_model import LocalModel
@@ -48,6 +48,7 @@ class GlobalModel:
         self.coalition: List = []
         self._stack1_dict: Dict[str, int] = dict()
         self._transitions_count: int = 0
+        self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
 
     @property
     def model(self):
@@ -69,6 +70,7 @@ class GlobalModel:
         :return: None.
         """
         self._agents_count = len(self._local_models)
+        self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = [{} for _ in range(self._agents_count)]
         self._model = SimpleModel(self._agents_count)
         self._add_to_stack(GlobalState.initial_state(self._agents_count))
         self._add_index_to_transitions()
@@ -78,6 +80,19 @@ class GlobalModel:
             self._iter_por()
         else:
             self._compute()
+
+        self._model.states = self._states
+        self._prepare_epistemic_relation()
+
+    def _prepare_epistemic_relation(self):
+        """
+        Prepares epistemic relation for the model.
+        Should be called after creating the model.
+        :return: None
+        """
+        for i in range(0, self._agents_count):
+            for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
+                self.model.add_epistemic_class(i, epistemic_class)
 
     def _add_index_to_transitions(self):
         for agent_id in range(self._agents_count):
@@ -494,7 +509,41 @@ class GlobalModel:
             self._states_dict[state.to_str()] = state_id
 
         state.id = state_id
+
+        for i in range(0, len(self._local_models)):
+            epistemic_state = self._get_epistemic_state(state, i)
+            self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
         return state_id
+
+    def _get_epistemic_state(self, state: GlobalState, agent_id: int) -> hash:
+        """
+        Compute epistemic representation of the given state.
+        :param state: State to compute.
+        :param agent_id: Id of the agent for which epistemic representation should be computed.
+        :return: Epistemic representation of the given state.
+        """
+
+        epistemic_state = {'id': state.id, 'local_state': state.local_states[agent_id]}
+        props = {}
+        for prop in self._local_models[agent_id].props:
+            if prop in state.props:
+                props[prop] = state.props[prop]
+        epistemic_state['props'] = props
+        return epistemic_state
+
+    def _add_to_epistemic_dictionary(self, state: hash, new_state_id: int, agent_id: int):
+        """
+        Adds state to the epistemic dictionary.
+        :param state:
+        :param new_state_id:
+        :param agent_id:
+        :return: None
+        """
+        state_str = ' '.join(str(state[e]) for e in state)
+        if state_str not in self._epistemic_states_dictionaries[agent_id]:
+            self._epistemic_states_dictionaries[agent_id][state_str] = {new_state_id}
+        else:
+            self._epistemic_states_dictionaries[agent_id][state_str].add(new_state_id)
 
     def _add_transition(self, state_from: int, state_to: int, action: str, agents: List[int]):
         while len(self._transitions) <= state_from:

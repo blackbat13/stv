@@ -22,6 +22,8 @@ class LocalModel:
         self._transitions: List[List[LocalTransition]] = transitions
         self._actions: Set[str] = actions
         self._protocols: Dict[str, List[List[str]]] = protocols
+        self._props: List[str] = []
+        self._compute_props()
 
     @property
     def agent_name(self):
@@ -32,6 +34,19 @@ class LocalModel:
     def transitions(self):
         """Transitions."""
         return self._transitions
+
+    @property
+    def props(self):
+        """Proposition variable names"""
+        return self._props
+
+    def _compute_props(self):
+        props_set = set()
+        for ls in self._transitions:
+            for tr in ls:
+                props_set.update(tr.props.keys())
+        self._props = list(props_set)
+        self._props.sort()
 
     def transitions_from_state(self, state_id: int) -> List[LocalTransition]:
         return self._transitions[state_id]
