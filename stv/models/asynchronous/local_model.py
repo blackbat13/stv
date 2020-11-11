@@ -40,6 +40,11 @@ class LocalModel:
         """Proposition variable names"""
         return self._props
 
+    @property
+    def actions(self):
+        """Set of action names"""
+        return self._actions
+
     def _compute_props(self):
         props_set = set()
         for ls in self._transitions:

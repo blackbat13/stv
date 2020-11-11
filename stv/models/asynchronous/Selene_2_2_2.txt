@@ -28,30 +28,6 @@ shared sendToWBB: wbb_gen1 -> wbb_send [wbb_t1=v_Voter1, wbb_t2=v_Voter2]
 shared generateTrackers_2: wbb_init -> wbb_gen2 [t1=2, t2=1]
 shared sendToWBB: wbb_gen2 -> wbb_send [wbb_t1=v_Voter2, wbb_t2=v_Voter1]
 PROTOCOL wbb_init: [[generateTrackers_1]]
-shared coercerWBB11true: wbb_send -[wbb_t1==1]> wbb_send
-shared coercerWBB11false: wbb_send -[wbb_t1!=1]> wbb_send
-shared Voter1_WBB11true: wbb_send -[wbb_t1==1]> wbb_send
-shared Voter1_WBB11false: wbb_send -[wbb_t1!=1]> wbb_send
-shared Voter2_WBB11true: wbb_send -[wbb_t1==1]> wbb_send
-shared Voter2_WBB11false: wbb_send -[wbb_t1!=1]> wbb_send
-shared coercerWBB21true: wbb_send -[wbb_t2==1]> wbb_send
-shared coercerWBB21false: wbb_send -[wbb_t2!=1]> wbb_send
-shared Voter1_WBB21true: wbb_send -[wbb_t2==1]> wbb_send
-shared Voter1_WBB21false: wbb_send -[wbb_t2!=1]> wbb_send
-shared Voter2_WBB21true: wbb_send -[wbb_t2==1]> wbb_send
-shared Voter2_WBB21false: wbb_send -[wbb_t2!=1]> wbb_send
-shared coercerWBB12true: wbb_send -[wbb_t1==2]> wbb_send
-shared coercerWBB12false: wbb_send -[wbb_t1!=2]> wbb_send
-shared Voter1_WBB12true: wbb_send -[wbb_t1==2]> wbb_send
-shared Voter1_WBB12false: wbb_send -[wbb_t1!=2]> wbb_send
-shared Voter2_WBB12true: wbb_send -[wbb_t1==2]> wbb_send
-shared Voter2_WBB12false: wbb_send -[wbb_t1!=2]> wbb_send
-shared coercerWBB22true: wbb_send -[wbb_t2==2]> wbb_send
-shared coercerWBB22false: wbb_send -[wbb_t2!=2]> wbb_send
-shared Voter1_WBB22true: wbb_send -[wbb_t2==2]> wbb_send
-shared Voter1_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
-shared Voter2_WBB22true: wbb_send -[wbb_t2==2]> wbb_send
-shared Voter2_WBB22false: wbb_send -[wbb_t2!=2]> wbb_send
 
 Agent Voter[2]:
 init: v_init
@@ -67,7 +43,6 @@ encryptVote: v_fill -> v_encrypt
 shared sendVote_aID: v_encrypt -> v_send [v_aID]
 shared finishVoting: v_send -> v_finish
 shared publishVotes: v_finish -> v_publish
-verifyElectionResults: v_publish -> v_publish
 computeFalseAlphaTerm_1: v_publish -> v_false_a [false_a_aID=1]
 computeFalseTracker1: v_false_a -> v_false_tr [false_tr_aID=1]
 computeFalseAlphaTerm_2: v_publish -> v_false_a [false_a_aID=2]
@@ -75,16 +50,6 @@ computeFalseTracker2: v_false_a -> v_false_tr [false_tr_aID=2]
 dontComputeFalseAlphaTerm: v_publish -> v_false_tr
 shared sendTracker_aID: v_false_tr -> v_send_tr [tr_aID]
 shared allTrackerSend: v_send_tr -> v_wbb
-shared aID_WBB11true: v_wbb -> v_wbb [t1_aID=1]
-shared aID_WBB11false: v_wbb -> v_wbb
-shared aID_WBB21true: v_wbb -> v_wbb [t2_aID=1]
-shared aID_WBB21false: v_wbb -> v_wbb
-shared aID_WBB12true: v_wbb -> v_wbb [t1_aID=2]
-shared aID_WBB12false: v_wbb -> v_wbb
-shared aID_WBB22true: v_wbb -> v_wbb [t2_aID=2]
-shared aID_WBB22false: v_wbb -> v_wbb
-verifyVote: v_wbb -> v_wbb
-wait: v_wbb -> v_wbb
 PROTOCOL v_wbb: [[verifyVote],[wait],[aID_WBB11true,aID_WBB11false],[aID_WBB21true,aID_WBB21false],[aID_WBB12true,aID_WBB12false],[aID_WBB22true,aID_WBB22false]]
 shared showTrackerFor1_aID: v_wbb -> v_show [v_show_aID=1]
 shared showTrackerFor2_aID: v_wbb -> v_show [v_show_aID=2]

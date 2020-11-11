@@ -419,7 +419,14 @@ class GlobalModel:
                         a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
                         g_p = self._successor(g, a)
                         g_p_state_id = self._add_state(g_p)
-                        self._add_transition(g_state_id, g_p_state_id, a.action, [a.agent_id])
+
+                        agent_list = []
+                        if a.shared:
+                            for agent_id, local in enumerate(self._local_models):
+                                if local.has_action(a.action):
+                                    agent_list.append(agent_id)
+
+                        self._add_transition(g_state_id, g_p_state_id, a.action, agent_list)
                         if self._add_to_stack(g_p):
                             dfs_stack.append(1)
             elif dfs == -1:
@@ -627,6 +634,29 @@ class GlobalModel:
     def set_coalition(self, coalition: List[str]):
         self.coalition = self.agent_name_coalition_to_ids(coalition)
 
+    def get_winning_states(self, props: hash):
+        winning_states = set()
+        for state in self._states:
+            ok = True
+            for prop in props:
+                if prop not in state.props:
+                    ok = False
+                    break
+                if state.props[prop] != props[prop]:
+                    ok = False
+                    break
+
+            if ok:
+                winning_states.add(state.id)
+        return winning_states
+
+    def get_actions(self):
+        actions = []
+        for local in self._local_models:
+            actions.append(local.actions)
+            actions[-1].add("")
+        return actions
+
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
@@ -658,6 +688,18 @@ if __name__ == "__main__":
     results_file.write(f"Model has {model.transitions_count} transitions.\n")
     results_file.write("\n\n")
     results_file.close()
+
+    winning_states = model.get_winning_states({'pun1': True})
+
+    for state in winning_states:
+        model._states[state].print()
+
+
+    atl_model = model.model.to_atl_imperfect(model.get_actions())
+    result = atl_model.minimum_formula_many_agents(model.agent_name_coalition_to_ids(["Coercer1"]), winning_states=winning_states)
+    print(result)
+
+    # model.model.simulate(model.agent_name_to_id("Coercer1"))
 
     # model.walk()
 

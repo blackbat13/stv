@@ -79,13 +79,13 @@ class SeleneModelGenerator:
         for i in range(1, len(list(perm)) + 1):
             wbb += f", generateTrackers_{i}"
         wbb += "]]\n"
-        for cand_id in range(1, self._cand_count + 1):
-            for tr_id in range(1, self._voter_count + 1):
-                wbb += f"shared coercerWBB{tr_id}{cand_id}true: wbb_send -[wbb_t{tr_id}=={cand_id}]> wbb_send\n"
-                wbb += f"shared coercerWBB{tr_id}{cand_id}false: wbb_send -[wbb_t{tr_id}!={cand_id}]> wbb_send\n"
-                for voter_id in range(1, self._voter_count + 1):
-                    wbb += f"shared Voter{voter_id}_WBB{tr_id}{cand_id}true: wbb_send -[wbb_t{tr_id}=={cand_id}]> wbb_send\n"
-                    wbb += f"shared Voter{voter_id}_WBB{tr_id}{cand_id}false: wbb_send -[wbb_t{tr_id}!={cand_id}]> wbb_send\n"
+        # for cand_id in range(1, self._cand_count + 1):
+        #     for tr_id in range(1, self._voter_count + 1):
+        #         wbb += f"shared coercerWBB{tr_id}{cand_id}true: wbb_send -[wbb_t{tr_id}=={cand_id}]> wbb_send\n"
+        #         wbb += f"shared coercerWBB{tr_id}{cand_id}false: wbb_send -[wbb_t{tr_id}!={cand_id}]> wbb_send\n"
+        #         for voter_id in range(1, self._voter_count + 1):
+        #             wbb += f"shared Voter{voter_id}_WBB{tr_id}{cand_id}true: wbb_send -[wbb_t{tr_id}=={cand_id}]> wbb_send\n"
+        #             wbb += f"shared Voter{voter_id}_WBB{tr_id}{cand_id}false: wbb_send -[wbb_t{tr_id}!={cand_id}]> wbb_send\n"
         return wbb
 
     def _generate_voter(self):
@@ -106,19 +106,19 @@ class SeleneModelGenerator:
         voter += "shared sendVote_aID: v_encrypt -> v_send [v_aID]\n"
         voter += "shared finishVoting: v_send -> v_finish\n"
         voter += "shared publishVotes: v_finish -> v_publish\n"
-        voter += "verifyElectionResults: v_publish -> v_publish\n"
+        # voter += "verifyElectionResults: v_publish -> v_publish\n"
         for cand_id in range(1, self._cand_count + 1):
             voter += f"computeFalseAlphaTerm_{cand_id}: v_publish -> v_false_a [false_a_aID={cand_id}]\n"
             voter += f"computeFalseTracker{cand_id}: v_false_a -> v_false_tr [false_tr_aID={cand_id}]\n"
         voter += "dontComputeFalseAlphaTerm: v_publish -> v_false_tr\n"
         voter += "shared sendTracker_aID: v_false_tr -> v_send_tr [tr_aID]\n"
         voter += "shared allTrackerSend: v_send_tr -> v_wbb\n"
-        for cand_id in range(1, self._cand_count + 1):
-            for tr_id in range(1, self._voter_count + 1):
-                voter += f"shared aID_WBB{tr_id}{cand_id}true: v_wbb -> v_wbb [t{tr_id}_aID={cand_id}]\n"
-                voter += f"shared aID_WBB{tr_id}{cand_id}false: v_wbb -> v_wbb\n"
-        voter += "verifyVote: v_wbb -> v_wbb\n"
-        voter += "wait: v_wbb -> v_wbb\n"
+        # for cand_id in range(1, self._cand_count + 1):
+        #     for tr_id in range(1, self._voter_count + 1):
+        #         voter += f"shared aID_WBB{tr_id}{cand_id}true: v_wbb -> v_wbb [t{tr_id}_aID={cand_id}]\n"
+        #         voter += f"shared aID_WBB{tr_id}{cand_id}false: v_wbb -> v_wbb\n"
+        # voter += "verifyVote: v_wbb -> v_wbb\n"
+        # voter += "wait: v_wbb -> v_wbb\n"
         voter += "PROTOCOL v_wbb: [[verifyVote],[wait]"
         for cand_id in range(1, self._cand_count + 1):
             for tr_id in range(1, self._voter_count + 1):

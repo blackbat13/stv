@@ -70,3 +70,6 @@ class GlobalState:
 
     def print(self):
         print(f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}, Counters: {self._counters}")
+
+    def __str__(self):
+        return f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}, Counters: {self._counters}"
