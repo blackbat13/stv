@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, dialog } = require('electron');
 // Zachowaj globalną referencję obiektu okna, jeśli tego nie zrobisz, okno
 // zostanie zamknięte automatycznie, gdy obiekt JavaScript odśmieci pamięć.
 let win;
@@ -33,6 +33,19 @@ function createWindow() {
     });
     
     ipcMain.on("toggle-devtools", () => toggleDevTools());
+    
+    ipcMain.on("choose-model-file", (event, args) => {
+        let msgKey = args[0];
+        let lastFilePath = args[1];
+        dialog.showOpenDialog(win, {
+            properties: ["openFile"],
+            title: "Choose a model file",
+            defaultPath: lastFilePath || undefined,
+        }).then(result => {
+            let filePath = result.canceled || !result.filePaths ? null : result.filePaths[0];
+            event.reply("model-file", [msgKey, filePath]);
+        });
+    });
 }
 
 function toggleDevTools() {

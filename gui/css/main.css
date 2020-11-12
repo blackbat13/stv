@@ -1,9 +1,4 @@
 form {
-    width: 25vw;
-    max-width: 400px;
-    position: fixed;
-    right: 0;
-    top: 0;
     background-color: beige;
     height: 100%;
     padding: 10px;
@@ -114,11 +109,6 @@ div.tooltip {
     pointer-events: none;
 }
 
-#div_graph {
-    width: 100%;
-    height: 100vh;
-}
-
 #btn_lower_approx, #btn_upper_approx {
     font-size: large;
     height: auto;
@@ -129,4 +119,66 @@ div.tooltip {
     height: auto;
     font-size: large;
     font-weight: bold;
+}
+
+#param5Value {
+    display: block;
+    font-size: 14px;
+    line-height: 1.2em;
+    margin: -8px 0 4px 0;
+    word-break: break-all;
+}
+
+body[data-model="global"] #param1div,
+body[data-model="global"] #param2div,
+body[data-model="global"] #param3div,
+body[data-model="global"] #param4div {
+    display: none;
+}
+
+#tabs {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-div {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    flex: 1 1 auto;
+}
+
+.main {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+.col-left {
+    flex: 1 1 66.66666666666%;
+    max-width: calc(100% - 400px);
+}
+.col-right {
+    flex: 0 0 400px;
+}
+.container-fluid {
+    padding: 0;
+}
+.row {
+    margin: 0;
+}
+.col-6 {
+    padding: 0;
+}
+.col-6:first-child {
+    padding-right: 15px;
+}
+.col-6:last-child {
+    padding-left: 15px;
+}
+
+html, body, .container-fluid, #div_graph {
+    width: 100%;
+    height: 100%;
 }
