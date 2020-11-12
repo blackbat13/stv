@@ -4,6 +4,7 @@ from stv.models.asynchronous.global_state import GlobalState
 from stv.models.asynchronous.local_model import LocalModel
 from stv.models.asynchronous.local_transition import LocalTransition, SharedTransition
 from stv.models import SimpleModel
+from stv.comparing_strats import StrategyComparer
 
 
 class GlobalModel:
@@ -31,11 +32,14 @@ class GlobalModel:
     :ivar _transitions_count
     """
 
-    def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str]):
+    def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str],
+                 coalition: List[str], goal: List[str]):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
         self._persistent: List[str] = persistent
+        self._coalition: List[str] = coalition
+        self._goal: List[str] = goal
         self._states: List[GlobalState] = []
         self._transitions: List = []
         self._dependent: List[List[List[int]]] = []
@@ -514,12 +518,11 @@ class GlobalModel:
             state.id = state_id
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
+            for i in range(0, len(self._local_models)):
+                epistemic_state = self._get_epistemic_state(state, i)
+                self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
 
         state.id = state_id
-
-        for i in range(0, len(self._local_models)):
-            epistemic_state = self._get_epistemic_state(state, i)
-            self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
         return state_id
 
     def _get_epistemic_state(self, state: GlobalState, agent_id: int) -> hash:
@@ -530,12 +533,13 @@ class GlobalModel:
         :return: Epistemic representation of the given state.
         """
 
-        epistemic_state = {'id': state.id, 'local_state': state.local_states[agent_id]}
+        epistemic_state = {'local_state': state.local_states[agent_id]}
         props = {}
         for prop in self._local_models[agent_id].props:
             if prop in state.props:
                 props[prop] = state.props[prop]
         epistemic_state['props'] = props
+        # print(epistemic_state, self._local_models[agent_id].agent_name)
         return epistemic_state
 
     def _add_to_epistemic_dictionary(self, state: hash, new_state_id: int, agent_id: int):
@@ -634,21 +638,42 @@ class GlobalModel:
     def set_coalition(self, coalition: List[str]):
         self.coalition = self.agent_name_coalition_to_ids(coalition)
 
-    def get_winning_states(self, props: hash):
+    def get_winning_states(self):
         winning_states = set()
         for state in self._states:
             ok = True
-            for prop in props:
-                if prop not in state.props:
-                    ok = False
-                    break
-                if state.props[prop] != props[prop]:
+            for prop in self._goal:
+                if (prop not in state.props) or (not state.props[prop]):
                     ok = False
                     break
 
             if ok:
                 winning_states.add(state.id)
         return winning_states
+
+    def verify_approximation(self, perfect_inf: bool):
+        atl_model = None
+        if perfect_inf:
+            atl_model = self._model.to_atl_perfect(self.get_actions())
+        else:
+            atl_model = self._model.to_atl_imperfect(self.get_actions())
+
+        start = time.process_time()
+        result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+                                                       self.get_winning_states())
+        end = time.process_time()
+
+        return result, end - start
+
+    def verify_domino(self):
+        agent_id = self.agent_name_to_id(self._coalition[0])
+        strategy_comparer = StrategyComparer(self._model, self.get_actions()[agent_id])
+        start = time.process_time()
+        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(), [agent_id],
+                                                        strategy_comparer.basic_h)
+        end = time.process_time()
+        print(strategy)
+        return result, end - start
 
     def get_actions(self):
         actions = []
@@ -686,19 +711,22 @@ if __name__ == "__main__":
     results_file.write(f"Model generated in {end - start} seconds.\n")
     results_file.write(f"Model has {model.states_count} states.\n")
     results_file.write(f"Model has {model.transitions_count} transitions.\n")
+    results_file.write("\n")
+
+    # model.model.simulate(model.agent_name_to_id("Coercer1"))
+
+    result, comp_time = model.verify_approximation(perfect_inf=True)
+
+    results_file.write(f"Perfect Information:\ntime: {comp_time} seconds, result: {0 in result}\n")
+
+    result, comp_time = model.verify_approximation(perfect_inf=False)
+    results_file.write(f"Imperfect Information Approximation:\ntime: {comp_time} seconds, result: {0 in result}\n")
+
+    # result, comp_time = model.verify_domino()
+    # results_file.write(f"Domino DFS:\ntime: {comp_time}, result: {result}\n")
+
     results_file.write("\n\n")
     results_file.close()
-
-    winning_states = model.get_winning_states({'pun1': True})
-
-    for state in winning_states:
-        model._states[state].print()
-
-
-    atl_model = model.model.to_atl_imperfect(model.get_actions())
-    result = atl_model.minimum_formula_many_agents(model.agent_name_coalition_to_ids(["Coercer1"]), winning_states=winning_states)
-    print(result)
-
     # model.model.simulate(model.agent_name_to_id("Coercer1"))
 
     # model.walk()
@@ -720,4 +748,4 @@ if __name__ == "__main__":
     # print()
     # model.walk()
 
-# Question: does the reduction work for the approximations methods?
+    # Question: does the reduction work for the approximations methods?

@@ -21,6 +21,8 @@ class SeleneModelGenerator:
         model += "\n"
         model += self._generate_reduction()
         model += self._generate_persistent()
+        model += self._generate_coalition()
+        model += self._generate_goal()
         return model
 
     def _generate_teller(self):
@@ -169,6 +171,14 @@ class SeleneModelGenerator:
         persistent = persistent.rstrip(" ,")
         persistent += "]\n"
         return persistent
+
+    def _generate_coalition(self):
+        coalition = "COALITION: [Coercer1]\n"
+        return coalition
+
+    def _generate_goal(self):
+        goal = "GOAL: [pun1]\n"
+        return goal
 
 
 if __name__ == "__main__":
