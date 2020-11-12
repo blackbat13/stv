@@ -700,9 +700,9 @@ if __name__ == "__main__":
     start = time.process_time()
     model.generate(reduction=(reduction == 1))
     end = time.process_time()
-    print(f"Model generated in {end - start} seconds.")
-    print(f"Model has {model.states_count} states.")
-    print(f"Model has {model.transitions_count} transitions.")
+    # print(f"Model generated in {end - start} seconds.")
+    # print(f"Model has {model.states_count} states.")
+    # print(f"Model has {model.transitions_count} transitions.")
 
     results_file.write(f"Teller Count: {teller_count}\n")
     results_file.write(f"Voter Count: {voter_count}\n")

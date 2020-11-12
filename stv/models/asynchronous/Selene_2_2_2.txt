@@ -58,10 +58,6 @@ shared no_punish_aID: v_show -> v_show
 
 Agent Coercer[1]:
 init: c_init
-shared publishTrackers: c_init -> c_init [phase=0]
-shared startVoting: c_init -> c_init [phase=1]
-shared finishVoting: c_init -> c_init [phase=2]
-shared publishVotes: c_init -> c_init [phase=3]
 shared leave_Voter1: c_init -> c_init [req1=0]
 shared punish_Voter1: c_init -> c_init [pun1=true]
 shared no_punish_Voter1: c_init -> c_init [pun1=false]
@@ -87,6 +83,6 @@ shared coercerWBB22false: c_init -> c_init
 PROTOCOL c_init: [[leave_Voter1],[punish_Voter1],[no_punish_Voter1],[requestVoteFor1_Voter1],[requestVoteFor2_Voter1],[showTrackerFor1_Voter1,showTrackerFor2_Voter1],[coercerWBB11true,coercerWBB11false],[coercerWBB12true,coercerWBB12false],[leave_Voter2],[punish_Voter2],[no_punish_Voter2],[requestVoteFor1_Voter2],[requestVoteFor2_Voter2],[showTrackerFor1_Voter2,showTrackerFor2_Voter2],[coercerWBB21true,coercerWBB21false],[coercerWBB22true,coercerWBB22false]]
 
 REDUCTION: [pun1]
-PERSISTENT: [v_Voter1, wbb_t1, t1, v_Voter2, wbb_t2, t2, phase]
+PERSISTENT: [v_Voter1, wbb_t1, t1, v_Voter2, wbb_t2, t2]
 COALITION: [Coercer1]
 GOAL: [pun1]
