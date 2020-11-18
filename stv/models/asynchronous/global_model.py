@@ -85,8 +85,12 @@ class GlobalModel:
         else:
             self._compute()
 
-        self._model.states = self._states
+        # self._model.states = self._states
         self._prepare_epistemic_relation()
+
+    def generate_local_models(self):
+        for local_model in self._local_models:
+            local_model.generate()
 
     def _prepare_epistemic_relation(self):
         """
@@ -518,6 +522,7 @@ class GlobalModel:
             state.id = state_id
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
+            self._model.states.append(state.to_str())
             for i in range(0, len(self._local_models)):
                 epistemic_state = self._get_epistemic_state(state, i)
                 self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
