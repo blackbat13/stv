@@ -6,6 +6,7 @@ filePath = sys.argv[3]
 
 global_model = GlobalModelParser().parse(filePath)
 global_model.generate(reduction=False)
+global_model.generate_local_models()
 
 winning = []
 
@@ -14,7 +15,7 @@ winning = []
 # global_model.print()
 localModels = []
 for localModel in global_model._local_models:
-    localModels.append(global_model.model.js_dump_model(winning))
+    localModels.append(localModel._model.js_dump_model([]))
 
 print(json.dumps({
     "localModels": localModels,

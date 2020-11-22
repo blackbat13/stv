@@ -1,5 +1,6 @@
 from typing import List, Dict, Set
 from stv.models.asynchronous.local_transition import LocalTransition
+from stv.models.simple_model import SimpleModel
 
 
 class LocalModel:
@@ -22,6 +23,9 @@ class LocalModel:
         self._transitions: List[List[LocalTransition]] = transitions
         self._actions: Set[str] = actions
         self._protocols: Dict[str, List[List[str]]] = protocols
+        self._props: List[str] = []
+        self._compute_props()
+        self._model = None
 
     @property
     def agent_name(self):
@@ -32,6 +36,33 @@ class LocalModel:
     def transitions(self):
         """Transitions."""
         return self._transitions
+
+    @property
+    def props(self):
+        """Proposition variable names"""
+        return self._props
+
+    @property
+    def actions(self):
+        """Set of action names"""
+        return self._actions
+
+    def generate(self):
+        self._model = SimpleModel(no_agents=1)
+        for state_name in self._states:
+            self._model.states.append({"id": self._states[state_name], "name": state_name})
+        for state_id in range(len(self._transitions)):
+            for transition in self._transitions[state_id]:
+                self._model.add_transition(from_state_id=state_id, to_state_id=self._states[transition.state_to],
+                                           actions=[transition.action])
+
+    def _compute_props(self):
+        props_set = set()
+        for ls in self._transitions:
+            for tr in ls:
+                props_set.update(tr.props.keys())
+        self._props = list(props_set)
+        self._props.sort()
 
     def transitions_from_state(self, state_id: int) -> List[LocalTransition]:
         return self._transitions[state_id]
