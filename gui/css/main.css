@@ -135,6 +135,13 @@ body[data-model="global"] #param3div,
 body[data-model="global"] #param4div {
     display: none;
 }
+body[data-model="global"] #btn_generate {
+    display: none;
+}
+body:not([data-model="global"]) #btn_generate_global,
+body:not([data-model="global"]) #btn_generate_reduced {
+    display: none;
+}
 
 #tabs {
     width: 100%;

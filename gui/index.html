@@ -199,6 +199,14 @@
                 <div>
                     <button type="button" class="btn btn-lg btn-primary" id="btn_generate">Generate</button>
                 </div>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary" id="btn_generate_global" data-mode="global">Generate global</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary" id="btn_generate_reduced" data-mode="reduced">Generate reduced</button>
+                    </div>
+                </div>
                 <hr/>
                 <div class="row">
                     <div class="col-6">
@@ -260,6 +268,8 @@
         let $modelList = $("#models");
         let $modelOptions = $("#model_options");
         let $generateButton = $("#btn_generate");
+        let $generateGlobalButton = $("#btn_generate_global");
+        let $generateReducedButton = $("#btn_generate_reduced");
         let $buttonLowerApprox = $("#btn_lower_approx");
         let $buttonUpperApprox = $("#btn_upper_approx");
         let $buttonDominoDFS = $("#btn_domino_dfs");
@@ -836,18 +846,40 @@
             
             let modelsForRecoloring = null;
             let currTabId = -1;
-
-            $generateButton.off('click');
-            $generateButton.on('click', function () {
+            
+            function getModel(models, tabId, mode) {
+                if (mode == "global") {
+                    if (tabId == 0) {
+                        return models.globalModel;
+                    }
+                    return models.localModels[tabId - 1];
+                }
+                else if (mode == "reduced") {
+                    if (tabId == 0) {
+                        return models.globalModel;
+                    }
+                    if (tabId == 1) {
+                        return models.reducedModel;;
+                    }
+                    return models.localModels[tabId - 2];
+                }
+            }
+            
+            let $generateButtons = $().add($generateGlobalButton).add($generateReducedButton);
+            $generateButtons.off('click');
+            $generateButtons.on('click', function (e) {
                 resetGraph(0);
                 
+                let mode = $(e.currentTarget).data("mode"); // "global" | "reduced"
+                
                 getModelFilePath().then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'run', filePath]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['global', 'run', mode, filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('run_global.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
-                        let tabs = ["Global"];
+                        let tabs = mode == "global" ? ["Global"] : ["Global", "Reduced"];
+                        let fixedTabsCount = tabs.length;
                         for (let i = 1; i <= dumpedModels.localModels.length; ++i) {
                             tabs.push(`Local ${i}`);
                         }
@@ -857,12 +889,15 @@
                             let $graph = $(`svg#graph-${tabId}`);
                             if (!$graph.data("loaded")) {
                                 resetGraph(tabId);
-                                const modelStr = tabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
+                                const modelStr = getModel(dumpedModels, tabId, mode);
                                 loadGraph(JSON.parse(modelStr), tabId);
                                 $graph.data("loaded", true);
                             }
                             if (modelsForRecoloring && !$graph.data("colored")) {
-                                const modelStr = tabId == 0 ? modelsForRecoloring.globalModel : modelsForRecoloring.localModels[tabId - 1];
+                                if (mode == "reduced") {
+                                    modelsForRecoloring.reducedModel = dumpedModels.reducedModel;
+                                }
+                                const modelStr = getModel(modelsForRecoloring, tabId, mode);
                                 recolorGraph(JSON.parse(modelStr), tabId);
                                 $graph.data("colored", true);
                             }
