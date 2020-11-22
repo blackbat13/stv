@@ -27,7 +27,7 @@
                 ipcRenderer.send("toggle-devtools");
             }
         }
-        function chooseModelFile() {
+        function chooseModelFile(title) {
             return new Promise((resolve, reject) => {
                 const msgKey = Math.random().toString(36).substr(2);
                 const handler = (event, data) => {
@@ -46,17 +46,21 @@
                     }
                 };
                 ipcRenderer.on("model-file", handler);
-                ipcRenderer.send("choose-model-file", [msgKey, localStorage["lastFilePath"]]);
+                ipcRenderer.send("choose-model-file", [
+                    msgKey,
+                    localStorage["lastFilePath"],
+                    title || "Choose a model file",
+                ]);
             });
         }
-        function getModelFilePath() {
+        function getModelFilePath(id, title) {
             return new Promise((resolve, reject) => {
-                const filePath = $("#param5Value").text();
+                const filePath = $(`#param${id}Value`).text();
                 if (filePath) {
                     resolve(filePath);
                 }
                 else {
-                    chooseModelFile().then(filePath => {
+                    chooseModelFile(title).then(filePath => {
                         if (filePath) {
                             resolve(filePath);
                         }
@@ -67,6 +71,17 @@
                     .catch(reject);
                 }
             });
+        }
+        async function getModelFilePaths(ids) {
+            let paths = [];
+            for (let id of ids) {
+                let title = null;
+                if (id == 5) { title = "Choose a model 1 file"; }
+                if (id == 6) { title = "Choose a model 2 file"; }
+                if (id == 7) { title = "Choose a relation file"; }
+                paths.push(await getModelFilePath(id, title));
+            }
+            return paths;
         }
         $(window).on("keydown", e => toggleDevTools(e));
     </script>
@@ -156,6 +171,7 @@
                         <option value="drone">Drones</option>
                         <option value="voting">Simple Voting</option>
                         <option value="global">Global</option>
+                        <option value="bisimulation">Bisimulation</option>
                     </select>
                 </div>
                 <div id="model_options">
@@ -190,6 +206,16 @@
                         <label id="param5Label" class="form-label" for="param5Button"></label>
                         <span id="param5Value"></span>
                         <button type="button" class="btn btn-sm btn-primary" id="param5Button">Choose a file...</button>
+                    </div>
+                    <div id="param6div" class="form-group" style="visibility: hidden;">
+                        <label id="param6Label" class="form-label" for="param6Button"></label>
+                        <span id="param6Value"></span>
+                        <button type="button" class="btn btn-sm btn-primary" id="param6Button">Choose a file...</button>
+                    </div>
+                    <div id="param7div" class="form-group" style="visibility: hidden;">
+                        <label id="param7Label" class="form-label" for="param7Button"></label>
+                        <span id="param7Value"></span>
+                        <button type="button" class="btn btn-sm btn-primary" id="param7Button">Choose a file...</button>
                     </div>
                 </div>
                 <div>
@@ -287,11 +313,19 @@
         let $param5Label = $("#param5Label");
         let $param5Input = $("#param5Value");
         let $param5Button = $("#param5Button");
+        let $param6Label = $("#param6Label");
+        let $param6Input = $("#param6Value");
+        let $param6Button = $("#param6Button");
+        let $param7Label = $("#param7Label");
+        let $param7Input = $("#param7Value");
+        let $param7Button = $("#param7Button");
         let $param1div = $('#param1div');
         let $param2div = $('#param2div');
         let $param3div = $('#param3div');
         let $param4div = $('#param4div');
         let $param5div = $('#param5div');
+        let $param6div = $('#param6div');
+        let $param7div = $('#param7div');
         let pyshell = require('python-shell').PythonShell;
         pyshell.defaultOptions = { pythonPath: '../venv/Scripts/python.exe' };
         let $divGraph = $('#div_graph');
@@ -321,20 +355,27 @@
             $param3div.css('visibility', 'hidden');
             $param4div.css('visibility', 'hidden');
             $param5div.css('visibility', 'hidden');
+            $param6div.css('visibility', 'hidden');
+            $param7div.css('visibility', 'hidden');
         }
         
         let onTabActivated = tabId => {};
-        function createTabs(tabs) {
+        function createTabs(tabs, panels) {
             $("#div_graph").html(`<div id="tabs">
                 <ul id="tab-ul">
                 </ul>
             </div>`);
             for (let i = 0; i < tabs.length; i++) {
                 $("#tab-ul").append("<li id='tab-" + i + "' class=\"tab-li\" tab_id='" + i + "' data-tab-id='" + i + "'><a href=\"#tabs-" + (i + 1) + "\">" + tabs[i] + "</a></li>");
-                $("#tabs").append("<div id=\"tabs-" + (i + 1) + "\" class=\"tab-div\">\n" +
-                "                    <svg id=\"graph-" + i + "\" width=\"10000\" height=\"10000\">\n" +
-                "                    </svg>\n" +
+                $("#tabs").append("<div id=\"tabs-" + (i + 1) + "\" class=\"tab-div panels" + (panels ? "" : " panels-single") + "\">\n" +
                     "            </div>");
+                for (let panelId of (panels || [0])) {
+                    let s = "                    <div class='" + `panel panel-${panelId}` + "'>\n" +
+                            "                       <div class='svg-container'><svg id=\"graph-" + `${i}-${panelId}` + "\" width=\"10000\" height=\"10000\">\n" +
+                            "                       </svg></div>\n" +
+                            "                    </div>\n";
+                    $("#tabs").children().last().append(s);
+                }
             }
             $("#tabs").tabs({
                 active: 0,
@@ -346,7 +387,7 @@
                 },
             });
             for (let i = 0; i < tabs.length; ++i) {
-                resetGraph(i);
+                resetGraph(i, panels);
             }
         }
         
@@ -399,14 +440,18 @@
                 selectionVoting();
             } else if (selection == "global") {
                 selectionGlobal();
+            } else if (selection == "bisimulation") {
+                selectionBisimulation();
             }
         });
-
-        function resetGraph(graphId) {
-            const $svgGraph = $(`#graph-${graphId}`);
-            $svgGraph.empty();
-            let $parent = $svgGraph.parent();
-            $parent[0].scrollTo(($parent[0].scrollWidth - $parent[0].clientWidth) / 2, ($parent[0].scrollHeight - $parent[0].clientHeight) / 2);
+        
+        function resetGraph(graphId, panels) {
+            for (let panelId of (panels || [0])) {
+                const $svgGraph = $(`#graph-${graphId}-${panelId}`);
+                $svgGraph.empty();
+                let $parent = $svgGraph.parent();
+                $parent[0].scrollTo(($parent[0].scrollWidth - $parent[0].clientWidth) / 2, ($parent[0].scrollHeight - $parent[0].clientHeight) / 2);
+            }
         }
 
         function loadUpperApproxModal(results) {
@@ -825,7 +870,7 @@
                 });
             });
         }
-
+        
         function selectionGlobal() {
             setActiveModel("global");
             createTabs(["Model"]);
@@ -872,7 +917,8 @@
                 
                 let mode = $(e.currentTarget).data("mode"); // "global" | "reduced"
                 
-                getModelFilePath().then(filePath => {
+                getModelFilePath(5).then(filePath => {
+                    $param5Input.text(filePath);
                     pyshell.run('../gui.py', {args: ['global', 'run', mode, filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('run_global.py finished.');
@@ -886,7 +932,7 @@
                         createTabs(tabs);
                         onTabActivated = tabId => {
                             currTabId = tabId;
-                            let $graph = $(`svg#graph-${tabId}`);
+                            let $graph = $(`svg#graph-${tabId}-0`);
                             if (!$graph.data("loaded")) {
                                 resetGraph(tabId);
                                 const modelStr = getModel(dumpedModels, tabId, mode);
@@ -913,7 +959,7 @@
                 let voters = $param1Input.val();
                 let candidates = $param2Input.val();
 
-                getModelFilePath().then(filePath => {
+                getModelFilePath(5).then(filePath => {
                     pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
@@ -923,7 +969,7 @@
                         recolorGraph(JSON.parse(modelStr), currTabId);
                         loadLowerApproxModal(results);
                         $("svg").data("colored", false);
-                        $(`svg#graph-${currTabId}`).data("colored", true);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
@@ -933,7 +979,7 @@
                 let voters = $param1Input.val();
                 let candidates = $param2Input.val();
 
-                getModelFilePath().then(filePath => {
+                getModelFilePath(5).then(filePath => {
                     pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
@@ -943,7 +989,7 @@
                         recolorGraph(JSON.parse(modelStr), currTabId);
                         loadUpperApproxModal(results);
                         $("svg").data("colored", false);
-                        $(`svg#graph-${currTabId}`).data("colored", true);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
@@ -952,7 +998,7 @@
             $buttonDominoDFS.on('click', function () {
                 let heuristic = $("#heuristic option:selected").val();
 
-                getModelFilePath().then(filePath => {
+                getModelFilePath(5).then(filePath => {
                     pyshell.run('../gui.py', {args: ['global', 'domino', filePath, heuristic]}, function (err, results) {
                         if (err) throw err;
                         console.log('domino_global.py finished.');
@@ -962,14 +1008,177 @@
                         recolorGraph(JSON.parse(modelStr), currTabId);
                         loadDominoResults(results);
                         $("svg").data("colored", false);
-                        $(`svg#graph-${currTabId}`).data("colored", true);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
         }
 
-        function recolorGraph(graph, graphId) {
-            const $graph = $(`svg#graph-${graphId}`);
+        function selectionBisimulation() {
+            setActiveModel("bisimulation");
+            createTabs(["Bisimulation"], [0, 1]);
+            hideParams();
+            $param5div.css('visibility', 'visible');
+            $param5Input.empty();
+            $param5Label.html("Model 1 file:");
+            $param6div.css('visibility', 'visible');
+            $param6Input.empty();
+            $param6Label.html("Model 2 file:");
+            $param7div.css('visibility', 'visible');
+            $param7Input.empty();
+            $param7Label.html("Relation file:");
+
+            setFormula('');
+
+            $param5Button.off('click');
+            $param5Button.on('click', function () {
+                chooseModelFile("Choose a model 1 file").then(path => {
+                    $param5Input.text(path);
+                })
+                .catch(() => {});
+            });
+            $param6Button.off('click');
+            $param6Button.on('click', function () {
+                chooseModelFile("Choose a model 2 file").then(path => {
+                    $param6Input.text(path);
+                })
+                .catch(() => {});
+            });
+            $param7Button.off('click');
+            $param7Button.on('click', function () {
+                chooseModelFile("Choose a relation file").then(path => {
+                    $param7Input.text(path);
+                })
+                .catch(() => {});
+            });
+            
+            let modelsForRecoloring = null;
+            let currTabId = -1;
+            
+            function getModel(models, panelId) {
+                if (panelId == 0) {
+                    return models.model1;
+                }
+                if (panelId == 1) {
+                    return models.model2;
+                }
+            }
+            
+            $generateButton.off('click');
+            $generateButton.on('click', function (e) {
+                resetGraph(0, [0, 1]);
+                
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    $param5Input.text(filePaths[0]);
+                    $param6Input.text(filePaths[1]);
+                    $param7Input.text(filePaths[2]);
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'run', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('run_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[0]);
+                        modelsForRecoloring = null;
+                        let tabs = ["Bisimulation"];
+                        let fixedTabsCount = tabs.length;
+                        createTabs(tabs, [0, 1]);
+                        onTabActivated = tabId => {
+                            currTabId = tabId;
+                            for (let panelId of [0, 1]) {
+                                let $graph = $(`svg#graph-${tabId}-${panelId}`);
+                                if (!$graph.data("loaded")) {
+                                    resetGraph(tabId, [panelId]);
+                                    const modelStr = getModel(dumpedModels, panelId);
+                                    loadGraph(JSON.parse(modelStr), tabId, panelId);
+                                    $graph.data("loaded", true);
+                                }
+                                if (modelsForRecoloring && !$graph.data("colored")) {
+                                    const modelStr = getModel(modelsForRecoloring, panelId);
+                                    recolorGraph(JSON.parse(modelStr), tabId, panelId);
+                                    $graph.data("colored", true);
+                                }
+                            }
+                        };
+                        onTabActivated(0);
+                    });
+                });
+
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'verify', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        $("svg").data("colored", false);
+                        for (let panelId of [0, 1]) {
+                            const modelStr = getModel(dumpedModels, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
+                        }
+                        loadLowerApproxModal(results);
+                    });
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'verify', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        $("svg").data("colored", false);
+                        for (let panelId of [0, 1]) {
+                            const modelStr = getModel(dumpedModels, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
+                        }
+                        loadUpperApproxModal(results);
+                    });
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let heuristic = $("#heuristic option:selected").val();
+
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'domino', filePaths[0], filePaths[1], filePaths[2], heuristic]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('domino_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        $("svg").data("colored", false);
+                        for (let panelId of [0, 1]) {
+                            const modelStr = getModel(dumpedModels, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
+                        }
+                        loadDominoResults(results);
+                    });
+                });
+            });
+        }
+        
+        function recolorGraphs(graphs, graphId, panels) {
+            let i = 0;
+            for (let panelId of (panels || [0])) {
+                recolorGraph(graphs[i], graphId, panelId);
+                ++i;
+            }
+        }
+        
+        function recolorGraph(graph, graphId, panelId) {
+            const $graph = $(`svg#graph-${graphId}-${panelId}`);
             let nodes = graph.nodes;
             let links = graph.links;
             clearGraphColor($graph);
@@ -1011,9 +1220,10 @@
         function clearLinkColor($graph) {
             $graph.find('.link').attr('stroke', '#CCC');
         }
-
-        function loadGraph(graph, graphId) {
+        
+        function loadGraph(graph, graphId, panelId) {
             let edgepaths, edgelabels, node, link;
+            panelId = panelId || "0";
             
             let tooltip = d3.select("body")
                 .append("div")
@@ -1023,7 +1233,7 @@
             let currNodes = graph.nodes;
             let currLinks = graph.links;
 
-            const svg = d3.select(`svg#graph-${graphId}`);
+            const svg = d3.select(`svg#graph-${graphId}-${panelId}`);
             const width = 10000;
             const height = 10000;
 

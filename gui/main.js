@@ -37,9 +37,10 @@ function createWindow() {
     ipcMain.on("choose-model-file", (event, args) => {
         let msgKey = args[0];
         let lastFilePath = args[1];
+        let title = args[2];
         dialog.showOpenDialog(win, {
             properties: ["openFile"],
-            title: "Choose a model file",
+            title: title,
             defaultPath: lastFilePath || undefined,
         }).then(result => {
             let filePath = result.canceled || !result.filePaths ? null : result.filePaths[0];
