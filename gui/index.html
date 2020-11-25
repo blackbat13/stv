@@ -1181,25 +1181,25 @@
             const $graph = $(`svg#graph-${graphId}-${panelId}`);
             let nodes = graph.nodes;
             let links = graph.links;
-            clearGraphColor($graph);
-            colorLinks(links);
-            colorNodes(nodes);
+            clearGraphColor($graph, graphId);
+            colorLinks(links, graphId);
+            colorNodes(nodes, graphId);
         }
 
-        function colorLinks(links) {
+        function colorLinks(links, graphId) {
             for (let i = 0; i < links.length; i++) {
                 if (links[i]['str'] === 1) {
                     let id = links[i]['id'];
-                    $graph.find('#link_' + id).attr('stroke', '#F00');
+                    $graph.find('#link_' + id + "_" + graphId).attr('stroke', '#F00');
                 }
             }
         }
 
-        function colorNodes(nodes) {
+        function colorNodes(nodes, graphId) {
             for (let i = 0; i < nodes.length; i++) {
                 if (nodes[i]['str'] === 1) {
                     let id = nodes[i]['id'];
-                    $graph.find('#node_' + id).attr('fill', '#0F0');
+                    $graph.find('#node_' + id + "_" + graphId).attr('fill', '#0F0');
                 }
             }
 
@@ -1207,14 +1207,14 @@
             $('.node[winning=true]').attr('fill', '#F0F');
         }
 
-        function clearGraphColor($graph) {
-            clearNodesColor($graph);
+        function clearGraphColor($graph, graphId) {
+            clearNodesColor($graph, graphId);
             clearLinkColor($graph);
         }
 
-        function clearNodesColor($graph) {
+        function clearNodesColor($graph, graphId) {
             $graph.find('g circle').attr('fill', '#CCC');
-            $graph.find('#node_0').attr('fill', '#00F');
+            $graph.find('#node_0' + "_" + graphId).attr('fill', '#00F');
         }
 
         function clearLinkColor($graph) {
@@ -1283,7 +1283,7 @@
                 //Add mouseover events to links
                 link.attr('class', 'link')
                     .attr('id', function (d) {
-                        return 'link_' + d.id;
+                        return 'link_' + d.id + "_" + graphId;
                     })
                     .on('mouseover.fade', linkFade(0.1))
                     .on('mouseover.tooltip', function (event, d) {
@@ -1353,7 +1353,7 @@
 
                 edgelabels.append('textPath')
                     .attr('xlink:href', function (d, i) {
-                        return '#link_' + d.id
+                        return '#link_' + d.id + "_" + graphId
                     })
                     .style("text-anchor", "middle")
                     .style("pointer-events", "none")
@@ -1375,7 +1375,7 @@
                 node.append("circle")
                     .attr('class', 'node')
                     .attr('id', function (d) {
-                        return "node_" + d.id
+                        return "node_" + d.id + "_" + graphId
                     })
                     .attr('initial', function (d) {
                         return d.bgn === 1;
