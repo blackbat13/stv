@@ -420,8 +420,9 @@ class ATLirModel(ATLIrModel):
                     continue
 
                 for action in itertools.product(*actions):
-                    if self.is_reachable_by_agents(agents_ids, pre_state, action, is_winning_state):
-                        epistemic_class = self.epistemic_class_for_state_multiple_agents(pre_state, agents_ids)
+                    res, new_epi = self.is_reachable_by_agents(agents_ids, pre_state, action, is_winning_state)
+                    if res:
+                        epistemic_class = new_epi # self.epistemic_class_for_state_multiple_agents(pre_state, agents_ids)
                         result_states.update(epistemic_class)
                         for epistemic_state_id in epistemic_class:
                             is_winning_state[epistemic_state_id] = True
@@ -434,7 +435,9 @@ class ATLirModel(ATLIrModel):
                                is_winning_state: List[bool]):
         result = False
         epistemic_class = self.epistemic_class_for_state_multiple_agents(state_id, agent_ids)
+        new_epistemic_class = []
         for state_id in epistemic_class:
+            is_ok = False
             for transition in self.transitions[state_id]:
                 is_good_transition = True
                 for agent_id, action in zip(agent_ids, actions):
@@ -443,10 +446,39 @@ class ATLirModel(ATLIrModel):
                         break
                 if is_good_transition:
                     result = True
-                    if not is_winning_state[transition.next_state]:
-                        return False
+                    is_ok = True
+            if is_ok:
+                new_epistemic_class.append(state_id)
 
-        return result
+        is_good = [0 for i in range(len(new_epistemic_class))]
+        old_sum = sum(is_good)
+        while old_sum != len(new_epistemic_class):
+            for i in range(len(new_epistemic_class)):
+                if is_good[i] == 1:
+                    continue
+                state_id = new_epistemic_class[i]
+                for transition in self.transitions[state_id]:
+                    is_good_transition = True
+                    for agent_id, action in zip(agent_ids, actions):
+                        if transition.actions[agent_id] != action:
+                            is_good_transition = False
+                            break
+                    if is_good_transition:
+                        result = True
+                        if is_winning_state[transition.next_state]:
+                            is_good[i] = 1
+                        elif transition.next_state in new_epistemic_class:
+                            next_i = new_epistemic_class.index(transition.next_state)
+                            is_good[i] = is_good[next_i]
+                        else:
+                            return False, []
+            new_sum = sum(is_good)
+            if new_sum == old_sum:
+                return False, []
+
+            old_sum = new_sum
+
+        return result, new_epistemic_class
 
     def epistemic_class_for_state_multiple_agents(self, state_id: int, agents_ids: List[int]) -> Set[int]:
         """Common Knowledge"""
