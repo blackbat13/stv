@@ -924,10 +924,10 @@
                         console.log('run_global.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
-                        let tabs = mode == "global" ? ["Global"] : ["Global", "Reduced"];
+                        let tabs = mode == "global" ? ["Global model"] : ["Global model", "Reduced model"];
                         let fixedTabsCount = tabs.length;
                         for (let i = 1; i <= dumpedModels.localModels.length; ++i) {
-                            tabs.push(`Local ${i}`);
+                            tabs.push(dumpedModels.localModelNames[i - 1]);
                         }
                         createTabs(tabs);
                         onTabActivated = tabId => {
