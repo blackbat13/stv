@@ -479,9 +479,11 @@ class SimpleModel:
         links = []
         for agent_id in range(1):  # range(self.no_agents):
             for state_id_1 in range(self.no_states):
+                if self._epistemic_class_membership[agent_id][state_id_1] == -1:
+                    continue
                 for state_id_2 in range(state_id_1 + 1, self.no_states):
-                    if self.epistemic_class_membership[agent_id][state_id_1] == \
-                            self.epistemic_class_membership[agent_id][state_id_2]:
+                    if self._epistemic_class_membership[agent_id][state_id_1] == \
+                            self._epistemic_class_membership[agent_id][state_id_2]:
                         links.append(
                             {'id': link_id, "source": state_id_1, "target": state_id_2, "T": agent_id, "str": 3})
                         link_id += 1

@@ -4,6 +4,7 @@ from stv.models.asynchronous.global_state import GlobalState
 from stv.models.asynchronous.local_model import LocalModel
 from stv.models.asynchronous.local_transition import LocalTransition, SharedTransition
 from stv.models import SimpleModel
+from stv.comparing_strats import StrategyComparer
 
 
 class GlobalModel:
@@ -31,11 +32,14 @@ class GlobalModel:
     :ivar _transitions_count
     """
 
-    def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str]):
+    def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str],
+                 coalition: List[str], goal: List[str]):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
         self._persistent: List[str] = persistent
+        self._coalition: List[str] = coalition
+        self._goal: List[str] = goal
         self._states: List[GlobalState] = []
         self._transitions: List = []
         self._dependent: List[List[List[int]]] = []
@@ -81,8 +85,12 @@ class GlobalModel:
         else:
             self._compute()
 
-        self._model.states = self._states
+        # self._model.states = self._states
         self._prepare_epistemic_relation()
+
+    def generate_local_models(self):
+        for local_model in self._local_models:
+            local_model.generate()
 
     def _prepare_epistemic_relation(self):
         """
@@ -425,7 +433,10 @@ class GlobalModel:
                             for agent_id, local in enumerate(self._local_models):
                                 if local.has_action(a.action):
                                     agent_list.append(agent_id)
+                        else:
+                            agent_list.append(a.agent_id)
 
+                        # print(a.action, agent_list)
                         self._add_transition(g_state_id, g_p_state_id, a.action, agent_list)
                         if self._add_to_stack(g_p):
                             dfs_stack.append(1)
@@ -455,7 +466,7 @@ class GlobalModel:
                 DIS.update(self._enabled_for_x(X))
                 X = self._dependent_for_x(X, DIS, U)
                 U.update(X)
-            if not X and not self._check_for_cycle(state, U):
+            if not X and not self._check_for_cycle(state, U) and not self._check_for_k(state, U):
                 return U
             V.difference_update(U)
         return {}
@@ -466,6 +477,29 @@ class GlobalModel:
             successor_state = self._successor(state, transition)
             if self._find_state_on_stack1(successor_state) != -1:
                 return True
+        return False
+
+    def _check_for_k(self, state: GlobalState, X: set):
+        for tup in X:
+            transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+            successor_state = self._successor(state, transition)
+            for agent_id in self.agent_name_coalition_to_ids(self._coalition):
+                # print(state.local_states[agent_id], successor_state.local_states[agent_id])
+                if state.local_states[agent_id] != successor_state.local_states[agent_id]:
+                    return True
+
+                for prop in self._local_models[agent_id].props:
+                    if prop in state.props and prop not in successor_state.props:
+                        # print("Hello1")
+                        return True
+                    if prop not in state.props and prop in successor_state.props:
+                        # print("Hello2")
+                        return True
+                    if prop not in state.props:
+                        continue
+                    if state.props[prop] != successor_state.props[prop]:
+                        # print("Hello")
+                        return True
         return False
 
     def _enabled_for_x(self, X):
@@ -514,12 +548,12 @@ class GlobalModel:
             state.id = state_id
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
+            self._model.states.append(state.to_str())
+            for i in range(0, len(self._local_models)):
+                epistemic_state = self._get_epistemic_state(state, i)
+                self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
 
         state.id = state_id
-
-        for i in range(0, len(self._local_models)):
-            epistemic_state = self._get_epistemic_state(state, i)
-            self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
         return state_id
 
     def _get_epistemic_state(self, state: GlobalState, agent_id: int) -> hash:
@@ -530,12 +564,15 @@ class GlobalModel:
         :return: Epistemic representation of the given state.
         """
 
-        epistemic_state = {'id': state.id, 'local_state': state.local_states[agent_id]}
+        epistemic_state = {'local_state': state.local_states[agent_id]}
+        if sum(state.local_states) == 0:
+            return {'local_state': state.local_states[agent_id], "init": True}
         props = {}
         for prop in self._local_models[agent_id].props:
             if prop in state.props:
                 props[prop] = state.props[prop]
         epistemic_state['props'] = props
+        # print(epistemic_state, self._local_models[agent_id].agent_name)
         return epistemic_state
 
     def _add_to_epistemic_dictionary(self, state: hash, new_state_id: int, agent_id: int):
@@ -573,6 +610,7 @@ class GlobalModel:
         """
         state = GlobalState.initial_state(len(self._local_models))
         self._states.append(state)
+        self.model.states.append(state.to_str())
         i = 0
         while i < len(self._states):
             state = self._states[i]
@@ -634,21 +672,51 @@ class GlobalModel:
     def set_coalition(self, coalition: List[str]):
         self.coalition = self.agent_name_coalition_to_ids(coalition)
 
-    def get_winning_states(self, props: hash):
+    def get_winning_states(self, formula_no):
         winning_states = set()
         for state in self._states:
             ok = True
-            for prop in props:
-                if prop not in state.props:
+            if formula_no == 1:
+                for prop in self._goal:
+                    if (prop not in state.props) or (not state.props[prop]):
+                        ok = False
+                        break
+            elif formula_no == 2:
+                if "v_Voter1" not in state.props or state.props["v_Voter1"] == 1:
                     ok = False
-                    break
-                if state.props[prop] != props[prop]:
-                    ok = False
-                    break
+                else:
+                    for state_id in self._model.epistemic_class_for_state(state.id, self.agent_name_to_id(self._coalition[0])):
+                        if "v_Voter1" in self._states[state_id].props and self._states[state_id].props["v_Voter1"] == 1:
+                            ok = False
+                            break
 
             if ok:
                 winning_states.add(state.id)
         return winning_states
+
+    def verify_approximation(self, perfect_inf: bool, formula_no: int):
+        atl_model = None
+        if perfect_inf:
+            atl_model = self._model.to_atl_perfect(self.get_actions())
+        else:
+            atl_model = self._model.to_atl_imperfect(self.get_actions())
+
+        start = time.process_time()
+        result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+                                                       self.get_winning_states(formula_no))
+        end = time.process_time()
+
+        return result, end - start
+
+    def verify_domino(self):
+        agent_id = self.agent_name_to_id(self._coalition[0])
+        strategy_comparer = StrategyComparer(self._model, self.get_actions()[agent_id])
+        start = time.process_time()
+        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(), [agent_id],
+                                                        strategy_comparer.basic_h)
+        end = time.process_time()
+        print(strategy)
+        return result, end - start
 
     def get_actions(self):
         actions = []
@@ -668,6 +736,8 @@ if __name__ == "__main__":
     cand_count = int(input("Candidates Count: "))
     reduction = int(input("Reduction: "))
 
+    formula_no = int(input("Formula (1-pun, 2-K!vVoter1): "))
+
     file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}.txt"
     model = GlobalModelParser().parse(file_name)
     # coalition = ["Coercer1"]
@@ -675,9 +745,9 @@ if __name__ == "__main__":
     start = time.process_time()
     model.generate(reduction=(reduction == 1))
     end = time.process_time()
-    print(f"Model generated in {end - start} seconds.")
-    print(f"Model has {model.states_count} states.")
-    print(f"Model has {model.transitions_count} transitions.")
+    # print(f"Model generated in {end - start} seconds.")
+    # print(f"Model has {model.states_count} states.")
+    # print(f"Model has {model.transitions_count} transitions.")
 
     results_file.write(f"Teller Count: {teller_count}\n")
     results_file.write(f"Voter Count: {voter_count}\n")
@@ -686,19 +756,25 @@ if __name__ == "__main__":
     results_file.write(f"Model generated in {end - start} seconds.\n")
     results_file.write(f"Model has {model.states_count} states.\n")
     results_file.write(f"Model has {model.transitions_count} transitions.\n")
+    results_file.write("\n")
+
+    # model.model.simulate(model.agent_name_to_id("Coercer1"))
+
+    result, comp_time = model.verify_approximation(perfect_inf=True, formula_no=formula_no)
+
+    results_file.write(f"Perfect Information:\ntime: {comp_time} seconds, result: {0 in result}\n")
+
+    result, comp_time = model.verify_approximation(perfect_inf=False, formula_no=formula_no)
+    results_file.write(f"Imperfect Information Approximation:\ntime: {comp_time} seconds, result: {0 in result}\n")
+    # print(result)
+    #
+    # for state_id in result:
+    #     print(model._states[state_id])
+    # result, comp_time = model.verify_domino()
+    # results_file.write(f"Domino DFS:\ntime: {comp_time}, result: {result}\n")
+    results_file.write(f"Formula: {formula_no}\n")
     results_file.write("\n\n")
     results_file.close()
-
-    winning_states = model.get_winning_states({'pun1': True})
-
-    for state in winning_states:
-        model._states[state].print()
-
-
-    atl_model = model.model.to_atl_imperfect(model.get_actions())
-    result = atl_model.minimum_formula_many_agents(model.agent_name_coalition_to_ids(["Coercer1"]), winning_states=winning_states)
-    print(result)
-
     # model.model.simulate(model.agent_name_to_id("Coercer1"))
 
     # model.walk()
@@ -720,4 +796,4 @@ if __name__ == "__main__":
     # print()
     # model.walk()
 
-# Question: does the reduction work for the approximations methods?
+    # Question: does the reduction work for the approximations methods?

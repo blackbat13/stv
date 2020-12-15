@@ -21,6 +21,8 @@ class SeleneModelGenerator:
         model += "\n"
         model += self._generate_reduction()
         model += self._generate_persistent()
+        model += self._generate_coalition()
+        model += self._generate_goal()
         return model
 
     def _generate_teller(self):
@@ -115,17 +117,17 @@ class SeleneModelGenerator:
         voter += "shared allTrackerSend: v_send_tr -> v_wbb\n"
         for cand_id in range(1, self._cand_count + 1):
             for tr_id in range(1, self._voter_count + 1):
-                voter += f"shared aID_WBB{tr_id}{cand_id}true: v_wbb -> v_wbb [t{tr_id}_aID={cand_id}]\n"
-                voter += f"shared aID_WBB{tr_id}{cand_id}false: v_wbb -> v_wbb\n"
-        voter += "verifyVote: v_wbb -> v_wbb\n"
-        voter += "wait: v_wbb -> v_wbb\n"
+                voter += f"shared aID_WBB{tr_id}{cand_id}true: v_wbb -> v_wbb2 [t{tr_id}_aID={cand_id}]\n"
+                voter += f"shared aID_WBB{tr_id}{cand_id}false: v_wbb -> v_wbb2\n"
+        voter += "verifyVote: v_wbb -> v_wbb2\n"
+        voter += "wait: v_wbb -> v_wbb2\n"
         voter += "PROTOCOL v_wbb: [[verifyVote],[wait]"
         for cand_id in range(1, self._cand_count + 1):
             for tr_id in range(1, self._voter_count + 1):
                 voter += f",[aID_WBB{tr_id}{cand_id}true,aID_WBB{tr_id}{cand_id}false]"
         voter += "]\n"
         for cand_id in range(1, self._cand_count + 1):
-            voter += f"shared showTrackerFor{cand_id}_aID: v_wbb -> v_show [v_show_aID={cand_id}]\n"
+            voter += f"shared showTrackerFor{cand_id}_aID: v_wbb2 -> v_show [v_show_aID={cand_id}]\n"
         voter += "shared punish_aID: v_show -> v_show\n"
         voter += "shared no_punish_aID: v_show -> v_show\n"
         return voter
@@ -133,6 +135,10 @@ class SeleneModelGenerator:
     def _generate_coercer(self):
         coercer = "Agent Coercer[1]:\n"
         coercer += "init: c_init\n"
+        coercer += "shared publishTrackers: c_init -> c_init [phase=1]\n"
+        coercer += "shared startVoting: c_init -> c_init [phase=2]\n"
+        coercer += "shared finishVoting: c_init -> c_init [phase=3]\n"
+        coercer += "shared publishVotes: c_init -> c_init [phase=4]]\n"
         for voter_id in range(1, self._voter_count + 1):
             coercer += f"shared leave_Voter{voter_id}: c_init -> c_init [req{voter_id}=0]\n"
             coercer += f"shared punish_Voter{voter_id}: c_init -> c_init [pun{voter_id}=true]\n"
@@ -166,9 +172,18 @@ class SeleneModelGenerator:
         persistent = "PERSISTENT: ["
         for voter_id in range(1, self._voter_count + 1):
             persistent += f"v_Voter{voter_id}, wbb_t{voter_id}, t{voter_id}, "
-        persistent = persistent.rstrip(" ,")
-        persistent += "]\n"
+        persistent += "phase, v1_show, pun1, req1]\n"
+        # persistent = persistent.rstrip(" ,")
+        # persistent += "]\n"
         return persistent
+
+    def _generate_coalition(self):
+        coalition = "COALITION: [Coercer1]\n"
+        return coalition
+
+    def _generate_goal(self):
+        goal = "GOAL: [pun1]\n"
+        return goal
 
 
 if __name__ == "__main__":

@@ -24,6 +24,8 @@ class GlobalModelParser:
         local_models = []
         reduction = []
         persistent = []
+        coalition = []
+        goal = []
         i = 0
         while i < len(lines):
             if StringTools.is_blank_line(lines[i]):
@@ -40,13 +42,19 @@ class GlobalModelParser:
                                                            agent_id)
                     local_models.append(local_model)
             elif self._is_reduction_header(lines[i]):
-                reduction = self._parse_reduction(lines[i])
+                reduction = self._parse_list(lines[i])
                 i += 1
             elif self._is_persistent_header(lines[i]):
-                persistent = self._parse_persistent(lines[i])
+                persistent = self._parse_list(lines[i])
+                i += 1
+            elif self._is_coalition_header(lines[i]):
+                coalition = self._parse_list(lines[i])
+                i += 1
+            elif self._is_goal_header(lines[i]):
+                goal = self._parse_list(lines[i])
                 i += 1
 
-        return GlobalModel(local_models, reduction, persistent)
+        return GlobalModel(local_models, reduction, persistent, coalition, goal)
 
     @staticmethod
     def _is_agent_header(line: str):
@@ -61,22 +69,21 @@ class GlobalModelParser:
         return line[0:10] == "PERSISTENT"
 
     @staticmethod
-    def _parse_reduction(line: str) -> List[str]:
+    def _is_coalition_header(line: str):
+        return line[0:9] == "COALITION"
+
+    @staticmethod
+    def _is_goal_header(line: str):
+        return line[0:4] == "GOAL"
+
+    @staticmethod
+    def _parse_list(line: str) -> List[str]:
         line = line.split(":")[1]
         line = line.strip().strip("[").strip("]")
         red = []
         for element in line.split(","):
             red.append(element.strip())
         return red
-
-    @staticmethod
-    def _parse_persistent(line: str) -> List[str]:
-        line = line.split(":")[1]
-        line = line.strip().strip("[").strip("]")
-        pers = []
-        for element in line.split(","):
-            pers.append(element.strip())
-        return pers
 
     @staticmethod
     def _parse_agent_max(line: str):
