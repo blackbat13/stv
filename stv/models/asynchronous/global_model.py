@@ -227,7 +227,6 @@ class GlobalModel:
         agent_id = transition.agent_id
         new_state = GlobalState.copy_state(state, self._persistent)
         new_state.set_local_state(agent_id, self._local_models[agent_id].get_state_id(transition.state_to))
-        new_state.increment_counter(agent_id)
         new_state = self._copy_props_to_state(new_state, transition)
         return new_state
 
@@ -235,7 +234,6 @@ class GlobalModel:
         new_state = GlobalState.copy_state(state, self._persistent)
         agents = []
         for act_tran in actual_transition:
-            new_state.increment_counter(act_tran[0])
             new_state.set_local_state(act_tran[0], self._local_models[act_tran[0]].get_state_id(
                 act_tran[1].state_to))
             new_state = self._copy_props_to_state(new_state, act_tran[1])
@@ -337,53 +335,6 @@ class GlobalModel:
     def _pop_from_stack(self):
         self._stack1_dict[self._stack1[-1].to_str()] = -1
         self._stack1.pop()
-
-    def _dfs_por(self):
-        """
-        Recursive partial order reductions algorithm.
-        :return: None.
-        """
-        g = self._stack1[-1]
-        reexplore = False
-
-        i = self._find_state_on_stack1(g)
-
-        if i != -1 and i != len(self._stack1) - 1:
-            if not self._stack2:
-                depth = 0
-            else:
-                depth = self._stack2[-1]
-            if i > depth:
-                reexplore = True
-            else:
-                self._pop_from_stack()
-                return
-
-        if not reexplore and self._is_in_G(g):
-            self._pop_from_stack()
-        g_state_id = self._add_state(g)
-        en_g = self._enabled_transitions_in_state_single_item_set(g)
-        if len(en_g) > 0:
-            if not reexplore:
-                E_g = self._ample(g)
-            if len(E_g) == 0:
-                E_g = en_g
-            if E_g == en_g:
-                self._stack2.append(len(self._stack1))
-            for tup in E_g:
-                a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
-                g_p = self._successor(g, a)
-                g_p_state_id = self._add_state(g_p)
-                self._add_transition(g_state_id, g_p_state_id, a.action, [a.agent_id])  # TODO agents ids
-                if self._add_to_stack(g_p):
-                    self._dfs_por()
-        if len(self._stack2) == 0:
-            depth = 0
-        else:
-            depth = self._stack2[-1]
-        if depth == len(self._stack1):
-            self._stack2.pop()
-        self._pop_from_stack()
 
     def _iter_por(self):
         """
@@ -630,40 +581,6 @@ class GlobalModel:
         for agent_name in agent_names:
             agent_ids.append(self.agent_name_to_id(agent_name))
         return agent_ids
-
-    def walk(self):
-        print("Simulation start")
-        current_state_id = 0
-        while True:
-            print("Current state:")
-            self._states[current_state_id].print()
-            print("Transitions:")
-            for i in range(0, len(self._transitions[current_state_id])):
-                print(f"{i}: ", end="")
-                self._pretty_print_transition(self._transitions[current_state_id][i])
-                # print(f"{i}: {self._transitions[current_state_id][i]}")
-
-            id = int(input("Select transition: "))
-            current_state_id = self._transitions[current_state_id][id]['to']
-
-    def _pretty_print_transition(self, t):
-        print(f"{t['from']} -({t['action']})-> {t['to']}, agents: ", end="")
-        for ag in t['agents']:
-            print(f"{self._local_models[ag].agent_name}, ", end="")
-        print()
-
-    def print_dependent_transitions(self):
-        for agent_id in range(self._agents_count):
-            print(f"Agent {self._local_models[agent_id].agent_name}")
-            agent_transitions = self._local_models[agent_id].get_transitions()
-            for i in range(0, len(agent_transitions)):
-                print("Transition:")
-                agent_transitions[i].print()
-                print("Dependent:")
-                for agent2_id in self._dependent[agent_id][i]:
-                    print(f"{self._local_models[agent2_id].agent_name}")
-                print()
-            print()
 
     def print(self):
         for model in self._local_models:
