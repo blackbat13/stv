@@ -433,7 +433,10 @@ class GlobalModel:
                             for agent_id, local in enumerate(self._local_models):
                                 if local.has_action(a.action):
                                     agent_list.append(agent_id)
+                        else:
+                            agent_list.append(a.agent_id)
 
+                        # print(a.action, agent_list)
                         self._add_transition(g_state_id, g_p_state_id, a.action, agent_list)
                         if self._add_to_stack(g_p):
                             dfs_stack.append(1)
@@ -463,7 +466,7 @@ class GlobalModel:
                 DIS.update(self._enabled_for_x(X))
                 X = self._dependent_for_x(X, DIS, U)
                 U.update(X)
-            if not X and not self._check_for_cycle(state, U):
+            if not X and not self._check_for_cycle(state, U) and not self._check_for_k(state, U):
                 return U
             V.difference_update(U)
         return {}
@@ -474,6 +477,29 @@ class GlobalModel:
             successor_state = self._successor(state, transition)
             if self._find_state_on_stack1(successor_state) != -1:
                 return True
+        return False
+
+    def _check_for_k(self, state: GlobalState, X: set):
+        for tup in X:
+            transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+            successor_state = self._successor(state, transition)
+            for agent_id in self.agent_name_coalition_to_ids(self._coalition):
+                # print(state.local_states[agent_id], successor_state.local_states[agent_id])
+                if state.local_states[agent_id] != successor_state.local_states[agent_id]:
+                    return True
+
+                for prop in self._local_models[agent_id].props:
+                    if prop in state.props and prop not in successor_state.props:
+                        # print("Hello1")
+                        return True
+                    if prop not in state.props and prop in successor_state.props:
+                        # print("Hello2")
+                        return True
+                    if prop not in state.props:
+                        continue
+                    if state.props[prop] != successor_state.props[prop]:
+                        # print("Hello")
+                        return True
         return False
 
     def _enabled_for_x(self, X):
@@ -539,6 +565,8 @@ class GlobalModel:
         """
 
         epistemic_state = {'local_state': state.local_states[agent_id]}
+        if sum(state.local_states) == 0:
+            return {'local_state': state.local_states[agent_id], "init": True}
         props = {}
         for prop in self._local_models[agent_id].props:
             if prop in state.props:
@@ -644,20 +672,29 @@ class GlobalModel:
     def set_coalition(self, coalition: List[str]):
         self.coalition = self.agent_name_coalition_to_ids(coalition)
 
-    def get_winning_states(self):
+    def get_winning_states(self, formula_no):
         winning_states = set()
         for state in self._states:
             ok = True
-            for prop in self._goal:
-                if (prop not in state.props) or (not state.props[prop]):
+            if formula_no == 1:
+                for prop in self._goal:
+                    if (prop not in state.props) or (not state.props[prop]):
+                        ok = False
+                        break
+            elif formula_no == 2:
+                if "v_Voter1" not in state.props or state.props["v_Voter1"] == 1:
                     ok = False
-                    break
+                else:
+                    for state_id in self._model.epistemic_class_for_state(state.id, self.agent_name_to_id(self._coalition[0])):
+                        if "v_Voter1" in self._states[state_id].props and self._states[state_id].props["v_Voter1"] == 1:
+                            ok = False
+                            break
 
             if ok:
                 winning_states.add(state.id)
         return winning_states
 
-    def verify_approximation(self, perfect_inf: bool):
+    def verify_approximation(self, perfect_inf: bool, formula_no: int):
         atl_model = None
         if perfect_inf:
             atl_model = self._model.to_atl_perfect(self.get_actions())
@@ -666,7 +703,7 @@ class GlobalModel:
 
         start = time.process_time()
         result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       self.get_winning_states())
+                                                       self.get_winning_states(formula_no))
         end = time.process_time()
 
         return result, end - start
@@ -699,6 +736,8 @@ if __name__ == "__main__":
     cand_count = int(input("Candidates Count: "))
     reduction = int(input("Reduction: "))
 
+    formula_no = int(input("Formula (1-pun, 2-K!vVoter1): "))
+
     file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}.txt"
     model = GlobalModelParser().parse(file_name)
     # coalition = ["Coercer1"]
@@ -721,16 +760,19 @@ if __name__ == "__main__":
 
     # model.model.simulate(model.agent_name_to_id("Coercer1"))
 
-    result, comp_time = model.verify_approximation(perfect_inf=True)
+    result, comp_time = model.verify_approximation(perfect_inf=True, formula_no=formula_no)
 
     results_file.write(f"Perfect Information:\ntime: {comp_time} seconds, result: {0 in result}\n")
 
-    result, comp_time = model.verify_approximation(perfect_inf=False)
+    result, comp_time = model.verify_approximation(perfect_inf=False, formula_no=formula_no)
     results_file.write(f"Imperfect Information Approximation:\ntime: {comp_time} seconds, result: {0 in result}\n")
-
+    # print(result)
+    #
+    # for state_id in result:
+    #     print(model._states[state_id])
     # result, comp_time = model.verify_domino()
     # results_file.write(f"Domino DFS:\ntime: {comp_time}, result: {result}\n")
-
+    results_file.write(f"Formula: {formula_no}\n")
     results_file.write("\n\n")
     results_file.close()
     # model.model.simulate(model.agent_name_to_id("Coercer1"))
