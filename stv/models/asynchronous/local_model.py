@@ -88,45 +88,6 @@ class LocalModel:
         result.sort(key=lambda x: x.id)
         return result
 
-    def pre_transitions(self, transition: LocalTransition) -> List[LocalTransition]:
-        result = []
-        state_from = transition.state_from
-        transitions_all = self.get_transitions()
-        for tr in transitions_all:
-            if tr == transition:
-                continue
-            if tr.state_to == state_from and tr.state_to != tr.state_from:
-                result.append(tr)
-        return result
-
-    def find_transition(self, action: str) -> LocalTransition:
-        transitions_all = self.get_transitions()
-        for tr in transitions_all:
-            if tr.action == action:
-                return tr
-
-        return None
-
-    def current_transitions(self, current_state_id: int, counter: int) -> List[LocalTransition]:
-        self._reachable_states = set()
-        self.dfs(0, counter)
-        result = set()
-        for state_id in self._reachable_states:
-            if state_id == current_state_id:
-                continue
-            for tr in self._transitions[state_id]:
-                result.add(tr)
-
-        return list(result)
-
-    def dfs(self, state_id: int, counter: int):
-        if counter == 0:
-            self._reachable_states.add(state_id)
-            return
-
-        for tr in self._transitions[state_id]:
-            self.dfs(self._states[tr.state_to], counter - 1)
-
     def print(self):
         print(self._agent_name)
         for transition_list in self._transitions:

@@ -1,5 +1,5 @@
 from stv.tools import StringTools
-from stv.models.asynchronous import LocalModel, GlobalModel
+from stv.models.asynchronous import GlobalModel
 from stv.models.asynchronous.parser.local_model_parser import LocalModelParser
 from typing import List
 
@@ -86,12 +86,12 @@ class GlobalModelParser:
         return red
 
     @staticmethod
-    def _parse_agent_max(line: str):
+    def _parse_agent_max(line: str) -> int:
         if len(line.split("[")) > 1:
             return int(line.split("[")[1].split("]")[0])
         return 1
 
-    def _find_agent_end(self, lines: List[str], line_index: int):
+    def _find_agent_end(self, lines: List[str], line_index: int) -> int:
         while line_index < len(lines) and not StringTools.is_blank_line(
                 lines[line_index]) and not self._is_agent_header(lines[line_index]):
             line_index += 1

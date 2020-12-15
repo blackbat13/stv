@@ -54,14 +54,6 @@ class GlobalState:
         if key in self._props:
             self._props.pop(key)
 
-    def set_counter(self, index: int, value: int):
-        return
-        self._counters[index] = value
-
-    def increment_counter(self, index: int):
-        return
-        self._counters[index] += 1
-
     def equal(self, state):
         return self._local_states == state.local_states and self._props == state.props
 
