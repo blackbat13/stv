@@ -84,6 +84,40 @@
             return paths;
         }
         $(window).on("keydown", e => toggleDevTools(e));
+        
+        // data: { global: { states: number, transitions: number }, reduced?: { states: number, transitions: number } }
+        let modelStatsModalData = null;
+        function showModelStatsModal(data) {
+            if (data.global) {
+                $("#modelStatsModal--globalInfo").css("display", "block");
+                $("#modelStatsModal--globalInfo--states").text(data.global.states);
+                $("#modelStatsModal--globalInfo--transitions").text(data.global.transitions);
+            }
+            else {
+                $("#modelStatsModal--globalInfo").css("display", "none");
+            }
+            if (data.reduced) {
+                $("#modelStatsModal--reducedInfo").css("display", "block");
+                $("#modelStatsModal--reducedInfo--states").text(data.reduced.states);
+                $("#modelStatsModal--reducedInfo--transitions").text(data.reduced.transitions);
+            }
+            else {
+                $("#modelStatsModal--reducedInfo").css("display", "none");
+            }
+            if (data.global && data.reduced) {
+                $("#modelStatsModal--reductionInfo").css("display", "block");
+                $("#modelStatsModal--reductionInfo--states").text(((data.global.states - data.reduced.states) / data.global.states * 100).toFixed(2) + "%");
+                $("#modelStatsModal--reductionInfo--transitions").text(((data.global.transitions - data.reduced.transitions) / data.global.transitions * 100).toFixed(2) + "%");
+            }
+            else {
+                $("#modelStatsModal--reductionInfo").css("display", "none");
+            }
+            $("#modelStatsModal").modal("show");
+        }
+        
+        function toggleStatsModalButton(visible) {
+            $("#openStatsModal").css("display", !visible ? "none" : "inline-block");
+        }
     </script>
 </head>
 <body>
@@ -153,6 +187,26 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modelStatsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Model information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modelStatsModal--globalInfo">Global model states: <span id="modelStatsModal--globalInfo--states"></span>, transitions: <span id="modelStatsModal--globalInfo--transitions"></span></p>
+                    <p id="modelStatsModal--reducedInfo">Reduced model states: <span id="modelStatsModal--reducedInfo--states"></span>, transitions: <span id="modelStatsModal--reducedInfo--transitions"></span></p>
+                    <p id="modelStatsModal--reductionInfo">Reduction: <span id="modelStatsModal--reductionInfo--states"></span> less states, <span id="modelStatsModal--reductionInfo--transitions"></span> less transitions</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="main">
         <div id="div_graph" class="col-left">
             <div id="tabs">
@@ -175,51 +229,51 @@
                     </select>
                 </div>
                 <div id="model_options">
-                    <div id="param1div" class="form-group" style="visibility: hidden;">
+                    <div id="param1div" class="form-group" style="display: none;">
                         <label id="param1Label" class="form-label" for="param1Input"></label>
                         <input class="form-control" type="number" min="1" max="5" id="param1Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param2div" class="form-group" style="visibility: hidden;">
+                    <div id="param2div" class="form-group" style="display: none;">
                         <label id="param2Label" class="form-label" for="param2Input"></label>
 
                         <input class="form-control" type="number" min="1" max="5" id="param2Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param3div" class="form-group" style="visibility: hidden;">
+                    <div id="param3div" class="form-group" style="display: none;">
                         <label id="param3Label" class="form-label" for="param3Input"></label>
 
                         <input class="form-control" type="number" min="1" max="5" id="param3Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param4div" class="form-group" style="visibility: hidden;">
+                    <div id="param4div" class="form-group" style="display: none;">
                         <label id="param4Label" class="form-label" for="param4Input"></label>
 
                         <input class="form-control" type="number" min="1" max="5" id="param4Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param5div" class="form-group" style="visibility: hidden;">
+                    <div id="param5div" class="form-group" style="display: none;">
                         <label id="param5Label" class="form-label" for="param5Button"></label>
                         <span id="param5Value"></span>
                         <button type="button" class="btn btn-sm btn-primary" id="param5Button">Choose a file...</button>
                     </div>
-                    <div id="param6div" class="form-group" style="visibility: hidden;">
+                    <div id="param6div" class="form-group" style="display: none;">
                         <label id="param6Label" class="form-label" for="param6Button"></label>
                         <span id="param6Value"></span>
                         <button type="button" class="btn btn-sm btn-primary" id="param6Button">Choose a file...</button>
                     </div>
-                    <div id="param7div" class="form-group" style="visibility: hidden;">
+                    <div id="param7div" class="form-group" style="display: none;">
                         <label id="param7Label" class="form-label" for="param7Button"></label>
                         <span id="param7Value"></span>
                         <button type="button" class="btn btn-sm btn-primary" id="param7Button">Choose a file...</button>
                     </div>
                 </div>
                 <div>
-                    <p id="pFormula" style="visibility: hidden">Formula to be verified:</p>
+                    <p id="pFormula" style="display: none">Formula to be verified:</p>
                     <pre id="formula"></pre>
                 </div>
                 <div>
@@ -265,6 +319,9 @@
                 <div class="custom-control custom-checkbox">
                     <input id="showLabels" type="checkbox" class="custom-control-input"/>
                     <label id="showLabelsLabel" class="custom-control-label" for="showLabels">Show Actions</label>
+                </div>
+                <div class="row">
+                    <button type="button" class="btn btn-sm btn-primary" id="openStatsModal" style="display: none">Show model information</button>
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -346,17 +403,36 @@
         let $lowerApproxFalse = $('#lowerApproxFalse');
         let $upperApproxNoStates = $('#upperApproxNoStates');
         let $lowerApproxNoStates = $('#lowerApproxNoStates');
+        let $modelStatsModal = $("#modelStatsModal");
+        
+        $("#openStatsModal").on("click", () => { showModelStatsModal(modelStatsModalData); });
+        function updateModelStatsModalData(globalModel, reducedModel) {
+            console.log(globalModel,reducedModel)
+            modelStatsModalData = {};
+            if (globalModel) {
+                modelStatsModalData.global = {
+                    states: globalModel.nodes.length,
+                    transitions: globalModel.links.length,
+                };
+            }
+            if (reducedModel) {
+                modelStatsModalData.reduced = {
+                    states: reducedModel.nodes.length,
+                    transitions: reducedModel.links.length,
+                };
+            }
+        }
 
         // window.scrollTo(3800, 3800);
 
         function hideParams() {
-            $param1div.css('visibility', 'hidden');
-            $param2div.css('visibility', 'hidden');
-            $param3div.css('visibility', 'hidden');
-            $param4div.css('visibility', 'hidden');
-            $param5div.css('visibility', 'hidden');
-            $param6div.css('visibility', 'hidden');
-            $param7div.css('visibility', 'hidden');
+            $param1div.css('display', 'none');
+            $param2div.css('display', 'none');
+            $param3div.css('display', 'none');
+            $param4div.css('display', 'none');
+            $param5div.css('display', 'none');
+            $param6div.css('display', 'none');
+            $param7div.css('display', 'none');
         }
         
         let onTabActivated = tabId => {};
@@ -426,8 +502,9 @@
         });
 
         $modelList.on('change', function () {
-            $("#pFormula").css("visibility", "visible");
+            $("#pFormula").css("display", "block");
             let selection = $("#models option:selected").val();
+            toggleStatsModalButton(false);
             if (selection === "tianji") {
                 selectionTianJi();
             } else if (selection === "castles") {
@@ -517,7 +594,7 @@
             setActiveModel("tianji");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Horses:");
 
@@ -579,10 +656,10 @@
             setActiveModel("castles");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
-            $param2div.css('visibility', 'visible');
-            $param3div.css('visibility', 'visible');
-            $param4div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
+            $param2div.css('display', 'block');
+            $param3div.css('display', 'block');
+            $param4div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Castle 1 size:");
             $param2Label.empty();
@@ -663,8 +740,8 @@
             setActiveModel("bridge");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
-            $param2div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
+            $param2div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Deck size (cards per player):");
             $param2Label.empty();
@@ -734,8 +811,8 @@
             setActiveModel("drone");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
-            $param2div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
+            $param2div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Number of drones:");
             $param2Label.empty();
@@ -805,10 +882,10 @@
             setActiveModel("voting");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Voters:");
-            $param2div.css('visibility', 'visible');
+            $param2div.css('display', 'block');
             $param2Label.empty();
             $param2Label.html("Candidates:");
 
@@ -875,7 +952,7 @@
             setActiveModel("global");
             createTabs(["Model"]);
             hideParams();
-            $param5div.css('visibility', 'visible');
+            $param5div.css('display', 'block');
             $param5Input.empty();
             $param5Label.html("Model file:");
 
@@ -925,6 +1002,11 @@
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
                         let tabs = mode == "global" ? ["Global model"] : ["Global model", "Reduced model"];
+                        updateModelStatsModalData(
+                            dumpedModels.globalModel ? JSON.parse(dumpedModels.globalModel) : null,
+                            dumpedModels.reducedModel ? JSON.parse(dumpedModels.reducedModel) : null
+                        );
+                        toggleStatsModalButton(true);
                         let fixedTabsCount = tabs.length;
                         for (let i = 1; i <= dumpedModels.localModels.length; ++i) {
                             tabs.push(dumpedModels.localModelNames[i - 1]);
@@ -1018,13 +1100,13 @@
             setActiveModel("bisimulation");
             createTabs(["Bisimulation"], [0, 1]);
             hideParams();
-            $param5div.css('visibility', 'visible');
+            $param5div.css('display', 'block');
             $param5Input.empty();
             $param5Label.html("Model 1 file:");
-            $param6div.css('visibility', 'visible');
+            $param6div.css('display', 'block');
             $param6Input.empty();
             $param6Label.html("Model 2 file:");
-            $param7div.css('visibility', 'visible');
+            $param7div.css('display', 'block');
             $param7Input.empty();
             $param7Label.html("Relation file:");
 
