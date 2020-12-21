@@ -6,15 +6,14 @@ class GlobalState:
     Represents global state of the model.
     """
 
-    def __init__(self, local_states: List[int], props: Dict, counters: List[int], id: int = -1):
+    def __init__(self, local_states: List[int], props: Dict, id: int = -1):
         self._id = id
         self._local_states: List[int] = local_states[:]
         self._props: Dict = props.copy()
-        self._counters: List[int] = counters[:]
 
     @classmethod
     def initial_state(cls, agent_count: int):
-        return cls([0 for _ in range(agent_count)], {}, [0 for _ in range(agent_count)], 0)
+        return cls([0 for _ in range(agent_count)], {}, 0)
 
     @classmethod
     def copy_state(cls, state, persistent: List[str]):
@@ -22,7 +21,7 @@ class GlobalState:
         for prop in state.props:
             if prop in persistent:
                 new_props[prop] = state.props[prop]
-        return cls(state.local_states, new_props, state.counters)
+        return cls(state.local_states, new_props)
 
     @property
     def local_states(self):
@@ -31,10 +30,6 @@ class GlobalState:
     @property
     def props(self):
         return self._props
-
-    @property
-    def counters(self):
-        return self._counters
 
     @property
     def id(self):
@@ -61,7 +56,7 @@ class GlobalState:
         return str(self._local_states) + " " + str(sorted(self._props.items()))
 
     def print(self):
-        print(f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}, Counters: {self._counters}")
+        print(f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}")
 
     def __str__(self):
-        return f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}, Counters: {self._counters}"
+        return f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}"

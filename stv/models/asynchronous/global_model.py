@@ -19,9 +19,6 @@ class GlobalModel:
     :ivar _reduction:
     :ivar _persistent:
     :ivar _states:
-    :ivar _transitions:
-    :ivar _dependent:
-    :ivar _pre:
     :ivar _agents_count:
     :ivar _states_dict:
     :ivar _stack1:
@@ -41,9 +38,6 @@ class GlobalModel:
         self._coalition: List[str] = coalition
         self._goal: List[str] = goal
         self._states: List[GlobalState] = []
-        self._transitions: List = []
-        self._dependent: List[List[List[int]]] = []
-        self._pre: List[List[List[LocalTransition]]] = []
         self._agents_count: int = 0
         self._states_dict: Dict[str, int] = dict()
         self._stack1: List[Any] = []
@@ -78,7 +72,7 @@ class GlobalModel:
         self._model = SimpleModel(self._agents_count)
         self._add_to_stack(GlobalState.initial_state(self._agents_count))
         self._add_index_to_transitions()
-        self._compute_dependent_transitions()
+        # self._compute_dependent_transitions()
         self._compute_shared_transitions()
         if reduction:
             self._iter_por()
@@ -98,7 +92,7 @@ class GlobalModel:
         Should be called after creating the model.
         :return: None
         """
-        for i in range(0, self._agents_count):
+        for i in range(self._agents_count):
             for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
                 self.model.add_epistemic_class(i, epistemic_class)
 
@@ -223,14 +217,14 @@ class GlobalModel:
                         i += 1
         return result
 
-    def _new_state_after_private_transition(self, state: GlobalState, transition: LocalTransition):
+    def _new_state_after_private_transition(self, state: GlobalState, transition: LocalTransition) -> GlobalState:
         agent_id = transition.agent_id
         new_state = GlobalState.copy_state(state, self._persistent)
         new_state.set_local_state(agent_id, self._local_models[agent_id].get_state_id(transition.state_to))
         new_state = self._copy_props_to_state(new_state, transition)
         return new_state
 
-    def _new_state_after_shared_transition(self, state: GlobalState, actual_transition):
+    def _new_state_after_shared_transition(self, state: GlobalState, actual_transition) -> (GlobalState, list):
         new_state = GlobalState.copy_state(state, self._persistent)
         agents = []
         for act_tran in actual_transition:
@@ -255,7 +249,7 @@ class GlobalModel:
             self._compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions)
 
     def _compute_next_for_state_for_agent(self, state: GlobalState, current_state_id: int, agent_id: int, visited: [],
-                                          all_transitions: []):
+                                          all_transitions: List[List[LocalTransition]]):
         for transition in all_transitions[agent_id]:
             if transition.shared and transition.action not in visited:
                 visited.append(transition.action)
@@ -294,19 +288,6 @@ class GlobalModel:
             return self._states_dict[state.to_str()]
 
         return -1
-
-    def _compute_dependent_transitions(self):
-        for agent_id in range(self._agents_count):
-            self._dependent.append([])
-            agent_transitions = self._local_models[agent_id].get_transitions()
-            for i in range(0, len(agent_transitions)):
-                self._dependent[agent_id].append([agent_id])
-                for agent2_id in range(self._agents_count):
-                    if agent_id == agent2_id:
-                        continue
-
-                    if self._local_models[agent2_id].has_action(agent_transitions[i].action):
-                        self._dependent[agent_id][i].append(agent2_id)
 
     def _is_in_G(self, state: GlobalState):
         for st in self._G:
@@ -357,11 +338,11 @@ class GlobalModel:
                         reexplore = True
                     else:
                         self._pop_from_stack()
-                        return
+                        continue
 
                 if not reexplore and self._is_in_G(g):
                     self._pop_from_stack()
-                    return
+                    continue
                 self._G.append(g)
                 g_state_id = self._add_state(g)
                 E_g = []
@@ -369,10 +350,20 @@ class GlobalModel:
                 if len(en_g) > 0:
                     if not reexplore:
                         E_g = self._ample(g)
+                        print("Ample")
+
+
                     if len(E_g) == 0:
                         E_g = en_g
                     if E_g == en_g:
                         self._stack2.append(len(self._stack1))
+
+                    print(g)
+                    for ap in E_g:
+                        tmptr = self._local_models[ap[0]].transitions[ap[1]][ap[2]]
+                        tmptr.print()
+                    print()
+
                     dfs_stack.append(-1)
                     for tup in E_g:
                         a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
@@ -407,17 +398,17 @@ class GlobalModel:
         :return: Ample set.
         """
         V = self._enabled_transitions_in_state_single_item_set(state)
-        while V:
+        while len(V) > 0:
             alpha = V.pop()
             V.add(alpha)
             X = {alpha}
             U = {alpha}
             DIS = set()
-            while X and not X.difference(V):
+            while len(X) > 0 and len(X.difference(V)) == 0:
                 DIS.update(self._enabled_for_x(X))
                 X = self._dependent_for_x(X, DIS, U)
                 U.update(X)
-            if not X and not self._check_for_cycle(state, U) and not self._check_for_k(state, U):
+            if len(X) == 0 and not self._check_for_cycle(state, U):# and not self._check_for_k(state, U):
                 return U
             V.difference_update(U)
         return {}
@@ -435,21 +426,17 @@ class GlobalModel:
             transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
             successor_state = self._successor(state, transition)
             for agent_id in self.agent_name_coalition_to_ids(self._coalition):
-                # print(state.local_states[agent_id], successor_state.local_states[agent_id])
                 if state.local_states[agent_id] != successor_state.local_states[agent_id]:
                     return True
 
                 for prop in self._local_models[agent_id].props:
                     if prop in state.props and prop not in successor_state.props:
-                        # print("Hello1")
                         return True
                     if prop not in state.props and prop in successor_state.props:
-                        # print("Hello2")
                         return True
                     if prop not in state.props:
                         continue
                     if state.props[prop] != successor_state.props[prop]:
-                        # print("Hello")
                         return True
         return False
 
@@ -500,7 +487,7 @@ class GlobalModel:
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
             self._model.states.append(state.to_str())
-            for i in range(0, len(self._local_models)):
+            for i in range(len(self._local_models)):
                 epistemic_state = self._get_epistemic_state(state, i)
                 self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
 
@@ -515,15 +502,14 @@ class GlobalModel:
         :return: Epistemic representation of the given state.
         """
 
-        epistemic_state = {'local_state': state.local_states[agent_id]}
         if sum(state.local_states) == 0:
             return {'local_state': state.local_states[agent_id], "init": True}
+        epistemic_state = {'local_state': state.local_states[agent_id]}
         props = {}
         for prop in self._local_models[agent_id].props:
             if prop in state.props:
                 props[prop] = state.props[prop]
         epistemic_state['props'] = props
-        # print(epistemic_state, self._local_models[agent_id].agent_name)
         return epistemic_state
 
     def _add_to_epistemic_dictionary(self, state: hash, new_state_id: int, agent_id: int):
@@ -541,10 +527,6 @@ class GlobalModel:
             self._epistemic_states_dictionaries[agent_id][state_str].add(new_state_id)
 
     def _add_transition(self, state_from: int, state_to: int, action: str, agents: List[int]):
-        while len(self._transitions) <= state_from:
-            self._transitions.append([])
-
-        self._transitions[state_from].append({'from': state_from, 'to': state_to, 'action': action, 'agents': agents})
         self._transitions_count += 1
         self._model.add_transition(state_from, state_to, self._create_list_of_actions(action, agents))
 
@@ -589,20 +571,19 @@ class GlobalModel:
     def set_coalition(self, coalition: List[str]):
         self.coalition = self.agent_name_coalition_to_ids(coalition)
 
-    def get_winning_states(self, formula_no):
+    def get_winning_states(self, formula_no: int) -> Set[int]:
         winning_states = set()
         for state in self._states:
             ok = True
             if formula_no == 1:
-                for prop in self._goal:
-                    if (prop not in state.props) or (not state.props[prop]):
-                        ok = False
-                        break
+                if ("pun1" not in state.props) or (not state.props["pun1"]):
+                    ok = False
             elif formula_no == 2:
                 if "v_Voter1" not in state.props or state.props["v_Voter1"] == 1:
                     ok = False
                 else:
-                    for state_id in self._model.epistemic_class_for_state(state.id, self.agent_name_to_id(self._coalition[0])):
+                    for state_id in self._model.epistemic_class_for_state(state.id,
+                                                                          self.agent_name_to_id(self._coalition[0])):
                         if "v_Voter1" in self._states[state_id].props and self._states[state_id].props["v_Voter1"] == 1:
                             ok = False
                             break
@@ -655,13 +636,21 @@ if __name__ == "__main__":
 
     formula_no = int(input("Formula (1-pun, 2-K!vVoter1): "))
 
-    file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}.txt"
-    model = GlobalModelParser().parse(file_name)
+    file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}_0.txt"
+    # model = GlobalModelParser().parse(file_name)
+    model = GlobalModelParser().parse("train_controller.txt")
     # coalition = ["Coercer1"]
     # model.set_coalition(coalition)
     start = time.process_time()
     model.generate(reduction=(reduction == 1))
     end = time.process_time()
+
+    for state in model._states:
+        state.print()
+
+    model.model.simulate(2)
+
+    # model.model.simulate(0)
     # print(f"Model generated in {end - start} seconds.")
     # print(f"Model has {model.states_count} states.")
     # print(f"Model has {model.transitions_count} transitions.")
