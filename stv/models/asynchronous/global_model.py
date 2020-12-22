@@ -623,6 +623,53 @@ class GlobalModel:
             actions[-1].add("")
         return actions
 
+    def _dfs_por(self):
+        """
+        Recursive partial order reductions algorithm.
+        :return: None.
+        """
+        g = self._stack1[-1]
+        reexplore = False
+
+        i = self._find_state_on_stack1(g)
+
+        if i != -1 and i != len(self._stack1) - 1:
+            if not self._stack2:
+                depth = 0
+            else:
+                depth = self._stack2[-1]
+            if i > depth:
+                reexplore = True
+            else:
+                self._pop_from_stack()
+                return
+
+        if not reexplore and self._is_in_G(g):
+            self._pop_from_stack()
+        g_state_id = self._add_state(g)
+        en_g = self._enabled_transitions_in_state_single_item_set(g)
+        if len(en_g) > 0:
+            if not reexplore:
+                E_g = self._ample(g)
+            if len(E_g) == 0:
+                E_g = en_g
+            if E_g == en_g:
+                self._stack2.append(len(self._stack1))
+            for tup in E_g:
+                a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+                g_p = self._successor(g, a)
+                g_p_state_id = self._add_state(g_p)
+                self._add_transition(g_state_id, g_p_state_id, a.action, [a.agent_id])  # TODO agents ids
+                if self._add_to_stack(g_p):
+                    self._dfs_por()
+        if len(self._stack2) == 0:
+            depth = 0
+        else:
+            depth = self._stack2[-1]
+        if depth == len(self._stack1):
+            self._stack2.pop()
+        self._pop_from_stack()
+
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
