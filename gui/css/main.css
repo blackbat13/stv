@@ -121,7 +121,9 @@ div.tooltip {
     font-weight: bold;
 }
 
-#param5Value {
+#param5Value,
+#param6Value,
+#param7Value {
     display: block;
     font-size: 14px;
     line-height: 1.2em;
@@ -132,7 +134,18 @@ div.tooltip {
 body[data-model="global"] #param1div,
 body[data-model="global"] #param2div,
 body[data-model="global"] #param3div,
-body[data-model="global"] #param4div {
+body[data-model="global"] #param4div,
+body[data-model="bisimulation"] #param1div,
+body[data-model="bisimulation"] #param2div,
+body[data-model="bisimulation"] #param3div,
+body[data-model="bisimulation"] #param4div {
+    display: none;
+}
+body[data-model="global"] #btn_generate {
+    display: none;
+}
+body:not([data-model="global"]) #btn_generate_global,
+body:not([data-model="global"]) #btn_generate_reduced {
     display: none;
 }
 
@@ -145,8 +158,7 @@ body[data-model="global"] #param4div {
 
 .tab-div {
     width: 100%;
-    height: 100%;
-    overflow: scroll;
+    height: calc(100% - 40px);
     flex: 1 1 auto;
 }
 
@@ -181,4 +193,26 @@ body[data-model="global"] #param4div {
 html, body, .container-fluid, #div_graph {
     width: 100%;
     height: 100%;
+}
+
+.ui-tabs .ui-tabs-panel.panels {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+.ui-tabs .ui-tabs-panel.panels .panel {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.ui-tabs .ui-tabs-panel.panels.panels-single .panel {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+.svg-container {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
 }

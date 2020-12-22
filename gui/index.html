@@ -27,7 +27,7 @@
                 ipcRenderer.send("toggle-devtools");
             }
         }
-        function chooseModelFile() {
+        function chooseModelFile(title) {
             return new Promise((resolve, reject) => {
                 const msgKey = Math.random().toString(36).substr(2);
                 const handler = (event, data) => {
@@ -46,17 +46,21 @@
                     }
                 };
                 ipcRenderer.on("model-file", handler);
-                ipcRenderer.send("choose-model-file", [msgKey, localStorage["lastFilePath"]]);
+                ipcRenderer.send("choose-model-file", [
+                    msgKey,
+                    localStorage["lastFilePath"],
+                    title || "Choose a model file",
+                ]);
             });
         }
-        function getModelFilePath() {
+        function getModelFilePath(id, title) {
             return new Promise((resolve, reject) => {
-                const filePath = $("#param5Value").text();
+                const filePath = $(`#param${id}Value`).text();
                 if (filePath) {
                     resolve(filePath);
                 }
                 else {
-                    chooseModelFile().then(filePath => {
+                    chooseModelFile(title).then(filePath => {
                         if (filePath) {
                             resolve(filePath);
                         }
@@ -68,7 +72,52 @@
                 }
             });
         }
+        async function getModelFilePaths(ids) {
+            let paths = [];
+            for (let id of ids) {
+                let title = null;
+                if (id == 5) { title = "Choose a model 1 file"; }
+                if (id == 6) { title = "Choose a model 2 file"; }
+                if (id == 7) { title = "Choose a relation file"; }
+                paths.push(await getModelFilePath(id, title));
+            }
+            return paths;
+        }
         $(window).on("keydown", e => toggleDevTools(e));
+        
+        // data: { global: { states: number, transitions: number }, reduced?: { states: number, transitions: number } }
+        let modelStatsModalData = null;
+        function showModelStatsModal(data) {
+            if (data.global) {
+                $("#modelStatsModal--globalInfo").css("display", "block");
+                $("#modelStatsModal--globalInfo--states").text(data.global.states);
+                $("#modelStatsModal--globalInfo--transitions").text(data.global.transitions);
+            }
+            else {
+                $("#modelStatsModal--globalInfo").css("display", "none");
+            }
+            if (data.reduced) {
+                $("#modelStatsModal--reducedInfo").css("display", "block");
+                $("#modelStatsModal--reducedInfo--states").text(data.reduced.states);
+                $("#modelStatsModal--reducedInfo--transitions").text(data.reduced.transitions);
+            }
+            else {
+                $("#modelStatsModal--reducedInfo").css("display", "none");
+            }
+            if (data.global && data.reduced) {
+                $("#modelStatsModal--reductionInfo").css("display", "block");
+                $("#modelStatsModal--reductionInfo--states").text(((data.global.states - data.reduced.states) / data.global.states * 100).toFixed(2) + "%");
+                $("#modelStatsModal--reductionInfo--transitions").text(((data.global.transitions - data.reduced.transitions) / data.global.transitions * 100).toFixed(2) + "%");
+            }
+            else {
+                $("#modelStatsModal--reductionInfo").css("display", "none");
+            }
+            $("#modelStatsModal").modal("show");
+        }
+        
+        function toggleStatsModalButton(visible) {
+            $("#openStatsModal").css("display", !visible ? "none" : "inline-block");
+        }
     </script>
 </head>
 <body>
@@ -138,6 +187,26 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modelStatsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Model information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modelStatsModal--globalInfo">Global model states: <span id="modelStatsModal--globalInfo--states"></span>, transitions: <span id="modelStatsModal--globalInfo--transitions"></span></p>
+                    <p id="modelStatsModal--reducedInfo">Reduced model states: <span id="modelStatsModal--reducedInfo--states"></span>, transitions: <span id="modelStatsModal--reducedInfo--transitions"></span></p>
+                    <p id="modelStatsModal--reductionInfo">Reduction: <span id="modelStatsModal--reductionInfo--states"></span> less states, <span id="modelStatsModal--reductionInfo--transitions"></span> less transitions</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="main">
         <div id="div_graph" class="col-left">
             <div id="tabs">
@@ -156,48 +225,67 @@
                         <option value="drone">Drones</option>
                         <option value="voting">Simple Voting</option>
                         <option value="global">Global</option>
+                        <option value="bisimulation">Bisimulation</option>
                     </select>
                 </div>
                 <div id="model_options">
-                    <div id="param1div" class="form-group" style="visibility: hidden;">
+                    <div id="param1div" class="form-group" style="display: none;">
                         <label id="param1Label" class="form-label" for="param1Input"></label>
                         <input class="form-control" type="number" min="1" max="5" id="param1Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param2div" class="form-group" style="visibility: hidden;">
+                    <div id="param2div" class="form-group" style="display: none;">
                         <label id="param2Label" class="form-label" for="param2Input"></label>
 
                         <input class="form-control" type="number" min="1" max="5" id="param2Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param3div" class="form-group" style="visibility: hidden;">
+                    <div id="param3div" class="form-group" style="display: none;">
                         <label id="param3Label" class="form-label" for="param3Input"></label>
 
                         <input class="form-control" type="number" min="1" max="5" id="param3Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param4div" class="form-group" style="visibility: hidden;">
+                    <div id="param4div" class="form-group" style="display: none;">
                         <label id="param4Label" class="form-label" for="param4Input"></label>
 
                         <input class="form-control" type="number" min="1" max="5" id="param4Input" value="1"
                                step="1"/>
 
                     </div>
-                    <div id="param5div" class="form-group" style="visibility: hidden;">
+                    <div id="param5div" class="form-group" style="display: none;">
                         <label id="param5Label" class="form-label" for="param5Button"></label>
                         <span id="param5Value"></span>
                         <button type="button" class="btn btn-sm btn-primary" id="param5Button">Choose a file...</button>
                     </div>
+                    <div id="param6div" class="form-group" style="display: none;">
+                        <label id="param6Label" class="form-label" for="param6Button"></label>
+                        <span id="param6Value"></span>
+                        <button type="button" class="btn btn-sm btn-primary" id="param6Button">Choose a file...</button>
+                    </div>
+                    <div id="param7div" class="form-group" style="display: none;">
+                        <label id="param7Label" class="form-label" for="param7Button"></label>
+                        <span id="param7Value"></span>
+                        <button type="button" class="btn btn-sm btn-primary" id="param7Button">Choose a file...</button>
+                    </div>
                 </div>
                 <div>
-                    <p id="pFormula" style="visibility: hidden">Formula to be verified:</p>
+                    <p id="pFormula" style="display: none">Formula to be verified:</p>
                     <pre id="formula"></pre>
                 </div>
                 <div>
                     <button type="button" class="btn btn-lg btn-primary" id="btn_generate">Generate</button>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary" id="btn_generate_global" data-mode="global">Generate global</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary" id="btn_generate_reduced" data-mode="reduced">Generate reduced</button>
+                    </div>
                 </div>
                 <hr/>
                 <div class="row">
@@ -233,6 +321,9 @@
                     <label id="showLabelsLabel" class="custom-control-label" for="showLabels">Show Actions</label>
                 </div>
                 <div class="row">
+                    <button type="button" class="btn btn-sm btn-primary" id="openStatsModal" style="display: none">Show model information</button>
+                </div>
+                <div class="row">
                     <div class="col-6">
                         <button type="button" class="btn btn-lg btn-primary" id="btn_zoom_out"><i
                                 class="fa fa-search-minus"></i></button>
@@ -260,6 +351,8 @@
         let $modelList = $("#models");
         let $modelOptions = $("#model_options");
         let $generateButton = $("#btn_generate");
+        let $generateGlobalButton = $("#btn_generate_global");
+        let $generateReducedButton = $("#btn_generate_reduced");
         let $buttonLowerApprox = $("#btn_lower_approx");
         let $buttonUpperApprox = $("#btn_upper_approx");
         let $buttonDominoDFS = $("#btn_domino_dfs");
@@ -277,11 +370,19 @@
         let $param5Label = $("#param5Label");
         let $param5Input = $("#param5Value");
         let $param5Button = $("#param5Button");
+        let $param6Label = $("#param6Label");
+        let $param6Input = $("#param6Value");
+        let $param6Button = $("#param6Button");
+        let $param7Label = $("#param7Label");
+        let $param7Input = $("#param7Value");
+        let $param7Button = $("#param7Button");
         let $param1div = $('#param1div');
         let $param2div = $('#param2div');
         let $param3div = $('#param3div');
         let $param4div = $('#param4div');
         let $param5div = $('#param5div');
+        let $param6div = $('#param6div');
+        let $param7div = $('#param7div');
         let pyshell = require('python-shell').PythonShell;
         pyshell.defaultOptions = { pythonPath: '../venv/Scripts/python.exe' };
         let $divGraph = $('#div_graph');
@@ -302,28 +403,55 @@
         let $lowerApproxFalse = $('#lowerApproxFalse');
         let $upperApproxNoStates = $('#upperApproxNoStates');
         let $lowerApproxNoStates = $('#lowerApproxNoStates');
+        let $modelStatsModal = $("#modelStatsModal");
+        
+        $("#openStatsModal").on("click", () => { showModelStatsModal(modelStatsModalData); });
+        function updateModelStatsModalData(globalModel, reducedModel) {
+            console.log(globalModel,reducedModel)
+            modelStatsModalData = {};
+            if (globalModel) {
+                modelStatsModalData.global = {
+                    states: globalModel.nodes.length,
+                    transitions: globalModel.links.length,
+                };
+            }
+            if (reducedModel) {
+                modelStatsModalData.reduced = {
+                    states: reducedModel.nodes.length,
+                    transitions: reducedModel.links.length,
+                };
+            }
+        }
 
         // window.scrollTo(3800, 3800);
 
         function hideParams() {
-            $param1div.css('visibility', 'hidden');
-            $param2div.css('visibility', 'hidden');
-            $param3div.css('visibility', 'hidden');
-            $param4div.css('visibility', 'hidden');
+            $param1div.css('display', 'none');
+            $param2div.css('display', 'none');
+            $param3div.css('display', 'none');
+            $param4div.css('display', 'none');
+            $param5div.css('display', 'none');
+            $param6div.css('display', 'none');
+            $param7div.css('display', 'none');
         }
         
         let onTabActivated = tabId => {};
-        function createTabs(tabs) {
+        function createTabs(tabs, panels) {
             $("#div_graph").html(`<div id="tabs">
                 <ul id="tab-ul">
                 </ul>
             </div>`);
             for (let i = 0; i < tabs.length; i++) {
                 $("#tab-ul").append("<li id='tab-" + i + "' class=\"tab-li\" tab_id='" + i + "' data-tab-id='" + i + "'><a href=\"#tabs-" + (i + 1) + "\">" + tabs[i] + "</a></li>");
-                $("#tabs").append("<div id=\"tabs-" + (i + 1) + "\" class=\"tab-div\">\n" +
-                "                    <svg id=\"graph-" + i + "\" width=\"10000\" height=\"10000\">\n" +
-                "                    </svg>\n" +
+                $("#tabs").append("<div id=\"tabs-" + (i + 1) + "\" class=\"tab-div panels" + (panels ? "" : " panels-single") + "\">\n" +
                     "            </div>");
+                for (let panelId of (panels || [0])) {
+                    let s = "                    <div class='" + `panel panel-${panelId}` + "'>\n" +
+                            "                       <div class='svg-container'><svg id=\"graph-" + `${i}-${panelId}` + "\" width=\"10000\" height=\"10000\">\n" +
+                            "                       </svg></div>\n" +
+                            "                    </div>\n";
+                    $("#tabs").children().last().append(s);
+                }
             }
             $("#tabs").tabs({
                 active: 0,
@@ -335,7 +463,7 @@
                 },
             });
             for (let i = 0; i < tabs.length; ++i) {
-                resetGraph(i);
+                resetGraph(i, panels);
             }
         }
         
@@ -374,8 +502,9 @@
         });
 
         $modelList.on('change', function () {
-            $("#pFormula").css("visibility", "visible");
+            $("#pFormula").css("display", "block");
             let selection = $("#models option:selected").val();
+            toggleStatsModalButton(false);
             if (selection === "tianji") {
                 selectionTianJi();
             } else if (selection === "castles") {
@@ -388,14 +517,18 @@
                 selectionVoting();
             } else if (selection == "global") {
                 selectionGlobal();
+            } else if (selection == "bisimulation") {
+                selectionBisimulation();
             }
         });
-
-        function resetGraph(graphId) {
-            const $svgGraph = $(`#graph-${graphId}`);
-            $svgGraph.empty();
-            let $parent = $svgGraph.parent();
-            $parent[0].scrollTo(($parent[0].scrollWidth - $parent[0].clientWidth) / 2, ($parent[0].scrollHeight - $parent[0].clientHeight) / 2);
+        
+        function resetGraph(graphId, panels) {
+            for (let panelId of (panels || [0])) {
+                const $svgGraph = $(`#graph-${graphId}-${panelId}`);
+                $svgGraph.empty();
+                let $parent = $svgGraph.parent();
+                $parent[0].scrollTo(($parent[0].scrollWidth - $parent[0].clientWidth) / 2, ($parent[0].scrollHeight - $parent[0].clientHeight) / 2);
+            }
         }
 
         function loadUpperApproxModal(results) {
@@ -461,7 +594,7 @@
             setActiveModel("tianji");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Horses:");
 
@@ -523,10 +656,10 @@
             setActiveModel("castles");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
-            $param2div.css('visibility', 'visible');
-            $param3div.css('visibility', 'visible');
-            $param4div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
+            $param2div.css('display', 'block');
+            $param3div.css('display', 'block');
+            $param4div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Castle 1 size:");
             $param2Label.empty();
@@ -607,8 +740,8 @@
             setActiveModel("bridge");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
-            $param2div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
+            $param2div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Deck size (cards per player):");
             $param2Label.empty();
@@ -678,8 +811,8 @@
             setActiveModel("drone");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
-            $param2div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
+            $param2div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Number of drones:");
             $param2Label.empty();
@@ -749,10 +882,10 @@
             setActiveModel("voting");
             createTabs(["Model"]);
             hideParams();
-            $param1div.css('visibility', 'visible');
+            $param1div.css('display', 'block');
             $param1Label.empty();
             $param1Label.html("Voters:");
-            $param2div.css('visibility', 'visible');
+            $param2div.css('display', 'block');
             $param2Label.empty();
             $param2Label.html("Candidates:");
 
@@ -814,12 +947,12 @@
                 });
             });
         }
-
+        
         function selectionGlobal() {
             setActiveModel("global");
             createTabs(["Model"]);
             hideParams();
-            $param5div.css('visibility', 'visible');
+            $param5div.css('display', 'block');
             $param5Input.empty();
             $param5Label.html("Model file:");
 
@@ -835,33 +968,64 @@
             
             let modelsForRecoloring = null;
             let currTabId = -1;
-
-            $generateButton.off('click');
-            $generateButton.on('click', function () {
+            
+            function getModel(models, tabId, mode) {
+                if (mode == "global") {
+                    if (tabId == 0) {
+                        return models.globalModel;
+                    }
+                    return models.localModels[tabId - 1];
+                }
+                else if (mode == "reduced") {
+                    if (tabId == 0) {
+                        return models.globalModel;
+                    }
+                    if (tabId == 1) {
+                        return models.reducedModel;;
+                    }
+                    return models.localModels[tabId - 2];
+                }
+            }
+            
+            let $generateButtons = $().add($generateGlobalButton).add($generateReducedButton);
+            $generateButtons.off('click');
+            $generateButtons.on('click', function (e) {
                 resetGraph(0);
                 
-                getModelFilePath().then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'run', filePath]}, function (err, results) {
+                let mode = $(e.currentTarget).data("mode"); // "global" | "reduced"
+                
+                getModelFilePath(5).then(filePath => {
+                    $param5Input.text(filePath);
+                    pyshell.run('../gui.py', {args: ['global', 'run', mode, filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('run_global.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
-                        let tabs = ["Global"];
+                        let tabs = mode == "global" ? ["Global model"] : ["Global model", "Reduced model"];
+                        updateModelStatsModalData(
+                            dumpedModels.globalModel ? JSON.parse(dumpedModels.globalModel) : null,
+                            dumpedModels.reducedModel ? JSON.parse(dumpedModels.reducedModel) : null
+                        );
+                        toggleStatsModalButton(true);
+                        let fixedTabsCount = tabs.length;
                         for (let i = 1; i <= dumpedModels.localModels.length; ++i) {
-                            tabs.push(`Local ${i}`);
+                            tabs.push(dumpedModels.localModelNames[i - 1]);
                         }
                         createTabs(tabs);
                         onTabActivated = tabId => {
                             currTabId = tabId;
-                            let $graph = $(`svg#graph-${tabId}`);
+                            let $graph = $(`svg#graph-${tabId}-0`);
                             if (!$graph.data("loaded")) {
                                 resetGraph(tabId);
-                                const modelStr = tabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
+                                const modelStr = getModel(dumpedModels, tabId, mode);
                                 loadGraph(JSON.parse(modelStr), tabId);
                                 $graph.data("loaded", true);
                             }
                             if (modelsForRecoloring && !$graph.data("colored")) {
-                                const modelStr = tabId == 0 ? modelsForRecoloring.globalModel : modelsForRecoloring.localModels[tabId - 1];
+                                if (mode == "reduced") {
+                                    modelsForRecoloring.reducedModel = dumpedModels.reducedModel;
+                                }
+                                const modelStr = getModel(modelsForRecoloring, tabId, mode);
                                 recolorGraph(JSON.parse(modelStr), tabId);
                                 $graph.data("colored", true);
                             }
@@ -877,7 +1041,7 @@
                 let voters = $param1Input.val();
                 let candidates = $param2Input.val();
 
-                getModelFilePath().then(filePath => {
+                getModelFilePath(5).then(filePath => {
                     pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
@@ -887,7 +1051,7 @@
                         recolorGraph(JSON.parse(modelStr), currTabId);
                         loadLowerApproxModal(results);
                         $("svg").data("colored", false);
-                        $(`svg#graph-${currTabId}`).data("colored", true);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
@@ -897,7 +1061,7 @@
                 let voters = $param1Input.val();
                 let candidates = $param2Input.val();
 
-                getModelFilePath().then(filePath => {
+                getModelFilePath(5).then(filePath => {
                     pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
@@ -907,7 +1071,7 @@
                         recolorGraph(JSON.parse(modelStr), currTabId);
                         loadUpperApproxModal(results);
                         $("svg").data("colored", false);
-                        $(`svg#graph-${currTabId}`).data("colored", true);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
@@ -916,7 +1080,7 @@
             $buttonDominoDFS.on('click', function () {
                 let heuristic = $("#heuristic option:selected").val();
 
-                getModelFilePath().then(filePath => {
+                getModelFilePath(5).then(filePath => {
                     pyshell.run('../gui.py', {args: ['global', 'domino', filePath, heuristic]}, function (err, results) {
                         if (err) throw err;
                         console.log('domino_global.py finished.');
@@ -926,35 +1090,198 @@
                         recolorGraph(JSON.parse(modelStr), currTabId);
                         loadDominoResults(results);
                         $("svg").data("colored", false);
-                        $(`svg#graph-${currTabId}`).data("colored", true);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
         }
 
-        function recolorGraph(graph, graphId) {
-            const $graph = $(`svg#graph-${graphId}`);
+        function selectionBisimulation() {
+            setActiveModel("bisimulation");
+            createTabs(["Bisimulation"], [0, 1]);
+            hideParams();
+            $param5div.css('display', 'block');
+            $param5Input.empty();
+            $param5Label.html("Model 1 file:");
+            $param6div.css('display', 'block');
+            $param6Input.empty();
+            $param6Label.html("Model 2 file:");
+            $param7div.css('display', 'block');
+            $param7Input.empty();
+            $param7Label.html("Relation file:");
+
+            setFormula('');
+
+            $param5Button.off('click');
+            $param5Button.on('click', function () {
+                chooseModelFile("Choose a model 1 file").then(path => {
+                    $param5Input.text(path);
+                })
+                .catch(() => {});
+            });
+            $param6Button.off('click');
+            $param6Button.on('click', function () {
+                chooseModelFile("Choose a model 2 file").then(path => {
+                    $param6Input.text(path);
+                })
+                .catch(() => {});
+            });
+            $param7Button.off('click');
+            $param7Button.on('click', function () {
+                chooseModelFile("Choose a relation file").then(path => {
+                    $param7Input.text(path);
+                })
+                .catch(() => {});
+            });
+            
+            let modelsForRecoloring = null;
+            let currTabId = -1;
+            
+            function getModel(models, panelId) {
+                if (panelId == 0) {
+                    return models.model1;
+                }
+                if (panelId == 1) {
+                    return models.model2;
+                }
+            }
+            
+            $generateButton.off('click');
+            $generateButton.on('click', function (e) {
+                resetGraph(0, [0, 1]);
+                
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    $param5Input.text(filePaths[0]);
+                    $param6Input.text(filePaths[1]);
+                    $param7Input.text(filePaths[2]);
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'run', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('run_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[0]);
+                        modelsForRecoloring = null;
+                        let tabs = ["Bisimulation"];
+                        let fixedTabsCount = tabs.length;
+                        createTabs(tabs, [0, 1]);
+                        onTabActivated = tabId => {
+                            currTabId = tabId;
+                            for (let panelId of [0, 1]) {
+                                let $graph = $(`svg#graph-${tabId}-${panelId}`);
+                                if (!$graph.data("loaded")) {
+                                    resetGraph(tabId, [panelId]);
+                                    const modelStr = getModel(dumpedModels, panelId);
+                                    loadGraph(JSON.parse(modelStr), tabId, panelId);
+                                    $graph.data("loaded", true);
+                                }
+                                if (modelsForRecoloring && !$graph.data("colored")) {
+                                    const modelStr = getModel(modelsForRecoloring, panelId);
+                                    recolorGraph(JSON.parse(modelStr), tabId, panelId);
+                                    $graph.data("colored", true);
+                                }
+                            }
+                        };
+                        onTabActivated(0);
+                    });
+                });
+
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'verify', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        $("svg").data("colored", false);
+                        for (let panelId of [0, 1]) {
+                            const modelStr = getModel(dumpedModels, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
+                        }
+                        loadLowerApproxModal(results);
+                    });
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'verify', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        $("svg").data("colored", false);
+                        for (let panelId of [0, 1]) {
+                            const modelStr = getModel(dumpedModels, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
+                        }
+                        loadUpperApproxModal(results);
+                    });
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let heuristic = $("#heuristic option:selected").val();
+
+                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'domino', filePaths[0], filePaths[1], filePaths[2], heuristic]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('domino_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        $("svg").data("colored", false);
+                        for (let panelId of [0, 1]) {
+                            const modelStr = getModel(dumpedModels, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
+                        }
+                        loadDominoResults(results);
+                    });
+                });
+            });
+        }
+        
+        function recolorGraphs(graphs, graphId, panels) {
+            let i = 0;
+            for (let panelId of (panels || [0])) {
+                recolorGraph(graphs[i], graphId, panelId);
+                ++i;
+            }
+        }
+        
+        function recolorGraph(graph, graphId, panelId) {
+            const $graph = $(`svg#graph-${graphId}-${panelId}`);
             let nodes = graph.nodes;
             let links = graph.links;
-            clearGraphColor($graph);
-            colorLinks(links);
-            colorNodes(nodes);
+            clearGraphColor($graph, graphId);
+            colorLinks(links, graphId);
+            colorNodes(nodes, graphId);
         }
 
-        function colorLinks(links) {
+        function colorLinks(links, graphId) {
             for (let i = 0; i < links.length; i++) {
                 if (links[i]['str'] === 1) {
                     let id = links[i]['id'];
-                    $graph.find('#link_' + id).attr('stroke', '#F00');
+                    $graph.find('#link_' + id + "_" + graphId).attr('stroke', '#F00');
                 }
             }
         }
 
-        function colorNodes(nodes) {
+        function colorNodes(nodes, graphId) {
             for (let i = 0; i < nodes.length; i++) {
                 if (nodes[i]['str'] === 1) {
                     let id = nodes[i]['id'];
-                    $graph.find('#node_' + id).attr('fill', '#0F0');
+                    $graph.find('#node_' + id + "_" + graphId).attr('fill', '#0F0');
                 }
             }
 
@@ -962,21 +1289,24 @@
             $('.node[winning=true]').attr('fill', '#F0F');
         }
 
-        function clearGraphColor($graph) {
-            clearNodesColor($graph);
+        function clearGraphColor($graph, graphId) {
+            clearNodesColor($graph, graphId);
             clearLinkColor($graph);
         }
 
-        function clearNodesColor($graph) {
+        function clearNodesColor($graph, graphId) {
             $graph.find('g circle').attr('fill', '#CCC');
-            $graph.find('#node_0').attr('fill', '#00F');
+            $graph.find('#node_0' + "_" + graphId).attr('fill', '#00F');
         }
 
         function clearLinkColor($graph) {
             $graph.find('.link').attr('stroke', '#CCC');
         }
-
-        function loadGraph(graph, graphId) {
+        
+        function loadGraph(graph, graphId, panelId) {
+            let edgepaths, edgelabels, node, link;
+            panelId = panelId || "0";
+            
             let tooltip = d3.select("body")
                 .append("div")
                 .attr("class", "tooltip")
@@ -985,12 +1315,12 @@
             let currNodes = graph.nodes;
             let currLinks = graph.links;
 
-            const svg = d3.select(`svg#graph-${graphId}`);
+            const svg = d3.select(`svg#graph-${graphId}-${panelId}`);
             const width = 10000;
             const height = 10000;
 
             svg.append('defs').append('marker')
-                .attr("id", 'arrowhead')
+                .attr("id", `arrowhead-${graphId}`)
                 .attr("viewBox", "0 -5 10 10")
                 .attr("refX", 19)
                 .attr("refY", 0)
@@ -1011,7 +1341,7 @@
                 .force("charge", d3.forceManyBody().strength(-500))
                 .force("center", d3.forceCenter(width / 2, height / 2));
 
-            update(currLinks, currNodes);
+            update(currLinks, currNodes);;
 
             function update(links, nodes) {
                 link = svg.selectAll(".link")
@@ -1024,7 +1354,7 @@
                             return '';
                         }
 
-                        return 'url(#arrowhead)'
+                        return `url(#arrowhead-${graphId})`;
                     });
 
                 link.append("title")
@@ -1035,7 +1365,7 @@
                 //Add mouseover events to links
                 link.attr('class', 'link')
                     .attr('id', function (d) {
-                        return 'link_' + d.id;
+                        return 'link_' + d.id + "_" + graphId;
                     })
                     .on('mouseover.fade', linkFade(0.1))
                     .on('mouseover.tooltip', function (event, d) {
@@ -1105,7 +1435,7 @@
 
                 edgelabels.append('textPath')
                     .attr('xlink:href', function (d, i) {
-                        return '#link_' + d.id
+                        return '#link_' + d.id + "_" + graphId
                     })
                     .style("text-anchor", "middle")
                     .style("pointer-events", "none")
@@ -1127,7 +1457,7 @@
                 node.append("circle")
                     .attr('class', 'node')
                     .attr('id', function (d) {
-                        return "node_" + d.id
+                        return "node_" + d.id + "_" + graphId
                     })
                     .attr('initial', function (d) {
                         return d.bgn === 1;
