@@ -29,12 +29,12 @@ class SeleneModelGenerator:
         teller = f"Agent Teller[{self._teller_count}]:\n"
         teller += "init: t_init\n"
         for voter_id in range(1, self._voter_count + 1):
-            teller += f"shared sendVote_Voter{voter_id}: t_init -> t_init [v_Voter{voter_id}?]\n"
+            teller += f"shared sendVote_Voter{voter_id}: t_init -> t_init\n"
         teller += "shared finishVoting: t_init -> t_finish\n"
         teller += "shared decryptVotes: t_finish -> t_decrypt\n"
-        teller += "shared sendToWBB: t_decrypt -> t_send [v_Voter1"
+        teller += "shared sendToWBB: t_decrypt -> t_send [WBB1_vote1=?aID_vote_Voter1"
         for voter_id in range(2, self._voter_count + 1):
-            teller += f", v_Voter{voter_id}"
+            teller += f", WBB1_vote{voter_id}=?aID_vote_Voter{voter_id}"
         teller += "]\n"
         teller += "shared publishVotes: t_send -> t_publish\n"
         return teller
@@ -47,18 +47,18 @@ class SeleneModelGenerator:
         num = 0
         for p in list(perm):
             num += 1
-            ea += f"shared generateTrackers_{num}: ea_init -> ea_gen [t1={p[0]}"
+            ea += f"shared generateTrackers_{num}: ea_init -> ea_gen [aID_t1={p[0]}"
             for tr_id in range(1, len(p)):
-                ea += f", t{tr_id + 1}={p[tr_id]}"
+                ea += f", aID_t{tr_id + 1}={p[tr_id]}"
             ea += "]\n"
         ea += "shared publishTrackers: ea_gen -> ea_pub_t\n"
         ea += "shared startVoting: ea_pub_t -> ea_start\n"
         ea += "shared finishVoting: ea_start -> ea_finish\n"
-        ea += "shared publishVotes: ea_finish -> ea_pub_v [published=true]\n"
+        ea += "shared publishVotes: ea_finish -> ea_pub_v\n"
         for voter_id in range(1, self._voter_count + 1):
             for tr_id in range(1, self._voter_count + 1):
-                ea += f"shared sendTracker_Voter{voter_id}: ea_pub_v -[t{tr_id}=={voter_id}]> ea_pub_v [t_Voter{voter_id}={tr_id}]\n"
-        ea += "shared allTrackerSend: ea_pub_v -> ea_send [end=true]\n"
+                ea += f"shared sendTracker_Voter{voter_id}: ea_pub_v -[aID_t{tr_id}=={voter_id}]> ea_pub_v [Voter{voter_id}_true_tr={tr_id}]\n"
+        ea += "shared allTrackerSend: ea_pub_v -> ea_send\n"
         return ea
 
     def _generate_wbb(self):
@@ -69,86 +69,89 @@ class SeleneModelGenerator:
         num = 0
         for p in list(perm):
             num += 1
-            wbb += f"shared generateTrackers_{num}: wbb_init -> wbb_gen{num} [t1={p[0]}"
+            wbb += f"shared generateTrackers_{num}: wbb_init -> wbb_gen{num} [aID_t1={p[0]}"
             for tr_id in range(1, len(p)):
-                wbb += f", t{tr_id + 1}={p[tr_id]}"
+                wbb += f", aID_t{tr_id + 1}={p[tr_id]}"
             wbb += "]\n"
-            wbb += f"shared sendToWBB: wbb_gen{num} -> wbb_send [wbb_t1=v_Voter{p[0]}"
-            for tr_id in range(1, len(p)):
-                wbb += f", wbb_t{tr_id + 1}=v_Voter{p[tr_id]}"
-            wbb += "]\n"
-        wbb += "PROTOCOL wbb_init: [[generateTrackers_1"
-        for i in range(1, len(list(perm)) + 1):
+            wbb += f"shared sendToWBB: wbb_gen{num} -> wbb_send\n"
+        for tr_id in range(1, self._voter_count + 1):
+            for tr_id2 in range(1, self._voter_count + 1):
+                wbb += f"shared coercerWBB{tr_id}: wbb_send -[aID_t{tr_id}=={tr_id2}]> wbb_send [Coercer1_wbb{tr_id}=?aID_vote{tr_id2}]\n"
+                for voter_id in range(1, self._voter_count + 1):
+                    wbb += f"shared Voter{voter_id}_WBB{tr_id}: wbb_send -[aID_t{tr_id}=={tr_id2}]> wbb_send [Voter{voter_id}_wbb{tr_id}=?aID_vote{tr_id2}]\n"
+        wbb += "PROTOCOL: [[generateTrackers_1"
+        for i in range(2, len(list(itertools.permutations(trackers))) + 1):
             wbb += f", generateTrackers_{i}"
         wbb += "]]\n"
-        for tr_id in range(1, self._voter_count + 1):
-            wbb += f"shared coercerWBB{tr_id}: wbb_send -> wbb_send [wbb_t{tr_id}]\n"
-            for voter_id in range(1, self._voter_count + 1):
-                wbb += f"shared Voter{voter_id}_WBB{tr_id}: wbb_send -> wbb_send [wbb_t{tr_id}]\n"
         return wbb
 
     def _generate_voter(self):
         voter = f"Agent Voter[{self._voter_count}]:\n"
         voter += "init: v_init\n"
         for cand_id in range(1, self._cand_count + 1):
-            voter += f"shared requestVoteFor{cand_id}_aID: v_init -> v_request [req_aID={cand_id}]\n"
+            voter += f"shared requestVoteFor{cand_id}_aID: v_init -> v_request [aID_req={cand_id}]\n"
         voter += "shared leave_aID: v_init -> v_request\n"
-        voter += "PROTOCOL v_init: [[leave_aID"
-        for cand_id in range(1, self._cand_count + 1):
-            voter += f", requestVoteFor{cand_id}_aID"
-        voter += "]]\n"
         voter += "shared startVoting: v_request -> v_start\n"
         voter += "createCommitment: v_start -> v_commit\n"
         for cand_id in range(1, self._cand_count + 1):
-            voter += f"fillVote{cand_id}: v_commit -> v_fill [v_aID={cand_id}]\n"
+            voter += f"fillVote{cand_id}: v_commit -> v_fill [aID_vote={cand_id}]\n"
         voter += "encryptVote: v_fill -> v_encrypt\n"
-        voter += "shared sendVote_aID: v_encrypt -> v_send [v_aID]\n"
+        voter += "shared sendVote_aID: v_encrypt -> v_send ["
+        for teller_id in range(1, self._teller_count + 1):
+            voter += f"Teller{teller_id}_vote_aID=?aID_vote,"
+        voter = voter.rstrip(",")
+        voter += "]\n"
         voter += "shared finishVoting: v_send -> v_finish\n"
         voter += "shared publishVotes: v_finish -> v_publish\n"
+        voter += f"computeFalseAlphaTerm: v_publish -> v_false_a\n"
         # voter += "verifyElectionResults: v_publish -> v_publish\n"
         for cand_id in range(1, self._cand_count + 1):
-            voter += f"computeFalseAlphaTerm_{cand_id}: v_publish -> v_false_a [false_a_aID={cand_id}]\n"
-            voter += f"computeFalseTracker{cand_id}: v_false_a -> v_false_tr [false_tr_aID={cand_id}]\n"
+            voter += f"computeFalseTracker{cand_id}: v_false_a -> v_false_tr [aID_false_tr={cand_id}]\n"
         voter += "dontComputeFalseAlphaTerm: v_publish -> v_false_tr\n"
-        voter += "shared sendTracker_aID: v_false_tr -> v_send_tr [t_aID?]\n"
+        voter += "shared sendTracker_aID: v_false_tr -> v_send_tr\n"
         voter += "shared allTrackerSend: v_send_tr -> v_wbb\n"
         for tr_id in range(1, self._voter_count + 1):
-            voter += f"shared aID_WBB{tr_id}: v_wbb -> v_wbb2 [wbb_t{tr_id}?]\n"
+            voter += f"shared aID_WBB{tr_id}: v_wbb -> v_wbb2\n"
         voter += "verifyVote: v_wbb -> v_wbb2\n"
         voter += "wait: v_wbb -> v_wbb2\n"
-        voter += "PROTOCOL v_wbb: [[verifyVote],[wait]"
-        for tr_id in range(1, self._voter_count + 1):
-            voter += f",[aID_WBB{tr_id}]"
-        voter += "]\n"
-        for cand_id in range(1, self._cand_count + 1):
-            voter += f"shared showTrackerFor{cand_id}_aID: v_wbb2 -> v_show [v_show_aID={cand_id}]\n"
+
+        for tracker_id in range(1, self._voter_count + 1):
+            voter += f"shared showTracker{tracker_id}_aID: v_wbb2 -[aID_true_tr=={tracker_id}]> v_show\n"
+            voter += f"shared showTracker{tracker_id}_aID: v_wbb2 -[aID_false_tr=={tracker_id}]> v_show\n"
+
         voter += "shared punish_aID: v_show -> v_show\n"
-        voter += "shared no_punish_aID: v_show -> v_show\n"
+        voter += "shared not_punish_aID: v_show -> v_show\n"
+
+        voter += "PROTOCOL: [[leave_aID"
+        for cand_id in range(1, self._cand_count + 1):
+            voter += f",requestVoteFor{cand_id}_aID"
+
+        voter += "],[punish_aID,not_punish_aID]]\n"
         return voter
 
     def _generate_coercer(self):
         coercer = "Agent Coercer[1]:\n"
         coercer += "init: c_init\n"
-        coercer += "shared publishTrackers: c_init -> c_init [phase=1]\n"
-        coercer += "shared startVoting: c_init -> c_init [phase=2]\n"
-        coercer += "shared finishVoting: c_init -> c_init [phase=3]\n"
-        coercer += "shared publishVotes: c_init -> c_init [phase=4]]\n"
+        coercer += "shared publishTrackers: c_init -> c_req\n"
+        coercer += "shared startVoting: c_req -> c_voting\n"
+        coercer += "shared finishVoting: c_voting -> c_finish\n"
+        coercer += "shared publishVotes: c_finish -> c_pub\n"
         for voter_id in range(1, self._voter_count + 1):
-            coercer += f"shared leave_Voter{voter_id}: c_init -> c_init [req{voter_id}=0]\n"
-            coercer += f"shared punish_Voter{voter_id}: c_init -> c_init [pun{voter_id}=true]\n"
-            coercer += f"shared no_punish_Voter{voter_id}: c_init -> c_init [pun{voter_id}=false]\n"
-            coercer += f"shared coercerWBB{voter_id}: c_init -> c_init [wbb_t{voter_id}?]\n"
+            coercer += f"shared leave_Voter{voter_id}: c_req -> c_req [aID_req{voter_id}=0]\n"
+            coercer += f"shared punish_Voter{voter_id}: c_pub -> c_pub [aID_pun{voter_id}=true]\n"
+            coercer += f"shared not_punish_Voter{voter_id}: c_pub -> c_pub [aID_pun{voter_id}=false]\n"
+            coercer += f"shared coercerWBB{voter_id}: c_pub -> c_pub\n"
+
             for cand_id in range(1, self._cand_count + 1):
-                coercer += f"shared requestVoteFor{cand_id}_Voter{voter_id}: c_init -> c_init [req{voter_id}={cand_id}]\n"
-                coercer += f"shared showTrackerFor{cand_id}_Voter{voter_id}: c_init -> c_init [v{voter_id}_show={cand_id}]\n"
-        coercer += "PROTOCOL c_init: ["
+                coercer += f"shared requestVoteFor{cand_id}_Voter{voter_id}: c_req -> c_req [aID_req{voter_id}={cand_id}]\n"
+
+            for tracker_id in range(1, self._voter_count + 1):
+                coercer += f"shared showTracker{tracker_id}_Voter{voter_id}: c_pub -> c_pub [aID_tr{voter_id}={tracker_id}]\n"
+        coercer += "PROTOCOL: ["
         for voter_id in range(1, self._voter_count + 1):
-            coercer += f"[leave_Voter{voter_id}],[punish_Voter{voter_id}],[no_punish_Voter{voter_id}],"
-            for cand_id in range(1, self._cand_count + 1):
-                coercer += f"[requestVoteFor{cand_id}_Voter{voter_id}],"
             coercer += "["
-            for cand_id in range(1, self._cand_count + 1):
-                coercer += f"showTrackerFor{cand_id}_Voter{voter_id},"
+            for tracker_id in range(1, self._voter_count + 1):
+                coercer += f"showTracker{tracker_id}_Voter{voter_id},"
             coercer = coercer.rstrip(",")
             coercer += "],"
             for cand_id in range(1, self._cand_count + 1):
@@ -159,9 +162,9 @@ class SeleneModelGenerator:
 
     def _generate_reduction(self):
         if self._formula == 0:
-            reduction = "REDUCTION: [pun1]\n"
+            reduction = "REDUCTION: [Coercer1_pun1]\n"
         elif self._formula == 1:
-            reduction = "REDUCTION: [end, v_Voter1]\n"
+            reduction = "REDUCTION: [end, Voter1_vote]\n"
         elif self._formula == 2:
             reduction = "REDUCTION: [end, t_Voter1]\n"
         elif self._formula == 3 or self._formula == 4:
@@ -174,8 +177,10 @@ class SeleneModelGenerator:
     def _generate_persistent(self):
         persistent = "PERSISTENT: ["
         for voter_id in range(1, self._voter_count + 1):
-            persistent += f"v_Voter{voter_id}, wbb_t{voter_id}, t{voter_id}, t_Voter{voter_id}, "
-        persistent += "phase, v1_show, pun1, req1, end]\n"
+            persistent += f"ElectionAuthority1_t{voter_id}, WBB1_t{voter_id}, WBB1_vote{voter_id}, Voter{voter_id}_true_tr, Voter{voter_id}_false_tr, Voter{voter_id}_vote, "
+            for teller_id in range(1, self._teller_count + 1):
+                persistent += f"Teller{teller_id}_vote_Voter{voter_id}, "
+        persistent += "end]\n"
         return persistent
 
     def _generate_coalition(self):

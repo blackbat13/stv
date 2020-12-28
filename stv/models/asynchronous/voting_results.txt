@@ -1,9 +1,0 @@
-Voters Count | Candidates Count | Full Size States | Full Size transitions | Full Time | Reduced Size States | Reduced Size transitions | Reduced Time
-1            | 2                | 28               | 60                    | 0.0       | 23                  | 34                       | 0.0
-2            | 2                | 514              | 1744                  | 0.046875  | 395                 | 795                      | 0.21875
-2            | 3                | 1112             | 3828                  | 0.109375  | 857                 | 1753                     | 0.5
-2            | 4                | 1938             | 6720                  | 0.21875   | 1534                | 3153                     | 1.1875
-3            | 2                | 7858             | 35400                 | 0.96875   | 6109                | 13602                    | 9.59375
-3            | 3                | 24806            | 113607                | 2.921875  | 19071               | 43550                    | 83.40625
-3            | 4                | 56826            | 262464                | 7.390625  | Maximum recursion depth error (default is 1000)
-4            | 2                | 110458           | 614560                | 15.3125   | Maximum recursion depth error

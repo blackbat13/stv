@@ -48,12 +48,6 @@ class LocalTransitionParser:
             variables = transition_str.split(",")
             for variable in variables:
                 variable = variable.strip(" ")
-                if variable.find("=") == -1:
-                    if variable[-1] == '?':
-                        props[variable.rstrip("?")] = "?"
-                    else:
-                        props[variable] = "!"
-                    continue
                 prop, val = variable.split("=")
                 if val.casefold() == "true":
                     val = True

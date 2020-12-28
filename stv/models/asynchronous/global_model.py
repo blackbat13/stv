@@ -269,11 +269,13 @@ class GlobalModel:
 
     def _copy_props_to_state(self, state: GlobalState, transition: LocalTransition) -> GlobalState:
         for prop in transition.props:
-            if transition.props[prop] == "?":
-                pass
-            elif type(transition.props[prop]) is str:
-                if transition.props[prop] in state.props:
-                    state.set_prop(prop, state.props[transition.props[prop]])
+            if type(transition.props[prop]) is str:
+                if transition.props[prop][0] == "?":
+                    prop_name = transition.props[prop][1:]
+                    if prop_name in transition.props:
+                        state.set_prop(prop_name, transition.props[prop_name])
+                    else:
+                        state.set_prop(prop_name, state.props[prop_name])
             elif type(transition.props[prop]) is bool:
                 if not transition.props[prop]:
                     state.remove_prop(prop)
@@ -343,6 +345,7 @@ class GlobalModel:
                 if not reexplore and self._is_in_G(g):
                     self._pop_from_stack()
                     continue
+
                 self._G.append(g)
                 g_state_id = self._add_state(g)
                 E_g = []
@@ -350,19 +353,15 @@ class GlobalModel:
                 if len(en_g) > 0:
                     if not reexplore:
                         E_g = self._ample(g)
-                        print("Ample")
-
 
                     if len(E_g) == 0:
                         E_g = en_g
                     if E_g == en_g:
                         self._stack2.append(len(self._stack1))
 
-                    print(g)
                     for ap in E_g:
                         tmptr = self._local_models[ap[0]].transitions[ap[1]][ap[2]]
                         tmptr.print()
-                    print()
 
                     dfs_stack.append(-1)
                     for tup in E_g:
@@ -378,7 +377,6 @@ class GlobalModel:
                         else:
                             agent_list.append(a.agent_id)
 
-                        # print(a.action, agent_list)
                         self._add_transition(g_state_id, g_p_state_id, a.action, agent_list)
                         if self._add_to_stack(g_p):
                             dfs_stack.append(1)
@@ -623,53 +621,6 @@ class GlobalModel:
             actions[-1].add("")
         return actions
 
-    def _dfs_por(self):
-        """
-        Recursive partial order reductions algorithm.
-        :return: None.
-        """
-        g = self._stack1[-1]
-        reexplore = False
-
-        i = self._find_state_on_stack1(g)
-
-        if i != -1 and i != len(self._stack1) - 1:
-            if not self._stack2:
-                depth = 0
-            else:
-                depth = self._stack2[-1]
-            if i > depth:
-                reexplore = True
-            else:
-                self._pop_from_stack()
-                return
-
-        if not reexplore and self._is_in_G(g):
-            self._pop_from_stack()
-        g_state_id = self._add_state(g)
-        en_g = self._enabled_transitions_in_state_single_item_set(g)
-        if len(en_g) > 0:
-            if not reexplore:
-                E_g = self._ample(g)
-            if len(E_g) == 0:
-                E_g = en_g
-            if E_g == en_g:
-                self._stack2.append(len(self._stack1))
-            for tup in E_g:
-                a = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
-                g_p = self._successor(g, a)
-                g_p_state_id = self._add_state(g_p)
-                self._add_transition(g_state_id, g_p_state_id, a.action, [a.agent_id])  # TODO agents ids
-                if self._add_to_stack(g_p):
-                    self._dfs_por()
-        if len(self._stack2) == 0:
-            depth = 0
-        else:
-            depth = self._stack2[-1]
-        if depth == len(self._stack1):
-            self._stack2.pop()
-        self._pop_from_stack()
-
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
@@ -684,10 +635,7 @@ if __name__ == "__main__":
     formula_no = int(input("Formula (1-pun, 2-K!vVoter1): "))
 
     file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}_0.txt"
-    # model = GlobalModelParser().parse(file_name)
-    model = GlobalModelParser().parse("train_controller.txt")
-    # coalition = ["Coercer1"]
-    # model.set_coalition(coalition)
+    model = GlobalModelParser().parse(file_name)
     start = time.process_time()
     model.generate(reduction=(reduction == 1))
     end = time.process_time()
@@ -696,11 +644,6 @@ if __name__ == "__main__":
         state.print()
 
     model.model.simulate(2)
-
-    # model.model.simulate(0)
-    # print(f"Model generated in {end - start} seconds.")
-    # print(f"Model has {model.states_count} states.")
-    # print(f"Model has {model.transitions_count} transitions.")
 
     results_file.write(f"Teller Count: {teller_count}\n")
     results_file.write(f"Voter Count: {voter_count}\n")
@@ -719,34 +662,7 @@ if __name__ == "__main__":
 
     result, comp_time = model.verify_approximation(perfect_inf=False, formula_no=formula_no)
     results_file.write(f"Imperfect Information Approximation:\ntime: {comp_time} seconds, result: {0 in result}\n")
-    # print(result)
-    #
-    # for state_id in result:
-    #     print(model._states[state_id])
-    # result, comp_time = model.verify_domino()
-    # results_file.write(f"Domino DFS:\ntime: {comp_time}, result: {result}\n")
     results_file.write(f"Formula: {formula_no}\n")
     results_file.write("\n\n")
     results_file.close()
-    # model.model.simulate(model.agent_name_to_id("Coercer1"))
 
-    # model.walk()
-
-    # model.print()
-    # model.parse("train_controller.txt")
-    # model.parse("selene.txt")
-    # model.print()
-    # coalition = ["Coercer1"]
-    # model.set_coalition(coalition)
-    # print(f"Coalition: {coalition}")
-
-    # model.generate(reduction=True)
-
-    # print()
-    #
-    # print(f"Model has {model.states_count} states.")
-    # print(f"Model has {model.transitions_count} transitions.")
-    # print()
-    # model.walk()
-
-    # Question: does the reduction work for the approximations methods?
