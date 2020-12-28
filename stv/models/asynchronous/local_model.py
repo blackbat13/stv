@@ -16,16 +16,17 @@ class LocalModel:
     """
 
     def __init__(self, agent_id: int, agent_name: str, states: Dict[str, int], transitions: List[List[LocalTransition]],
-                 protocols: Dict[str, List[List[str]]], actions: Set[str]):
+                 protocol: List[List[str]], actions: Set[str]):
         self._agent_id = agent_id
         self._agent_name: str = agent_name
         self._states: Dict[str, int] = states
         self._transitions: List[List[LocalTransition]] = transitions
         self._actions: Set[str] = actions
-        self._protocols: Dict[str, List[List[str]]] = protocols
+        self._protocol: List[List[str]] = protocol
         self._props: List[str] = []
+        self._model: SimpleModel = None
         self._compute_props()
-        self._model = None
+        self._apply_protocol()
 
     @property
     def agent_name(self):
@@ -56,8 +57,18 @@ class LocalModel:
                 self._model.add_transition(from_state_id=state_id, to_state_id=self._states[transition.state_to],
                                            actions=[transition.action])
 
-    def _compute_props(self):
-        props_set = set()
+    def _apply_protocol(self) -> None:
+        p: int = 0
+        for lst in self._protocol:
+            p += 1
+            for tr_name in lst:
+                for i in range(len(self._transitions)):
+                    for j in range(len(self._transitions[i])):
+                        if self._transitions[i][j].action == tr_name:
+                            self._transitions[i][j].prot_name = f"{self._agent_name}_prot_{p}"
+
+    def _compute_props(self) -> None:
+        props_set: Set[str] = set()
         for ls in self._transitions:
             for tr in ls:
                 props_set.update(tr.props.keys())

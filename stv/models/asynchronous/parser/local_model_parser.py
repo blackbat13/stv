@@ -23,7 +23,7 @@ class LocalModelParser:
         agent_name: str = lines[0].split(" ")[1].split("[")[0] + str(agent_no)
         init_state: str = lines[1].split(" ")[1]
         states: Dict[str, int] = {init_state: 0}
-        protocols: Dict[str, List[List[str]]] = {}
+        protocol: List[List[str]] = []
         actions: Set[str] = set()
         transitions: List[List[LocalTransition]] = []
         state_num: int = 1
@@ -32,8 +32,7 @@ class LocalModelParser:
             line = lines[i].strip()
             line = line.replace("aID", agent_name)
             if self._is_protocol_line(line):
-                state, prot = self._parse_protocol(line)
-                protocols[state] = prot
+                protocol = self._parse_protocol(line)
                 continue
 
             local_transition = LocalTransitionParser().parse(line)
@@ -62,7 +61,7 @@ class LocalModelParser:
         while len(transitions) < len(states):
             transitions.append([])
 
-        return LocalModel(agent_id, agent_name, states, transitions, protocols, actions)
+        return LocalModel(agent_id, agent_name, states, transitions, protocol, actions)
 
     @staticmethod
     def _is_protocol_line(line: str) -> bool:
@@ -70,9 +69,8 @@ class LocalModelParser:
 
     def _parse_protocol(self, line: str) -> (str, List[List[str]]):
         line = line.split(":")
-        state = line[0].split(" ")[1]
         protocol = self._parse_protocol_list(line[1])
-        return state, protocol
+        return protocol
 
     @staticmethod
     def _parse_protocol_list(line: str) -> List[List[str]]:

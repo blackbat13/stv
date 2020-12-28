@@ -29,11 +29,21 @@ class LocalTransition:
         self._conditions: List = cond
         self.i: int = -1
         self.j: int = -1
+        self._prot_name: str = action
 
     def __eq__(self, other):
         if isinstance(other, LocalTransition):
             return self._agent_id == other._agent_id and self._action == other._action
         return False
+
+    @property
+    def prot_name(self) -> str:
+        """Action name according to protocol"""
+        return self._prot_name
+
+    @prot_name.setter
+    def prot_name(self, val: str):
+        self._prot_name = val
 
     @property
     def conditions(self) -> List:
@@ -120,6 +130,7 @@ class SharedTransition(LocalTransition):
         self._transition_list = [local_transition]
         self.i = local_transition.i
         self.j = local_transition.j
+        self._prot_name = local_transition.prot_name
 
     def __eq__(self, other):
         if isinstance(other, SharedTransition):

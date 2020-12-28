@@ -274,7 +274,7 @@ class GlobalModel:
                     prop_name = transition.props[prop][1:]
                     if prop_name in transition.props:
                         state.set_prop(prop_name, transition.props[prop_name])
-                    else:
+                    elif prop_name in state.props:
                         state.set_prop(prop_name, state.props[prop_name])
             elif type(transition.props[prop]) is bool:
                 if not transition.props[prop]:
@@ -361,7 +361,6 @@ class GlobalModel:
 
                     for ap in E_g:
                         tmptr = self._local_models[ap[0]].transitions[ap[1]][ap[2]]
-                        tmptr.print()
 
                     dfs_stack.append(-1)
                     for tup in E_g:
