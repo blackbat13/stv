@@ -1,7 +1,7 @@
 Agent Train[2]:
 init: wait
-shared a1_aID: wait -> tunnel [in_aID=true]
-shared a2_aID: tunnel -> away [in_aID=false]
+shared a1_aID: wait -> tunnel [aID_in=true]
+shared a2_aID: tunnel -> away [aID_in=false]
 a3: away -> wait
 
 Agent Controller[1]:
@@ -12,3 +12,4 @@ shared a2_Train1: red -> green
 shared a2_Train2: red -> green
 
 REDUCTION: [in_Train1,in_Train2]
+COALITION: [Controller1]

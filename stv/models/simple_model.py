@@ -378,9 +378,9 @@ class SimpleModel:
 
         return result
 
-    def js_dump_model(self, winning: List = []) -> str:
+    def js_dump_model(self, winning: List = [], epistemic: bool = True, asynchronous: bool = False) -> str:
         nodes = self.fill_nodes_model(winning)
-        links = self.fill_links_model()
+        links = self.fill_links_model(epistemic, asynchronous)
         return json.dumps({"nodes": nodes, "links": links})
 
     def fill_nodes_model(self, winning: List = []) -> List[hash]:
@@ -398,19 +398,29 @@ class SimpleModel:
 
         return nodes
 
-    def fill_links_model(self) -> List[hash]:
+    def fill_links_model(self, epistemic: bool, asynchronous: bool) -> List[hash]:
         links = []
         transition_id = 0
         for state_id in range(0, self._no_states):
             for transition in self._graph[state_id]:
                 if transition.next_state == state_id:
                     continue
+
+                actions = transition.actions
+
+                if asynchronous:
+                    for act in actions:
+                        if len(act) > 0:
+                            actions = act
+                            break
+
                 links.append(
-                    {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions,
+                    {"id": transition_id, "source": state_id, "target": transition.next_state, "T": actions,
                      "str": 0})
                 transition_id += 1
 
-        links += self._create_epistemic_links(transition_id)
+        if epistemic:
+            links += self._create_epistemic_links(transition_id)
 
         return links
 

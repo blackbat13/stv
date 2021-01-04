@@ -395,7 +395,7 @@ class GlobalModel:
                 DIS.update(self._enabled_for_x(X))
                 X = self._dependent_for_x(X, DIS, U)
                 U.update(X)
-            if len(X) == 0 and not self._check_for_cycle(state, U):# and not self._check_for_k(state, U):
+            if len(X) == 0:# and not self._check_for_cycle(state, U):# and not self._check_for_k(state, U):
                 return U
             V.difference_update(U)
         return set()
