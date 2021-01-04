@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from stv.models.asynchronous.global_state import GlobalState
 
 
@@ -31,7 +31,7 @@ class LocalTransition:
         self.j: int = -1
         self._prot_name: str = action
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, LocalTransition):
             return self._agent_id == other._agent_id and self._action == other._action
         return False
@@ -112,7 +112,7 @@ class LocalTransition:
         """Print transition in readable form."""
         print(f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]; conditions: {self._conditions}")
 
-    def to_tuple(self):
+    def to_tuple(self) -> Tuple[int, int, int]:
         """Converts transition to tuple."""
         return self._agent_id, self.i, self.j
 
@@ -126,19 +126,19 @@ class SharedTransition(LocalTransition):
         super().__init__(local_transition.state_from, local_transition.state_to, local_transition.action,
                          True, local_transition.conditions, local_transition.props)
         self._id: int = local_transition.id
-        self._agent_id = local_transition.agent_id
-        self._transition_list = [local_transition]
-        self.i = local_transition.i
-        self.j = local_transition.j
-        self._prot_name = local_transition.prot_name
+        self._agent_id: int = local_transition.agent_id
+        self._transition_list: List[local_transition] = [local_transition]
+        self.i: int = local_transition.i
+        self.j: int = local_transition.j
+        self._prot_name: str = local_transition.prot_name
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, SharedTransition):
             return self._transition_list == other._transition_list
         return False
 
     @property
-    def transition_list(self):
+    def transition_list(self) -> List[LocalTransition]:
         """List of local transitions."""
         return self._transition_list
 
@@ -150,7 +150,7 @@ class SharedTransition(LocalTransition):
         """
         self._transition_list.append(local_transition)
 
-    def to_tuple(self):
+    def to_tuple(self) -> Tuple[int, int, int]:
         """
         Converts transition to tuple.
         :return:
