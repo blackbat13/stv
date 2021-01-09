@@ -1551,8 +1551,11 @@
                         'target': link.source
                     });
                     let sameAll = same.concat(sameAlt);
-
                     _.each(sameAll, function (s, i) {
+                        let sameArcDirection = s.sameLowerHalf ? 0 : 1;
+                        if (s.target == link.source) {
+                            sameArcDirection = s.sameLowerHalf ? 1 : 0;
+                        }
                         s.sameIndex = (i + 1);
                         s.sameTotal = sameAll.length;
                         s.sameTotalHalf = (s.sameTotal / 2);
@@ -1560,7 +1563,7 @@
                         s.sameMiddleLink = ((s.sameUneven === true) &&
                             (Math.ceil(s.sameTotalHalf) === s.sameIndex));
                         s.sameLowerHalf = (s.sameIndex <= s.sameTotalHalf);
-                        s.sameArcDirection = s.sameLowerHalf ? 0 : 1;
+                        s.sameArcDirection = sameArcDirection;
                         s.sameIndexCorrected = s.sameLowerHalf ? s.sameIndex : (s.sameIndex - Math.ceil(s.sameTotalHalf));
                     });
                 });
