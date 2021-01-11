@@ -8,6 +8,7 @@ shared flip2: voted2 -> fin1
 shared pass2: voted2 -> fin2
 shared pub: fin1 -> pub [win1=true]
 shared pub: fin2 -> pub [win2=true]
+shared loop: pub -> pub
 
 Agent Official[1]:
 init: start
@@ -17,6 +18,8 @@ shared flip2: start -> pub
 shared pass2: start -> pub
 np: pub -> pub
 shared pub: pub -> fin
+shared loop: fin -> fin
 
 REDUCTION: []
 COALITION: [Official1]
+PERSISTENT: [win1, win2]

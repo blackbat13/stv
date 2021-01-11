@@ -20,6 +20,7 @@
     <script src="node_modules/lodash/lodash.min.js"></script>
     <script type="text/javascript">
         const ipcRenderer = require("electron").ipcRenderer;
+
         function toggleDevTools(e) {
             if (e.key == "C" && e.ctrlKey && e.shiftKey) {
                 e.stopImmediatePropagation();
@@ -27,6 +28,7 @@
                 ipcRenderer.send("toggle-devtools");
             }
         }
+
         function chooseModelFile(title) {
             return new Promise((resolve, reject) => {
                 const msgKey = Math.random().toString(36).substr(2);
@@ -40,8 +42,7 @@
                         const lastFilePath = filePath.replace(/\\/g, "/");
                         localStorage["lastFilePath"] = lastFilePath.substr(0, lastFilePath.lastIndexOf("/") + 1);
                         resolve(filePath);
-                    }
-                    else {
+                    } else {
                         reject("cancelled");
                     }
                 };
@@ -53,78 +54,83 @@
                 ]);
             });
         }
+
         function getModelFilePath(id, title) {
             return new Promise((resolve, reject) => {
                 const filePath = $(`#param${id}Value`).text();
                 if (filePath) {
                     resolve(filePath);
-                }
-                else {
+                } else {
                     chooseModelFile(title).then(filePath => {
                         if (filePath) {
                             resolve(filePath);
-                        }
-                        else {
+                        } else {
                             reject("cancelled");
                         }
                     })
-                    .catch(reject);
+                        .catch(reject);
                 }
             });
         }
+
         async function getModelFilePaths(ids) {
             let paths = [];
             for (let id of ids) {
                 let title = null;
-                if (id == 5) { title = "Choose a model 1 file"; }
-                if (id == 6) { title = "Choose a model 2 file"; }
-                if (id == 7) { title = "Choose a relation file"; }
+                if (id == 5) {
+                    title = "Choose a model 1 file";
+                }
+                if (id == 6) {
+                    title = "Choose a model 2 file";
+                }
+                if (id == 7) {
+                    title = "Choose a relation file";
+                }
                 paths.push(await getModelFilePath(id, title));
             }
             return paths;
         }
+
         $(window).on("keydown", e => toggleDevTools(e));
-        
+
         // data: { global: { states: number, transitions: number }, reduced?: { states: number, transitions: number } }
         let modelStatsModalData = null;
+
         function showModelStatsModal(data) {
             if (data.global) {
                 $("#modelStatsModal--globalInfo").css("display", "block");
                 $("#modelStatsModal--globalInfo--states").text(data.global.states);
                 $("#modelStatsModal--globalInfo--transitions").text(data.global.transitions);
-            }
-            else {
+            } else {
                 $("#modelStatsModal--globalInfo").css("display", "none");
             }
             if (data.reduced) {
                 $("#modelStatsModal--reducedInfo").css("display", "block");
                 $("#modelStatsModal--reducedInfo--states").text(data.reduced.states);
                 $("#modelStatsModal--reducedInfo--transitions").text(data.reduced.transitions);
-            }
-            else {
+            } else {
                 $("#modelStatsModal--reducedInfo").css("display", "none");
             }
             if (data.global && data.reduced) {
                 $("#modelStatsModal--reductionInfo").css("display", "block");
                 $("#modelStatsModal--reductionInfo--states").text(((data.global.states - data.reduced.states) / data.global.states * 100).toFixed(2) + "%");
                 $("#modelStatsModal--reductionInfo--transitions").text(((data.global.transitions - data.reduced.transitions) / data.global.transitions * 100).toFixed(2) + "%");
-            }
-            else {
+            } else {
                 $("#modelStatsModal--reductionInfo").css("display", "none");
             }
             $("#modelStatsModal").modal("show");
         }
-        
+
         function toggleStatsModalButton(visible) {
             $("#openStatsModal").css("display", !visible ? "none" : "inline-block");
         }
-        
+
         function generateNodeColors(pairs) {
             let n = pairs.length;
             let useLightness = n > 12;
             let useSaturation = n > (12 * 3);
             let _n = Math.min(12, n);
-            
+
             let palette = [];
             for (let i = 0; i < _n; ++i) {
                 let h = (360 / _n * i).toString();
@@ -135,24 +141,25 @@
                     palette.push(`hsl(${h}, 50%, 25%)`);
                     palette.push(`hsl(${h}, 50%, 50%)`);
                     palette.push(`hsl(${h}, 50%, 75%)`);
-                }
-                else if (useLightness && !useSaturation) {
+                } else if (useLightness && !useSaturation) {
                     palette.push(`hsl(${h}, 100%, 25%)`);
                     palette.push(`hsl(${h}, 100%, 50%)`);
                     palette.push(`hsl(${h}, 100%, 75%)`);
-                }
-                else {
+                } else {
                     palette.push(`hsl(${h}, 100%, 50%)`);
                 }
             }
-            
+
             let colors = [{}, {}];
             for (let i = 0; i < n; ++i) {
                 let k = i % palette.length;
-                colors[0][pairs[i][0]] = palette[k];
-                colors[1][pairs[i][1]] = palette[k];
+                for (let mId = 0; mId <= 1; mId++) {
+                    for (let j = 0; j < pairs[i][0].length; j++) {
+                        colors[mId][pairs[i][mId][j]] = palette[k];
+                    }
+                }
             }
-            
+
             return colors;
         }
     </script>
@@ -224,7 +231,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modelStatsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modelStatsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -234,9 +242,15 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p id="modelStatsModal--globalInfo">Global model states: <span id="modelStatsModal--globalInfo--states"></span>, transitions: <span id="modelStatsModal--globalInfo--transitions"></span></p>
-                    <p id="modelStatsModal--reducedInfo">Reduced model states: <span id="modelStatsModal--reducedInfo--states"></span>, transitions: <span id="modelStatsModal--reducedInfo--transitions"></span></p>
-                    <p id="modelStatsModal--reductionInfo">Reduction: <span id="modelStatsModal--reductionInfo--states"></span> less states, <span id="modelStatsModal--reductionInfo--transitions"></span> less transitions</p>
+                    <p id="modelStatsModal--globalInfo">Global model states: <span
+                            id="modelStatsModal--globalInfo--states"></span>, transitions: <span
+                            id="modelStatsModal--globalInfo--transitions"></span></p>
+                    <p id="modelStatsModal--reducedInfo">Reduced model states: <span
+                            id="modelStatsModal--reducedInfo--states"></span>, transitions: <span
+                            id="modelStatsModal--reducedInfo--transitions"></span></p>
+                    <p id="modelStatsModal--reductionInfo">Reduction: <span
+                            id="modelStatsModal--reductionInfo--states"></span> less states, <span
+                            id="modelStatsModal--reductionInfo--transitions"></span> less transitions</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
@@ -318,10 +332,14 @@
                 </div>
                 <div class="row">
                     <div class="col-6">
-                        <button type="button" class="btn btn-primary" id="btn_generate_global" data-mode="global">Generate global</button>
+                        <button type="button" class="btn btn-primary" id="btn_generate_global" data-mode="global">
+                            Generate global
+                        </button>
                     </div>
                     <div class="col-6">
-                        <button type="button" class="btn btn-primary" id="btn_generate_reduced" data-mode="reduced">Generate reduced</button>
+                        <button type="button" class="btn btn-primary" id="btn_generate_reduced" data-mode="reduced">
+                            Generate reduced
+                        </button>
                     </div>
                 </div>
                 <hr/>
@@ -358,7 +376,9 @@
                     <label id="showLabelsLabel" class="custom-control-label" for="showLabels">Show Actions</label>
                 </div>
                 <div class="row">
-                    <button type="button" class="btn btn-sm btn-primary" id="openStatsModal" style="display: none">Show model information</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="openStatsModal" style="display: none">Show
+                        model information
+                    </button>
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -421,7 +441,7 @@
         let $param6div = $('#param6div');
         let $param7div = $('#param7div');
         let pyshell = require('python-shell').PythonShell;
-        pyshell.defaultOptions = { pythonPath: '../venv/Scripts/python.exe' };
+        pyshell.defaultOptions = {pythonPath: '../venv/Scripts/python.exe'};
         let $divGraph = $('#div_graph');
         let $pFormula = $('#formula');
         let scale = 1;
@@ -441,10 +461,13 @@
         let $upperApproxNoStates = $('#upperApproxNoStates');
         let $lowerApproxNoStates = $('#lowerApproxNoStates');
         let $modelStatsModal = $("#modelStatsModal");
-        
-        $("#openStatsModal").on("click", () => { showModelStatsModal(modelStatsModalData); });
+
+        $("#openStatsModal").on("click", () => {
+            showModelStatsModal(modelStatsModalData);
+        });
+
         function updateModelStatsModalData(globalModel, reducedModel) {
-            console.log(globalModel,reducedModel)
+            console.log(globalModel, reducedModel)
             modelStatsModalData = {};
             if (globalModel) {
                 modelStatsModalData.global = {
@@ -471,8 +494,10 @@
             $param6div.css('display', 'none');
             $param7div.css('display', 'none');
         }
-        
-        let onTabActivated = tabId => {};
+
+        let onTabActivated = tabId => {
+        };
+
         function createTabs(tabs, panels) {
             $("#div_graph").html(`<div id="tabs">
                 <ul id="tab-ul">
@@ -484,9 +509,9 @@
                     "            </div>");
                 for (let panelId of (panels || [0])) {
                     let s = "                    <div class='" + `panel panel-${panelId}` + "'>\n" +
-                            "                       <div class='svg-container'><svg id=\"graph-" + `${i}-${panelId}` + "\" width=\"10000\" height=\"10000\">\n" +
-                            "                       </svg></div>\n" +
-                            "                    </div>\n";
+                        "                       <div class='svg-container'><svg id=\"graph-" + `${i}-${panelId}` + "\" width=\"10000\" height=\"10000\">\n" +
+                        "                       </svg></div>\n" +
+                        "                    </div>\n";
                     $("#tabs").children().last().append(s);
                 }
             }
@@ -503,7 +528,7 @@
                 resetGraph(i, panels);
             }
         }
-        
+
         createTabs(["Model"]);
 
         $buttonZoomIn.on('click', function () {
@@ -558,7 +583,7 @@
                 selectionBisimulation();
             }
         });
-        
+
         function resetGraph(graphId, panels) {
             for (let panelId of (panels || [0])) {
                 const $svgGraph = $(`#graph-${graphId}-${panelId}`);
@@ -617,12 +642,12 @@
             $lowerApproxModalFormula.text(formula);
             $dominoFormula.text(formula);
         }
-        
+
         function setElementData($elem, key, value) {
             $elem.data(key, value);
             $elem.attr("data-" + key, value);
         }
-        
+
         function setActiveModel(modelName) {
             setElementData($("body"), "model", modelName);
         }
@@ -984,7 +1009,7 @@
                 });
             });
         }
-        
+
         function selectionGlobal() {
             setActiveModel("global");
             createTabs(["Model"]);
@@ -1000,37 +1025,38 @@
                 chooseModelFile().then(path => {
                     $param5Input.text(path);
                 })
-                .catch(() => {});
+                    .catch(() => {
+                    });
             });
-            
+
             let modelsForRecoloring = null;
             let currTabId = -1;
-            
+
             function getModel(models, tabId, mode) {
                 if (mode == "global") {
                     if (tabId == 0) {
                         return models.globalModel;
                     }
                     return models.localModels[tabId - 1];
-                }
-                else if (mode == "reduced") {
+                } else if (mode == "reduced") {
                     if (tabId == 0) {
                         return models.globalModel;
                     }
                     if (tabId == 1) {
-                        return models.reducedModel;;
+                        return models.reducedModel;
+                        ;
                     }
                     return models.localModels[tabId - 2];
                 }
             }
-            
+
             let $generateButtons = $().add($generateGlobalButton).add($generateReducedButton);
             $generateButtons.off('click');
             $generateButtons.on('click', function (e) {
                 resetGraph(0);
-                
+
                 let mode = $(e.currentTarget).data("mode"); // "global" | "reduced"
-                
+
                 getModelFilePath(5).then(filePath => {
                     $param5Input.text(filePath);
                     pyshell.run('../gui.py', {args: ['global', 'run', mode, filePath]}, function (err, results) {
@@ -1154,27 +1180,30 @@
                 chooseModelFile("Choose a model 1 file").then(path => {
                     $param5Input.text(path);
                 })
-                .catch(() => {});
+                    .catch(() => {
+                    });
             });
             $param6Button.off('click');
             $param6Button.on('click', function () {
                 chooseModelFile("Choose a model 2 file").then(path => {
                     $param6Input.text(path);
                 })
-                .catch(() => {});
+                    .catch(() => {
+                    });
             });
             $param7Button.off('click');
             $param7Button.on('click', function () {
                 chooseModelFile("Choose a relation file").then(path => {
                     $param7Input.text(path);
                 })
-                .catch(() => {});
+                    .catch(() => {
+                    });
             });
-            
+
             let modelsForRecoloring = null;
             let nodeColors = null;
             let currTabId = -1;
-            
+
             function getModel(models, panelId) {
                 if (panelId == 0) {
                     return models.model1;
@@ -1183,11 +1212,11 @@
                     return models.model2;
                 }
             }
-            
+
             $generateButton.off('click');
             $generateButton.on('click', function (e) {
                 resetGraph(0, [0, 1]);
-                
+
                 getModelFilePaths([5, 6, 7]).then(filePaths => {
                     $param5Input.text(filePaths[0]);
                     $param6Input.text(filePaths[1]);
@@ -1197,7 +1226,9 @@
                         console.log('run_bisimulation.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
-                        nodeColors = generateNodeColors(dumpedModels.correspondingNodeIds);
+                        nodeColors = generateNodeColors(dumpedModels.mapping);
+                        const bisimulationResult = dumpedModels.bisimulation_result;
+
                         let tabs = ["Bisimulation"];
                         let fixedTabsCount = tabs.length;
                         createTabs(tabs, [0, 1]);
@@ -1215,8 +1246,7 @@
                                     const modelStr = getModel(modelsForRecoloring, panelId);
                                     recolorGraph(JSON.parse(modelStr), tabId, panelId, nodeColors[panelId]);
                                     $graph.data("colored", true);
-                                }
-                                else {
+                                } else {
                                     const modelStr = getModel(dumpedModels, panelId);
                                     recolorGraph(JSON.parse(modelStr), tabId, panelId, nodeColors[panelId]);
                                     $graph.data("colored", true);
@@ -1294,7 +1324,7 @@
                 });
             });
         }
-        
+
         function recolorGraphs(graphs, graphId, panels) {
             let i = 0;
             for (let panelId of (panels || [0])) {
@@ -1302,7 +1332,7 @@
                 ++i;
             }
         }
-        
+
         function recolorGraph(graph, graphId, panelId, nodeColors) {
             const $graph = $(`svg#graph-${graphId}-${panelId}`);
             let nodes = graph.nodes;
@@ -1323,7 +1353,7 @@
 
         function colorNodes(nodes, graphId, panelId, nodeColors) {
             const $graph = $(`svg#graph-${graphId}-${panelId}`);
-            
+
             for (let i = 0; i < nodes.length; i++) {
                 if (nodes[i]['str'] === 1) {
                     let id = nodes[i]['id'];
@@ -1331,13 +1361,13 @@
                 }
             }
 
-            $('.node[initial=true]').attr('fill', '#00F');
-            $('.node[winning=true]').attr('fill', '#F0F');
-            
             if (nodeColors) {
                 for (let id in nodeColors) {
                     $graph.find('#node_' + id + "_" + graphId).attr('fill', nodeColors[id]);
                 }
+            } else {
+                $('.node[initial=true]').attr('fill', '#00F');
+                $('.node[winning=true]').attr('fill', '#F0F');
             }
         }
 
@@ -1354,11 +1384,11 @@
         function clearLinkColor($graph) {
             $graph.find('.link').attr('stroke', '#CCC');
         }
-        
+
         function loadGraph(graph, graphId, panelId) {
             let edgepaths, edgelabels, node, link;
             panelId = panelId || "0";
-            
+
             let tooltip = d3.select("body")
                 .append("div")
                 .attr("class", "tooltip")
@@ -1366,6 +1396,11 @@
 
             let currNodes = graph.nodes;
             let currLinks = graph.links;
+
+            for(let i = 0; i < currNodes.length; i++) {
+                currNodes[i].fixed = false;
+                currNodes[i].graphId = graphId;
+            }
 
             const svg = d3.select(`svg#graph-${graphId}-${panelId}`);
             const width = 10000;
@@ -1389,9 +1424,10 @@
             let simulation = d3.forceSimulation()
                 .force("link", d3.forceLink().id(function (d) {
                     return d.id;
-                }).distance(100).strength(1))
+                }).distance(200).strength(1))
                 .force("charge", d3.forceManyBody().strength(-500))
-                .force("center", d3.forceCenter(width / 2, height / 2));
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collide", d3.forceCollide().radius(60).iterations(2));
 
             update(currLinks, currNodes);
 
@@ -1504,7 +1540,8 @@
                     .call(d3.drag()
                         .on("start", dragstarted)
                         .on("drag", dragged)
-                    );
+                        .on("end", dragstopped)
+                    ).on("contextmenu", rightclicked);
 
                 node.append("circle")
                     .attr('class', 'node')
@@ -1648,6 +1685,27 @@
             function dragged(event, d) {
                 d.fx = event.x;
                 d.fy = event.y;
+            }
+
+            function dragstopped(event, d) {
+                if(!d.fixed) {
+                    d.fx = null;
+                    d.fy = null;
+                }
+            }
+
+            function rightclicked(event, d) {
+                if(d.fixed === false) {
+                    d.fx = d.x;
+                    d.fy = d.y;
+                    d.fixed = true;
+                    $("#node_" + d.id + "_" + d.graphId).addClass("node_fixed");
+                } else {
+                    d.fx = null;
+                    d.fy = null;
+                    d.fixed = false;
+                    $("#node_" + d.id + "_" + d.graphId).removeClass("node_fixed");
+                }
             }
 
             function ticked() {

@@ -216,3 +216,7 @@ html, body, .container-fluid, #div_graph {
     height: 100%;
     overflow: scroll;
 }
+
+.node_fixed {
+    stroke-width: 5px !important;
+}

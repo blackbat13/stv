@@ -1,6 +1,7 @@
 import sys
 import json
 from stv.models.asynchronous.parser import GlobalModelParser
+from stv.models import SimpleModel
 
 model1FilePath = sys.argv[3]
 model2FilePath = sys.argv[4]
@@ -16,14 +17,27 @@ global_model2.generate_local_models()
 
 winning = []
 
-# @todo real computation of correspondingNodeIds
-correspondingNodeIds = []
-n = 11
-for i in range(3, 7):
-    correspondingNodeIds.append([i, n - i - 1])
+mapping = SimpleModel.parse_mapping_sets(relationPath)
+
+bis_result = global_model1.model.check_bisimulation(global_model2.model, SimpleModel.parse_mapping(relationPath))
+
+# # @todo real computation of correspondingNodeIds
+# correspondingNodeIds = []
+# # n = 11
+#
+# for pair in mapping:
+#
+#
+# for state_id in mapping:
+#     for sim_state_id in mapping[state_id]:
+#         correspondingNodeIds.append([state_id, sim_state_id])
+
+# for i in range(3, 7):
+#     correspondingNodeIds.append([i, n - i - 1])
 
 print(json.dumps({
     "model1": global_model1.model.js_dump_model(winning),
     "model2": global_model2.model.js_dump_model(winning),
-    "correspondingNodeIds": correspondingNodeIds,
+    "mapping": mapping,
+    "bisimulation_result": bis_result,
 }))

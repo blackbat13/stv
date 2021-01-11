@@ -714,8 +714,10 @@ class SimpleModel:
 
         return result
 
-    def check_bisimulation(self, sim_model, mapping: Dict[int, List[int]], agent_id: int) -> bool:
+    def check_bisimulation(self, sim_model, mapping: Dict[int, List[int]]) -> bool:
+        agent_id = self._coalition[0]
         for epistemic_class in self.epistemic_classes[agent_id]:
+            # print(epistemic_class)
             for state_id in epistemic_class:
                 partial_strats = self.get_partial_strategies(state_id, agent_id)
                 for action in partial_strats:
@@ -753,7 +755,9 @@ class SimpleModel:
         return True
 
     def match(self, state_id: int, sim_state_id: int, sim_model, agent_id: int) -> bool:
-        return self.states[state_id]['props'] == sim_model.states[sim_state_id]['props']  # TODO verify
+        # print(self.states[state_id]['Propositions'], sim_model.states[sim_state_id]['Propositions'])
+        # print(self.states[state_id])
+        return self.states[state_id]['Propositions'] == sim_model.states[sim_state_id]['Propositions']
 
     def simulepist(self, state_id: int, sim_state_id: int, sim_model, agent_id: int,
                    mapping: Dict[int, List[int]]) -> bool:
@@ -790,3 +794,34 @@ class SimpleModel:
                         return False
 
         return True
+
+    @staticmethod
+    def parse_mapping(file_name: str) -> Dict[int, List[int]]:
+        input_file = open(file_name, "r")
+        lines = input_file.readlines()
+        input_file.close()
+        result = dict()
+
+        for line in lines:
+            states_left, states_right = line.split("->")
+            states_left = list(map(int, states_left.strip(" ").split(",")))
+            states_right = list(map(int, states_right.strip(" ").split(",")))
+            for state_id in states_left:
+                result[state_id] = states_right[:]
+
+        return result
+
+    @staticmethod
+    def parse_mapping_sets(file_name: str) -> List[List[List[int]]]:
+        input_file = open(file_name, "r")
+        lines = input_file.readlines()
+        input_file.close()
+        result = []
+
+        for line in lines:
+            states_left, states_right = line.split("->")
+            states_left = list(map(int, states_left.strip(" ").split(",")))
+            states_right = list(map(int, states_right.strip(" ").split(",")))
+            result.append([states_left[:], states_right[:]])
+
+        return result
