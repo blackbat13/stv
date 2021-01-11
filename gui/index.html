@@ -119,6 +119,7 @@
             $("#openStatsModal").css("display", !visible ? "none" : "inline-block");
         }
         
+        let coloredNodePairs = null;
         function generateNodeColors(pairs) {
             let n = pairs.length;
             let useLightness = n > 12;
@@ -155,6 +156,7 @@
             
             return colors;
         }
+        let currentSelection = "";
     </script>
 </head>
 <body>
@@ -541,6 +543,7 @@
             $("#pFormula").css("display", "block");
             let selection = $("#models option:selected").val();
             toggleStatsModalButton(false);
+            currentSelection = selection;
             if (selection === "tianji") {
                 selectionTianJi();
             } else if (selection === "castles") {
@@ -1199,6 +1202,7 @@
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
                         nodeColors = generateNodeColors(dumpedModels.correspondingNodeIds);
+                        coloredNodePairs = dumpedModels.correspondingNodeIds;
                         let tabs = ["Bisimulation checking"];
                         let fixedTabsCount = tabs.length;
                         createTabs(tabs, [0, 1]);
@@ -1308,7 +1312,7 @@
             const $graph = $(`svg#graph-${graphId}-${panelId}`);
             let nodes = graph.nodes;
             let links = graph.links;
-            clearGraphColor($graph, graphId);
+            clearGraphColor($graph, graphId, panelId);
             colorLinks(links, graphId);
             colorNodes(nodes, graphId, panelId, nodeColors);
         }
@@ -1328,7 +1332,7 @@
             for (let i = 0; i < nodes.length; i++) {
                 if (nodes[i]['str'] === 1) {
                     let id = nodes[i]['id'];
-                    $graph.find('#node_' + id + "_" + graphId).attr('fill', '#0F0');
+                    $graph.find('#node_' + id + "_" + graphId + "_" + panelId).attr('fill', '#0F0');
                 }
             }
 
@@ -1337,19 +1341,19 @@
             
             if (nodeColors) {
                 for (let id in nodeColors) {
-                    $graph.find('#node_' + id + "_" + graphId).attr('fill', nodeColors[id]);
+                    $graph.find('#node_' + id + "_" + graphId + "_" + panelId).attr('fill', nodeColors[id]);
                 }
             }
         }
 
-        function clearGraphColor($graph, graphId) {
-            clearNodesColor($graph, graphId);
+        function clearGraphColor($graph, graphId, panelId) {
+            clearNodesColor($graph, graphId, panelId);
             clearLinkColor($graph);
         }
 
-        function clearNodesColor($graph, graphId) {
+        function clearNodesColor($graph, graphId, panelId) {
             $graph.find('g circle').attr('fill', '#CCC');
-            $graph.find('#node_0' + "_" + graphId).attr('fill', '#00F');
+            $graph.find('#node_0' + "_" + graphId + "_" + panelId).attr('fill', '#00F');
         }
 
         function clearLinkColor($graph) {
@@ -1529,7 +1533,7 @@
                 node.append("circle")
                     .attr('class', 'node')
                     .attr('id', function (d) {
-                        return "node_" + d.id + "_" + graphId
+                        return "node_" + d.id + "_" + graphId + "_" + panelId
                     })
                     .attr('initial', function (d) {
                         return d.bgn === 1;
@@ -1562,12 +1566,14 @@
                             .style("top", (event.pageY + 10) + "px");
                     })
                     .on('mouseover.fade', fade(0.1))
+                    .on('mouseover.grayoutOtherNodes', toggleOtherGrayedOut(true))
                     .on("mouseout.tooltip", function () {
                         tooltip.transition()
                             .duration(100)
                             .style("opacity", 0);
                     })
                     .on('mouseout.fade', fade(1))
+                    .on('mouseout.grayoutOtherNodes', toggleOtherGrayedOut(false))
                     .on("mousemove", function (event) {
                         tooltip.style("left", (event.pageX) + "px")
                             .style("top", (event.pageY + 10) + "px");
@@ -1748,6 +1754,35 @@
 
                     link.style('stroke-opacity', o => (o.source === d.source && o.target === d.target ? 1 : opacity));
                 }
+            }
+            
+            function toggleOtherGrayedOut(grayedOut) {
+                return (event, d) => {
+                    if (currentSelection != "bisimulation") {
+                        return;
+                    }
+                    $(".highlighted-by-color").removeClass("highlighted-by-color");
+                    $(document.body).toggleClass("highlight-by-color", grayedOut);
+                    if (!grayedOut) {
+                        return;
+                    }
+                    let $target = $(event.target);
+                    let id = $target.attr("id");
+                    let [ , nodeId, graphId, panelId ] = id.split("_").map(x => parseInt(x));
+                    let pair = coloredNodePairs.filter(x => x[panelId] == nodeId)[0];
+                    if (!pair && nodeId != 0) {
+                        return;
+                    }
+                    let otherPanelId = panelId == 1 ? 0 : 1;
+                    let otherNodeId = nodeId == 0 ? 0 : pair[otherPanelId];
+                    let otherId = `node_${otherNodeId}_${graphId}_${otherPanelId}`;
+                    let $otherNode = $(`#${otherId}`);
+                    if ($otherNode.length == 0) {
+                        return;
+                    }
+                    let $nodes = $().add($target).add($otherNode);
+                    $nodes.addClass("highlighted-by-color");
+                };
             }
 
             $buttonFreeze.off('click');

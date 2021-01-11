@@ -216,3 +216,10 @@ html, body, .container-fluid, #div_graph {
     height: 100%;
     overflow: scroll;
 }
+
+body.highlight-by-color circle.node:not(.highlighted-by-color) {
+    fill: #ccc !important;
+}
+g.node text {
+    pointer-events: none;
+}
