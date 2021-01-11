@@ -1,7 +1,7 @@
 from stv.logics.atl import ATLIrModel, ATLirModel, Transition
 from stv.logics.atl.mv import MvATLirModel
 from stv.logics.sl import SLIr
-from typing import List, Set
+from typing import List, Set, Dict
 import ast
 import itertools
 import json
@@ -676,3 +676,113 @@ class SimpleModel:
                 new_model.add_epistemic_class(agent_id, new_epistemic_class)
 
         return new_model
+
+    def get_partial_strategies(self, state_id: int, agent_id: int) -> Dict[str, List[Transition]]:
+        result = dict()
+        for transition in self.graph[state_id]:
+            action = transition.actions[agent_id]
+            if action in result:
+                result[action].append(transition)
+            else:
+                result[action] = [transition]
+        return result
+
+    def group_by_epistemic_classes(self, states: List[int], agent_id: int) -> List[List[int]]:
+        vis = [False for _ in range(len(states))]
+        result = []
+        for i in range(len(states)):
+            if vis[i]:
+                continue
+
+            vis[i] = True
+            state_id = states[i]
+            result.append([state_id])
+            epistemic_class_id = self.epistemic_class_membership[agent_id][state_id]
+            for j in range(i + 1, len(states)):
+                if vis[j]:
+                    continue
+
+                state2_id = states[j]
+                epistemic_class2_id = self.epistemic_class_membership[agent_id][state2_id]
+                if epistemic_class_id == epistemic_class2_id:
+                    result[-1].append(state2_id)
+                    vis[j] = True
+
+        return result
+
+    def check_bisimulation(self, sim_model, mapping: Dict[int, List[int]], agent_id: int) -> bool:
+        for epistemic_class in self.epistemic_classes[agent_id]:
+            for state_id in epistemic_class:
+                partial_strats = self.get_partial_strategies(state_id, agent_id)
+                for action in partial_strats:
+                    trans = partial_strats[action]
+                    sim_states = mapping[state_id]
+                    sim_groups = sim_model.group_by_epistemic_classes(sim_states, agent_id)
+                    for sim_group in sim_groups:
+                        sim_repr_id = sim_group[0]
+                        sim_partial_strats = sim_model.get_partial_strategies(sim_repr_id, agent_id)
+                        glob_ok = False
+                        for sim_action in sim_partial_strats:
+                            sim_trans = sim_partial_strats[sim_action]
+                            ok = True
+                            for sim_state_id in sim_group:
+                                if not self.match(state_id, sim_state_id, sim_model, agent_id):
+                                    ok = False
+                                    break
+
+                                if not self.simulepist(state_id, sim_state_id, sim_model, agent_id, mapping):
+                                    ok = False
+                                    break
+
+                                if not self.simultrans(epistemic_class,
+                                                       sim_model.epistemic_class_for_state(sim_state_id, agent_id),
+                                                       mapping, trans, sim_trans):
+                                    ok = False
+                                    break
+
+                            if ok:
+                                glob_ok = True
+                                break
+
+                        if not glob_ok:
+                            return False
+        return True
+
+    def match(self, state_id: int, sim_state_id: int, sim_model, agent_id: int) -> bool:
+        return self.states[state_id]['props'] == sim_model.states[sim_state_id]['props']  # TODO verify
+
+    def simulepist(self, state_id: int, sim_state_id: int, sim_model, agent_id: int,
+                   mapping: Dict[int, List[int]]) -> bool:
+        # for each agent
+        for sim_epistemic_state_id in sim_model.epistemic_class_for_state(sim_state_id, agent_id):
+            ok = False
+            for epistemic_state_id in self.epistemic_class_for_state(state_id, agent_id):
+                if sim_epistemic_state_id in mapping[epistemic_state_id]:
+                    ok = True
+                    break
+
+            if not ok:
+                return False
+
+        return True
+
+    def simultrans(self, epistemic_class: Set[int], sim_epistemic_class: Set[int], mapping: Dict[int, List[int]],
+                   trans: List[Transition], sim_trans: List[Transition]) -> bool:
+        for state_id in epistemic_class:
+            for sim_state_id in sim_epistemic_class:
+                if sim_state_id not in mapping[state_id]:
+                    continue
+
+                for sim_transition in sim_trans:
+                    sim_suc_id = sim_transition.next_state
+                    ok = False
+                    for transition in trans:
+                        suc_id = transition.next_state
+                        if sim_suc_id in mapping[suc_id]:
+                            ok = True
+                            break
+
+                    if not ok:
+                        return False
+
+        return True
