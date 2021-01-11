@@ -22,12 +22,12 @@ winning = []
 localModels = []
 localModelNames = []
 for localModel in global_model._local_models:
-    localModels.append(localModel._model.js_dump_model(winning=[], epistemic=False))
+    localModels.append(localModel._model.js_dump_model(winning=[], epistemic=True))
     localModelNames.append(localModel._agent_name)
 
 print(json.dumps({
     "localModels": localModels,
     "localModelNames": localModelNames,
-    "globalModel": global_model.model.js_dump_model(winning, False, True),
-    "reducedModel": reduced_model.model.js_dump_model(winning, False, True) if reduced_model else None,
+    "globalModel": global_model.model.js_dump_model(winning, True, True),
+    "reducedModel": reduced_model.model.js_dump_model(winning, True, True) if reduced_model else None,
 }))

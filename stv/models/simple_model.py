@@ -18,9 +18,13 @@ class SimpleModel:
         self._epistemic_classes: List[List[Set[int]]] = []
         self._epistemic_class_membership: List[List[int]] = []
         self._states: List[{}] = []
+        self._coalition = [0]
         for _ in range(0, self._no_agents):
             self._epistemic_classes.append([])
             self._epistemic_class_membership.append([])
+
+    def set_coalition(self, coalition: List[int]):
+        self._coalition = coalition
 
     @property
     def graph(self) -> List[List[Transition]]:
@@ -403,8 +407,8 @@ class SimpleModel:
         transition_id = 0
         for state_id in range(0, self._no_states):
             for transition in self._graph[state_id]:
-                if transition.next_state == state_id:
-                    continue
+                # if transition.next_state == state_id:
+                #     continue
 
                 actions = transition.actions
 
@@ -487,7 +491,7 @@ class SimpleModel:
 
     def _create_epistemic_links(self, link_id: int) -> list:
         links = []
-        for agent_id in range(1):  # range(self.no_agents):
+        for agent_id in self._coalition:  # range(self.no_agents):
             for state_id_1 in range(self.no_states):
                 if self._epistemic_class_membership[agent_id][state_id_1] == -1:
                     continue

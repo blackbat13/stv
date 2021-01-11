@@ -82,6 +82,9 @@ class GlobalModel:
         # self._model.states = self._states
         self._prepare_epistemic_relation()
 
+        coal_ids = self.agent_name_coalition_to_ids(self._coalition)
+        self._model.set_coalition(coal_ids)
+
     def generate_local_models(self):
         for local_model in self._local_models:
             local_model.generate()
