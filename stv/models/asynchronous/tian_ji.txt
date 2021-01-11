@@ -1,0 +1,34 @@
+Agent TianHorse[3]:
+init: idle
+shared choose_aID: idle -> chosen
+
+Agent KingHorse[3]:
+init: idle
+shared choose_aID: idle -> chosen
+
+Agent round[3]:
+init: pre_idle
+shared start_aID: pre_idle -> idle
+shared choose_KingHorse1: idle -> k1
+shared choose_KingHorse1: idle -> k2
+shared choose_KingHorse1: idle -> k3
+shared choose_TianHorse1: k1 -> win_k
+shared choose_TianHorse1: k2 -> win_t
+shared choose_TianHorse1: k3 -> win_t
+shared choose_TianHorse2: k1 -> win_k
+shared choose_TianHorse2: k2 -> win_k
+shared choose_TianHorse2: k3 -> win_t
+shared choose_TianHorse3: k1 -> win_k
+shared choose_TianHorse3: k2 -> win_k
+shared choose_TianHorse3: k3 -> win_k
+shared end_aID: win_k -> halt
+shared end_aID: win_t -> halt
+
+Agent Env[1]:
+init: idle
+shared start_round1: idle -> round1_in
+shared end_round1: round1_in -> round1_out
+shared start_round2: round1_out -> round2_in
+shared end_round2: round2_in -> round2_out
+shared start_round3: round2_out -> round3_in
+shared end_round3: round3_in -> halt
