@@ -223,3 +223,6 @@ body.highlight-by-color circle.node:not(.highlighted-by-color) {
 g.node text {
     pointer-events: none;
 }
+.node_fixed {
+    stroke-width: 5px !important;
+}

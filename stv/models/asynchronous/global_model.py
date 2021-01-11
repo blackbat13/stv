@@ -476,7 +476,7 @@ class GlobalModel:
             state.id = state_id
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
-            self._model.states.append(state.to_str())
+            self._model.states.append(state.to_obj())
             for i in range(len(self._local_models)):
                 epistemic_state = self._get_epistemic_state(state, i)
                 self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
@@ -541,8 +541,9 @@ class GlobalModel:
         :return:
         """
         state: GlobalState = GlobalState.initial_state(len(self._local_models))
-        self._states.append(state)
-        self.model.states.append(state.to_str())
+        self._add_state(state)
+        # self._states.append(state)
+        # self.model.states.append(state.to_str())
         i: int = 0
         while i < len(self._states):
             state = self._states[i]

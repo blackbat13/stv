@@ -60,3 +60,6 @@ class GlobalState:
 
     def __str__(self):
         return f"ID: {self._id}, Local States: {self._local_states}, Props: {self._props}"
+
+    def to_obj(self):
+        return {"Local States": self._local_states, "Propositions": self._props}
