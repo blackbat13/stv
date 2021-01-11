@@ -566,6 +566,7 @@
 
         $modelList.on('change', function () {
             $("#pFormula").css("display", "block");
+            $(document.body).removeClass("highlight-by-color");
             let selection = $("#models option:selected").val();
             toggleStatsModalButton(false);
             currentSelection = selection;
@@ -1164,6 +1165,7 @@
         }
 
         function selectionBisimulation() {
+            $(document.body).removeClass("highlight-by-color");
             setActiveModel("bisimulation");
             createTabs(["Bisimulation checking"], [0, 1]);
             hideParams();
@@ -1219,6 +1221,7 @@
 
             $generateButton.off('click');
             $generateButton.on('click', function (e) {
+                $(document.body).removeClass("highlight-by-color");
                 resetGraph(0, [0, 1]);
 
                 getModelFilePaths([5, 6, 7]).then(filePaths => {
