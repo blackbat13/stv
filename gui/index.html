@@ -1136,7 +1136,7 @@
 
         function selectionBisimulation() {
             setActiveModel("bisimulation");
-            createTabs(["Bisimulation"], [0, 1]);
+            createTabs(["Bisimulation checking"], [0, 1]);
             hideParams();
             $param5div.css('display', 'block');
             $param5Input.empty();
@@ -1199,7 +1199,7 @@
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
                         nodeColors = generateNodeColors(dumpedModels.correspondingNodeIds);
-                        let tabs = ["Bisimulation"];
+                        let tabs = ["Bisimulation checking"];
                         let fixedTabsCount = tabs.length;
                         createTabs(tabs, [0, 1]);
                         onTabActivated = tabId => {
@@ -1317,7 +1317,7 @@
             for (let i = 0; i < links.length; i++) {
                 if (links[i]['str'] === 1) {
                     let id = links[i]['id'];
-                    $graph.find('#link_' + id + "_" + graphId).attr('stroke', '#F00');
+                    $graph.find(`#link_${graphId}_${panelId}_${id}`).attr('stroke', '#F00');
                 }
             }
         }
@@ -1437,7 +1437,7 @@
                 //Add mouseover events to links
                 link.attr('class', 'link')
                     .attr('id', function (d) {
-                        return 'link_' + d.id + "_" + graphId;
+                        return `link_${graphId}_${panelId}_${d.id}`;
                     })
                     .on('mouseover.fade', linkFade(0.1))
                     .on('mouseover.tooltip', function (event, d) {
@@ -1500,14 +1500,14 @@
                         }
                     })
                     .attr('id', function (d, i) {
-                        return 'edgelabel' + i
+                        return `edgelabel_${graphId}_${panelId}_${i}`;
                     })
                     .attr('font-size', 20)
                     .attr('fill', '#666');
 
                 edgelabels.append('textPath')
                     .attr('xlink:href', function (d, i) {
-                        return '#link_' + d.id + "_" + graphId
+                        return `#link_${graphId}_${panelId}_${d.id}`;
                     })
                     .style("text-anchor", "middle")
                     .style("pointer-events", "none")
