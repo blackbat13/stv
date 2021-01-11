@@ -1044,9 +1044,11 @@
                         );
                         toggleStatsModalButton(true);
                         let fixedTabsCount = tabs.length;
+                        let localModelTabs = [];
                         for (let i = 1; i <= dumpedModels.localModels.length; ++i) {
-                            tabs.push(dumpedModels.localModelNames[i - 1]);
+                            localModelTabs.push(dumpedModels.localModelNames[i - 1]);
                         }
+                        tabs = [...localModelTabs, ...tabs];
                         createTabs(tabs);
                         onTabActivated = tabId => {
                             currTabId = tabId;
