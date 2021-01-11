@@ -444,7 +444,6 @@
         
         $("#openStatsModal").on("click", () => { showModelStatsModal(modelStatsModalData); });
         function updateModelStatsModalData(globalModel, reducedModel) {
-            console.log(globalModel,reducedModel)
             modelStatsModalData = {};
             if (globalModel) {
                 modelStatsModalData.global = {
@@ -1370,8 +1369,9 @@
             const svg = d3.select(`svg#graph-${graphId}-${panelId}`);
             const width = 10000;
             const height = 10000;
-
-            svg.append('defs').append('marker')
+            
+            const defs = svg.append('defs')
+            defs.append('marker')
                 .attr("id", `arrowhead-${graphId}`)
                 .attr("viewBox", "0 -5 10 10")
                 .attr("refX", 19)
@@ -1384,6 +1384,20 @@
                 .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
                 .style('fill', '#999')
                 .style('stroke', 'none');
+            defs.append('marker')
+                .attr("id", `arrowhead-self-${graphId}`)
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 10)
+                .attr("refY", 0)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "45deg")
+                .attr('xoverflow', 'visible')
+                .append('svg:path')
+                .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+                .style('fill', '#999')
+                .style('stroke', 'none');
+
 
 
             let simulation = d3.forceSimulation()
@@ -1405,8 +1419,12 @@
                         if (d.str === 3) {
                             return '';
                         }
-
-                        return `url(#arrowhead-${graphId})`;
+                        if (d.source == d.target) {
+                            return `url(#arrowhead-self-${graphId})`;
+                        }
+                        else {
+                            return `url(#arrowhead-${graphId})`;
+                        }
                     });
 
                 link.append("title")
@@ -1618,6 +1636,7 @@
                         s.sameArcDirection = sameArcDirection;
                         s.sameIndexCorrected = s.sameLowerHalf ? s.sameIndex : (s.sameIndex - Math.ceil(s.sameTotalHalf));
                     });
+                    link.sameTargetAndSource = link.target == link.source;
                 });
 
                 let maxSame = _.chain(links)
@@ -1686,8 +1705,13 @@
                 if (d.sameMiddleLink) {
                     arc = 0;
                 }
-
-                return "M" + d.source.x + "," + d.source.y + "A" + arc + "," + arc + " 0 0," + d.sameArcDirection + " " + d.target.x + "," + d.target.y;
+                if (d.sameTargetAndSource) {
+                    arc = 25;
+                    return "M" + d.source.x + "," + d.source.y + "A" + arc + "," + arc + " 0 1,1 " + (d.target.x - 25 * 0) + "," + (d.target.y - 20);
+                }
+                else {
+                    return "M" + d.source.x + "," + d.source.y + "A" + arc + "," + arc + " 0 0," + d.sameArcDirection + " " + d.target.x + "," + d.target.y;
+                }
             }
 
             const linkedByIndex = {};
