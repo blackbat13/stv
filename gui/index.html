@@ -1602,14 +1602,13 @@
                             .style("top", (event.pageY + 10) + "px");
                     })
                     .on('mouseover.fade', fade(0.1))
-                    .on('mouseover.grayoutOtherNodes', toggleOtherGrayedOut(true))
                     .on("mouseout.tooltip", function () {
                         tooltip.transition()
-                            .duration(100)
-                            .style("opacity", 0);
+                        .duration(100)
+                        .style("opacity", 0);
                     })
                     .on('mouseout.fade', fade(1))
-                    .on('mouseout.grayoutOtherNodes', toggleOtherGrayedOut(false))
+                    .on('click.grayoutOtherNodes', toggleOtherGrayedOut(true))
                     .on("mousemove", function (event) {
                         tooltip.style("left", (event.pageX) + "px")
                             .style("top", (event.pageY + 10) + "px");
@@ -1815,6 +1814,9 @@
             
             function toggleOtherGrayedOut(grayedOut) {
                 return (event, d) => {
+                    if (!grayedOut && $(event.target).is("circle[id^='node_']")) {
+                        return;
+                    }
                     $(document.body).toggleClass("highlight-by-color", false);
                     $(".highlighted-by-color").removeClass("highlighted-by-color");
                     if (currentSelection != "bisimulation") {
@@ -1857,6 +1859,10 @@
                     $nodes.addClass("highlighted-by-color");
                 };
             }
+            
+            $(document)
+                .off("click.grayoutOtherNodes")
+                .on("click.grayoutOtherNodes", "svg[id^='graph-']", toggleOtherGrayedOut(false));
 
             $buttonFreeze.off('click');
             $buttonFreeze.on('click', function () {
