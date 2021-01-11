@@ -16,7 +16,14 @@ global_model2.generate_local_models()
 
 winning = []
 
+# @todo real computation of correspondingNodeIds
+correspondingNodeIds = []
+n = 11
+for i in range(3, 7):
+    correspondingNodeIds.append([i, n - i - 1])
+
 print(json.dumps({
     "model1": global_model1.model.js_dump_model(winning),
     "model2": global_model2.model.js_dump_model(winning),
+    "correspondingNodeIds": correspondingNodeIds,
 }))

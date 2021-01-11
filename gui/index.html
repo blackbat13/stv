@@ -118,6 +118,43 @@
         function toggleStatsModalButton(visible) {
             $("#openStatsModal").css("display", !visible ? "none" : "inline-block");
         }
+        
+        function generateNodeColors(pairs) {
+            let n = pairs.length;
+            let useLightness = n > 12;
+            let useSaturation = n > (12 * 3);
+            let _n = Math.min(12, n);
+            
+            let palette = [];
+            for (let i = 0; i < _n; ++i) {
+                let h = (360 / _n * i).toString();
+                if (useLightness && useSaturation) {
+                    palette.push(`hsl(${h}, 100%, 25%)`);
+                    palette.push(`hsl(${h}, 100%, 50%)`);
+                    palette.push(`hsl(${h}, 100%, 75%)`);
+                    palette.push(`hsl(${h}, 50%, 25%)`);
+                    palette.push(`hsl(${h}, 50%, 50%)`);
+                    palette.push(`hsl(${h}, 50%, 75%)`);
+                }
+                else if (useLightness && !useSaturation) {
+                    palette.push(`hsl(${h}, 100%, 25%)`);
+                    palette.push(`hsl(${h}, 100%, 50%)`);
+                    palette.push(`hsl(${h}, 100%, 75%)`);
+                }
+                else {
+                    palette.push(`hsl(${h}, 100%, 50%)`);
+                }
+            }
+            
+            let colors = [{}, {}];
+            for (let i = 0; i < n; ++i) {
+                let k = i % palette.length;
+                colors[0][pairs[i][0]] = palette[k];
+                colors[1][pairs[i][1]] = palette[k];
+            }
+            
+            return colors;
+        }
     </script>
 </head>
 <body>
@@ -1135,6 +1172,7 @@
             });
             
             let modelsForRecoloring = null;
+            let nodeColors = null;
             let currTabId = -1;
             
             function getModel(models, panelId) {
@@ -1159,6 +1197,7 @@
                         console.log('run_bisimulation.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
+                        nodeColors = generateNodeColors(dumpedModels.correspondingNodeIds);
                         let tabs = ["Bisimulation"];
                         let fixedTabsCount = tabs.length;
                         createTabs(tabs, [0, 1]);
@@ -1174,7 +1213,12 @@
                                 }
                                 if (modelsForRecoloring && !$graph.data("colored")) {
                                     const modelStr = getModel(modelsForRecoloring, panelId);
-                                    recolorGraph(JSON.parse(modelStr), tabId, panelId);
+                                    recolorGraph(JSON.parse(modelStr), tabId, panelId, nodeColors[panelId]);
+                                    $graph.data("colored", true);
+                                }
+                                else {
+                                    const modelStr = getModel(dumpedModels, panelId);
+                                    recolorGraph(JSON.parse(modelStr), tabId, panelId, nodeColors[panelId]);
                                     $graph.data("colored", true);
                                 }
                             }
@@ -1199,7 +1243,7 @@
                         $("svg").data("colored", false);
                         for (let panelId of [0, 1]) {
                             const modelStr = getModel(dumpedModels, panelId);
-                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId, nodeColors[panelId]);
                             $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
                         }
                         loadLowerApproxModal(results);
@@ -1221,7 +1265,7 @@
                         $("svg").data("colored", false);
                         for (let panelId of [0, 1]) {
                             const modelStr = getModel(dumpedModels, panelId);
-                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId, nodeColors[panelId]);
                             $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
                         }
                         loadUpperApproxModal(results);
@@ -1242,7 +1286,7 @@
                         $("svg").data("colored", false);
                         for (let panelId of [0, 1]) {
                             const modelStr = getModel(dumpedModels, panelId);
-                            recolorGraph(JSON.parse(modelStr), currTabId, panelId);
+                            recolorGraph(JSON.parse(modelStr), currTabId, panelId, nodeColors[panelId]);
                             $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
                         }
                         loadDominoResults(results);
@@ -1259,13 +1303,13 @@
             }
         }
         
-        function recolorGraph(graph, graphId, panelId) {
+        function recolorGraph(graph, graphId, panelId, nodeColors) {
             const $graph = $(`svg#graph-${graphId}-${panelId}`);
             let nodes = graph.nodes;
             let links = graph.links;
             clearGraphColor($graph, graphId);
             colorLinks(links, graphId);
-            colorNodes(nodes, graphId);
+            colorNodes(nodes, graphId, panelId, nodeColors);
         }
 
         function colorLinks(links, graphId) {
@@ -1277,7 +1321,9 @@
             }
         }
 
-        function colorNodes(nodes, graphId) {
+        function colorNodes(nodes, graphId, panelId, nodeColors) {
+            const $graph = $(`svg#graph-${graphId}-${panelId}`);
+            
             for (let i = 0; i < nodes.length; i++) {
                 if (nodes[i]['str'] === 1) {
                     let id = nodes[i]['id'];
@@ -1287,6 +1333,12 @@
 
             $('.node[initial=true]').attr('fill', '#00F');
             $('.node[winning=true]').attr('fill', '#F0F');
+            
+            if (nodeColors) {
+                for (let id in nodeColors) {
+                    $graph.find('#node_' + id + "_" + graphId).attr('fill', nodeColors[id]);
+                }
+            }
         }
 
         function clearGraphColor($graph, graphId) {
@@ -1551,8 +1603,11 @@
                         'target': link.source
                     });
                     let sameAll = same.concat(sameAlt);
-
                     _.each(sameAll, function (s, i) {
+                        let sameArcDirection = s.sameLowerHalf ? 0 : 1;
+                        if (s.target == link.source) {
+                            sameArcDirection = s.sameLowerHalf ? 1 : 0;
+                        }
                         s.sameIndex = (i + 1);
                         s.sameTotal = sameAll.length;
                         s.sameTotalHalf = (s.sameTotal / 2);
@@ -1560,7 +1615,7 @@
                         s.sameMiddleLink = ((s.sameUneven === true) &&
                             (Math.ceil(s.sameTotalHalf) === s.sameIndex));
                         s.sameLowerHalf = (s.sameIndex <= s.sameTotalHalf);
-                        s.sameArcDirection = s.sameLowerHalf ? 0 : 1;
+                        s.sameArcDirection = sameArcDirection;
                         s.sameIndexCorrected = s.sameLowerHalf ? s.sameIndex : (s.sameIndex - Math.ceil(s.sameTotalHalf));
                     });
                 });
