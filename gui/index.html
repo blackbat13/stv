@@ -270,8 +270,16 @@
         <div class="col-right">
             <form>
                 <div>
+                    <select name="methods" id="methods">
+                        <option value="verification">Verification techniques</option>
+                        <option value="global">Partial order reduction</option>
+                        <option value="bisimulation">Bisimulation checking</option>
+                    </select>
+                </div>
+                <div id="div_models_sel">
+                    <label for="models">Select model:</label>
                     <select name="models" id="models">
-                        <option value="none">Select model</option>
+                        <option value="none">Asynchronous model</option>
                         <option value="tianji">Tian Ji</option>
                         <option value="castles">Castles</option>
                         <option value="bridge">Bridge Endplay</option>
@@ -407,6 +415,8 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        let $methodList = $("#methods");
+        let $divModelList = $("#div_models_sel");
         let $modelList = $("#models");
         let $modelOptions = $("#model_options");
         let $generateButton = $("#btn_generate");
@@ -564,6 +574,18 @@
             }
         });
 
+        $methodList.on("change", function() {
+            let selection = $("#methods option:selected").val();
+            toggleStatsModalButton(false);
+            if(selection === "global") {
+                selectionGlobal();
+            } else if(selection === "bisimulation") {
+                selectionBisimulation();
+            } else if(selection === "verification") {
+                // selectionVerification();
+            }
+        });
+
         $modelList.on('change', function () {
             $("#pFormula").css("display", "block");
             $(document.body).removeClass("highlight-by-color");
@@ -580,10 +602,6 @@
                 selectionDrone();
             } else if (selection === "voting") {
                 selectionVoting();
-            } else if (selection == "global") {
-                selectionGlobal();
-            } else if (selection == "bisimulation") {
-                selectionBisimulation();
             }
         });
 
@@ -1017,6 +1035,9 @@
             setActiveModel("global");
             createTabs(["Model"]);
             hideParams();
+
+            $divModelList.css('display', 'none');
+
             $param5div.css('display', 'block');
             $param5Input.empty();
             $param5Label.html("Model file:");
@@ -1169,6 +1190,9 @@
             setActiveModel("bisimulation");
             createTabs(["Bisimulation checking"], [0, 1]);
             hideParams();
+
+            $divModelList.css('display', 'none');
+
             $param5div.css('display', 'block');
             $param5Input.empty();
             $param5Label.html("Model 1 file:");
@@ -1407,6 +1431,7 @@
             for(let i = 0; i < currNodes.length; i++) {
                 currNodes[i].fixed = false;
                 currNodes[i].graphId = graphId;
+                currNodes[i].panelId = panelId;
             }
 
             const svg = d3.select(`svg#graph-${graphId}-${panelId}`);
@@ -1727,12 +1752,12 @@
                     d.fx = d.x;
                     d.fy = d.y;
                     d.fixed = true;
-                    $("#node_" + d.id + "_" + d.graphId).addClass("node_fixed");
+                    $("#node_" + d.id + "_" + d.graphId + "_" + d.panelId).addClass("node_fixed");
                 } else {
                     d.fx = null;
                     d.fy = null;
                     d.fixed = false;
-                    $("#node_" + d.id + "_" + d.graphId).removeClass("node_fixed");
+                    $("#node_" + d.id + "_" + d.graphId + "_" + d.panelId).removeClass("node_fixed");
                 }
             }
 
