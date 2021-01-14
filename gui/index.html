@@ -124,8 +124,9 @@
         function toggleStatsModalButton(visible) {
             $("#openStatsModal").css("display", !visible ? "none" : "inline-block");
         }
-        
+
         let coloredNodeMappings = null;
+
         function generateNodeColors(pairs) {
             let n = pairs.length;
             let useLightness = n > 12;
@@ -163,12 +164,33 @@
 
             return colors;
         }
+
         let currentSelection = "";
     </script>
 </head>
 <body>
 <div class="container-fluid">
     <!-- Modal -->
+    <div class="modal fade" id="bisimulationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bisimulation checking finished</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="bis_result_true">Models are A-bisimilar</p>
+                    <p id="bis_result_false">Models are not A-bisimilar</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="upperApproxModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -279,14 +301,12 @@
                 <div id="div_models_sel">
                     <label for="models">Select model:</label>
                     <select name="models" id="models">
-                        <option value="none">Asynchronous model</option>
+                        <option value="async">Asynchronous model</option>
                         <option value="tianji">Tian Ji</option>
                         <option value="castles">Castles</option>
                         <option value="bridge">Bridge Endplay</option>
                         <option value="drone">Drones</option>
                         <option value="voting">Simple Voting</option>
-                        <option value="global">Partial order reduction</option>
-                        <option value="bisimulation">Bisimulation checking</option>
                     </select>
                 </div>
                 <div id="model_options">
@@ -327,11 +347,7 @@
                         <span id="param6Value"></span>
                         <button type="button" class="btn btn-sm btn-primary" id="param6Button">Choose a file...</button>
                     </div>
-                    <div id="param7div" class="form-group" style="display: none;">
-                        <label id="param7Label" class="form-label" for="param7Button"></label>
-                        <span id="param7Value"></span>
-                        <button type="button" class="btn btn-sm btn-primary" id="param7Button">Choose a file...</button>
-                    </div>
+
                 </div>
                 <div>
                     <p id="pFormula" style="display: none">Formula to be verified:</p>
@@ -339,6 +355,16 @@
                 </div>
                 <div>
                     <button type="button" class="btn btn-lg btn-primary" id="btn_generate">Generate</button>
+                </div>
+                <div>
+                    <div id="param7div" class="form-group" style="display: none;">
+                        <label id="param7Label" class="form-label" for="param7Button"></label>
+                        <span id="param7Value"></span>
+                        <button type="button" class="btn btn-sm btn-primary" id="param7Button">Choose a file...</button>
+                    </div>
+                </div>
+                <div id="check_div">
+                    <button type="button" class="btn btn-lg btn-primary" id="btn_check">Check</button>
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -353,27 +379,41 @@
                     </div>
                 </div>
                 <hr/>
-                <div class="row">
-                    <div class="col-6">
-                        <button type="button" class="btn btn-lg btn-primary" id="btn_lower_approx">Lower approx.
-                        </button>
+                <div id="div_verif">
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-lg btn-primary" id="btn_lower_approx">Lower approx.
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-lg btn-primary" id="btn_upper_approx">Upper approx.
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <button type="button" class="btn btn-lg btn-primary" id="btn_upper_approx">Upper approx.
-                        </button>
+                    <hr/>
+                    <div>
+                        <select name="heuristic" id="heuristic">
+                            <option value="0">Basic heuristic</option>
+                            <option value="1">Control heuristic</option>
+                            <option value="2">Epistemic heuristic</option>
+                            <option value="3">Visited states heuristic</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-lg btn-primary" id="btn_domino_dfs">Domino DFS</button>
                     </div>
                 </div>
-                <hr/>
-                <div>
-                    <select name="heuristic" id="heuristic">
-                        <option value="0">Basic heuristic</option>
-                        <option value="1">Control heuristic</option>
-                        <option value="2">Epistemic heuristic</option>
-                        <option value="3">Visited states heuristic</option>
-                    </select>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-lg btn-primary" id="btn_domino_dfs">Domino DFS</button>
+                <div id="div_bis_verif">
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-lg btn-primary" id="btn_verif_left">Verify Left
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-lg btn-primary" id="btn_verif_right">Verify Right
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <hr/>
                 <div class="custom-control custom-checkbox">
@@ -419,6 +459,8 @@
         let $divModelList = $("#div_models_sel");
         let $modelList = $("#models");
         let $modelOptions = $("#model_options");
+        let $checkButton = $("#btn_check");
+        let $checkDiv = $("#check_div");
         let $generateButton = $("#btn_generate");
         let $generateGlobalButton = $("#btn_generate_global");
         let $generateReducedButton = $("#btn_generate_reduced");
@@ -474,6 +516,11 @@
         let $lowerApproxNoStates = $('#lowerApproxNoStates');
         let $modelStatsModal = $("#modelStatsModal");
 
+        let $verifDiv = $("#div_verif");
+        let $bisVerifDiv = $("#div_bis_verif");
+        let $btnVerifLeft = $("#btn_verif_left");
+        let $btnVerifRight = $("#btn_verif_right");
+
         $("#openStatsModal").on("click", () => {
             showModelStatsModal(modelStatsModalData);
         });
@@ -504,6 +551,7 @@
             $param5div.css('display', 'none');
             $param6div.css('display', 'none');
             $param7div.css('display', 'none');
+            $checkDiv.css('display', 'none');
         }
 
         let onTabActivated = tabId => {
@@ -574,15 +622,15 @@
             }
         });
 
-        $methodList.on("change", function() {
+        $methodList.on("change", function () {
             let selection = $("#methods option:selected").val();
             toggleStatsModalButton(false);
-            if(selection === "global") {
+            if (selection === "global") {
                 selectionGlobal();
-            } else if(selection === "bisimulation") {
+            } else if (selection === "bisimulation") {
                 selectionBisimulation();
-            } else if(selection === "verification") {
-                // selectionVerification();
+            } else if (selection === "verification") {
+                selectionVerification();
             }
         });
 
@@ -602,6 +650,8 @@
                 selectionDrone();
             } else if (selection === "voting") {
                 selectionVoting();
+            } else if (selection === "async") {
+                selectionAsync();
             }
         });
 
@@ -673,6 +723,157 @@
             setElementData($("body"), "model", modelName);
         }
 
+        function selectionAsync() {
+            setActiveModel("async");
+            createTabs(["Model"]);
+            hideParams();
+
+            $param5div.css('display', 'block');
+            $param5Input.empty();
+            $param5Label.html("Model file:");
+
+            setFormula('');
+
+            $param5Button.off('click');
+            $param5Button.on('click', function () {
+                chooseModelFile().then(path => {
+                    $param5Input.text(path);
+                })
+                    .catch(() => {
+                    });
+            });
+
+            let modelsForRecoloring = null;
+            let currTabId = -1;
+
+            function getModel(models, tabId, mode) {
+                if (mode == "global") {
+                    if (tabId == models.localModels.length) {
+                        return models.globalModel;
+                    }
+                    return models.localModels[tabId];
+                } else if (mode == "reduced") {
+                    if (tabId == models.localModels.length) {
+                        return models.globalModel;
+                    }
+                    if (tabId == models.localModels.length + 1) {
+                        return models.reducedModel;
+                    }
+                    return models.localModels[tabId];
+                }
+            }
+
+            $generateButton.off('click');
+            $generateButton.on('click', function (e) {
+                resetGraph(0);
+
+                let mode = "global";
+
+                getModelFilePath(5).then(filePath => {
+                    $param5Input.text(filePath);
+                    pyshell.run('../gui.py', {args: ['global', 'run', mode, filePath]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('run_global.py finished.');
+                        const dumpedModels = JSON.parse(results[0]);
+                        modelsForRecoloring = null;
+                        let tabs = mode == "global" ? ["Global model"] : ["Global model", "Reduced model"];
+                        updateModelStatsModalData(
+                            dumpedModels.globalModel ? JSON.parse(dumpedModels.globalModel) : null,
+                            dumpedModels.reducedModel ? JSON.parse(dumpedModels.reducedModel) : null
+                        );
+                        toggleStatsModalButton(true);
+                        let fixedTabsCount = tabs.length;
+                        let localModelTabs = [];
+                        for (let i = 1; i <= dumpedModels.localModels.length; ++i) {
+                            localModelTabs.push(dumpedModels.localModelNames[i - 1]);
+                        }
+                        tabs = [...localModelTabs, ...tabs];
+                        createTabs(tabs);
+                        onTabActivated = tabId => {
+                            currTabId = tabId;
+                            let $graph = $(`svg#graph-${tabId}-0`);
+                            if (!$graph.data("loaded")) {
+                                resetGraph(tabId);
+                                const modelStr = getModel(dumpedModels, tabId, mode);
+                                loadGraph(JSON.parse(modelStr), tabId);
+                                $graph.data("loaded", true);
+                            }
+                            if (modelsForRecoloring && !$graph.data("colored")) {
+                                if (mode == "reduced") {
+                                    modelsForRecoloring.reducedModel = dumpedModels.reducedModel;
+                                }
+                                const modelStr = getModel(modelsForRecoloring, tabId, mode);
+                                recolorGraph(JSON.parse(modelStr), tabId);
+                                $graph.data("colored", true);
+                            }
+                        };
+                        onTabActivated(0);
+                    });
+                });
+
+            });
+
+            $buttonLowerApprox.off('click');
+            $buttonLowerApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                getModelFilePath(5).then(filePath => {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_global.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
+                        recolorGraph(JSON.parse(modelStr), currTabId);
+                        loadLowerApproxModal(results);
+                        $("svg").data("colored", false);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
+                    });
+                });
+            });
+
+            $buttonUpperApprox.off('click');
+            $buttonUpperApprox.on('click', function () {
+                let voters = $param1Input.val();
+                let candidates = $param2Input.val();
+
+                getModelFilePath(5).then(filePath => {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_global.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
+                        recolorGraph(JSON.parse(modelStr), currTabId);
+                        loadUpperApproxModal(results);
+                        $("svg").data("colored", false);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
+                    });
+                });
+            });
+
+            $buttonDominoDFS.off('click');
+            $buttonDominoDFS.on('click', function () {
+                let heuristic = $("#heuristic option:selected").val();
+
+                getModelFilePath(5).then(filePath => {
+                    pyshell.run('../gui.py', {args: ['global', 'domino', filePath, heuristic]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('domino_global.py finished.');
+                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        modelsForRecoloring = dumpedModels;
+                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
+                        recolorGraph(JSON.parse(modelStr), currTabId);
+                        loadDominoResults(results);
+                        $("svg").data("colored", false);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
+                    });
+                });
+            });
+
+        }
+
         function selectionTianJi() {
             setActiveModel("tianji");
             createTabs(["Model"]);
@@ -686,11 +887,11 @@
             $generateButton.off('click');
             $generateButton.on('click', function () {
                 let horses = $param1Input.val();
-                resetGraph(0);
+                resetGraph(0, [0]);
                 pyshell.run('../gui.py', {args: ['tian_ji', 'run', horses]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_tian_ji.py finished.');
-                    loadGraph(JSON.parse(results[0]), 0);
+                    loadGraph(JSON.parse(results[0]), 0, 0);
                 });
             });
 
@@ -702,7 +903,7 @@
                     if (err) throw err;
                     console.log('verify_tian_ji.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadLowerApproxModal(results);
                 });
             });
@@ -715,7 +916,7 @@
                     if (err) throw err;
                     console.log('verify_tian_ji.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadUpperApproxModal(results);
                 });
             });
@@ -729,7 +930,7 @@
                     if (err) throw err;
                     console.log('domino_tian_ji.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadDominoResults(results);
                 });
             });
@@ -765,7 +966,7 @@
                 pyshell.run('../gui.py', {args: ['castles', 'run', castle1Size, castle2Size, castle3Size, life]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_castles.py finished.');
-                    loadGraph(JSON.parse(results[0]), 0);
+                    loadGraph(JSON.parse(results[0]), 0, 0);
                 });
             });
 
@@ -780,7 +981,7 @@
                     if (err) throw err;
                     console.log('verify_castles.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadLowerApproxModal(results);
                 });
             });
@@ -796,7 +997,7 @@
                     if (err) throw err;
                     console.log('verify_castles.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadUpperApproxModal(results);
                 });
             });
@@ -813,7 +1014,7 @@
                     if (err) throw err;
                     console.log('domino_castles.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadDominoResults(results);
                 });
             });
@@ -842,7 +1043,7 @@
                 pyshell.run('../gui.py', {args: ['bridge', 'run', n, k]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_bridge.py finished.');
-                    loadGraph(JSON.parse(results[results.length - 1]), 0);
+                    loadGraph(JSON.parse(results[results.length - 1]), 0, 0);
                 });
             });
 
@@ -855,7 +1056,7 @@
                     if (err) throw err;
                     console.log('verify_bridge.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadLowerApproxModal(results);
                 });
             });
@@ -869,7 +1070,7 @@
                     if (err) throw err;
                     console.log('verify_bridge.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadUpperApproxModal(results);
                 });
             });
@@ -884,7 +1085,7 @@
                     if (err) throw err;
                     console.log('domino_bridge.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadDominoResults(results);
                 });
             });
@@ -913,7 +1114,7 @@
                 pyshell.run('../gui.py', {args: ['drone', 'run', n, k]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_drone.py finished.');
-                    loadGraph(JSON.parse(results[results.length - 1]), 0);
+                    loadGraph(JSON.parse(results[results.length - 1]), 0, 0);
                 });
             });
 
@@ -926,7 +1127,7 @@
                     if (err) throw err;
                     console.log('verify_drone.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadLowerApproxModal(results);
                 });
             });
@@ -940,7 +1141,7 @@
                     if (err) throw err;
                     console.log('verify_drone.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadUpperApproxModal(results);
                 });
             });
@@ -955,7 +1156,7 @@
                     if (err) throw err;
                     console.log('domino_drone.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadDominoResults(results);
                 });
             });
@@ -983,7 +1184,7 @@
                 pyshell.run('../gui.py', {args: ['voting', 'run', voters, candidates]}, function (err, results) {
                     if (err) throw err;
                     console.log('run_simple_voting.py finished.');
-                    loadGraph(JSON.parse(results[0]), 0);
+                    loadGraph(JSON.parse(results[0]), 0, 0);
                 });
             });
 
@@ -996,7 +1197,7 @@
                     if (err) throw err;
                     console.log('verify_simple_voting.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadLowerApproxModal(results);
                 });
             });
@@ -1010,7 +1211,7 @@
                     if (err) throw err;
                     console.log('verify_simple_voting.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadUpperApproxModal(results);
                 });
             });
@@ -1025,10 +1226,20 @@
                     if (err) throw err;
                     console.log('domino_simple_voting.py finished.');
                     let graph = JSON.parse(results[results.length - 1]);
-                    recolorGraph(graph, 0);
+                    recolorGraph(graph, 0, 0);
                     loadDominoResults(results);
                 });
             });
+        }
+
+        function selectionVerification() {
+            createTabs(["Model"]);
+            hideParams();
+            $divModelList.css('display', 'block');
+            $verifDiv.css('display', 'block');
+            $bisVerifDiv.css('display', 'none');
+            $modelList.val("async");
+            selectionAsync();
         }
 
         function selectionGlobal() {
@@ -1037,6 +1248,8 @@
             hideParams();
 
             $divModelList.css('display', 'none');
+            $verifDiv.css('display', 'block');
+            $bisVerifDiv.css('display', 'none');
 
             $param5div.css('display', 'block');
             $param5Input.empty();
@@ -1058,19 +1271,18 @@
 
             function getModel(models, tabId, mode) {
                 if (mode == "global") {
-                    if (tabId == 0) {
+                    if (tabId == models.localModels.length) {
                         return models.globalModel;
                     }
-                    return models.localModels[tabId - 1];
+                    return models.localModels[tabId];
                 } else if (mode == "reduced") {
-                    if (tabId == 0) {
+                    if (tabId == models.localModels.length) {
                         return models.globalModel;
                     }
-                    if (tabId == 1) {
+                    if (tabId == models.localModels.length + 1) {
                         return models.reducedModel;
-                        ;
                     }
-                    return models.localModels[tabId - 2];
+                    return models.localModels[tabId];
                 }
             }
 
@@ -1192,6 +1404,10 @@
             hideParams();
 
             $divModelList.css('display', 'none');
+            $verifDiv.css('display', 'none');
+            $bisVerifDiv.css('display', 'block');
+
+            $checkDiv.css('display', 'block');
 
             $param5div.css('display', 'block');
             $param5Input.empty();
@@ -1213,6 +1429,7 @@
                     .catch(() => {
                     });
             });
+
             $param6Button.off('click');
             $param6Button.on('click', function () {
                 chooseModelFile("Choose a model 2 file").then(path => {
@@ -1221,6 +1438,7 @@
                     .catch(() => {
                     });
             });
+
             $param7Button.off('click');
             $param7Button.on('click', function () {
                 chooseModelFile("Choose a relation file").then(path => {
@@ -1248,18 +1466,14 @@
                 $(document.body).removeClass("highlight-by-color");
                 resetGraph(0, [0, 1]);
 
-                getModelFilePaths([5, 6, 7]).then(filePaths => {
+                getModelFilePaths([5, 6]).then(filePaths => {
                     $param5Input.text(filePaths[0]);
                     $param6Input.text(filePaths[1]);
-                    $param7Input.text(filePaths[2]);
-                    pyshell.run('../gui.py', {args: ['bisimulation', 'run', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'run', filePaths[0], filePaths[1]]}, function (err, results) {
                         if (err) throw err;
                         console.log('run_bisimulation.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
-                        nodeColors = generateNodeColors(dumpedModels.mapping);
-                        const bisimulationResult = dumpedModels.bisimulation_result;
-                        coloredNodeMappings = dumpedModels.mapping;
                         let tabs = ["Bisimulation checking"];
                         let fixedTabsCount = tabs.length;
                         createTabs(tabs, [0, 1]);
@@ -1273,15 +1487,6 @@
                                     loadGraph(JSON.parse(modelStr), tabId, panelId);
                                     $graph.data("loaded", true);
                                 }
-                                if (modelsForRecoloring && !$graph.data("colored")) {
-                                    const modelStr = getModel(modelsForRecoloring, panelId);
-                                    recolorGraph(JSON.parse(modelStr), tabId, panelId, nodeColors[panelId]);
-                                    $graph.data("colored", true);
-                                } else {
-                                    const modelStr = getModel(dumpedModels, panelId);
-                                    recolorGraph(JSON.parse(modelStr), tabId, panelId, nodeColors[panelId]);
-                                    $graph.data("colored", true);
-                                }
                             }
                         };
                         onTabActivated(0);
@@ -1290,70 +1495,62 @@
 
             });
 
-            $buttonLowerApprox.off('click');
-            $buttonLowerApprox.on('click', function () {
-                let voters = $param1Input.val();
-                let candidates = $param2Input.val();
+            $checkButton.off('click');
+            $checkButton.on('click', function (e) {
+                $(document.body).removeClass("highlight-by-color");
 
                 getModelFilePaths([5, 6, 7]).then(filePaths => {
-                    pyshell.run('../gui.py', {args: ['bisimulation', 'verify', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
+                    $param5Input.text(filePaths[0]);
+                    $param6Input.text(filePaths[1]);
+                    $param7Input.text(filePaths[2]);
+                    pyshell.run('../gui.py', {args: ['bisimulation', 'check', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
                         if (err) throw err;
-                        console.log('verify_bisimulation.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
-                        modelsForRecoloring = dumpedModels;
-                        $("svg").data("colored", false);
+                        console.log('run_bisimulation.py finished.');
+                        const dumpedModels = JSON.parse(results[0]);
+                        modelsForRecoloring = null;
+                        nodeColors = generateNodeColors(dumpedModels.mapping);
+                        const bisimulationResult = dumpedModels.bisimulation_result;
+                        coloredNodeMappings = dumpedModels.mapping;
                         for (let panelId of [0, 1]) {
+                            let $graph = $(`svg#graph-${0}-${panelId}`);
                             const modelStr = getModel(dumpedModels, panelId);
-                            recolorGraph(JSON.parse(modelStr), currTabId, panelId, nodeColors[panelId]);
-                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
+                            recolorGraph(JSON.parse(modelStr), 0, panelId, nodeColors[panelId]);
+                            $graph.data("colored", true);
                         }
-                        loadLowerApproxModal(results);
+
+                        if (bisimulationResult == true) {
+                            $("#bis_result_false").css("display", "none");
+                            $("#bis_result_true").css("display", "block");
+                        } else {
+                            $("#bis_result_false").css("display", "block");
+                            $("#bis_result_true").css("display", "none");
+                        }
+
+                        $("#bisimulationModal").modal('show');
                     });
                 });
+
             });
 
-            $buttonUpperApprox.off('click');
-            $buttonUpperApprox.on('click', function () {
-                let voters = $param1Input.val();
-                let candidates = $param2Input.val();
-
-                getModelFilePaths([5, 6, 7]).then(filePaths => {
-                    pyshell.run('../gui.py', {args: ['bisimulation', 'verify', filePaths[0], filePaths[1], filePaths[2]]}, function (err, results) {
-                        if (err) throw err;
-                        console.log('verify_bisimulation.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
-                        modelsForRecoloring = dumpedModels;
-                        $("svg").data("colored", false);
-                        for (let panelId of [0, 1]) {
-                            const modelStr = getModel(dumpedModels, panelId);
-                            recolorGraph(JSON.parse(modelStr), currTabId, panelId, nodeColors[panelId]);
-                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
-                        }
-                        loadUpperApproxModal(results);
-                    });
+            $btnVerifLeft.off('click');
+            $btnVerifLeft.on('click', function() {
+                getModelFilePaths([5]).then(filePaths => {
+                    selectionVerification();
+                    $methodList.val("verification");
+                    $param5Input.text(filePaths[0]);
+                    $generateButton.click();
                 });
-            });
+            })
 
-            $buttonDominoDFS.off('click');
-            $buttonDominoDFS.on('click', function () {
-                let heuristic = $("#heuristic option:selected").val();
-
-                getModelFilePaths([5, 6, 7]).then(filePaths => {
-                    pyshell.run('../gui.py', {args: ['bisimulation', 'domino', filePaths[0], filePaths[1], filePaths[2], heuristic]}, function (err, results) {
-                        if (err) throw err;
-                        console.log('domino_bisimulation.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
-                        modelsForRecoloring = dumpedModels;
-                        $("svg").data("colored", false);
-                        for (let panelId of [0, 1]) {
-                            const modelStr = getModel(dumpedModels, panelId);
-                            recolorGraph(JSON.parse(modelStr), currTabId, panelId, nodeColors[panelId]);
-                            $(`svg#graph-${currTabId}-${panelId}`).data("colored", true);
-                        }
-                        loadDominoResults(results);
-                    });
+            $btnVerifRight.off('click');
+            $btnVerifRight.on('click', function() {
+                getModelFilePaths([6]).then(filePaths => {
+                    selectionVerification();
+                    $methodList.val("verification");
+                    $param5Input.text(filePaths[0]);
+                    $generateButton.click();
                 });
-            });
+            })
         }
 
         function recolorGraphs(graphs, graphId, panels) {
@@ -1369,11 +1566,13 @@
             let nodes = graph.nodes;
             let links = graph.links;
             clearGraphColor($graph, graphId, panelId);
-            colorLinks(links, graphId);
+            colorLinks(links, graphId, panelId);
             colorNodes(nodes, graphId, panelId, nodeColors);
         }
 
-        function colorLinks(links, graphId) {
+        function colorLinks(links, graphId, panelId) {
+            const $graph = $(`svg#graph-${graphId}-${panelId}`);
+
             for (let i = 0; i < links.length; i++) {
                 if (links[i]['str'] === 1) {
                     let id = links[i]['id'];
@@ -1428,7 +1627,7 @@
             let currNodes = graph.nodes;
             let currLinks = graph.links;
 
-            for(let i = 0; i < currNodes.length; i++) {
+            for (let i = 0; i < currNodes.length; i++) {
                 currNodes[i].fixed = false;
                 currNodes[i].graphId = graphId;
                 currNodes[i].panelId = panelId;
@@ -1437,7 +1636,7 @@
             const svg = d3.select(`svg#graph-${graphId}-${panelId}`);
             const width = 10000;
             const height = 10000;
-            
+
             const defs = svg.append('defs')
             defs.append('marker')
                 .attr("id", `arrowhead-${graphId}`)
@@ -1467,7 +1666,6 @@
                 .style('stroke', 'none');
 
 
-
             let simulation = d3.forceSimulation()
                 .force("link", d3.forceLink().id(function (d) {
                     return d.id;
@@ -1490,8 +1688,7 @@
                         }
                         if (d.source == d.target) {
                             return `url(#arrowhead-self-${graphId})`;
-                        }
-                        else {
+                        } else {
                             return `url(#arrowhead-${graphId})`;
                         }
                     });
@@ -1632,8 +1829,8 @@
                     .on('mouseover.fade', fade(0.1))
                     .on("mouseout.tooltip", function () {
                         tooltip.transition()
-                        .duration(100)
-                        .style("opacity", 0);
+                            .duration(100)
+                            .style("opacity", 0);
                     })
                     .on('mouseout.fade', fade(1))
                     .on('click.grayoutOtherNodes', toggleOtherGrayedOut(true))
@@ -1741,14 +1938,14 @@
             }
 
             function dragstopped(event, d) {
-                if(!d.fixed) {
+                if (!d.fixed) {
                     d.fx = null;
                     d.fy = null;
                 }
             }
 
             function rightclicked(event, d) {
-                if(d.fixed === false) {
+                if (d.fixed === false) {
                     d.fx = d.x;
                     d.fy = d.y;
                     d.fixed = true;
@@ -1800,8 +1997,7 @@
                 if (d.sameTargetAndSource) {
                     arc = 25;
                     return "M" + d.source.x + "," + d.source.y + "A" + arc + "," + arc + " 0 1,1 " + (d.target.x - 25 * 0) + "," + (d.target.y - 20);
-                }
-                else {
+                } else {
                     return "M" + d.source.x + "," + d.source.y + "A" + arc + "," + arc + " 0 0," + d.sameArcDirection + " " + d.target.x + "," + d.target.y;
                 }
             }
@@ -1839,7 +2035,7 @@
                     link.style('stroke-opacity', o => (o.source === d.source && o.target === d.target ? 1 : opacity));
                 }
             }
-            
+
             function toggleOtherGrayedOut(grayedOut) {
                 return (event, d) => {
                     if (!grayedOut && $(event.target).is("circle[id^='node_']")) {
@@ -1855,7 +2051,7 @@
                     }
                     let $target = $(event.target);
                     let id = $target.attr("id");
-                    let [ , nodeId, graphId, panelId ] = id.split("_").map(x => parseInt(x));
+                    let [, nodeId, graphId, panelId] = id.split("_").map(x => parseInt(x));
                     let pair = coloredNodeMappings.filter(x => x[panelId].indexOf(nodeId) >= 0)[0];
                     if (!pair && nodeId != 0) {
                         return;
@@ -1887,7 +2083,7 @@
                     $nodes.addClass("highlighted-by-color");
                 };
             }
-            
+
             $(document)
                 .off("click.grayoutOtherNodes")
                 .on("click.grayoutOtherNodes", "svg[id^='graph-']", toggleOtherGrayedOut(false));
@@ -1900,6 +2096,8 @@
                 });
             });
         }
+
+        selectionVerification();
     });
 
 

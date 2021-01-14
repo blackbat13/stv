@@ -53,3 +53,5 @@ if __name__ == "__main__":
             import stv.gui_helper.asynchronous.verify_bisimulation
         elif method == 'domino':
             import stv.gui_helper.asynchronous.domino_bisimulation
+        elif method == "check":
+            import stv.gui_helper.asynchronous.check_bisimulation
