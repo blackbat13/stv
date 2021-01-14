@@ -13,3 +13,4 @@ shared a2_Train2: red -> green
 
 REDUCTION: [in_Train1,in_Train2]
 COALITION: [Controller1]
+FORMULA: <<Controller1>>F(Train1_in=True | Train2_in=True)

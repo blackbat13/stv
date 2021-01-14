@@ -1,20 +1,23 @@
 from enum import Enum
 from .parser import Parser
 
+
 class FormulaType(Enum):
     F = "F"
     G = "G"
+
 
 class Formula:
     agents = []
     type = None
     expression = None
-    
+
     def __init__(self):
         pass
-    
+
     def __str__(self):
         return "<<" + (", ".join(self.agents)) + ">>" + str(self.type.value) + str(self.expression)
+
 
 class SimpleExpressionOperator(Enum):
     AND = "&"
@@ -23,16 +26,17 @@ class SimpleExpressionOperator(Enum):
     EQ = "="
     NEQ = "!="
 
+
 class SimpleExpression:
     left = None
     operator = None
     right = None
-    
+
     def __init__(self, left, operator, right):
         self.left = left
         self.operator = operator
         self.right = right
-    
+
     def __getValue(self, item, varValues):
         if isinstance(item, str):
             if item in varValues:
@@ -42,44 +46,45 @@ class SimpleExpression:
         elif isinstance(item, SimpleExpression):
             return item.evaluate(varValues)
         return item
-    
+
     def evaluate(self, varValues):
         left = self.__getValue(self.left, varValues)
         right = self.__getValue(self.right, varValues)
         if self.operator == SimpleExpressionOperator.NOT:
             return not right
         elif self.operator == SimpleExpressionOperator.AND:
-            return not not(left and right)
+            return not not (left and right)
         elif self.operator == SimpleExpressionOperator.OR:
-            return not not(left or right)
+            return not not (left or right)
         elif self.operator == SimpleExpressionOperator.EQ:
             return str(left) == str(right)
         elif self.operator == SimpleExpressionOperator.NEQ:
             return str(left) != str(right)
         else:
             raise Exception("Can't evaluate a SimpleExpression: unknown operator")
-    
+
     def __str__(self):
         if self.operator == SimpleExpressionOperator.NOT:
             return str(self.operator.value) + str(self.right)
         else:
             return "(" + str(self.left) + " " + str(self.operator.value) + " " + str(self.right) + ")"
 
+
 class FormulaParser(Parser):
-    
+
     def __init__(self):
         pass
-    
+
     def parseFormula(self, formulaStr):
         self.setStr(formulaStr)
-        
+
         formula = Formula()
         formula.agents = self.__parseFormulaAgents()
         formula.type = self.__parseFormulaType()
         formula.expression = self.__parseFormulaExpression()
-        
+
         return formula
-    
+
     def __parseFormulaAgents(self):
         agents = []
         self.consume("<<")
@@ -94,7 +99,7 @@ class FormulaParser(Parser):
                 self.consume(",")
         self.consume(">>")
         return agents
-    
+
     def __parseFormulaType(self):
         c = self.read(1)
         if c == "F":
@@ -103,7 +108,7 @@ class FormulaParser(Parser):
             return FormulaType.G
         else:
             raise Exception("Unknown formula type")
-    
+
     def __parseFormulaExpression(self):
         self.consume("(")
         formulaExpression = []
@@ -131,14 +136,14 @@ class FormulaParser(Parser):
         simpleExpression = self.__convertToSimpleExpression(formulaExpression)
         self.consume(")")
         return simpleExpression
-    
+
     def __convertToSimpleExpression(self, arr):
         # Single value
         if not isinstance(arr, list):
             return arr
         if len(arr) == 1:
             return arr[0]
-        
+
         # NOT
         i = 0
         l = len(arr)
@@ -149,15 +154,15 @@ class FormulaParser(Parser):
                     l = l - 1
                     arr[i] = SimpleExpression(None, SimpleExpressionOperator.NOT, arr[i])
             i = i + 1
-        
+
         # OR
         if arr.count("|") > 0:
             return self.__convertToSimpleExpressionByOperator(arr, SimpleExpressionOperator.OR)
-        
+
         # AND
         if arr.count("&") > 0:
             return self.__convertToSimpleExpressionByOperator(arr, SimpleExpressionOperator.AND)
-        
+
         # EQ/NEQ
         if len(arr) == 3 and (arr[1] == "=" or arr[1] == "!="):
             left = self.__convertToSimpleExpression(arr[0])
@@ -166,9 +171,9 @@ class FormulaParser(Parser):
                 return SimpleExpression(left, SimpleExpressionOperator.EQ, right)
             elif arr[1] == "!=":
                 return SimpleExpression(left, SimpleExpressionOperator.NEQ, right)
-        
+
         return arr
-    
+
     def __convertToSimpleExpressionByOperator(self, arr, op):
         i = 0
         l = len(arr)

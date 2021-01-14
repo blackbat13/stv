@@ -26,6 +26,7 @@ class GlobalModelParser:
         persistent = []
         coalition = []
         goal = []
+        formula = ""
         i = 0
         while i < len(lines):
             if StringTools.is_blank_line(lines[i]):
@@ -53,8 +54,11 @@ class GlobalModelParser:
             elif self._is_goal_header(lines[i]):
                 goal = self._parse_list(lines[i])
                 i += 1
+            elif self._is_formula_header(lines[i]):
+                formula = self._parse_formula(lines[i])
+                i += 1
 
-        return GlobalModel(local_models, reduction, persistent, coalition, goal)
+        return GlobalModel(local_models, reduction, persistent, coalition, goal, formula)
 
     @staticmethod
     def _is_agent_header(line: str):
@@ -77,6 +81,10 @@ class GlobalModelParser:
         return line[0:4] == "GOAL"
 
     @staticmethod
+    def _is_formula_header(line: str):
+        return line[0:7] == "FORMULA"
+
+    @staticmethod
     def _parse_list(line: str) -> List[str]:
         line = line.split(":")[1]
         line = line.strip().strip("[").strip("]")
@@ -90,6 +98,10 @@ class GlobalModelParser:
         if len(line.split("[")) > 1:
             return int(line.split("[")[1].split("]")[0])
         return 1
+
+    @staticmethod
+    def _parse_formula(line: str) -> str:
+        return line.split(":")[1].strip(" ")
 
     def _find_agent_end(self, lines: List[str], line_index: int) -> int:
         while line_index < len(lines) and not StringTools.is_blank_line(

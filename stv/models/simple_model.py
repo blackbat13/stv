@@ -447,8 +447,8 @@ class SimpleModel:
         transition_id = 0
         for state_id in range(0, self._no_states):
             for transition in self._graph[state_id]:
-                if transition.next_state == state_id:
-                    continue
+                # if transition.next_state == state_id:
+                #     continue
 
                 self.js_dump_transition(transition, state_id, strategy, links, nodes, transition_id)
                 transition_id += 1
@@ -508,8 +508,11 @@ class SimpleModel:
         ln = 0
         if strategy[state_id] is not None:
             ln = len(strategy[state_id])
-        for i in range(0, ln):
-            actions.append(transition.actions[i])
+        for agent_id in self._coalition:
+            actions.append(transition.actions[agent_id])
+        # for i in range(0, ln):
+        #     actions.append(transition.actions[i])
+        # print(strategy[state_id], actions, strategy[state_id] == actions)
         if strategy[state_id] == actions:
             links.append(
                 {"id": transition_id, "source": state_id, "target": transition.next_state, "T": transition.actions,

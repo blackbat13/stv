@@ -5,6 +5,7 @@ from stv.models.asynchronous.local_model import LocalModel
 from stv.models.asynchronous.local_transition import LocalTransition, SharedTransition
 from stv.models import SimpleModel
 from stv.comparing_strats import StrategyComparer
+from stv.parsers import FormulaParser
 
 
 class GlobalModel:
@@ -30,23 +31,37 @@ class GlobalModel:
     """
 
     def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str],
-                 coalition: List[str], goal: List[str]):
+                 coalition: List[str], goal: List[str], formula: str):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
         self._persistent: List[str] = persistent
         self._coalition: List[str] = coalition
         self._goal: List[str] = goal
+        self._formula = formula
+        self._formula_obj = self._parse_formula()
         self._states: List[GlobalState] = []
         self._agents_count: int = 0
         self._states_dict: Dict[str, int] = dict()
         self._stack1: List[Any] = []
         self._stack2: List[int] = []
         self._G: List = []
-        self.coalition: List = []
+        self.coalition: List = self._formula_obj.agents
         self._stack1_dict: Dict[str, int] = dict()
         self._transitions_count: int = 0
         self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
+
+    def _parse_formula(self):
+        formula_parser = FormulaParser()
+        return formula_parser.parseFormula(self._formula)
+
+    def get_agent(self):
+        return self.agent_name_to_id(self.coalition[0])
+
+    @property
+    def formula(self):
+        """Formula string"""
+        return self._formula
 
     @property
     def model(self):
@@ -622,48 +637,67 @@ class GlobalModel:
             actions[-1].add("")
         return actions
 
+    def get_formula_winning_states(self):
+        expr = self._formula_obj.expression
+        result = []
+        for state in self._states:
+            if expr.evaluate(state.props):
+                result.append(state.id)
+
+        return result
+
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
+    from stv.parsers import FormulaParser
 
-    results_file = open("selene_results.txt", "a")
+    model = GlobalModelParser().parse("train_controller.txt")
+    model.generate(reduction=False)
+    formula_parser = FormulaParser()
+    print(model._formula)
+    formula_obj = formula_parser.parseFormula(formulaStr=model._formula)
+    print(formula_obj.agents, formula_obj.type, formula_obj.expression)
+    model.get_formula_winning_states()
+    print(model.get_agent())
 
-    teller_count = int(input("Teller Count: "))
-    voter_count = int(input("Voter Count: "))
-    cand_count = int(input("Candidates Count: "))
-    reduction = int(input("Reduction: "))
-
-    formula_no = int(input("Formula (1-pun, 2-K!vVoter1): "))
-
-    file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}_0.txt"
-    model = GlobalModelParser().parse(file_name)
-    start = time.process_time()
-    model.generate(reduction=(reduction == 1))
-    end = time.process_time()
-
-    for state in model._states:
-        state.print()
-
-    model.model.simulate(2)
-
-    results_file.write(f"Teller Count: {teller_count}\n")
-    results_file.write(f"Voter Count: {voter_count}\n")
-    results_file.write(f"Candidates Count: {cand_count}\n")
-    results_file.write(f"Reduction: {reduction == 1}\n")
-    results_file.write(f"Model generated in {end - start} seconds.\n")
-    results_file.write(f"Model has {model.states_count} states.\n")
-    results_file.write(f"Model has {model.transitions_count} transitions.\n")
-    results_file.write("\n")
-
-    # model.model.simulate(model.agent_name_to_id("Coercer1"))
-
-    result, comp_time = model.verify_approximation(perfect_inf=True, formula_no=formula_no)
-
-    results_file.write(f"Perfect Information:\ntime: {comp_time} seconds, result: {0 in result}\n")
-
-    result, comp_time = model.verify_approximation(perfect_inf=False, formula_no=formula_no)
-    results_file.write(f"Imperfect Information Approximation:\ntime: {comp_time} seconds, result: {0 in result}\n")
-    results_file.write(f"Formula: {formula_no}\n")
-    results_file.write("\n\n")
-    results_file.close()
+    # results_file = open("selene_results.txt", "a")
+    #
+    # teller_count = int(input("Teller Count: "))
+    # voter_count = int(input("Voter Count: "))
+    # cand_count = int(input("Candidates Count: "))
+    # reduction = int(input("Reduction: "))
+    #
+    # formula_no = int(input("Formula (1-pun, 2-K!vVoter1): "))
+    #
+    # file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}_0.txt"
+    # model = GlobalModelParser().parse(file_name)
+    # start = time.process_time()
+    # model.generate(reduction=(reduction == 1))
+    # end = time.process_time()
+    #
+    # for state in model._states:
+    #     state.print()
+    #
+    # model.model.simulate(2)
+    #
+    # results_file.write(f"Teller Count: {teller_count}\n")
+    # results_file.write(f"Voter Count: {voter_count}\n")
+    # results_file.write(f"Candidates Count: {cand_count}\n")
+    # results_file.write(f"Reduction: {reduction == 1}\n")
+    # results_file.write(f"Model generated in {end - start} seconds.\n")
+    # results_file.write(f"Model has {model.states_count} states.\n")
+    # results_file.write(f"Model has {model.transitions_count} transitions.\n")
+    # results_file.write("\n")
+    #
+    # # model.model.simulate(model.agent_name_to_id("Coercer1"))
+    #
+    # result, comp_time = model.verify_approximation(perfect_inf=True, formula_no=formula_no)
+    #
+    # results_file.write(f"Perfect Information:\ntime: {comp_time} seconds, result: {0 in result}\n")
+    #
+    # result, comp_time = model.verify_approximation(perfect_inf=False, formula_no=formula_no)
+    # results_file.write(f"Imperfect Information Approximation:\ntime: {comp_time} seconds, result: {0 in result}\n")
+    # results_file.write(f"Formula: {formula_no}\n")
+    # results_file.write("\n\n")
+    # results_file.close()
 

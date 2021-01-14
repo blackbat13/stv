@@ -13,8 +13,9 @@ reduced_model = None
 if mode == "reduced":
     reduced_model = GlobalModelParser().parse(filePath)
     reduced_model.generate(reduction=True)
+    winning_reduced = reduced_model.get_formula_winning_states()
 
-winning = []
+winning_global = global_model.get_formula_winning_states()
 
 # for state in global_model._states:
 #     state.print()
@@ -28,6 +29,7 @@ for localModel in global_model._local_models:
 print(json.dumps({
     "localModels": localModels,
     "localModelNames": localModelNames,
-    "globalModel": global_model.model.js_dump_model(winning, True, True),
-    "reducedModel": reduced_model.model.js_dump_model(winning, True, True) if reduced_model else None,
+    "globalModel": global_model.model.js_dump_model(winning_global, True, True),
+    "reducedModel": reduced_model.model.js_dump_model(winning_reduced, True, True) if reduced_model else None,
+    "formula": global_model.formula
 }))

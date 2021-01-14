@@ -309,6 +309,12 @@
                         <option value="voting">Simple Voting</option>
                     </select>
                 </div>
+                <!--                <div id="div_formula_input">-->
+                <!--                    <div class="form-group">-->
+                <!--                        <label id="formulaLabel" class="form-label" for="formulaInput">Formula:</label>-->
+                <!--                        <input class="form-control" type="text" id="formulaInput" value=""/>-->
+                <!--                    </div>-->
+                <!--                </div>-->
                 <div id="model_options">
                     <div id="param1div" class="form-group" style="display: none;">
                         <label id="param1Label" class="form-label" for="param1Input"></label>
@@ -403,6 +409,65 @@
                         <button type="button" class="btn btn-lg btn-primary" id="btn_domino_dfs">Domino DFS</button>
                     </div>
                 </div>
+                <div id="div_partial_verif">
+                    <div id="div_verif_global">
+                        <h5>Verify Global Model</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-lg btn-primary" id="btn_lower_approx_global">Lower
+                                    approx.
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-lg btn-primary" id="btn_upper_approx_global">Upper
+                                    approx.
+                                </button>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div>
+                            <select name="heuristic" id="heuristic_global">
+                                <option value="0">Basic heuristic</option>
+                                <option value="1">Control heuristic</option>
+                                <option value="2">Epistemic heuristic</option>
+                                <option value="3">Visited states heuristic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-lg btn-primary" id="btn_domino_dfs_global">Domino DFS
+                            </button>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div id="div_verif_reduced">
+                        <h5>Verify Reduced Model</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-lg btn-primary" id="btn_lower_approx_reduced">Lower
+                                    approx.
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-lg btn-primary" id="btn_upper_approx_reduced">Upper
+                                    approx.
+                                </button>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div>
+                            <select name="heuristic" id="heuristic_reduced">
+                                <option value="0">Basic heuristic</option>
+                                <option value="1">Control heuristic</option>
+                                <option value="2">Epistemic heuristic</option>
+                                <option value="3">Visited states heuristic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-lg btn-primary" id="btn_domino_dfs_reduced">Domino DFS
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div id="div_bis_verif">
                     <div class="row">
                         <div class="col-6">
@@ -465,8 +530,14 @@
         let $generateGlobalButton = $("#btn_generate_global");
         let $generateReducedButton = $("#btn_generate_reduced");
         let $buttonLowerApprox = $("#btn_lower_approx");
+        let $buttonLowerApproxGlobal = $("#btn_lower_approx_global");
+        let $buttonLowerApproxReduced = $("#btn_lower_approx_reduced");
         let $buttonUpperApprox = $("#btn_upper_approx");
+        let $buttonUpperApproxGlobal = $("#btn_upper_approx_global");
+        let $buttonUpperApproxReduced = $("#btn_upper_approx_reduced");
         let $buttonDominoDFS = $("#btn_domino_dfs");
+        let $buttonDominoDFSGlobal = $("#btn_domino_dfs_global");
+        let $buttonDominoDFSReduced = $("#btn_domino_dfs_reduced");
         let $buttonZoomIn = $("#btn_zoom_in");
         let $buttonZoomOut = $("#btn_zoom_out");
         let $buttonFreeze = $("#btn_freeze");
@@ -520,6 +591,7 @@
         let $bisVerifDiv = $("#div_bis_verif");
         let $btnVerifLeft = $("#btn_verif_left");
         let $btnVerifRight = $("#btn_verif_right");
+        let $partialVerifDiv = $("#div_partial_verif");
 
         $("#openStatsModal").on("click", () => {
             showModelStatsModal(modelStatsModalData);
@@ -696,9 +768,47 @@
             $lowerApproxModal.modal('show');
         }
 
+        function loadLowerApproxModal2(formulaResult, noStates) {
+            if (formulaResult === true) {
+                $lowerApproxFalse.addClass('display_none');
+                $lowerApproxTrue.removeClass('display_none');
+            } else {
+                $lowerApproxFalse.removeClass('display_none');
+                $lowerApproxTrue.addClass('display_none');
+            }
+
+            $lowerApproxNoStates.text(noStates);
+
+            $lowerApproxModal.modal('show');
+        }
+
+        function loadUpperApproxModal2(formulaResult, noStates) {
+            if (formulaResult === true) {
+                $upperApproxFalse.addClass('display_none');
+                $upperApproxTrue.removeClass('display_none');
+            } else {
+                $upperApproxFalse.removeClass('display_none');
+                $upperApproxTrue.addClass('display_none');
+            }
+
+            $upperApproxNoStates.text(noStates);
+
+            $upperApproxModal.modal('show');
+        }
+
         function loadDominoResults(results) {
             let strategyResult = results[results.length - 2];
             if (strategyResult === "1") {
+                $stratFalse.addClass('display_none');
+            } else {
+                $stratFalse.removeClass('display_none');
+            }
+
+            $dominoModal.modal('show');
+        }
+
+        function loadDominoResults2(strategyResult) {
+            if (strategyResult === true) {
                 $stratFalse.addClass('display_none');
             } else {
                 $stratFalse.removeClass('display_none');
@@ -775,6 +885,8 @@
                         if (err) throw err;
                         console.log('run_global.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
+                        const formula = dumpedModels.formula;
+                        $pFormula.text(formula);
                         modelsForRecoloring = null;
                         let tabs = mode == "global" ? ["Global model"] : ["Global model", "Reduced model"];
                         updateModelStatsModalData(
@@ -815,18 +927,16 @@
 
             $buttonLowerApprox.off('click');
             $buttonLowerApprox.on('click', function () {
-                let voters = $param1Input.val();
-                let candidates = $param2Input.val();
+                let mode = "global";
 
                 getModelFilePath(5).then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', mode, filePath, 1]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = dumpedModels;
-                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
-                        recolorGraph(JSON.parse(modelStr), currTabId);
-                        loadLowerApproxModal(results);
+                        recolorGraph(JSON.parse(dumpedModels.globalModel), dumpedModels.localModels.length, 0);
+                        loadLowerApproxModal2(dumpedModels.globalResult, dumpedModels.globalStatesCount);
                         $("svg").data("colored", false);
                         $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
@@ -835,18 +945,16 @@
 
             $buttonUpperApprox.off('click');
             $buttonUpperApprox.on('click', function () {
-                let voters = $param1Input.val();
-                let candidates = $param2Input.val();
+                let mode = "global";
 
                 getModelFilePath(5).then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', mode, filePath, 0]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = dumpedModels;
-                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
-                        recolorGraph(JSON.parse(modelStr), currTabId);
-                        loadUpperApproxModal(results);
+                        recolorGraph(JSON.parse(dumpedModels.globalModel), dumpedModels.localModels.length, 0);
+                        loadUpperApproxModal2(dumpedModels.globalResult, dumpedModels.globalStatesCount);
                         $("svg").data("colored", false);
                         $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
@@ -856,16 +964,18 @@
             $buttonDominoDFS.off('click');
             $buttonDominoDFS.on('click', function () {
                 let heuristic = $("#heuristic option:selected").val();
+                let mode = "global";
 
                 getModelFilePath(5).then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'domino', filePath, heuristic]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['global', 'domino', mode, filePath, heuristic]}, function (err, results) {
                         if (err) throw err;
                         console.log('domino_global.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        console.log(results);
+                        const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = dumpedModels;
-                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
-                        recolorGraph(JSON.parse(modelStr), currTabId);
-                        loadDominoResults(results);
+                        recolorGraph(JSON.parse(dumpedModels.globalModel), dumpedModels.localModels.length, 0);
+                        $dominoFormula.text(dumpedModels.formula);
+                        loadDominoResults2(dumpedModels.globalResult);
                         $("svg").data("colored", false);
                         $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
@@ -1237,6 +1347,7 @@
             hideParams();
             $divModelList.css('display', 'block');
             $verifDiv.css('display', 'block');
+            $partialVerifDiv.css('display', 'none');
             $bisVerifDiv.css('display', 'none');
             $modelList.val("async");
             selectionAsync();
@@ -1248,7 +1359,8 @@
             hideParams();
 
             $divModelList.css('display', 'none');
-            $verifDiv.css('display', 'block');
+            $verifDiv.css('display', 'none');
+            $partialVerifDiv.css('display', 'block');
             $bisVerifDiv.css('display', 'none');
 
             $param5div.css('display', 'block');
@@ -1300,6 +1412,8 @@
                         console.log('run_global.py finished.');
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = null;
+                        const formula = dumpedModels.formula;
+                        $pFormula.text(formula);
                         let tabs = mode == "global" ? ["Global model"] : ["Global model", "Reduced model"];
                         updateModelStatsModalData(
                             dumpedModels.globalModel ? JSON.parse(dumpedModels.globalModel) : null,
@@ -1337,59 +1451,114 @@
 
             });
 
-            $buttonLowerApprox.off('click');
-            $buttonLowerApprox.on('click', function () {
-                let voters = $param1Input.val();
-                let candidates = $param2Input.val();
+            $buttonLowerApproxGlobal.off('click');
+            $buttonLowerApproxGlobal.on('click', function () {
+                let mode = "global";
 
                 getModelFilePath(5).then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', mode, filePath, 1]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = dumpedModels;
-                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
-                        recolorGraph(JSON.parse(modelStr), currTabId);
-                        loadLowerApproxModal(results);
+                        recolorGraph(JSON.parse(dumpedModels.globalModel), dumpedModels.localModels.length, 0);
+                        loadLowerApproxModal2(dumpedModels.globalResult, dumpedModels.globalStatesCount);
                         $("svg").data("colored", false);
                         $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
 
-            $buttonUpperApprox.off('click');
-            $buttonUpperApprox.on('click', function () {
-                let voters = $param1Input.val();
-                let candidates = $param2Input.val();
+            $buttonUpperApproxGlobal.off('click');
+            $buttonUpperApproxGlobal.on('click', function () {
+                let mode = "global";
 
                 getModelFilePath(5).then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'verify', filePath]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', mode, filePath, 0]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = dumpedModels;
-                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
-                        recolorGraph(JSON.parse(modelStr), currTabId);
-                        loadUpperApproxModal(results);
+                        recolorGraph(JSON.parse(dumpedModels.globalModel), dumpedModels.localModels.length, 0);
+                        loadUpperApproxModal2(dumpedModels.globalResult, dumpedModels.globalStatesCount);
                         $("svg").data("colored", false);
                         $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
                 });
             });
 
-            $buttonDominoDFS.off('click');
-            $buttonDominoDFS.on('click', function () {
-                let heuristic = $("#heuristic option:selected").val();
+            $buttonDominoDFSGlobal.off('click');
+            $buttonDominoDFSGlobal.on('click', function () {
+                let heuristic = $("#heuristic_global option:selected").val();
+                let mode = "global";
 
                 getModelFilePath(5).then(filePath => {
-                    pyshell.run('../gui.py', {args: ['global', 'domino', filePath, heuristic]}, function (err, results) {
+                    pyshell.run('../gui.py', {args: ['global', 'domino', mode, filePath, heuristic]}, function (err, results) {
                         if (err) throw err;
                         console.log('domino_global.py finished.');
-                        const dumpedModels = JSON.parse(results[results.length - 1]);
+                        console.log(results);
+                        const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = dumpedModels;
-                        const modelStr = currTabId == 0 ? dumpedModels.globalModel : dumpedModels.localModels[tabId - 1];
-                        recolorGraph(JSON.parse(modelStr), currTabId);
-                        loadDominoResults(results);
+                        recolorGraph(JSON.parse(dumpedModels.globalModel), dumpedModels.localModels.length, 0);
+                        $dominoFormula.text(dumpedModels.formula);
+                        loadDominoResults2(dumpedModels.globalResult);
+                        $("svg").data("colored", false);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
+                    });
+                });
+            });
+
+            $buttonLowerApproxReduced.off('click');
+            $buttonLowerApproxReduced.on('click', function () {
+                let mode = "reduced";
+
+                getModelFilePath(5).then(filePath => {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', mode, filePath, 1]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_global.py finished.');
+                        const dumpedModels = JSON.parse(results[0]);
+                        modelsForRecoloring = dumpedModels;
+                        recolorGraph(JSON.parse(dumpedModels.reducedModel), dumpedModels.localModels.length + 1, 0);
+                        loadLowerApproxModal2(dumpedModels.reducedResult, dumpedModels.reducedStatesCount);
+                        $("svg").data("colored", false);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
+                    });
+                });
+            });
+
+            $buttonUpperApproxReduced.off('click');
+            $buttonUpperApproxReduced.on('click', function () {
+                let mode = "reduced";
+
+                getModelFilePath(5).then(filePath => {
+                    pyshell.run('../gui.py', {args: ['global', 'verify', mode, filePath, 0]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('verify_global.py finished.');
+                        const dumpedModels = JSON.parse(results[0]);
+                        modelsForRecoloring = dumpedModels;
+                        recolorGraph(JSON.parse(dumpedModels.reducedModel), dumpedModels.localModels.length + 1, 0);
+                        loadUpperApproxModal2(dumpedModels.reducedResult, dumpedModels.reducedStatesCount);
+                        $("svg").data("colored", false);
+                        $(`svg#graph-${currTabId}-0`).data("colored", true);
+                    });
+                });
+            });
+
+            $buttonDominoDFSReduced.off('click');
+            $buttonDominoDFSReduced.on('click', function () {
+                let heuristic = $("#heuristic_reduced option:selected").val();
+                let mode = "reduced";
+
+                getModelFilePath(5).then(filePath => {
+                    pyshell.run('../gui.py', {args: ['global', 'domino', mode, filePath, heuristic]}, function (err, results) {
+                        if (err) throw err;
+                        console.log('domino_global.py finished.');
+                        console.log(results);
+                        const dumpedModels = JSON.parse(results[0]);
+                        modelsForRecoloring = dumpedModels;
+                        recolorGraph(JSON.parse(dumpedModels.reducedModel), dumpedModels.localModels.length + 1, 0);
+                        $dominoFormula.text(dumpedModels.formula);
+                        loadDominoResults2(dumpedModels.reducedResult);
                         $("svg").data("colored", false);
                         $(`svg#graph-${currTabId}-0`).data("colored", true);
                     });
@@ -1405,6 +1574,7 @@
 
             $divModelList.css('display', 'none');
             $verifDiv.css('display', 'none');
+            $partialVerifDiv.css('display', 'none');
             $bisVerifDiv.css('display', 'block');
 
             $checkDiv.css('display', 'block');
@@ -1533,7 +1703,7 @@
             });
 
             $btnVerifLeft.off('click');
-            $btnVerifLeft.on('click', function() {
+            $btnVerifLeft.on('click', function () {
                 getModelFilePaths([5]).then(filePaths => {
                     selectionVerification();
                     $methodList.val("verification");
@@ -1543,7 +1713,7 @@
             })
 
             $btnVerifRight.off('click');
-            $btnVerifRight.on('click', function() {
+            $btnVerifRight.on('click', function () {
                 getModelFilePaths([6]).then(filePaths => {
                     selectionVerification();
                     $methodList.val("verification");

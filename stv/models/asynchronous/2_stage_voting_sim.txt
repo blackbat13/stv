@@ -19,3 +19,4 @@ shared loop: fin -> fin
 REDUCTION: []
 COALITION: [Official1]
 PERSISTENT: [win1, win2]
+FORMULA: <<Official1>>F(win1=true)
