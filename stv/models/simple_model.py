@@ -1,5 +1,5 @@
 from stv.logics.atl import ATLIrModel, ATLirModel, Transition
-from stv.logics.atl.mv import MvATLirModel
+# from stv.logics.atl.mv import MvATLirModel
 from stv.logics.sl import SLIr
 from typing import List, Set, Dict
 import ast
@@ -243,7 +243,7 @@ class SimpleModel:
         atl_model = self._copy_model(atl_model, actions, epistemic=True)
         return atl_model
 
-    def to_mvatl_imperfect(self, actions, lattice) -> MvATLirModel:
+    def to_mvatl_imperfect(self, actions, lattice):
         """
         Creates Multi-Valued Alternating-Time Temporal Logic model with imperfect information
         :param actions:
@@ -717,8 +717,9 @@ class SimpleModel:
 
         return result
 
-    def check_bisimulation(self, sim_model, mapping: Dict[int, List[int]]) -> bool:
-        agent_id = self._coalition[0]
+    def check_bisimulation(self, sim_model, mapping: Dict[int, List[int]], coalition: List[int]) -> bool:
+        # agent_id = self._coalition[0]
+        agent_id = coalition[0]
         for epistemic_class in self.epistemic_classes[agent_id]:
             # print(epistemic_class)
             for state_id in epistemic_class:
@@ -799,32 +800,40 @@ class SimpleModel:
         return True
 
     @staticmethod
-    def parse_mapping(file_name: str) -> Dict[int, List[int]]:
+    def parse_mapping(file_name: str) -> (Dict[int, List[int]], List[int]):
         input_file = open(file_name, "r")
         lines = input_file.readlines()
         input_file.close()
         result = dict()
+        coalition = []
 
         for line in lines:
+            if line[0:9] == "coalition":
+                coalition = list(map(int, line.split(":")[1].split(",")))
+                continue
             states_left, states_right = line.split("->")
             states_left = list(map(int, states_left.strip(" ").split(",")))
             states_right = list(map(int, states_right.strip(" ").split(",")))
             for state_id in states_left:
                 result[state_id] = states_right[:]
 
-        return result
+        return result, coalition
 
     @staticmethod
-    def parse_mapping_sets(file_name: str) -> List[List[List[int]]]:
+    def parse_mapping_sets(file_name: str) -> (List[List[List[int]]], List[int]):
         input_file = open(file_name, "r")
         lines = input_file.readlines()
         input_file.close()
         result = []
+        coalition = []
 
         for line in lines:
+            if line[0:9] == "coalition":
+                coalition = list(map(int, line.split(":")[1].split(",")))
+                continue
             states_left, states_right = line.split("->")
             states_left = list(map(int, states_left.strip(" ").split(",")))
             states_right = list(map(int, states_right.strip(" ").split(",")))
             result.append([states_left[:], states_right[:]])
 
-        return result
+        return result, coalition

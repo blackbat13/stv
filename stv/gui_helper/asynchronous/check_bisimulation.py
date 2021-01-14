@@ -17,9 +17,11 @@ global_model2.generate_local_models()
 
 winning = []
 
-mapping = SimpleModel.parse_mapping_sets(relationPath)
+mapping, coalition = SimpleModel.parse_mapping_sets(relationPath)
 
-bis_result = global_model1.model.check_bisimulation(global_model2.model, SimpleModel.parse_mapping(relationPath))
+mapping2, coalition2 = SimpleModel.parse_mapping(relationPath)
+
+bis_result = global_model1.model.check_bisimulation(global_model2.model, mapping2, coalition2)
 
 # # @todo real computation of correspondingNodeIds
 # correspondingNodeIds = []
@@ -40,4 +42,5 @@ print(json.dumps({
     "model2": global_model2.model.js_dump_model(winning),
     "mapping": mapping,
     "bisimulation_result": bis_result,
+    "coalition": global_model1.coalition_ids_to_str(coalition),
 }))

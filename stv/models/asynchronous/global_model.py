@@ -646,6 +646,12 @@ class GlobalModel:
 
         return result
 
+    def coalition_ids_to_str(self, coalition: List[int]) -> List[str]:
+        result = []
+        for agent_id in coalition:
+            result.append(self._local_models[agent_id].agent_name)
+        return result
+
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
