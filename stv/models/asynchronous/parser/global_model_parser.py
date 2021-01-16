@@ -29,7 +29,7 @@ class GlobalModelParser:
         formula = ""
         i = 0
         while i < len(lines):
-            if StringTools.is_blank_line(lines[i]):
+            if StringTools.is_blank_line(lines[i]) or self._is_comment_line(lines[i]):
                 i += 1
                 continue
 
@@ -59,6 +59,10 @@ class GlobalModelParser:
                 i += 1
 
         return GlobalModel(local_models, reduction, persistent, coalition, goal, formula)
+
+    @staticmethod
+    def _is_comment_line(line: str):
+        return line[0] == "%"
 
     @staticmethod
     def _is_agent_header(line: str):
