@@ -23,13 +23,13 @@ winning_global = global_model.get_formula_winning_states()
 localModels = []
 localModelNames = []
 for localModel in global_model._local_models:
-    localModels.append(localModel._model.js_dump_model(winning=[], epistemic=True))
+    localModels.append(localModel._model.js_dump_model(winning=[], epistemic=False))
     localModelNames.append(localModel._agent_name)
 
 print(json.dumps({
     "localModels": localModels,
     "localModelNames": localModelNames,
-    "globalModel": global_model.model.js_dump_model(winning_global, True, True),
-    "reducedModel": reduced_model.model.js_dump_model(winning_reduced, True, True) if reduced_model else None,
+    "globalModel": global_model.model.js_dump_model(winning_global, global_model._show_epistemic, True),
+    "reducedModel": reduced_model.model.js_dump_model(winning_reduced, global_model._show_epistemic, True) if reduced_model else None,
     "formula": global_model.formula
 }))

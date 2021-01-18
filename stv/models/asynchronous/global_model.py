@@ -31,7 +31,7 @@ class GlobalModel:
     """
 
     def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str],
-                 coalition: List[str], goal: List[str], formula: str):
+                 coalition: List[str], goal: List[str], formula: str, show_epistemic: bool):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
@@ -50,6 +50,7 @@ class GlobalModel:
         self._stack1_dict: Dict[str, int] = dict()
         self._transitions_count: int = 0
         self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
+        self._show_epistemic = show_epistemic
 
     def _parse_formula(self):
         formula_parser = FormulaParser()

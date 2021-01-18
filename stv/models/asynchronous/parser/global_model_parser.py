@@ -27,6 +27,7 @@ class GlobalModelParser:
         coalition = []
         goal = []
         formula = ""
+        show_epistemic = True
         i = 0
         while i < len(lines):
             if StringTools.is_blank_line(lines[i]) or self._is_comment_line(lines[i]):
@@ -57,8 +58,15 @@ class GlobalModelParser:
             elif self._is_formula_header(lines[i]):
                 formula = self._parse_formula(lines[i])
                 i += 1
+            elif self._is_show_epistemic_header(lines[i]):
+                show_epistemic = self._parse_show_epistemic(lines[i])
+                i += 1
 
-        return GlobalModel(local_models, reduction, persistent, coalition, goal, formula)
+        return GlobalModel(local_models, reduction, persistent, coalition, goal, formula, show_epistemic)
+
+    @staticmethod
+    def _is_show_epistemic_header(line: str):
+        return line[0:14] == "SHOW_EPISTEMIC"
 
     @staticmethod
     def _is_comment_line(line: str):
@@ -106,6 +114,10 @@ class GlobalModelParser:
     @staticmethod
     def _parse_formula(line: str) -> str:
         return line.split(":")[1].strip(" ")
+
+    @staticmethod
+    def _parse_show_epistemic(line: str) -> bool:
+        return line.split(":")[1].strip(" ").casefold() == "true"
 
     def _find_agent_end(self, lines: List[str], line_index: int) -> int:
         while line_index < len(lines) and not StringTools.is_blank_line(

@@ -542,7 +542,7 @@ class SimpleVotingModel:
             current_level_states = new_states[:]
 
         path += ";\n"
-        f = open("voting.txt", "w")
+        f = open("simple_voting_1_voter.txt", "w")
         f.write(path)
         f.write(transitions)
         f.close()

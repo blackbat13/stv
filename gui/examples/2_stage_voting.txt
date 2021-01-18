@@ -1,3 +1,4 @@
+% 2-stage Voting model
 Agent Voter[1]:
 init: start
 vote1: start -> voted1
@@ -6,8 +7,8 @@ shared flip1: voted1 -> fin2
 shared pass1: voted1 -> fin1
 shared flip2: voted2 -> fin1
 shared pass2: voted2 -> fin2
-shared pub: fin1 -> pub [win1=True]
-shared pub: fin2 -> pub [win2=True]
+shared pub: fin1 -> pub [aID_win1=True]
+shared pub: fin2 -> pub [aID_win2=True]
 shared loop: pub -> pub
 
 Agent Official[1]:
@@ -22,5 +23,5 @@ shared loop: fin -> fin
 
 REDUCTION: [win1]
 COALITION: [Official1]
-PERSISTENT: [win1, win2]
+PERSISTENT: [Voter1_win1, Voter1_win2]
 FORMULA: <<Official1>>F(win1=True)
