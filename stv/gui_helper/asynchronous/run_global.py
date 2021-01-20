@@ -29,7 +29,7 @@ for localModel in global_model._local_models:
 print(json.dumps({
     "localModels": localModels,
     "localModelNames": localModelNames,
-    "globalModel": global_model.model.js_dump_model(winning_global, global_model._show_epistemic, True),
+    "globalModel": global_model.model.js_dump_model(winning_global, global_model._show_epistemic, True, reduced_model.model if reduced_model else None),
     "reducedModel": reduced_model.model.js_dump_model(winning_reduced, global_model._show_epistemic, True) if reduced_model else None,
     "formula": global_model.formula
 }))

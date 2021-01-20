@@ -224,6 +224,12 @@ body.highlight-by-color circle.node:not(.highlighted-by-color) {
 g.node text {
     pointer-events: none;
 }
+
+.reduced-part {
+    stroke: deepskyblue !important;
+    stroke-width: 3px !important;
+}
+
 .node_fixed {
     stroke-width: 5px !important;
 }

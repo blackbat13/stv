@@ -1,6 +1,6 @@
 {
   "name": "atlmodelchecker",
-  "version": "0.2-alpha",
+  "version": "0.2.0",
   "private": true,
   "main": "main.js",
   "scripts": {

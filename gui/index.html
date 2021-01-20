@@ -1465,7 +1465,7 @@
                         };
                         onTabActivated(0);
 
-                        if(mode === "global") {
+                        if (mode === "global") {
                             $("#tabs").tabs("option", "active", dumpedModels.localModels.length);
                         } else {
                             $("#tabs").tabs("option", "active", dumpedModels.localModels.length + 1);
@@ -1894,7 +1894,7 @@
                     .data(links)
                     .enter()
                     .append("path")
-                    .attr("class", "link")
+                    .attr('class', "link")
                     .attr('marker-end', function (d) {
                         if (d.str === 3) {
                             return '';
@@ -1938,7 +1938,14 @@
                             .style("top", (event.pageY + 10) + "px");
                     });
 
-                link.transition().attr('stroke', function (d) {
+                link.transition().attr('class', function (d) {
+                    let result = "";
+                    if (d.reduced === 1) {
+                        result += " reduced-part"
+                    }
+
+                    return result;
+                }).attr('stroke', function (d) {
                     if (d.str === 1) {
                         return "#F00";
                     }
@@ -2005,7 +2012,14 @@
                     ).on("contextmenu", rightclicked);
 
                 node.append("circle")
-                    .attr('class', 'node')
+                    .attr('class', function (d) {
+                        let result = "node";
+                        if (d.reduced === 1) {
+                            result += " reduced-part"
+                        }
+
+                        return result;
+                    })
                     .attr('id', function (d) {
                         return "node_" + d.id + "_" + graphId + "_" + panelId
                     })
@@ -2017,6 +2031,9 @@
                     })
                     .attr("r", 20)
                     .attr("fill", function (d, i) {
+                        // if (d.reduced === 1) {
+                        //     return "#F00";
+                        // }
                         if (d.id === 0) {
                             return "#00F";
                         }

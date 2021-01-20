@@ -70,6 +70,13 @@ class SimpleModel:
     def states(self, value: List):
         self._states = value
 
+    def has_transition(self, transition: Transition):
+        for l in self._graph:
+            if transition in l:
+                return True
+
+        return False
+
     def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]) -> None:
         """
         Adds transition between to states in the model
@@ -382,16 +389,19 @@ class SimpleModel:
 
         return result
 
-    def js_dump_model(self, winning: List = [], epistemic: bool = True, asynchronous: bool = False) -> str:
-        nodes = self.fill_nodes_model(winning)
-        links = self.fill_links_model(epistemic, asynchronous)
+    def js_dump_model(self, winning: List = [], epistemic: bool = True, asynchronous: bool = False, reduced_model = None) -> str:
+        nodes = self.fill_nodes_model(winning, reduced_model)
+        links = self.fill_links_model(epistemic, asynchronous, reduced_model)
         return json.dumps({"nodes": nodes, "links": links})
 
-    def fill_nodes_model(self, winning: List = []) -> List[hash]:
+    def fill_nodes_model(self, winning: List = [], reduced_model = None) -> List[hash]:
         nodes = []
         state_id = 0
         for state in self.states:
             nodes.append({"T": state, "id": state_id, "bgn": 0})
+            if reduced_model is not None and state in reduced_model.states:
+                nodes[state_id]["reduced"] = 1
+
             state_id += 1
 
         for state_id in self.epistemic_class_for_state(0, 0):
@@ -402,7 +412,7 @@ class SimpleModel:
 
         return nodes
 
-    def fill_links_model(self, epistemic: bool, asynchronous: bool) -> List[hash]:
+    def fill_links_model(self, epistemic: bool, asynchronous: bool, reduced_model = None) -> List[hash]:
         links = []
         transition_id = 0
         for state_id in range(0, self._no_states):
@@ -421,6 +431,18 @@ class SimpleModel:
                 links.append(
                     {"id": transition_id, "source": state_id, "target": transition.next_state, "T": actions,
                      "str": 0})
+
+                if reduced_model is not None:
+                    state_from = self._states[state_id]
+                    state_to = self._states[transition.next_state]
+                    if state_from in reduced_model.states and state_to in reduced_model.states:
+                        red_state_from_id = reduced_model._states.index(state_from)
+                        red_state_to_id = reduced_model._states.index(state_to)
+                        for tr in reduced_model.graph[red_state_from_id]:
+                            if tr.next_state == red_state_to_id and tr.actions == transition.actions:
+                                links[transition_id]["reduced"] = 1
+                                break
+
                 transition_id += 1
 
         if epistemic:
