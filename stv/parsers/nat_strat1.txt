@@ -1,0 +1,8 @@
+Agent: Voter
+has_ballot -> scan_ballot
+scanning -> enter_vote
+voted -> check2
+(check2_ok || check2_fail || check_request) -> move_next
+vote_ok -> shred_ballot
+shred -> leave
+check4 -> check4
