@@ -70,163 +70,163 @@
         <transition>
             <source ref="id0"/>
             <target ref="id8"/>
-            <label kind="assignment" x="1000" y="-400">move_next</label>
+            <label kind="comments" x="1000" y="-400">move_next</label>
         </transition>
         <transition>
             <source ref="id1"/>
             <target ref="id0"/>
-            <label kind="assignment" x="1104" y="-344">share</label>
+            <label kind="comments" x="1104" y="-344">share</label>
         </transition>
         <transition>
             <source ref="id1"/>
             <target ref="id8"/>
-            <label kind="assignment" x="968" y="-336">move_next</label>
+            <label kind="comments" x="968" y="-336">move_next</label>
         </transition>
         <transition>
             <source ref="id9"/>
             <target ref="id1"/>
-            <label kind="assignment" x="1000" y="-296">request</label>
+            <label kind="comments" x="1000" y="-296">request</label>
         </transition>
         <transition>
             <source ref="id2"/>
             <target ref="id7"/>
-            <label kind="assignment" x="760" y="-80">check3</label>
+            <label kind="comments" x="760" y="-80">check3</label>
         </transition>
         <transition>
             <source ref="id2"/>
             <target ref="id11"/>
-            <label kind="assignment" x="832" y="-48">move_next</label>
+            <label kind="comments" x="832" y="-48">move_next</label>
         </transition>
         <transition>
             <source ref="id15"/>
             <target ref="id2"/>
-            <label kind="assignment" x="728" y="-48">check2</label>
+            <label kind="comments" x="728" y="-48">check2</label>
         </transition>
         <transition>
             <source ref="id3"/>
             <target ref="id6"/>
-            <label kind="assignment" x="992" y="-488">finish</label>
+            <label kind="comments" x="992" y="-488">finish</label>
         </transition>
         <transition>
             <source ref="id8"/>
             <target ref="id3"/>
-            <label kind="assignment" x="944" y="-448">check4</label>
+            <label kind="comments" x="944" y="-448">check4</label>
         </transition>
         <transition>
             <source ref="id4"/>
             <target ref="id6"/>
-            <label kind="assignment" x="888" y="-488">finish</label>
+            <label kind="comments" x="888" y="-488">finish</label>
         </transition>
         <transition>
             <source ref="id4"/>
             <target ref="id14"/>
-            <label kind="assignment" x="744" y="-392">raise_error</label>
+            <label kind="comments" x="744" y="-392">raise_error</label>
         </transition>
         <transition>
             <source ref="id8"/>
             <target ref="id4"/>
-            <label kind="assignment" x="888" y="-424">check4</label>
+            <label kind="comments" x="888" y="-424">check4</label>
         </transition>
         <transition>
             <source ref="id5"/>
             <target ref="id9"/>
-            <label kind="assignment" x="1040" y="-208">leave</label>
+            <label kind="comments" x="1040" y="-208">leave</label>
             <nail x="1088" y="-200"/>
         </transition>
         <transition>
             <source ref="id11"/>
             <target ref="id9"/>
-            <label kind="assignment" x="888" y="-256">leave</label>
+            <label kind="comments" x="888" y="-256">leave</label>
             <nail x="912" y="-224"/>
         </transition>
         <transition>
             <source ref="id5"/>
             <target ref="id10"/>
-            <label kind="assignment" x="1008" y="-160">shred_ballot</label>
+            <label kind="comments" x="1008" y="-160">shred_ballot</label>
         </transition>
         <transition>
             <source ref="id15"/>
             <target ref="id5"/>
-            <label kind="assignment" x="888" y="32">skip</label>
+            <label kind="comments" x="888" y="32">skip</label>
             <nail x="760" y="56"/>
             <nail x="1008" y="56"/>
         </transition>
         <transition>
             <source ref="id7"/>
             <target ref="id14"/>
-            <label kind="assignment" x="752" y="-480">raise_error</label>
+            <label kind="comments" x="752" y="-480">raise_error</label>
         </transition>
         <transition>
             <source ref="id9"/>
             <target ref="id8"/>
-            <label kind="assignment" x="880" y="-344">not_request</label>
+            <label kind="comments" x="880" y="-344">not_request</label>
         </transition>
         <transition>
             <source ref="id10"/>
             <target ref="id9"/>
-            <label kind="assignment" x="968" y="-224">leave</label>
+            <label kind="comments" x="968" y="-224">leave</label>
         </transition>
         <transition>
             <source ref="id11"/>
             <target ref="id10"/>
-            <label kind="assignment" x="968" y="-112">shred_ballot</label>
+            <label kind="comments" x="968" y="-112">shred_ballot</label>
         </transition>
         <transition>
             <source ref="id12"/>
             <target ref="id11"/>
-            <label kind="assignment" x="824" y="-112">move_next</label>
+            <label kind="comments" x="824" y="-112">move_next</label>
         </transition>
         <transition>
             <source ref="id7"/>
             <target ref="id11"/>
-            <label kind="assignment" x="856" y="-160">move_next</label>
+            <label kind="comments" x="856" y="-160">move_next</label>
         </transition>
         <transition>
             <source ref="id12"/>
             <target ref="id7"/>
-            <label kind="assignment" x="744" y="-176">check3</label>
+            <label kind="comments" x="744" y="-176">check3</label>
         </transition>
         <transition>
             <source ref="id12"/>
             <target ref="id14"/>
-            <label kind="assignment" x="632" y="-264">raise_error</label>
+            <label kind="comments" x="632" y="-264">raise_error</label>
         </transition>
         <transition>
             <source ref="id15"/>
             <target ref="id12"/>
-            <label kind="assignment" x="656" y="-88">check2</label>
+            <label kind="comments" x="656" y="-88">check2</label>
         </transition>
         <transition>
             <source ref="id13"/>
             <target ref="id18"/>
-            <label kind="assignment" x="216" y="-128">move_next</label>
+            <label kind="comments" x="216" y="-128">move_next</label>
         </transition>
         <transition>
             <source ref="id17"/>
             <target ref="id13"/>
-            <label kind="assignment" x="360" y="-152">check_ballot
+            <label kind="comments" x="360" y="-152">check_ballot
                 counter++
             </label>
         </transition>
         <transition>
             <source ref="id16"/>
             <target ref="id15"/>
-            <label kind="assignment" x="584" y="-64">enter_vote</label>
+            <label kind="comments" x="584" y="-64">enter_vote</label>
         </transition>
         <transition>
             <source ref="id17"/>
             <target ref="id16"/>
-            <label kind="assignment" x="448" y="-64">scan_ballot</label>
+            <label kind="comments" x="448" y="-64">scan_ballot</label>
         </transition>
         <transition>
             <source ref="id18"/>
             <target ref="id17"/>
-            <label kind="assignment" x="312" y="-64">print_ballot</label>
+            <label kind="comments" x="312" y="-64">print_ballot</label>
         </transition>
         <transition>
             <source ref="id19"/>
             <target ref="id18"/>
-            <label kind="assignment" x="184" y="-64">check_auth</label>
+            <label kind="comments" x="184" y="-64">check_auth</label>
         </transition>
     </template>
     <template>
@@ -253,37 +253,37 @@
         <transition>
             <source ref="id23"/>
             <target ref="id20"/>
-            <label kind="assignment" x="-160" y="-144">raise_error</label>
+            <label kind="comments" x="-160" y="-144">raise_error</label>
         </transition>
         <transition>
             <source ref="id24"/>
             <target ref="id20"/>
-            <label kind="assignment" x="-248" y="-104">raise_error</label>
+            <label kind="comments" x="-248" y="-104">raise_error</label>
         </transition>
         <transition>
             <source ref="id25"/>
             <target ref="id20"/>
-            <label kind="assignment" x="-424" y="-144">raise_error</label>
+            <label kind="comments" x="-424" y="-144">raise_error</label>
         </transition>
         <transition>
             <source ref="id22"/>
             <target ref="id21"/>
-            <label kind="assignment" x="96" y="-56">check2</label>
+            <label kind="comments" x="96" y="-56">check2</label>
         </transition>
         <transition>
             <source ref="id23"/>
             <target ref="id22"/>
-            <label kind="assignment" x="-56" y="-56">district_check</label>
+            <label kind="comments" x="-56" y="-56">district_check</label>
         </transition>
         <transition>
             <source ref="id24"/>
             <target ref="id23"/>
-            <label kind="assignment" x="-224" y="-56">second_check</label>
+            <label kind="comments" x="-224" y="-56">second_check</label>
         </transition>
         <transition>
             <source ref="id25"/>
             <target ref="id24"/>
-            <label kind="assignment" x="-376" y="-56">first_check</label>
+            <label kind="comments" x="-376" y="-56">first_check</label>
         </transition>
     </template>
     <template>
@@ -298,20 +298,20 @@
         <transition>
             <source ref="id26"/>
             <target ref="id27"/>
-            <label kind="assignment" x="40" y="24">display</label>
+            <label kind="comments" x="40" y="24">display</label>
             <nail x="64" y="24"/>
         </transition>
         <transition>
             <source ref="id27"/>
             <target ref="id27"/>
-            <label kind="assignment" x="-8" y="-80">idle</label>
+            <label kind="comments" x="-8" y="-80">idle</label>
             <nail x="-24" y="-48"/>
             <nail x="24" y="-48"/>
         </transition>
         <transition>
             <source ref="id27"/>
             <target ref="id26"/>
-            <label kind="assignment" x="40" y="-48">new_info</label>
+            <label kind="comments" x="40" y="-48">new_info</label>
             <nail x="64" y="-24"/>
         </transition>
     </template>
@@ -327,19 +327,19 @@
         <transition>
             <source ref="id28"/>
             <target ref="id29"/>
-            <label kind="assignment" x="16" y="32">sign or !sign</label>
+            <label kind="comments" x="16" y="32">sign or !sign</label>
             <nail x="56" y="32"/>
         </transition>
         <transition>
             <source ref="id29"/>
             <target ref="id28"/>
-            <label kind="assignment" x="24" y="-48">message</label>
+            <label kind="comments" x="24" y="-48">message</label>
             <nail x="56" y="-24"/>
         </transition>
         <transition>
             <source ref="id29"/>
             <target ref="id29"/>
-            <label kind="assignment" x="-24" y="-64">idle</label>
+            <label kind="comments" x="-24" y="-64">idle</label>
             <nail x="-32" y="-40"/>
             <nail x="8" y="-40"/>
         </transition>
@@ -356,20 +356,20 @@
         <transition>
             <source ref="id31"/>
             <target ref="id31"/>
-            <label kind="assignment" x="-8" y="-64">idle</label>
+            <label kind="comments" x="-8" y="-64">idle</label>
             <nail x="-16" y="-40"/>
             <nail x="24" y="-40"/>
         </transition>
         <transition>
             <source ref="id30"/>
             <target ref="id31"/>
-            <label kind="assignment" x="24" y="24">cancel_vote</label>
+            <label kind="comments" x="24" y="24">cancel_vote</label>
             <nail x="64" y="24"/>
         </transition>
         <transition>
             <source ref="id31"/>
             <target ref="id30"/>
-            <label kind="assignment" x="32" y="-40">wrong_vote</label>
+            <label kind="comments" x="32" y="-40">wrong_vote</label>
             <nail x="64" y="-16"/>
         </transition>
     </template>
@@ -394,24 +394,24 @@
         <transition>
             <source ref="id32"/>
             <target ref="id36"/>
-            <label kind="assignment" x="104" y="-24">return</label>
+            <label kind="comments" x="104" y="-24">return</label>
         </transition>
         <transition>
             <source ref="id36"/>
             <target ref="id36"/>
-            <label kind="assignment" x="-64" y="-24">idle</label>
+            <label kind="comments" x="-64" y="-24">idle</label>
             <nail x="-40" y="0"/>
             <nail x="-32" y="-24"/>
         </transition>
         <transition>
             <source ref="id34"/>
             <target ref="id36"/>
-            <label kind="assignment" x="-136" y="32">idle</label>
+            <label kind="comments" x="-136" y="32">idle</label>
         </transition>
         <transition>
             <source ref="id33"/>
             <target ref="id32"/>
-            <label kind="assignment" x="192" y="56">print</label>
+            <label kind="comments" x="192" y="56">print</label>
         </transition>
         <transition>
             <source ref="id35"/>
@@ -426,7 +426,7 @@
         <transition>
             <source ref="id36"/>
             <target ref="id35"/>
-            <label kind="assignment" x="8" y="56">print_request</label>
+            <label kind="comments" x="8" y="56">print_request</label>
         </transition>
     </template>
     <template>
@@ -457,7 +457,7 @@
             <source ref="id37"/>
             <target ref="id41"/>
             <label kind="guard" x="184" y="-112">i &lt; n</label>
-            <label kind="assignment" x="168" y="-72">move_next
+            <label kind="comments" x="168" y="-72">move_next
                 i++
             </label>
             <nail x="200" y="-80"/>
@@ -465,33 +465,33 @@
         <transition>
             <source ref="id37"/>
             <target ref="id38"/>
-            <label kind="assignment" x="184" y="56">raise_error</label>
+            <label kind="comments" x="184" y="56">raise_error</label>
         </transition>
         <transition>
             <source ref="id40"/>
             <target ref="id38"/>
-            <label kind="assignment" x="24" y="40">raise_error</label>
+            <label kind="comments" x="24" y="40">raise_error</label>
         </transition>
         <transition>
             <source ref="id37"/>
             <target ref="id39"/>
             <label kind="guard" x="448" y="-24">i == n</label>
-            <label kind="assignment" x="440" y="0">end_first</label>
+            <label kind="comments" x="440" y="0">end_first</label>
         </transition>
         <transition>
             <source ref="id40"/>
             <target ref="id37"/>
-            <label kind="assignment" x="240" y="0">check_serial2(i)</label>
+            <label kind="comments" x="240" y="0">check_serial2(i)</label>
         </transition>
         <transition>
             <source ref="id41"/>
             <target ref="id38"/>
-            <label kind="assignment" x="-72" y="56">raise_error</label>
+            <label kind="comments" x="-72" y="56">raise_error</label>
         </transition>
         <transition>
             <source ref="id41"/>
             <target ref="id40"/>
-            <label kind="assignment" x="48" y="0">check_serial1(i)</label>
+            <label kind="comments" x="48" y="0">check_serial1(i)</label>
         </transition>
     </template>
     <template>
@@ -522,7 +522,7 @@
             <source ref="id42"/>
             <target ref="id46"/>
             <label kind="guard" x="184" y="-104">i &lt; n</label>
-            <label kind="assignment" x="160" y="-72">move_next
+            <label kind="comments" x="160" y="-72">move_next
                 i++
             </label>
             <nail x="200" y="-80"/>
@@ -530,33 +530,33 @@
         <transition>
             <source ref="id42"/>
             <target ref="id43"/>
-            <label kind="assignment" x="184" y="56">raise_error</label>
+            <label kind="comments" x="184" y="56">raise_error</label>
         </transition>
         <transition>
             <source ref="id45"/>
             <target ref="id43"/>
-            <label kind="assignment" x="8" y="40">raise_error</label>
+            <label kind="comments" x="8" y="40">raise_error</label>
         </transition>
         <transition>
             <source ref="id42"/>
             <target ref="id44"/>
             <label kind="guard" x="368" y="24">i == n</label>
-            <label kind="assignment" x="360" y="40">end_first</label>
+            <label kind="comments" x="360" y="40">end_first</label>
         </transition>
         <transition>
             <source ref="id45"/>
             <target ref="id42"/>
-            <label kind="assignment" x="192" y="0">check_serial2(i)</label>
+            <label kind="comments" x="192" y="0">check_serial2(i)</label>
         </transition>
         <transition>
             <source ref="id46"/>
             <target ref="id43"/>
-            <label kind="assignment" x="-72" y="56">raise_error</label>
+            <label kind="comments" x="-72" y="56">raise_error</label>
         </transition>
         <transition>
             <source ref="id46"/>
             <target ref="id45"/>
-            <label kind="assignment" x="24" y="0">check_serial1(i)</label>
+            <label kind="comments" x="24" y="0">check_serial1(i)</label>
         </transition>
     </template>
     <template>
@@ -592,7 +592,7 @@
             <source ref="id49"/>
             <target ref="id51"/>
             <label kind="guard" x="200" y="-112">i &lt; n</label>
-            <label kind="assignment" x="176" y="-80">move_next
+            <label kind="comments" x="176" y="-80">move_next
                 i++
             </label>
             <nail x="208" y="-88"/>
@@ -600,28 +600,28 @@
         <transition>
             <source ref="id50"/>
             <target ref="id47"/>
-            <label kind="assignment" x="160" y="48">raise_error</label>
+            <label kind="comments" x="160" y="48">raise_error</label>
         </transition>
         <transition>
             <source ref="id51"/>
             <target ref="id47"/>
-            <label kind="assignment" x="-16" y="48">raise_error</label>
+            <label kind="comments" x="-16" y="48">raise_error</label>
         </transition>
         <transition>
             <source ref="id49"/>
             <target ref="id48"/>
             <label kind="guard" x="480" y="-32">i == n</label>
-            <label kind="assignment" x="456" y="-8">end_second</label>
+            <label kind="comments" x="456" y="-8">end_second</label>
         </transition>
         <transition>
             <source ref="id50"/>
             <target ref="id49"/>
-            <label kind="assignment" x="268" y="-8">check_number(i)</label>
+            <label kind="comments" x="268" y="-8">check_number(i)</label>
         </transition>
         <transition>
             <source ref="id51"/>
             <target ref="id50"/>
-            <label kind="assignment" x="52" y="-8">ckeck_name(i)</label>
+            <label kind="comments" x="52" y="-8">ckeck_name(i)</label>
         </transition>
     </template>
     <template>
@@ -656,13 +656,13 @@
         <transition>
             <source ref="id54"/>
             <target ref="id52"/>
-            <label kind="assignment" x="216" y="48">raise_error</label>
+            <label kind="comments" x="216" y="48">raise_error</label>
         </transition>
         <transition>
             <source ref="id54"/>
             <target ref="id56"/>
             <label kind="guard" x="192" y="-112">j &lt; m</label>
-            <label kind="assignment" x="168" y="-80">move_next
+            <label kind="comments" x="168" y="-80">move_next
                 j++
             </label>
             <nail x="208" y="-88"/>
@@ -670,28 +670,28 @@
         <transition>
             <source ref="id55"/>
             <target ref="id52"/>
-            <label kind="assignment" x="56" y="32">raise_error</label>
+            <label kind="comments" x="56" y="32">raise_error</label>
         </transition>
         <transition>
             <source ref="id56"/>
             <target ref="id52"/>
-            <label kind="assignment" x="-32" y="48">raise_error</label>
+            <label kind="comments" x="-32" y="48">raise_error</label>
         </transition>
         <transition>
             <source ref="id54"/>
             <target ref="id53"/>
             <label kind="guard" x="384" y="16">j == m</label>
-            <label kind="assignment" x="368" y="40">end_second</label>
+            <label kind="comments" x="368" y="40">end_second</label>
         </transition>
         <transition>
             <source ref="id55"/>
             <target ref="id54"/>
-            <label kind="assignment" x="200" y="-8">check_number2(j)</label>
+            <label kind="comments" x="200" y="-8">check_number2(j)</label>
         </transition>
         <transition>
             <source ref="id56"/>
             <target ref="id55"/>
-            <label kind="assignment" x="32" y="-8">check_number1(j)</label>
+            <label kind="comments" x="32" y="-8">check_number1(j)</label>
         </transition>
     </template>
     <template>
@@ -715,46 +715,46 @@
         <transition>
             <source ref="id61"/>
             <target ref="id61"/>
-            <label kind="assignment" x="32" y="-48">idle</label>
+            <label kind="comments" x="32" y="-48">idle</label>
             <nail x="40" y="-24"/>
             <nail x="24" y="-40"/>
         </transition>
         <transition>
             <source ref="id59"/>
             <target ref="id57"/>
-            <label kind="assignment" x="128" y="-80">check_vote</label>
+            <label kind="comments" x="128" y="-80">check_vote</label>
         </transition>
         <transition>
             <source ref="id59"/>
             <target ref="id60"/>
-            <label kind="assignment" x="-40" y="48">raise_error</label>
+            <label kind="comments" x="-40" y="48">raise_error</label>
             <nail x="-8" y="48"/>
         </transition>
         <transition>
             <source ref="id61"/>
             <target ref="id59"/>
-            <label kind="assignment" x="72" y="-24">bar_code</label>
+            <label kind="comments" x="72" y="-24">bar_code</label>
         </transition>
         <transition>
             <source ref="id60"/>
             <target ref="id61"/>
-            <label kind="assignment" x="-120" y="-88">idle</label>
+            <label kind="comments" x="-120" y="-88">idle</label>
             <nail x="-112" y="-72"/>
         </transition>
         <transition>
             <source ref="id61"/>
             <target ref="id60"/>
-            <label kind="assignment" x="-128" y="-24">raise_error</label>
+            <label kind="comments" x="-128" y="-24">raise_error</label>
         </transition>
         <transition>
             <source ref="id58"/>
             <target ref="id61"/>
-            <label kind="assignment" x="-40" y="-96">return</label>
+            <label kind="comments" x="-40" y="-96">return</label>
         </transition>
         <transition>
             <source ref="id57"/>
             <target ref="id58"/>
-            <label kind="assignment" x="88" y="-168">print</label>
+            <label kind="comments" x="88" y="-168">print</label>
         </transition>
     </template>
     <template>
@@ -781,7 +781,7 @@
             <source ref="id64"/>
             <target ref="id65"/>
             <label kind="guard" x="88" y="-128">i &lt; n</label>
-            <label kind="assignment" x="80" y="-72">i++
+            <label kind="comments" x="80" y="-72">i++
                 move_next
             </label>
             <nail x="104" y="-104"/>
@@ -833,67 +833,67 @@
         <transition>
             <source ref="id70"/>
             <target ref="id71"/>
-            <label kind="assignment" x="-40" y="-136">raise_error</label>
+            <label kind="comments" x="-40" y="-136">raise_error</label>
         </transition>
         <transition>
             <source ref="id67"/>
             <target ref="id71"/>
-            <label kind="assignment" x="-160" y="-120">raise_error</label>
+            <label kind="comments" x="-160" y="-120">raise_error</label>
         </transition>
         <transition>
             <source ref="id66"/>
             <target ref="id73"/>
-            <label kind="assignment" x="16" y="16">ok</label>
+            <label kind="comments" x="16" y="16">ok</label>
         </transition>
         <transition>
             <source ref="id74"/>
             <target ref="id66"/>
-            <label kind="assignment" x="-176" y="24">check_preferences</label>
+            <label kind="comments" x="-176" y="24">check_preferences</label>
         </transition>
         <transition>
             <source ref="id67"/>
             <target ref="id73"/>
-            <label kind="assignment" x="24" y="-64">ok</label>
+            <label kind="comments" x="24" y="-64">ok</label>
         </transition>
         <transition>
             <source ref="id74"/>
             <target ref="id67"/>
-            <label kind="assignment" x="-176" y="-64">check_preferences</label>
+            <label kind="comments" x="-176" y="-64">check_preferences</label>
         </transition>
         <transition>
             <source ref="id68"/>
             <target ref="id74"/>
-            <label kind="assignment" x="-216" y="16">ok</label>
+            <label kind="comments" x="-216" y="16">ok</label>
         </transition>
         <transition>
             <source ref="id75"/>
             <target ref="id68"/>
-            <label kind="assignment" x="-384" y="24">check_serial</label>
+            <label kind="comments" x="-384" y="24">check_serial</label>
         </transition>
         <transition>
             <source ref="id69"/>
             <target ref="id71"/>
-            <label kind="assignment" x="-272" y="-144">raise_error</label>
+            <label kind="comments" x="-272" y="-144">raise_error</label>
         </transition>
         <transition>
             <source ref="id69"/>
             <target ref="id74"/>
-            <label kind="assignment" x="-216" y="-64">ok</label>
+            <label kind="comments" x="-216" y="-64">ok</label>
         </transition>
         <transition>
             <source ref="id75"/>
             <target ref="id69"/>
-            <label kind="assignment" x="-392" y="-64">check_serial</label>
+            <label kind="comments" x="-392" y="-64">check_serial</label>
         </transition>
         <transition>
             <source ref="id73"/>
             <target ref="id70"/>
-            <label kind="assignment" x="88" y="-88">check4</label>
+            <label kind="comments" x="88" y="-88">check4</label>
         </transition>
         <transition>
             <source ref="id73"/>
             <target ref="id72"/>
-            <label kind="assignment" x="112" y="-40">check4</label>
+            <label kind="comments" x="112" y="-40">check4</label>
         </transition>
     </template>
     <system>// Place template instantiations here.
