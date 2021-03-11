@@ -23,6 +23,8 @@ class VotingModelGenerator:
         self._model += self._generate_voter() + "\n"
         self._model += self._generate_coercer() + "\n"
         self._model += self._generate_reduction()
+        self._model += "COALITION: [Coercer1]\n"
+        self._model += "FORMULA: <<Coercer1>>F(Coercer1_pun1_1=True)\n"
 
     def save_to_file(self):
         """
@@ -62,7 +64,7 @@ class VotingModelGenerator:
         :return: Coercer agent string.
         """
         coercer: str = "Agent Coercer[1]:\n"
-        coercer += "init_aID: q0\n"
+        coercer += "init: q0\n"
         for voter_id in range(1, self._voters_count + 1):
             for cand_id in range(1, self._candidates_count + 1):
                 coercer += f"shared gv{cand_id}_Voter{voter_id}: q0 -> q0\n"
@@ -70,7 +72,7 @@ class VotingModelGenerator:
                 coercer += f"shared stopG{cand_id}_Voter{voter_id}: q0 -> q{cand_id}_Voter{voter_id}\n"
                 coercer += f"shared stopN{cand_id}_Voter{voter_id}: q0 -> q{cand_id}_Voter{voter_id}\n"
                 coercer += f"np{cand_id}_Voter{voter_id}: q{cand_id}_Voter{voter_id} -> q0\n"
-                coercer += f"pun{cand_id}_Voter{voter_id}: q{cand_id}_Voter{voter_id} -> q{cand_id}p_Voter{voter_id} [pun{voter_id}=true]\n"
+                coercer += f"pun{cand_id}_Voter{voter_id}: q{cand_id}_Voter{voter_id} -> q{cand_id}p_Voter{voter_id} [aID_pun{cand_id}_{voter_id}=true]\n"
                 coercer += f"return{cand_id}_Voter{voter_id}: q{cand_id}p_Voter{voter_id} -> q0\n"
 
         return coercer
@@ -80,12 +82,12 @@ class VotingModelGenerator:
         Generates reduction section.
         :return: Reduction section string.
         """
-        reduction: str = "REDUCTION: ["
-        for voter_id in range(1, self._voters_count + 1):
-            reduction += f"pun{voter_id}, "
-            for cand_id in range(1, self._candidates_count + 1):
-                reduction += f"Voter{voter_id}_revealed{cand_id}, "
-                reduction += f"Voter{voter_id}_voted{cand_id}, "
+        reduction: str = "REDUCTION: [Coercer1_pun1_1"
+        # for voter_id in range(1, self._voters_count + 1):
+        #     reduction += f"pun{voter_id}, "
+        #     for cand_id in range(1, self._candidates_count + 1):
+        #         reduction += f"Voter{voter_id}_revealed{cand_id}, "
+        #         reduction += f"Voter{voter_id}_voted{cand_id}, "
 
         reduction = reduction.rstrip(", ")
         reduction += "]\n"
@@ -93,8 +95,8 @@ class VotingModelGenerator:
 
 
 if __name__ == "__main__":
-    CANDIDATES_COUNT = 4
-    VOTERS_COUNT = 3
+    CANDIDATES_COUNT = 2
+    VOTERS_COUNT = 2
     voting_model_generator = VotingModelGenerator(VOTERS_COUNT, CANDIDATES_COUNT)
     voting_model_generator.generate()
     voting_model_generator.save_to_file()

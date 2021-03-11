@@ -357,7 +357,7 @@ class SimpleModel:
         result = ""
         result += f"{self._no_states}\n"
         result += f"{self._no_agents}\n"
-        result += self.dump_states()
+        # result += self.dump_states()
         result += self.dump_transitions()
         result += self.dump_epistemic_classes()
         return result
@@ -370,10 +370,19 @@ class SimpleModel:
         return result
 
     def dump_transitions(self) -> str:
+        actions_dict = dict()
+        action_ind = 0
         result = f"{self._no_transitions}\n"
         for state_id in range(0, self._no_states):
             for transition in self._graph[state_id]:
-                result += f"{state_id} {transition.next_state} {json.dumps(transition.actions)}\n"
+                result += f"{state_id} {transition.next_state}"
+                for action in transition.actions:
+                    if action not in actions_dict:
+                        actions_dict[action] = action_ind
+                        action_ind += 1
+
+                    result += f" {actions_dict[action]}"
+                result += "\n"
 
         return result
 

@@ -253,7 +253,8 @@ class GlobalModel:
             agents.append(act_tran[0])
         return new_state, agents
 
-    def _new_state_after_shared_transitions_list(self, state: GlobalState, transitions: List[LocalTransition]) -> GlobalState:
+    def _new_state_after_shared_transitions_list(self, state: GlobalState,
+                                                 transitions: List[LocalTransition]) -> GlobalState:
         new_state = GlobalState.copy_state(state, self._persistent)
         for transition in transitions:
             new_state.set_local_state(transition.agent_id,
@@ -267,7 +268,8 @@ class GlobalModel:
         for agent_id in range(len(self._local_models)):
             self._compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions)
 
-    def _compute_next_for_state_for_agent(self, state: GlobalState, current_state_id: int, agent_id: int, visited: List[str],
+    def _compute_next_for_state_for_agent(self, state: GlobalState, current_state_id: int, agent_id: int,
+                                          visited: List[str],
                                           all_transitions: List[List[LocalTransition]]):
         for transition in all_transitions[agent_id]:
             if transition.shared and transition.action not in visited:
@@ -383,7 +385,7 @@ class GlobalModel:
                     for tup in E_g:
                         a: LocalTransition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
                         g_p: GlobalState = self._successor(g, a)
-                        g_p_state_id : int = self._add_state(g_p)
+                        g_p_state_id: int = self._add_state(g_p)
 
                         self._add_transition(g_state_id, g_p_state_id, a)
                         if self._add_to_stack(g_p):
@@ -414,7 +416,7 @@ class GlobalModel:
                 DIS.update(self._enabled_for_x(X))
                 X = self._dependent_for_x(X, DIS, U)
                 U.update(X)
-            if len(X) == 0:# and not self._check_for_cycle(state, U):# and not self._check_for_k(state, U):
+            if len(X) == 0:  # and not self._check_for_cycle(state, U):# and not self._check_for_k(state, U):
                 return U
             V.difference_update(U)
         return set()
@@ -463,7 +465,8 @@ class GlobalModel:
 
         return result
 
-    def _dependent_for_x(self, X: Set[Tuple[int, int, int]], DIS: Set[Tuple[int, int, int]], U: Set[Tuple[int, int, int]]) -> Set[Tuple[int, int, int]]:  # !!!!
+    def _dependent_for_x(self, X: Set[Tuple[int, int, int]], DIS: Set[Tuple[int, int, int]],
+                         U: Set[Tuple[int, int, int]]) -> Set[Tuple[int, int, int]]:  # !!!!
         result = set()
         for tup in X:
             transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
@@ -653,19 +656,37 @@ class GlobalModel:
             result.append(self._local_models[agent_id].agent_name)
         return result
 
+    def save_to_file(self, filename: str):
+        model_file = open(filename, "w")
+        model_dump = self.model.dump()
+        model_file.write(model_dump)
+        winning_states = self.get_formula_winning_states()
+        model_file.write(f"{len(winning_states)}\n")
+        for state_id in winning_states:
+            model_file.write(f"{state_id}\n")
+
+        model_file.write(f"{self.get_agent()}\n")
+        model_file.close()
+
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    model = GlobalModelParser().parse("train_controller.txt")
-    model.generate(reduction=False)
+    voter = 2
+    cand = 2
+    reduction=True
+    model = GlobalModelParser().parse(f"voting_{voter}_{cand}.txt")
+    model.generate(reduction=reduction)
+    print(model.model.dump())
+    print(model.states_count)
     formula_parser = FormulaParser()
     print(model._formula)
     formula_obj = formula_parser.parseFormula(formulaStr=model._formula)
     print(formula_obj.agents, formula_obj.type, formula_obj.expression)
-    model.get_formula_winning_states()
+    print(model.get_formula_winning_states())
     print(model.get_agent())
+    model.save_to_file(f"voter_model_{voter}_{cand}_{reduction}.txt")
 
     # results_file = open("selene_results.txt", "a")
     #
@@ -707,4 +728,3 @@ if __name__ == "__main__":
     # results_file.write(f"Formula: {formula_no}\n")
     # results_file.write("\n\n")
     # results_file.close()
-
