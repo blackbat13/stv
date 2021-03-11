@@ -1,4 +1,3 @@
-% Train Gate Controller model with two trains and one controller
 Agent Train[2]:
 init: wait
 shared a1_aID: wait -> tunnel [aID_in=true]
@@ -14,4 +13,3 @@ shared a2_Train2: red -> green
 
 REDUCTION: [in_Train1,in_Train2]
 COALITION: [Controller1]
-FORMULA: <<Controller1>>F(Train1_in=True | Train2_in=True)

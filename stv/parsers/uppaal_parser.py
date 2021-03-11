@@ -115,18 +115,22 @@ class UppaalModelParser:
                                 guard_label.text = guard
                                 # tran.append(guard_label)
                             else:
+                                nail_count = len(tran.findall("nail"))
                                 label = ElementTree.Element("label")
                                 label.set("kind", "guard")
                                 label.text = strat["conditions"]
                                 label.set("x", "0")
                                 label.set("y", "0")
-                                tran.append(label)
+
+                                tran.insert(len(tran) - nail_count, label)
+                                # tran.append(label)
                             # Add guard label
                             break
         data = ElementTree.tostring(self._root)
         file = open("test.xml", "w+b")
         file.write(data)
         file.close()
+
 
 class NaturalStrategy:
     def __init__(self):
@@ -165,7 +169,7 @@ class NaturalStrategy:
         return result
 
 if __name__ == "__main__":
-    parser = UppaalModelParser("vvote_nat1_test.xml")
+    parser = UppaalModelParser("vvote_v3_nat.xml")
     # parser.parse()
 
     natural_strategy = NaturalStrategy()
@@ -174,4 +178,4 @@ if __name__ == "__main__":
     print(natural_strategy)
 
     parser.apply(natural_strategy)
-    parser.parse()
+    # parser.parse()

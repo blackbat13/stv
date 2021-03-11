@@ -1,8 +1,11 @@
 Agent: Voter
+(p_start || p_check2_ok || p_check2_fail || p_outside_ps) -> move_next
+p_polling_station -> give_document
 p_has_ballot -> scan_ballot
-p_scanning -> enter_vote
+p_scanning -> enter_vote(v)
 p_voted -> check2
-(p_check2_ok || p_check2_fail) -> move_next
-p_vote_ok -> shred_ballot
+p_cast -> send_to_wbb
+p_send -> shred
 p_shred -> leave
-p_check4 -> check4
+p_check_request -> not_share
+p_checkWBB -> checkWBB
