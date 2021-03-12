@@ -107,7 +107,7 @@ class UppaalModelParser:
                         continue
 
                     for strat in nat_strat._strategy:
-                        if strat["action"] == comment:
+                        if strat["action"] == comment or (strat["action"] == "*" and comment not in nat_strat._actions):
                             if guard_label is not None:
                                 # tran.remove(guard_label)
                                 guard = guard_label.text
@@ -136,6 +136,7 @@ class NaturalStrategy:
     def __init__(self):
         self._agent_name = ""
         self._strategy = []
+        self._actions = set()
 
     def parse(self, file_name: str):
         file = open(file_name)
@@ -148,6 +149,7 @@ class NaturalStrategy:
                 conditions = conditions.strip(" ")
                 state = state.strip(" ")
                 self._strategy.append({"conditions": conditions, "action": state})
+                self._actions.add(state)
 
         file.close()
 
@@ -159,6 +161,8 @@ class NaturalStrategy:
             new_condition = new_condition.rstrip("& ")
             new_condition += f") && {self._strategy[i]['conditions']})"
             self._strategy[i]["conditions"] = new_condition
+
+        # self._strategy.append({"conditions": f"!({self._strategy[-1]['conditions']})", "action": "*"})
 
     def __str__(self):
         result = f"Agent name: {self._agent_name}\n"
@@ -173,7 +177,7 @@ if __name__ == "__main__":
     # parser.parse()
 
     natural_strategy = NaturalStrategy()
-    natural_strategy.parse("nat_strat1.txt")
+    natural_strategy.parse("nat_strat5_voter.txt")
     natural_strategy.prepare()
     print(natural_strategy)
 

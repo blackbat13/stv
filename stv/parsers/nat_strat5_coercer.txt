@@ -1,0 +1,5 @@
+Agent: Coercer
+p_start -> coerce(ca)
+p_coerce -> request
+p_request -> move_next
+true -> *
