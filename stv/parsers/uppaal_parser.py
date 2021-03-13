@@ -173,11 +173,11 @@ class NaturalStrategy:
         return result
 
 if __name__ == "__main__":
-    parser = UppaalModelParser("vvote_v3_nat.xml")
+    parser = UppaalModelParser("test.xml")
     # parser.parse()
 
     natural_strategy = NaturalStrategy()
-    natural_strategy.parse("nat_strat5_voter.txt")
+    natural_strategy.parse("nat_strat4_Check4SN.txt")
     natural_strategy.prepare()
     print(natural_strategy)
 

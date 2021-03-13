@@ -3,4 +3,9 @@
 /*
 
 */
+//NO_QUERY
+
+/*
+
+*/
 A<>Coercer.p_share1+Coercer.p_share2+Coercer.p_share3>=1

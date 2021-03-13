@@ -175,6 +175,14 @@ p_ok=true</label></transition><transition><source ref="id90"/><target ref="id89"
 p_request=true</label></transition><transition><source ref="id91"/><target ref="id90"/><label kind="guard" x="0" y="0">p_start</label><label kind="synchronisation" x="-96" y="-392">coerce!</label><label kind="assignment" x="-208" y="-400">p_start=false,
 p_coerce=true</label><label kind="comments">coerce(ca)</label></transition></template><template><name>Intruder</name><location id="id92" x="208" y="-312"><name x="232" y="-320">s_notify_ok</name></location><location id="id93" x="208" y="16"><name x="232" y="8">s_notify_not_ok</name></location><location id="id94" x="-144" y="-144"><name x="-144" y="-136">infection</name><committed/></location><location id="id95" x="208" y="-208"><name x="128" y="-208">ca_eq_v</name><committed/></location><location id="id96" x="208" y="-72"><name x="112" y="-64">ca_not_eq_v</name><committed/></location><location id="id97" x="208" y="-144"><name x="224" y="-152">capture</name><committed/></location><location id="id98" x="-32" y="-144"><name x="-24" y="-136">listen</name><committed/></location><location id="id99" x="-312" y="-144"><name x="-304" y="-136">start</name><committed/></location><init ref="id99"/><transition><source ref="id95"/><target ref="id92"/><label kind="synchronisation" x="224" y="-272">notify_ok!</label></transition><transition><source ref="id96"/><target ref="id93"/><label kind="synchronisation" x="216" y="-40">notify_not_ok!</label></transition><transition><source ref="id94"/><target ref="id98"/><label kind="synchronisation" x="-128" y="-168">infect_vm!</label></transition><transition><source ref="id99"/><target ref="id94"/><label kind="select" x="-288" y="-189">choice: int[1,no_candidates]</label><label kind="assignment" x="-296" y="-168">ca=choice</label><label kind="comments">select_candidate(ca)</label></transition><transition><source ref="id97"/><target ref="id95"/><label kind="guard" x="240" y="-200">ca==v</label><label kind="comments">check_vote(v)</label></transition><transition><source ref="id97"/><target ref="id96"/><label kind="guard" x="240" y="-128">ca!=v</label><label kind="comments">check_vote(v)</label></transition><transition><source ref="id98"/><target ref="id97"/><label kind="synchronisation" x="48" y="-168">enter_vote?</label><label kind="comments">enter_vote(v)</label></transition></template><system>// Place template instantiations here.
 //Process = Template();
-
+v2 = Voter();
+v3 = Voter();
+v4 = Voter();
+v5 = Voter();
+v6 = Voter();
+v7 = Voter();
+v8 = Voter();
+v9 = Voter();
+v10 = Voter();
 // List one or more processes to be composed into a system.
 system Voter, Printer, EBM, PublicWBB, Coercer;</system></nta>
