@@ -14,11 +14,14 @@ class SLIr(ATLIrModel):
         """
         super().__init__(number_of_agents)
 
-    def verify(self, winning_states, quant_pref, bind_pref, all_quant_ids):
+    def verify(self, winning_states, quant_pref, bind_pref):
         current_states = set(winning_states)
         current_states_len = len(current_states)
         next_states = set(winning_states)
         next_current_len = -1
+        all_quant_ids = set()
+        for el in bind_pref:
+            all_quant_ids.add(el[1])
         while current_states_len != next_current_len:
             next_current_len = len(current_states)
             pre_states = self.get_pre_states(next_states)
@@ -42,21 +45,13 @@ class SLIr(ATLIrModel):
             for state_id in pre_states:
                 tran_ok = True
                 for transition in self.transitions[state_id]:
-                    if transition.actions != actions:
-                        for id in all_quant_ids:
-                            if transition.actions[id] == actions[id]:
-                                tran_ok = False
-                                break
-                        if not tran_ok:
+                    for id in all_quant_ids:
+                        if transition.actions[id] != actions[id]:
+                            tran_ok = False
                             break
-                        continue
 
-                    if transition.next_state not in states:
+                    if not tran_ok:
                         break
-
-                    result.add(state_id)
-                    tran_ok = False
-                    break
 
                 if tran_ok:
                     result.add(state_id)
@@ -101,10 +96,8 @@ class SLIr(ATLIrModel):
 
     def update(self, bind, actions, var, action):
         new_actions = actions[:]
-        for agent_id in range(0, self.number_of_agents):
+        for agent_id in range(self.number_of_agents):
             if (var, agent_id) in bind:
                 new_actions[agent_id] = action
-            else:
-                new_actions[agent_id] = actions[agent_id]  # don't need that
 
         return new_actions
