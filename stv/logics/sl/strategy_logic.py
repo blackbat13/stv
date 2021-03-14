@@ -80,7 +80,6 @@ class SLIr(ATLIrModel):
                 new_result = self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
                                       self.update(actions, quant_pref[quant_pref_no][1], action),
                                       all_quant_ids)
-                # print(action, pre_states, new_result)
                 if first and len(new_result) > 0:
                     result.update(new_result)
                     first = False
