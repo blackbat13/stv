@@ -41,3 +41,10 @@ class Transition:
         :return: string representation of the transition
         """
         return f"Next state: {self.next_state}; Actions: {self.actions}"
+
+    def __str__(self) -> str:
+        """
+        Creates string representation of the transition
+        :return: string representation of the transition
+        """
+        return f"Next state: {self.next_state}; Actions: {self.actions}"

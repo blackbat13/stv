@@ -13,6 +13,7 @@ class SLIr(ATLIrModel):
         :param number_of_agents: number of agents in the model
         """
         super().__init__(number_of_agents)
+        self._strat_bind = dict()
 
     def verify(self, winning_states, quant_pref, bind_pref):
         current_states = set(winning_states)
@@ -20,8 +21,11 @@ class SLIr(ATLIrModel):
         next_states = set(winning_states)
         next_current_len = -1
         all_quant_ids = set()
+        self._strat_bind = dict()
         for el in bind_pref:
             all_quant_ids.add(el[1])
+            self._strat_bind[el[0]] = el[1]
+
         while current_states_len != next_current_len:
             next_current_len = len(current_states)
             pre_states = self.get_pre_states(next_states)
@@ -45,10 +49,14 @@ class SLIr(ATLIrModel):
             for state_id in pre_states:
                 tran_ok = True
                 for transition in self.transitions[state_id]:
+                    correct = True
                     for id in all_quant_ids:
                         if transition.actions[id] != actions[id]:
-                            tran_ok = False
+                            correct = False
                             break
+
+                    if correct and transition.next_state not in states:
+                        tran_ok = False
 
                     if not tran_ok:
                         break
@@ -59,45 +67,30 @@ class SLIr(ATLIrModel):
             return result
         if quant_pref[quant_pref_no][0] == "Exist":
             result = set()
-            # for a_actions in self.agents_actions:
-            #     for action in a_actions:
-            #         result.update(
-            #             self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
-            #                      self.update(bind_pref, actions, quant_pref[quant_pref_no][1], action)))
-            for action in self.agents_actions[quant_pref_no]:
+            for action in self.agents_actions[self._strat_bind[quant_pref[quant_pref_no][1]]]:
                 result.update(
                     self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
-                             self.update(bind_pref, actions, quant_pref[quant_pref_no][1], action), all_quant_ids))
+                             self.update(actions, quant_pref[quant_pref_no][1], action), all_quant_ids))
             return result
         else:
             result = set()
             first = True
-            # for a_actions in self.agents_actions:
-            #     for action in a_actions:
-            #         new_result = self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
-            #                               self.update(bind_pref, actions, quant_pref[quant_pref_no][1], action))
-            #         if first and len(new_result) > 0:
-            #             result.update(new_result)
-            #             first = False
-            #         elif len(new_result) > 0:
-            #             result.intersection_update(new_result)
 
-            for action in self.agents_actions[quant_pref_no]:
+            for action in self.agents_actions[self._strat_bind[quant_pref[quant_pref_no][1]]]:
                 new_result = self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
-                                      self.update(bind_pref, actions, quant_pref[quant_pref_no][1], action),
+                                      self.update(actions, quant_pref[quant_pref_no][1], action),
                                       all_quant_ids)
+                # print(action, pre_states, new_result)
                 if first and len(new_result) > 0:
                     result.update(new_result)
                     first = False
-                elif len(new_result) > 0:
+                else:
                     result.intersection_update(new_result)
 
             return result
 
-    def update(self, bind, actions, var, action):
+    def update(self, actions, var, action):
         new_actions = actions[:]
-        for agent_id in range(self.number_of_agents):
-            if (var, agent_id) in bind:
-                new_actions[agent_id] = action
+        new_actions[self._strat_bind[var]] = action
 
         return new_actions
