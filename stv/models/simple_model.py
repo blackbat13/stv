@@ -683,8 +683,8 @@ class SimpleModel:
         bind_pref = json_obj["formula"]["bind_pref"]
 
         formula = json_obj['formula']['form']
-        formula = formula['operand1']['form']
         result = []
+
         if formula['op'] == 'F':
             formula = formula['operand1']
             expression = formula
