@@ -19,6 +19,7 @@ class SimpleModel:
         self._epistemic_class_membership: List[List[int]] = []
         self._states: List[{}] = []
         self._coalition = [0]
+        self._actions = [set() for _ in range(no_agents)]
         for _ in range(0, self._no_agents):
             self._epistemic_classes.append([])
             self._epistemic_class_membership.append([])
@@ -90,6 +91,11 @@ class SimpleModel:
         self._graph[from_state_id].append(Transition(to_state_id, actions))
         self._pre_image[to_state_id].append(from_state_id)
         self._no_transitions += 1
+        self._add_actions(actions)
+
+    def _add_actions(self, actions: List[str]):
+        for agent_id, action in enumerate(actions):
+            self._actions[agent_id].add(action)
 
     def is_unique_transition(self, transition: Transition, state_id: int) -> bool:
         for tr in self._graph[state_id]:
@@ -398,12 +404,13 @@ class SimpleModel:
 
         return result
 
-    def js_dump_model(self, winning: List = [], epistemic: bool = True, asynchronous: bool = False, reduced_model = None) -> str:
+    def js_dump_model(self, winning: List = [], epistemic: bool = True, asynchronous: bool = False,
+                      reduced_model=None) -> str:
         nodes = self.fill_nodes_model(winning, reduced_model)
         links = self.fill_links_model(epistemic, asynchronous, reduced_model)
         return json.dumps({"nodes": nodes, "links": links})
 
-    def fill_nodes_model(self, winning: List = [], reduced_model = None) -> List[hash]:
+    def fill_nodes_model(self, winning: List = [], reduced_model=None) -> List[hash]:
         nodes = []
         state_id = 0
         for state in self.states:
@@ -421,7 +428,7 @@ class SimpleModel:
 
         return nodes
 
-    def fill_links_model(self, epistemic: bool, asynchronous: bool, reduced_model = None) -> List[hash]:
+    def fill_links_model(self, epistemic: bool, asynchronous: bool, reduced_model=None) -> List[hash]:
         links = []
         transition_id = 0
         for state_id in range(0, self._no_states):
@@ -647,6 +654,69 @@ class SimpleModel:
             else:
                 atl_perfect = simple_model.to_atl_perfect(actions)
                 result = atl_perfect.maximum_formula_many_agents(coalition, winning_states)
+
+        return result
+
+    def _load_nodes_from_json(self, nodes: list, DEBUG: bool = False):
+        for node in nodes:
+            if DEBUG:
+                print(node)
+            id = int(node['id'])
+            label = node['label']
+            props = node['props']
+            self.states[id] = {'label': label, 'props': props}
+
+    def _load_transitions_from_json(self, transitions: list, DEBUG: bool = False):
+        for transition in transitions:
+            if DEBUG:
+                print(transition)
+            source = transition['source']
+            target = transition['target']
+            label = ast.literal_eval(transition['label'])
+            self.add_transition(from_state_id=source, to_state_id=target, actions=label)
+
+    @staticmethod
+    def load_sl_from_json(json_str: str, DEBUG: bool = False) -> [int]:
+        json_obj = json.loads(json_str)
+        label = ast.literal_eval(json_obj['links'][0]['label'])
+        no_agents = len(label)
+        simple_model = SimpleModel(no_agents)
+        no_states = len(json_obj['nodes'])
+        simple_model.states = [{} for _ in range(no_states)]
+        simple_model._no_states = no_states
+        simple_model.resize_to_state(no_states - 1)
+        simple_model._load_nodes_from_json(json_obj['nodes'], DEBUG)
+        simple_model._load_transitions_from_json(json_obj['links'])
+
+        quant_pref = json_obj["formula"]["quant_pref"]
+        bind_pref = json_obj["formula"]["bind_pref"]
+
+        formula = json_obj['formula']['form']
+        result = []
+
+        if formula['op'] == 'F':
+            formula = formula['operand1']
+            expression = formula
+            winning_states = set()
+            for state_id in range(len(simple_model.states)):
+                state = simple_model.states[state_id]
+                if simple_model.evaluate_on_state(expression, state):
+                    winning_states.add(state_id)
+
+            sl_perfect = simple_model.to_sl_perfect(simple_model._actions)
+            result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
+
+        # elif formula['op'] == 'G':
+        #     formula = formula['operand1']
+        #     expression = formula
+        #     winning_states = set()
+        #     for state_id in range(len(simple_model.states)):
+        #         state = simple_model.states[state_id]
+        #         if simple_model.evaluate_on_state(expression, state):
+        #             winning_states.add(state_id)
+        #
+        #     sl_perfect = simple_model.to_sl_perfect(simple_model._actions)
+        #     result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
 
         return result
 

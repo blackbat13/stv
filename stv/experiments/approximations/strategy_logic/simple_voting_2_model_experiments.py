@@ -14,12 +14,9 @@ class SimpleVoting2ModelExperiments:
         quant_pref = [('Exist', 'se'), ('All', 'sc'), ('Exist', 'sv')]
         bind_pref = [('se', 0), ('sc', 1), ('sv', 2)]
 
-        quant_all_ids = [1]
-
         for voter_id in range(1, self.no_voters):
             quant_pref.append(('Exist', f'sv{voter_id}'))
             bind_pref.append((f'sv{voter_id}', voter_id + 2))
-            # quant_all_ids.append(voter_id + 2)
 
         formula = 'F (end_v & vote_v_0 & !punish_v)'
 
@@ -28,13 +25,13 @@ class SimpleVoting2ModelExperiments:
         voter_id = 0
         for state in self.model.states:
             state_id += 1
-            if state['finish'][voter_id] and state['vote'][voter_id] == 0 and state['pun'][voter_id] == False:
+            if state['finish'][voter_id] and state['vote'][voter_id] == 0 and not state['pun'][voter_id]:
                 winning_states.append(state_id)
 
         sl_model = self.model.model.to_sl_perfect(self.model.get_actions())
 
         start = time.perf_counter()
-        result = sl_model.verify(winning_states, quant_pref, bind_pref, quant_all_ids)
+        result = sl_model.verify(winning_states, quant_pref, bind_pref)
         stop = time.perf_counter()
 
         time_verification = stop - start
@@ -72,5 +69,5 @@ class SimpleVoting2ModelExperiments:
 
 
 if __name__ == "__main__":
-    simple_voting2_model_experiments = SimpleVoting2ModelExperiments(2, 5)
+    simple_voting2_model_experiments = SimpleVoting2ModelExperiments(2, 2)
     simple_voting2_model_experiments.run_experiments()
