@@ -23,6 +23,7 @@ class SeleneModelGenerator:
         model += self._generate_reduction()
         model += self._generate_persistent()
         model += self._generate_coalition()
+        model += self._generate_formula()
         return model
 
     def _generate_teller(self):
@@ -189,6 +190,10 @@ class SeleneModelGenerator:
         else:
             coalition = "COALITION: [Coercer1]\n"
         return coalition
+
+    def _generate_formula(self):
+        formula = "FORMULA: <<Coercer1>>F(Coercer1_pun1=True)\n"
+        return formula
 
 
 if __name__ == "__main__":

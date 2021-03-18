@@ -196,6 +196,7 @@ class ATLIrModel:
         self.strategy = [None for _ in range(self.number_of_states)]
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
+            print("Current states", current_states)
             result_states.update(current_states)
             if result_states_length == len(result_states):
                 break
@@ -227,11 +228,16 @@ class ATLIrModel:
                                   is_winning_state: List[bool]) -> Set[int]:
         result_states = set()
         pre_image = self.prepare_pre_image(current_states)
+        print("Pre image", pre_image)
         actions = self.get_agents_actions(agent_ids)
+        print("Actions", actions)
 
         for state_id in pre_image:
+            if is_winning_state[state_id]:
+                continue
             for action in itertools.product(*actions):
-                if self.is_reachable_by_agents(agent_ids, state_id, action, is_winning_state):
+                if self.is_reachable_by_agents(agent_ids, state_id, list(action), is_winning_state):
+
                     self.strategy[state_id] = list(action)
                     result_states.add(state_id)
                     is_winning_state[state_id] = True
@@ -258,6 +264,7 @@ class ATLIrModel:
         result = False
         for transition in self.transitions[state_id]:
             is_good_transition = True
+            print(transition, actions)
             for agent_id, action in zip(agent_ids, actions):
                 if transition.actions[agent_id] != action:
                     is_good_transition = False
@@ -265,8 +272,10 @@ class ATLIrModel:
             if is_good_transition:
                 result = True
                 if not is_winning_state[transition.next_state]:
+                    print(False)
                     return False
 
+        print(result)
         return result
 
     def minimum_formula_no_agents(self, winning_states: Set[int]) -> Set[int]:

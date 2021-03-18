@@ -676,7 +676,7 @@ if __name__ == "__main__":
     voter = 2
     cand = 2
     reduction=True
-    model = GlobalModelParser().parse(f"voting_{voter}_{cand}.txt")
+    model = GlobalModelParser().parse(f"Selene_1_1_1_0.txt")
     model.generate(reduction=reduction)
     print(model.model.dump())
     print(model.states_count)
@@ -686,7 +686,16 @@ if __name__ == "__main__":
     print(formula_obj.agents, formula_obj.type, formula_obj.expression)
     print(model.get_formula_winning_states())
     print(model.get_agent())
-    model.save_to_file(f"voter_model_{voter}_{cand}_{reduction}.txt")
+
+    # model.model.simulate(model.get_agent())
+
+    imp = model.model.to_atl_perfect(model.get_actions())
+
+    result = imp.minimum_formula_many_agents([model.get_agent()], set(model.get_formula_winning_states()))
+
+    print(result)
+
+    # model.save_to_file(f"voter_model_{voter}_{cand}_{reduction}.txt")
 
     # results_file = open("selene_results.txt", "a")
     #
