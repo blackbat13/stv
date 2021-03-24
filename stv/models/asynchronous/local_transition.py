@@ -116,6 +116,9 @@ class LocalTransition:
         """Converts transition to tuple."""
         return self._agent_id, self.i, self.j
 
+    def __str__(self):
+        return f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]; conditions: {self._conditions}"
+
 
 class SharedTransition(LocalTransition):
     """

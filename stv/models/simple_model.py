@@ -243,7 +243,7 @@ class SimpleModel:
         :return: ATLIr model
         """
         atl_model = ATLIrModel(self._no_agents)
-        atl_model = self._copy_model(atl_model, actions, epistemic=False)
+        atl_model = self._copy_model(atl_model, self._actions, epistemic=False)
         return atl_model
 
     def to_atl_imperfect(self, actions) -> ATLirModel:
@@ -253,7 +253,7 @@ class SimpleModel:
         :return: ATLir model
         """
         atl_model = ATLirModel(self._no_agents)
-        atl_model = self._copy_model(atl_model, actions, epistemic=True)
+        atl_model = self._copy_model(atl_model, self._actions, epistemic=True)
         return atl_model
 
     def to_mvatl_imperfect(self, actions, lattice):
@@ -264,7 +264,7 @@ class SimpleModel:
         :return: MvATLir model
         """
         mvatl_model = MvATLirModel(self._no_agents, lattice)
-        mvatl_model = self._copy_model(mvatl_model, actions, epistemic=True)
+        mvatl_model = self._copy_model(mvatl_model, self._actions, epistemic=True)
         return mvatl_model
 
     def to_sl_perfect(self, actions) -> SLIr:
@@ -274,7 +274,7 @@ class SimpleModel:
         :return: SLIr model
         """
         sl_model = SLIr(self._no_agents)
-        sl_model = self._copy_model(sl_model, actions, epistemic=False)
+        sl_model = self._copy_model(sl_model, self._actions, epistemic=False)
         return sl_model
 
     def _copy_model(self, model, actions, epistemic: bool):
@@ -368,6 +368,15 @@ class SimpleModel:
         result += self.dump_epistemic_classes()
         return result
 
+    def dump_for_agent(self, agent_id) -> str:
+        result = ""
+        result += f"{self._no_states}\n"
+        result += "1\n"
+        # result += self.dump_states()
+        result += self.dump_transitions_for_agent(agent_id)
+        result += self.dump_epistemic_classes_for_agent(agent_id)
+        return result
+
     def dump_states(self) -> str:
         result = ""
         for state in self._states:
@@ -392,6 +401,23 @@ class SimpleModel:
 
         return result
 
+    def dump_transitions_for_agent(self, agent_id) -> str:
+        actions_dict = dict()
+        action_ind = 0
+        result = f"{self._no_transitions}\n"
+        for state_id in range(0, self._no_states):
+            for transition in self._graph[state_id]:
+                result += f"{state_id} {transition.next_state}"
+                action = transition.actions[agent_id]
+                if action not in actions_dict:
+                    actions_dict[action] = action_ind
+                    action_ind += 1
+
+                result += f" {actions_dict[action]}"
+                result += "\n"
+
+        return result
+
     def dump_epistemic_classes(self) -> str:
         result = ""
         for agent_id in range(0, self._no_agents):
@@ -401,6 +427,17 @@ class SimpleModel:
                 for state_id in epistemic_class:
                     result += f" {state_id}"
                 result += "\n"
+
+        return result
+
+    def dump_epistemic_classes_for_agent(self, agent_id: int) -> str:
+        result = ""
+        result += f"{len(self._epistemic_classes[agent_id])}\n"
+        for epistemic_class in self._epistemic_classes[agent_id]:
+            result += f"{len(epistemic_class)}"
+            for state_id in epistemic_class:
+                result += f" {state_id}"
+            result += "\n"
 
         return result
 

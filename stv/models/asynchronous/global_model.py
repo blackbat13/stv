@@ -293,10 +293,11 @@ class GlobalModel:
             if type(transition.props[prop]) is str:
                 if transition.props[prop][0] == "?":
                     prop_name = transition.props[prop][1:]
+                    # print(prop_name, state.props, prop)
                     if prop_name in transition.props:
-                        state.set_prop(prop_name, transition.props[prop_name])
+                        state.set_prop(prop, transition.props[prop_name])
                     elif prop_name in state.props:
-                        state.set_prop(prop_name, state.props[prop_name])
+                        state.set_prop(prop, state.props[prop_name])
             elif type(transition.props[prop]) is bool:
                 if not transition.props[prop]:
                     state.remove_prop(prop)
@@ -350,6 +351,7 @@ class GlobalModel:
             dfs: int = dfs_stack.pop()
             if dfs == 1:
                 g: GlobalState = self._stack1[-1]
+                # print("State:", g)
                 reexplore: bool = False
                 i: int = self._find_state_on_stack1(g)
                 if i != -1 and i != len(self._stack1) - 1:
@@ -371,6 +373,15 @@ class GlobalModel:
                 g_state_id: int = self._add_state(g)
                 E_g: Set[Tuple[int, int, int]] = set()
                 en_g: Set[Tuple[int, int, int]] = self._enabled_transitions_in_state_single_item_set(g)
+
+                # print("State:", g)
+                # print("en_g:")
+                # for tup in en_g:
+                #     a: LocalTransition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
+                #     print(a)
+                # print()
+
+                dfs_stack.append(-1)
                 if len(en_g) > 0:
                     if not reexplore:
                         E_g = self._ample(g)
@@ -381,14 +392,17 @@ class GlobalModel:
                     if E_g == en_g:
                         self._stack2.append(len(self._stack1))
 
-                    dfs_stack.append(-1)
                     for tup in E_g:
                         a: LocalTransition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
                         g_p: GlobalState = self._successor(g, a)
                         g_p_state_id: int = self._add_state(g_p)
 
+                        # print("State g_p:", g_p)
+
                         self._add_transition(g_state_id, g_p_state_id, a)
                         if self._add_to_stack(g_p):
+                            # print("State g_p:", g_p)
+                            # print("State added")
                             dfs_stack.append(1)
             elif dfs == -1:
                 if len(self._stack2) == 0:
@@ -658,14 +672,14 @@ class GlobalModel:
 
     def save_to_file(self, filename: str):
         model_file = open(filename, "w")
-        model_dump = self.model.dump()
+        model_dump = self.model.dump_for_agent(self.get_agent())
         model_file.write(model_dump)
         winning_states = self.get_formula_winning_states()
         model_file.write(f"{len(winning_states)}\n")
         for state_id in winning_states:
             model_file.write(f"{state_id}\n")
 
-        model_file.write(f"{self.get_agent()}\n")
+        model_file.write("0\n")
         model_file.close()
 
 
@@ -673,10 +687,10 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voter = 2
+    voter = 5
     cand = 2
-    reduction=True
-    model = GlobalModelParser().parse(f"Selene_1_1_1_0.txt")
+    reduction = False
+    model = GlobalModelParser().parse(f"voting_v2_{voter}_{cand}.txt")
     model.generate(reduction=reduction)
     print(model.model.dump())
     print(model.states_count)
@@ -689,13 +703,13 @@ if __name__ == "__main__":
 
     # model.model.simulate(model.get_agent())
 
-    imp = model.model.to_atl_perfect(model.get_actions())
+    # imp = model.model.to_atl_imperfect(model.get_actions())
+    #
+    # result = imp.minimum_formula_many_agents([model.get_agent()], set(model.get_formula_winning_states()))
+    #
+    # print(result)
 
-    result = imp.minimum_formula_many_agents([model.get_agent()], set(model.get_formula_winning_states()))
-
-    print(result)
-
-    # model.save_to_file(f"voter_model_{voter}_{cand}_{reduction}.txt")
+    model.save_to_file(f"voting_v2_{voter}_{cand}_{reduction}_dump.txt")
 
     # results_file = open("selene_results.txt", "a")
     #
