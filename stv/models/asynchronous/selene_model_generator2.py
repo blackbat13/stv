@@ -87,9 +87,11 @@ class SeleneModelGenerator:
                 for voter in range(1, self._voter_count + 1):
                     for candidate in range(1, self._cand_count + 1):
                         if vot[perm[voter - 1] - 1] == candidate:
-                            uniqe_tr.add(f"shared coercerWBB_{voter}_{candidate}: wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))} -> wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))}\n")
+                            uniqe_tr.add(
+                                f"shared coercerWBB_{voter}_{candidate}: wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))} -> wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))}\n")
                             for v_id in range(1, self._voter_count + 1):
-                                uniqe_tr.add(f"shared Voter{v_id}_WBB_{voter}_{candidate}: wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))} -> wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))}\n")
+                                uniqe_tr.add(
+                                    f"shared Voter{v_id}_WBB_{voter}_{candidate}: wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))} -> wbb_send{self._tr_vote_comb_to_str(list(perm), list(vot))}\n")
         for tr in uniqe_tr:
             wbb += tr
 
@@ -211,7 +213,7 @@ class SeleneModelGenerator:
                     for tracker_id in range(1, self._voter_count + 1):
                         tr_copy = trackers[:]
                         tr_copy[voter_id - 1] = tracker_id
-                        coercer += f"shared showTracker{tracker_id}_Voter{voter_id}: c_wbb{self._trackers_to_str(req)}{self._trackers_to_str(w)} -> c_show{self._trackers_to_str(req)}{self._trackers_to_str(w)}{self._trackers_to_str(tr_copy)} [c_voter{voter_id}_bad={req[voter_id - 1] != 0 and req[voter_id-1] != w[tr_copy[voter_id - 1] - 1]}, c_some_bad={tr_copy[voter_id - 1] in trackers}, c_vote_Voter{voter_id}={w[tr_copy[voter_id - 1] - 1]}]\n"
+                        coercer += f"shared showTracker{tracker_id}_Voter{voter_id}: c_wbb{self._trackers_to_str(req)}{self._trackers_to_str(w)} -> c_show{self._trackers_to_str(req)}{self._trackers_to_str(w)}{self._trackers_to_str(tr_copy)} [c_voter{voter_id}_bad={req[voter_id - 1] != 0 and req[voter_id - 1] != w[tr_copy[voter_id - 1] - 1]}, c_some_bad={tr_copy[voter_id - 1] in trackers}, c_vote_Voter{voter_id}={w[tr_copy[voter_id - 1] - 1]}]\n"
                         coercer += self._recursive_coercer_tr(tr_copy, req, w)
 
                 trackers = [[i for i in range(1, self._voter_count + 1)] for _ in range(self._voter_count)]
@@ -230,7 +232,7 @@ class SeleneModelGenerator:
             for tracker_id in range(1, self._voter_count + 1):
                 tr_copy = tr[:]
                 tr_copy[voter_id - 1] = tracker_id
-                result += f"shared showTracker{tracker_id}_Voter{voter_id}: c_show{self._trackers_to_str(req)}{self._trackers_to_str(w)}{self._trackers_to_str(tr)} -> c_show{self._trackers_to_str(req)}{self._trackers_to_str(w)}{self._trackers_to_str(tr_copy)} [c_voter{voter_id}_bad={req[voter_id - 1] != 0 and req[voter_id-1] != w[tr_copy[voter_id - 1] - 1]}, c_some_bad={tr_copy[voter_id - 1] in tr}, c_vote_Voter{voter_id}={w[tr_copy[voter_id - 1] - 1]}]\n"
+                result += f"shared showTracker{tracker_id}_Voter{voter_id}: c_show{self._trackers_to_str(req)}{self._trackers_to_str(w)}{self._trackers_to_str(tr)} -> c_show{self._trackers_to_str(req)}{self._trackers_to_str(w)}{self._trackers_to_str(tr_copy)} [c_voter{voter_id}_bad={req[voter_id - 1] != 0 and req[voter_id - 1] != w[tr_copy[voter_id - 1] - 1]}, c_some_bad={tr_copy[voter_id - 1] in tr}, c_vote_Voter{voter_id}={w[tr_copy[voter_id - 1] - 1]}]\n"
                 result += self._recursive_coercer_tr(tr_copy, req, w)
 
         return result
@@ -266,10 +268,10 @@ class SeleneModelGenerator:
 
 
 if __name__ == "__main__":
-    teller_count = int(input("Teller Count: "))
-    voter_count = int(input("Voter Count: "))
-    cand_count = int(input("Candidates Count: "))
-    formula = int(input("Formula: "))
+    teller_count = 2  # int(input("Teller Count: "))
+    voter_count = 1  # int(input("Voter Count: "))
+    cand_count = 2  # int(input("Candidates Count: "))
+    formula = 0  # int(input("Formula: "))
     selene_model_generator = SeleneModelGenerator(teller_count, voter_count, cand_count, formula)
     model = selene_model_generator.generate()
     file = open(f"Selene_{teller_count}_{voter_count}_{cand_count}_{formula}.txt", "w")

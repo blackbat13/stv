@@ -104,9 +104,9 @@ class StrategyComparer:
         #     print(False)
         #     return False, winning_strategy
 
-        # if self.already_has_strategy(epistemic_class, winning_strategy):
-        #     # print(True)
-        #     return True, winning_strategy
+        if self.already_has_strategy(epistemic_class, winning_strategy):
+            # print(True)
+            return True, winning_strategy
 
         self.mark_state(epistemic_class[0], visited=True)
 

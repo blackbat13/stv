@@ -97,7 +97,7 @@ class VotingModelV2Generator:
 
 if __name__ == "__main__":
     CANDIDATES_COUNT = 2
-    VOTERS_COUNT = 5
+    VOTERS_COUNT = 7
     voting_model_generator = VotingModelV2Generator(VOTERS_COUNT, CANDIDATES_COUNT)
     voting_model_generator.generate()
     voting_model_generator.save_to_file()

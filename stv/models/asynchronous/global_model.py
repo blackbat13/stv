@@ -86,11 +86,11 @@ class GlobalModel:
         self._agents_count = len(self._local_models)
         self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = [{} for _ in range(self._agents_count)]
         self._model = SimpleModel(self._agents_count)
-        self._add_to_stack(GlobalState.initial_state(self._agents_count))
         self._add_index_to_transitions()
         # self._compute_dependent_transitions()
         self._compute_shared_transitions()
         if reduction:
+            self._add_to_stack(GlobalState.initial_state(self._agents_count))
             self._iter_por()
         else:
             self._compute()
@@ -111,9 +111,13 @@ class GlobalModel:
         Should be called after creating the model.
         :return: None
         """
-        for i in range(self._agents_count):
-            for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
-                self.model.add_epistemic_class(i, epistemic_class)
+        # for i in range(self._agents_count):
+        #     for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
+        #         self.model.add_epistemic_class(i, epistemic_class)
+
+        i = self.get_agent()
+        for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
+            self.model.add_epistemic_class(i, epistemic_class)
 
     def _add_index_to_transitions(self):
         for agent_id in range(self._agents_count):
@@ -510,9 +514,12 @@ class GlobalModel:
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
             self._model.states.append(state.to_obj())
-            for i in range(len(self._local_models)):
-                epistemic_state = self._get_epistemic_state(state, i)
-                self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
+            # for i in range(len(self._local_models)):
+            #     epistemic_state = self._get_epistemic_state(state, i)
+            #     self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
+            i = self.get_agent()
+            epistemic_state = self._get_epistemic_state(state, i)
+            self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
 
         state.id = state_id
         return state_id
@@ -527,7 +534,8 @@ class GlobalModel:
 
         if state.id == 0:
             return {'local_state': -1}
-        epistemic_state = {'local_state': state.local_states[agent_id]}
+        # epistemic_state = {'local_state': state.local_states[agent_id]}
+        epistemic_state = {'local_state': state.local_states[:]}
         props = {}
 
         agent_name: str = self._local_models[agent_id].agent_name
@@ -604,7 +612,7 @@ class GlobalModel:
     def set_coalition(self, coalition: List[str]):
         self.coalition = self.agent_name_coalition_to_ids(coalition)
 
-    def get_winning_states(self, formula_no: int) -> Set[int]:
+    def get_winning_states(self, formula_no: int, voters_count: int) -> Set[int]:
         winning_states = set()
         for state in self._states:
             ok = True
@@ -612,20 +620,75 @@ class GlobalModel:
                 if ("pun1" not in state.props) or (not state.props["pun1"]):
                     ok = False
             elif formula_no == 2:
-                if "v_Voter1" not in state.props or state.props["v_Voter1"] == 1:
+                if "Coercer1_end" not in state.props:
+                    continue
+                for voter_id in range(1, voters_count + 1):
+                    if f"Voter{voter_id}_vote" not in state.props or state.props[f"Voter{voter_id}_vote"] == 1:
+                        ok = True
+                if not ok:
+                    for state_id in self._model.epistemic_class_for_state(state.id,
+                                                                          self.agent_name_to_id(self._coalition[0])):
+                        for voter_id in range(1, voters_count + 1):
+                            if f"Voter{voter_id}_vote" in self._states[state_id].props and self._states[state_id].props[f"Voter{voter_id}_vote"] != 1:
+                                ok = True
+                                break
+            elif formula_no == 3:
+                if "Coercer1_end" not in state.props:
+                    continue
+                ok = True
+                for voter_id in range(1, voters_count + 1):
+                    if f"Voter{voter_id}_vote" not in state.props or state.props[f"Voter{voter_id}_vote"] != 1:
+                        ok = False
+                if not ok:
+                    for voter_id in range(1, voters_count + 1):
+                        ok = True
+                        for state_id in self._model.epistemic_class_for_state(state.id,
+                                                                              self.agent_name_to_id(self._coalition[0])):
+                            if f"Voter{voter_id}_vote" in self._states[state_id].props and self._states[state_id].props[f"Voter{voter_id}_vote"] == 1:
+                                ok = False
+                                break
+                        if ok:
+                            break
+            elif formula_no == 4: ## 1 in article
+                if "Coercer1_end" not in state.props:
+                    continue
+                voter_id = 1
+                ok = True
+                if f"Voter{voter_id}_vote" not in state.props or state.props[f"Voter{voter_id}_vote"] == 1:
                     ok = False
                 else:
                     for state_id in self._model.epistemic_class_for_state(state.id,
                                                                           self.agent_name_to_id(self._coalition[0])):
-                        if "v_Voter1" in self._states[state_id].props and self._states[state_id].props["v_Voter1"] == 1:
+                        if f"Voter{voter_id}_vote" in self._states[state_id].props and self._states[state_id].props[f"Voter{voter_id}_vote"] == 1:
                             ok = False
                             break
+            # elif formula_no == 5: ## 2 in article
+
+
+            # actions_set = set()
+            # for st in self._model.get_possible_strategies(state.id):
+            #     actions_set.add(st[self.agent_name_to_id(self._coalition[0])])
+            # # print(len(self._model.epistemic_class_for_state(state.id, self.agent_name_to_id(self._coalition[0]))))
+            # for state_id in self._model.epistemic_class_for_state(state.id,
+            #                                                       self.agent_name_to_id(self._coalition[0])):
+            #     new_actions_set = set()
+            #     for st in self._model.get_possible_strategies(state_id):
+            #         new_actions_set.add(st[self.agent_name_to_id(self._coalition[0])])
+            #
+            #     if actions_set != new_actions_set:
+            #         print("DIFFERENCE")
+            #         print(actions_set)
+            #         print(new_actions_set)
+            #         print(state)
+            #         print(self._states[state_id])
+                    # print(actions_set, new_actions_set, state, self._states[state_id])
 
             if ok:
+                # print(state)
                 winning_states.add(state.id)
         return winning_states
 
-    def verify_approximation(self, perfect_inf: bool, formula_no: int):
+    def verify_approximation(self, perfect_inf: bool, formula_no: int, voters_count: int):
         if perfect_inf:
             atl_model = self._model.to_atl_perfect(self.get_actions())
         else:
@@ -633,19 +696,19 @@ class GlobalModel:
 
         start = time.process_time()
         result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       self.get_winning_states(formula_no))
+                                                       self.get_winning_states(formula_no, voters_count))
         end = time.process_time()
 
-        return result, end - start
+        return 0 in result, end - start
 
-    def verify_domino(self):
-        agent_id = self.agent_name_to_id(self._coalition[0])
+    def verify_domino(self, formula_no, voters_count):
+        agent_id = self.get_agent()
         strategy_comparer = StrategyComparer(self._model, self.get_actions()[agent_id])
         start = time.process_time()
-        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(), [agent_id],
+        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(formula_no, voters_count), [agent_id],
                                                         strategy_comparer.basic_h)
         end = time.process_time()
-        print(strategy)
+        # print(strategy)
         return result, end - start
 
     def get_actions(self):
@@ -670,11 +733,12 @@ class GlobalModel:
             result.append(self._local_models[agent_id].agent_name)
         return result
 
-    def save_to_file(self, filename: str):
+    def save_to_file(self, filename: str, voters_count: int):
         model_file = open(filename, "w")
         model_dump = self.model.dump_for_agent(self.get_agent())
         model_file.write(model_dump)
-        winning_states = self.get_formula_winning_states()
+        # winning_states = self.get_formula_winning_states()
+        winning_states = self.get_winning_states(2, voters_count)
         model_file.write(f"{len(winning_states)}\n")
         for state_id in winning_states:
             model_file.write(f"{state_id}\n")
@@ -687,19 +751,26 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voter = 5
+    voter = 4
     cand = 2
-    reduction = False
-    model = GlobalModelParser().parse(f"voting_v2_{voter}_{cand}.txt")
+    formula = 2
+    reduction = True
+    model = GlobalModelParser().parse(f"Selene_2_{voter}_{cand}_{formula}.txt")
     model.generate(reduction=reduction)
-    print(model.model.dump())
+    # print(model.model.dump())
     print(model.states_count)
     formula_parser = FormulaParser()
     print(model._formula)
     formula_obj = formula_parser.parseFormula(formulaStr=model._formula)
     print(formula_obj.agents, formula_obj.type, formula_obj.expression)
-    print(model.get_formula_winning_states())
+    # print(model.get_formula_winning_states())
     print(model.get_agent())
+
+    print("Winning:", model.get_winning_states(formula, voter))
+
+    print("DominoDFS",model.verify_domino(formula, voter))
+    print("Approx low", model.verify_approximation(False, formula, voter))
+    print("Approx up", model.verify_approximation(True, formula, voter))
 
     # model.model.simulate(model.get_agent())
 
@@ -709,7 +780,7 @@ if __name__ == "__main__":
     #
     # print(result)
 
-    model.save_to_file(f"voting_v2_{voter}_{cand}_{reduction}_dump.txt")
+    model.save_to_file(f"Selene_2_{voter}_{cand}_{reduction}_{formula}_dump.txt", voter)
 
     # results_file = open("selene_results.txt", "a")
     #

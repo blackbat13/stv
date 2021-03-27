@@ -78,8 +78,8 @@ class SeleneModelGenerator:
         for tr_id in range(1, self._voter_count + 1):
             for tr_id2 in range(1, self._voter_count + 1):
                 wbb += f"shared coercerWBB{tr_id}: wbb_send -[aID_t{tr_id}=={tr_id2}]> wbb_send [Coercer1_wbb{tr_id}=?aID_vote{tr_id2}]\n"
-                for voter_id in range(1, self._voter_count + 1):
-                    wbb += f"shared Voter{voter_id}_WBB{tr_id}: wbb_send -[aID_t{tr_id}=={tr_id2}]> wbb_send [Voter{voter_id}_wbb{tr_id}=?aID_vote{tr_id2}]\n"
+                # for voter_id in range(1, self._voter_count + 1):
+                #     wbb += f"shared Voter{voter_id}_WBB{tr_id}: wbb_send -[aID_t{tr_id}=={tr_id2}]> wbb_send [Voter{voter_id}_wbb{tr_id}=?aID_vote{tr_id2}]\n"
         wbb += "PROTOCOL: [[generateTrackers_1"
         for i in range(2, len(list(itertools.permutations(trackers))) + 1):
             wbb += f", generateTrackers_{i}"
@@ -111,17 +111,17 @@ class SeleneModelGenerator:
         voter += "dontComputeFalseAlphaTerm: v_publish -> v_false_tr\n"
         voter += "shared sendTracker_aID: v_false_tr -> v_send_tr\n"
         voter += "shared allTrackerSend: v_send_tr -> v_wbb\n"
-        for tr_id in range(1, self._voter_count + 1):
-            voter += f"shared aID_WBB{tr_id}: v_wbb -> v_wbb2\n"
+        # for tr_id in range(1, self._voter_count + 1):
+        #     voter += f"shared aID_WBB{tr_id}: v_wbb -> v_wbb2\n"
         voter += "verifyVote: v_wbb -> v_wbb2\n"
         voter += "wait: v_wbb -> v_wbb2\n"
 
         for tracker_id in range(1, self._voter_count + 1):
-            voter += f"shared showTracker{tracker_id}_aID: v_wbb2 -[aID_true_tr=={tracker_id}]> v_show\n"
-            voter += f"shared showTracker{tracker_id}_aID: v_wbb2 -[aID_false_tr=={tracker_id}]> v_show\n"
+            voter += f"shared showTracker{tracker_id}_aID: v_wbb2 -[aID_true_tr=={tracker_id}]> v_show [aID_true_tr=0, aID_false_tr=0]\n"
+            voter += f"shared showTracker{tracker_id}_aID: v_wbb2 -[aID_false_tr=={tracker_id}]> v_show [aID_true_tr=0, aID_false_tr=0]\n"
 
-        voter += "shared punish_aID: v_show -> v_show\n"
-        voter += "shared not_punish_aID: v_show -> v_show\n"
+        voter += "shared punish_aID: v_show -> v_end\n"
+        voter += "shared not_punish_aID: v_show -> v_end\n"
 
         voter += "PROTOCOL: [[leave_aID"
         for cand_id in range(1, self._cand_count + 1):
@@ -136,11 +136,11 @@ class SeleneModelGenerator:
         coercer += "shared publishTrackers: c_init -> c_req\n"
         coercer += "shared startVoting: c_req -> c_voting\n"
         coercer += "shared finishVoting: c_voting -> c_finish\n"
-        coercer += "shared publishVotes: c_finish -> c_pub\n"
+        coercer += "shared publishVotes: c_finish -> c_pub [aID_end=true]\n"
         for voter_id in range(1, self._voter_count + 1):
             coercer += f"shared leave_Voter{voter_id}: c_req -> c_req [aID_req{voter_id}=0]\n"
             coercer += f"shared punish_Voter{voter_id}: c_pub -> c_pub [aID_pun{voter_id}=true]\n"
-            coercer += f"shared not_punish_Voter{voter_id}: c_pub -> c_pub [aID_pun{voter_id}=false]\n"
+            coercer += f"shared not_punish_Voter{voter_id}: c_pub -> c_pub [aID_npun{voter_id}=true]\n"
             coercer += f"shared coercerWBB{voter_id}: c_pub -> c_pub\n"
 
             for cand_id in range(1, self._cand_count + 1):
@@ -155,8 +155,6 @@ class SeleneModelGenerator:
                 coercer += f"showTracker{tracker_id}_Voter{voter_id},"
             coercer = coercer.rstrip(",")
             coercer += "],"
-            for cand_id in range(1, self._cand_count + 1):
-                coercer += f"[coercerWBB{voter_id}{cand_id}true,coercerWBB{voter_id}{cand_id}false],"
         coercer = coercer.rstrip(",")
         coercer += "]\n"
         return coercer
@@ -165,23 +163,23 @@ class SeleneModelGenerator:
         if self._formula == 0:
             reduction = "REDUCTION: [Coercer1_pun1]\n"
         elif self._formula == 1:
-            reduction = "REDUCTION: [end, Voter1_vote]\n"
-        elif self._formula == 2:
-            reduction = "REDUCTION: [end, t_Voter1]\n"
-        elif self._formula == 3 or self._formula == 4:
-            reduction = "REDUCTION: [end"
+            reduction = "REDUCTION: [Coercer1_pun1]\n"
+        elif self._formula == 2 or self._formula == 3:
+            reduction = "REDUCTION: ["
             for voter_id in range(1, self._voter_count + 1):
-                reduction += f", v_Voter{voter_id}"
-            reduction += "]\n"
+                reduction += f"Voter{voter_id}_vote, "
+            reduction += "Coercer1_end]\n"
+        elif self._formula == 4:
+            reduction = "REDUCTION: [Coercer1_end, Voter1_vote]\n"
         return reduction
 
     def _generate_persistent(self):
         persistent = "PERSISTENT: ["
         for voter_id in range(1, self._voter_count + 1):
-            persistent += f"ElectionAuthority1_t{voter_id}, WBB1_t{voter_id}, WBB1_vote{voter_id}, Voter{voter_id}_true_tr, Voter{voter_id}_false_tr, Voter{voter_id}_vote, "
+            persistent += f"ElectionAuthority1_t{voter_id}, WBB1_t{voter_id}, WBB1_vote{voter_id}, Voter{voter_id}_true_tr, Voter{voter_id}_false_tr, Voter{voter_id}_vote, " #Coercer1_tr{voter_id}, "
             for teller_id in range(1, self._teller_count + 1):
                 persistent += f"Teller{teller_id}_vote_Voter{voter_id}, "
-        persistent += "end]\n"
+        persistent += "Coercer1_end]\n"
         return persistent
 
     def _generate_coalition(self):
@@ -197,10 +195,10 @@ class SeleneModelGenerator:
 
 
 if __name__ == "__main__":
-    teller_count = int(input("Teller Count: "))
-    voter_count = int(input("Voter Count: "))
-    cand_count = int(input("Candidates Count: "))
-    formula = int(input("Formula: "))
+    teller_count = 2  # int(input("Teller Count: "))
+    voter_count = 4  # int(input("Voter Count: "))
+    cand_count = 2  # int(input("Candidates Count: "))
+    formula = 4  # int(input("Formula: "))
     selene_model_generator = SeleneModelGenerator(teller_count, voter_count, cand_count, formula)
     model = selene_model_generator.generate()
     file = open(f"Selene_{teller_count}_{voter_count}_{cand_count}_{formula}.txt", "w")
