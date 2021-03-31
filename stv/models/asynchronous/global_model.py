@@ -751,8 +751,8 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voter = 2
-    cand = 5
+    voter = 4
+    cand = 2
     formula = 2
     reduction = False
     model = GlobalModelParser().parse(f"Selene_2_{voter}_{cand}_{formula}.txt")

@@ -1,0 +1,212 @@
+Agent Teller[2]:
+init: t_init
+shared sendVote_Voter1: t_init -> t_init
+shared sendVote_Voter2: t_init -> t_init
+shared sendVote_Voter3: t_init -> t_init
+shared sendVote_Voter4: t_init -> t_init
+shared finishVoting: t_init -> t_finish
+shared decryptVotes: t_finish -> t_decrypt
+shared sendToWBB: t_decrypt -> t_send [WBB1_vote1=?aID_vote_Voter1, WBB1_vote2=?aID_vote_Voter2, WBB1_vote3=?aID_vote_Voter3, WBB1_vote4=?aID_vote_Voter4]
+shared publishVotes: t_send -> t_publish
+
+Agent ElectionAuthority[1]:
+init: ea_init
+shared generateTrackers_1: ea_init -> ea_gen [aID_t1=1, aID_t2=2, aID_t3=3, aID_t4=4]
+shared generateTrackers_2: ea_init -> ea_gen [aID_t1=1, aID_t2=2, aID_t3=4, aID_t4=3]
+shared generateTrackers_3: ea_init -> ea_gen [aID_t1=1, aID_t2=3, aID_t3=2, aID_t4=4]
+shared generateTrackers_4: ea_init -> ea_gen [aID_t1=1, aID_t2=3, aID_t3=4, aID_t4=2]
+shared generateTrackers_5: ea_init -> ea_gen [aID_t1=1, aID_t2=4, aID_t3=2, aID_t4=3]
+shared generateTrackers_6: ea_init -> ea_gen [aID_t1=1, aID_t2=4, aID_t3=3, aID_t4=2]
+shared generateTrackers_7: ea_init -> ea_gen [aID_t1=2, aID_t2=1, aID_t3=3, aID_t4=4]
+shared generateTrackers_8: ea_init -> ea_gen [aID_t1=2, aID_t2=1, aID_t3=4, aID_t4=3]
+shared generateTrackers_9: ea_init -> ea_gen [aID_t1=2, aID_t2=3, aID_t3=1, aID_t4=4]
+shared generateTrackers_10: ea_init -> ea_gen [aID_t1=2, aID_t2=3, aID_t3=4, aID_t4=1]
+shared generateTrackers_11: ea_init -> ea_gen [aID_t1=2, aID_t2=4, aID_t3=1, aID_t4=3]
+shared generateTrackers_12: ea_init -> ea_gen [aID_t1=2, aID_t2=4, aID_t3=3, aID_t4=1]
+shared generateTrackers_13: ea_init -> ea_gen [aID_t1=3, aID_t2=1, aID_t3=2, aID_t4=4]
+shared generateTrackers_14: ea_init -> ea_gen [aID_t1=3, aID_t2=1, aID_t3=4, aID_t4=2]
+shared generateTrackers_15: ea_init -> ea_gen [aID_t1=3, aID_t2=2, aID_t3=1, aID_t4=4]
+shared generateTrackers_16: ea_init -> ea_gen [aID_t1=3, aID_t2=2, aID_t3=4, aID_t4=1]
+shared generateTrackers_17: ea_init -> ea_gen [aID_t1=3, aID_t2=4, aID_t3=1, aID_t4=2]
+shared generateTrackers_18: ea_init -> ea_gen [aID_t1=3, aID_t2=4, aID_t3=2, aID_t4=1]
+shared generateTrackers_19: ea_init -> ea_gen [aID_t1=4, aID_t2=1, aID_t3=2, aID_t4=3]
+shared generateTrackers_20: ea_init -> ea_gen [aID_t1=4, aID_t2=1, aID_t3=3, aID_t4=2]
+shared generateTrackers_21: ea_init -> ea_gen [aID_t1=4, aID_t2=2, aID_t3=1, aID_t4=3]
+shared generateTrackers_22: ea_init -> ea_gen [aID_t1=4, aID_t2=2, aID_t3=3, aID_t4=1]
+shared generateTrackers_23: ea_init -> ea_gen [aID_t1=4, aID_t2=3, aID_t3=1, aID_t4=2]
+shared generateTrackers_24: ea_init -> ea_gen [aID_t1=4, aID_t2=3, aID_t3=2, aID_t4=1]
+shared publishTrackers: ea_gen -> ea_pub_t
+shared startVoting: ea_pub_t -> ea_start
+shared finishVoting: ea_start -> ea_finish
+shared publishVotes: ea_finish -> ea_pub_v
+shared sendTracker_Voter1: ea_pub_v -[aID_t1==1]> ea_pub_v [Voter1_true_tr=1]
+shared sendTracker_Voter1: ea_pub_v -[aID_t2==1]> ea_pub_v [Voter1_true_tr=2]
+shared sendTracker_Voter1: ea_pub_v -[aID_t3==1]> ea_pub_v [Voter1_true_tr=3]
+shared sendTracker_Voter1: ea_pub_v -[aID_t4==1]> ea_pub_v [Voter1_true_tr=4]
+shared sendTracker_Voter2: ea_pub_v -[aID_t1==2]> ea_pub_v [Voter2_true_tr=1]
+shared sendTracker_Voter2: ea_pub_v -[aID_t2==2]> ea_pub_v [Voter2_true_tr=2]
+shared sendTracker_Voter2: ea_pub_v -[aID_t3==2]> ea_pub_v [Voter2_true_tr=3]
+shared sendTracker_Voter2: ea_pub_v -[aID_t4==2]> ea_pub_v [Voter2_true_tr=4]
+shared sendTracker_Voter3: ea_pub_v -[aID_t1==3]> ea_pub_v [Voter3_true_tr=1]
+shared sendTracker_Voter3: ea_pub_v -[aID_t2==3]> ea_pub_v [Voter3_true_tr=2]
+shared sendTracker_Voter3: ea_pub_v -[aID_t3==3]> ea_pub_v [Voter3_true_tr=3]
+shared sendTracker_Voter3: ea_pub_v -[aID_t4==3]> ea_pub_v [Voter3_true_tr=4]
+shared sendTracker_Voter4: ea_pub_v -[aID_t1==4]> ea_pub_v [Voter4_true_tr=1]
+shared sendTracker_Voter4: ea_pub_v -[aID_t2==4]> ea_pub_v [Voter4_true_tr=2]
+shared sendTracker_Voter4: ea_pub_v -[aID_t3==4]> ea_pub_v [Voter4_true_tr=3]
+shared sendTracker_Voter4: ea_pub_v -[aID_t4==4]> ea_pub_v [Voter4_true_tr=4]
+shared allTrackerSend: ea_pub_v -> ea_send
+
+Agent WBB[1]:
+init: wbb_init
+shared generateTrackers_1: wbb_init -> wbb_gen1 [aID_t1=1, aID_t2=2, aID_t3=3, aID_t4=4]
+shared sendToWBB: wbb_gen1 -> wbb_send
+shared generateTrackers_2: wbb_init -> wbb_gen2 [aID_t1=1, aID_t2=2, aID_t3=4, aID_t4=3]
+shared sendToWBB: wbb_gen2 -> wbb_send
+shared generateTrackers_3: wbb_init -> wbb_gen3 [aID_t1=1, aID_t2=3, aID_t3=2, aID_t4=4]
+shared sendToWBB: wbb_gen3 -> wbb_send
+shared generateTrackers_4: wbb_init -> wbb_gen4 [aID_t1=1, aID_t2=3, aID_t3=4, aID_t4=2]
+shared sendToWBB: wbb_gen4 -> wbb_send
+shared generateTrackers_5: wbb_init -> wbb_gen5 [aID_t1=1, aID_t2=4, aID_t3=2, aID_t4=3]
+shared sendToWBB: wbb_gen5 -> wbb_send
+shared generateTrackers_6: wbb_init -> wbb_gen6 [aID_t1=1, aID_t2=4, aID_t3=3, aID_t4=2]
+shared sendToWBB: wbb_gen6 -> wbb_send
+shared generateTrackers_7: wbb_init -> wbb_gen7 [aID_t1=2, aID_t2=1, aID_t3=3, aID_t4=4]
+shared sendToWBB: wbb_gen7 -> wbb_send
+shared generateTrackers_8: wbb_init -> wbb_gen8 [aID_t1=2, aID_t2=1, aID_t3=4, aID_t4=3]
+shared sendToWBB: wbb_gen8 -> wbb_send
+shared generateTrackers_9: wbb_init -> wbb_gen9 [aID_t1=2, aID_t2=3, aID_t3=1, aID_t4=4]
+shared sendToWBB: wbb_gen9 -> wbb_send
+shared generateTrackers_10: wbb_init -> wbb_gen10 [aID_t1=2, aID_t2=3, aID_t3=4, aID_t4=1]
+shared sendToWBB: wbb_gen10 -> wbb_send
+shared generateTrackers_11: wbb_init -> wbb_gen11 [aID_t1=2, aID_t2=4, aID_t3=1, aID_t4=3]
+shared sendToWBB: wbb_gen11 -> wbb_send
+shared generateTrackers_12: wbb_init -> wbb_gen12 [aID_t1=2, aID_t2=4, aID_t3=3, aID_t4=1]
+shared sendToWBB: wbb_gen12 -> wbb_send
+shared generateTrackers_13: wbb_init -> wbb_gen13 [aID_t1=3, aID_t2=1, aID_t3=2, aID_t4=4]
+shared sendToWBB: wbb_gen13 -> wbb_send
+shared generateTrackers_14: wbb_init -> wbb_gen14 [aID_t1=3, aID_t2=1, aID_t3=4, aID_t4=2]
+shared sendToWBB: wbb_gen14 -> wbb_send
+shared generateTrackers_15: wbb_init -> wbb_gen15 [aID_t1=3, aID_t2=2, aID_t3=1, aID_t4=4]
+shared sendToWBB: wbb_gen15 -> wbb_send
+shared generateTrackers_16: wbb_init -> wbb_gen16 [aID_t1=3, aID_t2=2, aID_t3=4, aID_t4=1]
+shared sendToWBB: wbb_gen16 -> wbb_send
+shared generateTrackers_17: wbb_init -> wbb_gen17 [aID_t1=3, aID_t2=4, aID_t3=1, aID_t4=2]
+shared sendToWBB: wbb_gen17 -> wbb_send
+shared generateTrackers_18: wbb_init -> wbb_gen18 [aID_t1=3, aID_t2=4, aID_t3=2, aID_t4=1]
+shared sendToWBB: wbb_gen18 -> wbb_send
+shared generateTrackers_19: wbb_init -> wbb_gen19 [aID_t1=4, aID_t2=1, aID_t3=2, aID_t4=3]
+shared sendToWBB: wbb_gen19 -> wbb_send
+shared generateTrackers_20: wbb_init -> wbb_gen20 [aID_t1=4, aID_t2=1, aID_t3=3, aID_t4=2]
+shared sendToWBB: wbb_gen20 -> wbb_send
+shared generateTrackers_21: wbb_init -> wbb_gen21 [aID_t1=4, aID_t2=2, aID_t3=1, aID_t4=3]
+shared sendToWBB: wbb_gen21 -> wbb_send
+shared generateTrackers_22: wbb_init -> wbb_gen22 [aID_t1=4, aID_t2=2, aID_t3=3, aID_t4=1]
+shared sendToWBB: wbb_gen22 -> wbb_send
+shared generateTrackers_23: wbb_init -> wbb_gen23 [aID_t1=4, aID_t2=3, aID_t3=1, aID_t4=2]
+shared sendToWBB: wbb_gen23 -> wbb_send
+shared generateTrackers_24: wbb_init -> wbb_gen24 [aID_t1=4, aID_t2=3, aID_t3=2, aID_t4=1]
+shared sendToWBB: wbb_gen24 -> wbb_send
+shared coercerWBB1: wbb_send -[aID_t1==1]> wbb_send [Coercer1_wbb1=?aID_vote1]
+shared coercerWBB1: wbb_send -[aID_t1==2]> wbb_send [Coercer1_wbb1=?aID_vote2]
+shared coercerWBB1: wbb_send -[aID_t1==3]> wbb_send [Coercer1_wbb1=?aID_vote3]
+shared coercerWBB1: wbb_send -[aID_t1==4]> wbb_send [Coercer1_wbb1=?aID_vote4]
+shared coercerWBB2: wbb_send -[aID_t2==1]> wbb_send [Coercer1_wbb2=?aID_vote1]
+shared coercerWBB2: wbb_send -[aID_t2==2]> wbb_send [Coercer1_wbb2=?aID_vote2]
+shared coercerWBB2: wbb_send -[aID_t2==3]> wbb_send [Coercer1_wbb2=?aID_vote3]
+shared coercerWBB2: wbb_send -[aID_t2==4]> wbb_send [Coercer1_wbb2=?aID_vote4]
+shared coercerWBB3: wbb_send -[aID_t3==1]> wbb_send [Coercer1_wbb3=?aID_vote1]
+shared coercerWBB3: wbb_send -[aID_t3==2]> wbb_send [Coercer1_wbb3=?aID_vote2]
+shared coercerWBB3: wbb_send -[aID_t3==3]> wbb_send [Coercer1_wbb3=?aID_vote3]
+shared coercerWBB3: wbb_send -[aID_t3==4]> wbb_send [Coercer1_wbb3=?aID_vote4]
+shared coercerWBB4: wbb_send -[aID_t4==1]> wbb_send [Coercer1_wbb4=?aID_vote1]
+shared coercerWBB4: wbb_send -[aID_t4==2]> wbb_send [Coercer1_wbb4=?aID_vote2]
+shared coercerWBB4: wbb_send -[aID_t4==3]> wbb_send [Coercer1_wbb4=?aID_vote3]
+shared coercerWBB4: wbb_send -[aID_t4==4]> wbb_send [Coercer1_wbb4=?aID_vote4]
+PROTOCOL: [[generateTrackers_1, generateTrackers_2, generateTrackers_3, generateTrackers_4, generateTrackers_5, generateTrackers_6, generateTrackers_7, generateTrackers_8, generateTrackers_9, generateTrackers_10, generateTrackers_11, generateTrackers_12, generateTrackers_13, generateTrackers_14, generateTrackers_15, generateTrackers_16, generateTrackers_17, generateTrackers_18, generateTrackers_19, generateTrackers_20, generateTrackers_21, generateTrackers_22, generateTrackers_23, generateTrackers_24]]
+
+Agent Voter[4]:
+init: v_init
+shared requestVoteFor1_aID: v_init -> v_request [aID_req=1]
+shared requestVoteFor2_aID: v_init -> v_request [aID_req=2]
+shared leave_aID: v_init -> v_request
+shared startVoting: v_request -> v_start
+createCommitment: v_start -> v_commit
+fillVote1: v_commit -> v_fill [aID_vote=1]
+fillVote2: v_commit -> v_fill [aID_vote=2]
+encryptVote: v_fill -> v_encrypt
+shared sendVote_aID: v_encrypt -> v_send [Teller1_vote_aID=?aID_vote,Teller2_vote_aID=?aID_vote]
+shared finishVoting: v_send -> v_finish
+shared publishVotes: v_finish -> v_publish
+computeFalseAlphaTerm: v_publish -> v_false_a
+computeFalseTracker1: v_false_a -> v_false_tr [aID_false_tr=1]
+computeFalseTracker2: v_false_a -> v_false_tr [aID_false_tr=2]
+dontComputeFalseAlphaTerm: v_publish -> v_false_tr
+shared sendTracker_aID: v_false_tr -> v_send_tr
+shared allTrackerSend: v_send_tr -> v_wbb
+verifyVote: v_wbb -> v_wbb2
+wait: v_wbb -> v_wbb2
+shared showTracker1_aID: v_wbb2 -[aID_true_tr==1]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared showTracker1_aID: v_wbb2 -[aID_false_tr==1]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared showTracker2_aID: v_wbb2 -[aID_true_tr==2]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared showTracker2_aID: v_wbb2 -[aID_false_tr==2]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared showTracker3_aID: v_wbb2 -[aID_true_tr==3]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared showTracker3_aID: v_wbb2 -[aID_false_tr==3]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared showTracker4_aID: v_wbb2 -[aID_true_tr==4]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared showTracker4_aID: v_wbb2 -[aID_false_tr==4]> v_show [aID_true_tr=0, aID_false_tr=0]
+shared punish_aID: v_show -> v_end
+shared not_punish_aID: v_show -> v_end
+PROTOCOL: [[leave_aID,requestVoteFor1_aID,requestVoteFor2_aID],[punish_aID,not_punish_aID]]
+
+Agent Coercer[1]:
+init: c_init
+shared publishTrackers: c_init -> c_req
+shared startVoting: c_req -> c_voting
+shared finishVoting: c_voting -> c_finish
+shared publishVotes: c_finish -> c_pub [aID_end=true]
+shared leave_Voter1: c_req -> c_req [aID_req1=0]
+shared punish_Voter1: c_pub -> c_pub [aID_pun1=true]
+shared not_punish_Voter1: c_pub -> c_pub [aID_npun1=true]
+shared coercerWBB1: c_pub -> c_pub
+shared requestVoteFor1_Voter1: c_req -> c_req [aID_req1=1]
+shared requestVoteFor2_Voter1: c_req -> c_req [aID_req1=2]
+shared showTracker1_Voter1: c_pub -> c_pub [aID_tr1=1]
+shared showTracker2_Voter1: c_pub -> c_pub [aID_tr1=2]
+shared showTracker3_Voter1: c_pub -> c_pub [aID_tr1=3]
+shared showTracker4_Voter1: c_pub -> c_pub [aID_tr1=4]
+shared leave_Voter2: c_req -> c_req [aID_req2=0]
+shared punish_Voter2: c_pub -> c_pub [aID_pun2=true]
+shared not_punish_Voter2: c_pub -> c_pub [aID_npun2=true]
+shared coercerWBB2: c_pub -> c_pub
+shared requestVoteFor1_Voter2: c_req -> c_req [aID_req2=1]
+shared requestVoteFor2_Voter2: c_req -> c_req [aID_req2=2]
+shared showTracker1_Voter2: c_pub -> c_pub [aID_tr2=1]
+shared showTracker2_Voter2: c_pub -> c_pub [aID_tr2=2]
+shared showTracker3_Voter2: c_pub -> c_pub [aID_tr2=3]
+shared showTracker4_Voter2: c_pub -> c_pub [aID_tr2=4]
+shared leave_Voter3: c_req -> c_req [aID_req3=0]
+shared punish_Voter3: c_pub -> c_pub [aID_pun3=true]
+shared not_punish_Voter3: c_pub -> c_pub [aID_npun3=true]
+shared coercerWBB3: c_pub -> c_pub
+shared requestVoteFor1_Voter3: c_req -> c_req [aID_req3=1]
+shared requestVoteFor2_Voter3: c_req -> c_req [aID_req3=2]
+shared showTracker1_Voter3: c_pub -> c_pub [aID_tr3=1]
+shared showTracker2_Voter3: c_pub -> c_pub [aID_tr3=2]
+shared showTracker3_Voter3: c_pub -> c_pub [aID_tr3=3]
+shared showTracker4_Voter3: c_pub -> c_pub [aID_tr3=4]
+shared leave_Voter4: c_req -> c_req [aID_req4=0]
+shared punish_Voter4: c_pub -> c_pub [aID_pun4=true]
+shared not_punish_Voter4: c_pub -> c_pub [aID_npun4=true]
+shared coercerWBB4: c_pub -> c_pub
+shared requestVoteFor1_Voter4: c_req -> c_req [aID_req4=1]
+shared requestVoteFor2_Voter4: c_req -> c_req [aID_req4=2]
+shared showTracker1_Voter4: c_pub -> c_pub [aID_tr4=1]
+shared showTracker2_Voter4: c_pub -> c_pub [aID_tr4=2]
+shared showTracker3_Voter4: c_pub -> c_pub [aID_tr4=3]
+shared showTracker4_Voter4: c_pub -> c_pub [aID_tr4=4]
+PROTOCOL: [[showTracker1_Voter1,showTracker2_Voter1,showTracker3_Voter1,showTracker4_Voter1],[showTracker1_Voter2,showTracker2_Voter2,showTracker3_Voter2,showTracker4_Voter2],[showTracker1_Voter3,showTracker2_Voter3,showTracker3_Voter3,showTracker4_Voter3],[showTracker1_Voter4,showTracker2_Voter4,showTracker3_Voter4,showTracker4_Voter4]]
+
+REDUCTION: [Voter1_vote, Voter2_vote, Voter3_vote, Voter4_vote, Coercer1_end]
+PERSISTENT: [ElectionAuthority1_t1, WBB1_t1, WBB1_vote1, Voter1_true_tr, Voter1_false_tr, Voter1_vote, Teller1_vote_Voter1, Teller2_vote_Voter1, ElectionAuthority1_t2, WBB1_t2, WBB1_vote2, Voter2_true_tr, Voter2_false_tr, Voter2_vote, Teller1_vote_Voter2, Teller2_vote_Voter2, ElectionAuthority1_t3, WBB1_t3, WBB1_vote3, Voter3_true_tr, Voter3_false_tr, Voter3_vote, Teller1_vote_Voter3, Teller2_vote_Voter3, ElectionAuthority1_t4, WBB1_t4, WBB1_vote4, Voter4_true_tr, Voter4_false_tr, Voter4_vote, Teller1_vote_Voter4, Teller2_vote_Voter4, Coercer1_end]
+COALITION: [Voter1]
+FORMULA: <<Coercer1>>F(Coercer1_pun1=True)
