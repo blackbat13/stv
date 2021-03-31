@@ -76,6 +76,8 @@ class SLIr(ATLIrModel):
             result = set()
             first = True
 
+            print(self._strat_bind[quant_pref[quant_pref_no][1]])
+            print(len(self.agents_actions))
             for action in self.agents_actions[self._strat_bind[quant_pref[quant_pref_no][1]]]:
                 new_result = self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
                                       self.update(actions, quant_pref[quant_pref_no][1], action),

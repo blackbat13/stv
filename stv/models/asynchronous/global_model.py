@@ -751,10 +751,10 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voter = 4
-    cand = 2
+    voter = 2
+    cand = 5
     formula = 2
-    reduction = True
+    reduction = False
     model = GlobalModelParser().parse(f"Selene_2_{voter}_{cand}_{formula}.txt")
     model.generate(reduction=reduction)
     # print(model.model.dump())
@@ -765,6 +765,8 @@ if __name__ == "__main__":
     print(formula_obj.agents, formula_obj.type, formula_obj.expression)
     # print(model.get_formula_winning_states())
     print(model.get_agent())
+
+    model.save_to_file(f"Selene_2_{voter}_{cand}_{reduction}_{formula}_dump.txt", voter)
 
     print("Winning:", model.get_winning_states(formula, voter))
 
@@ -780,7 +782,7 @@ if __name__ == "__main__":
     #
     # print(result)
 
-    model.save_to_file(f"Selene_2_{voter}_{cand}_{reduction}_{formula}_dump.txt", voter)
+
 
     # results_file = open("selene_results.txt", "a")
     #
