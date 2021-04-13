@@ -37,6 +37,6 @@ shared showTracker1_Voter1: c_finish -> c_finish [aID_tr1=1]
 PROTOCOL: [[showTracker1_Voter1]]
 
 REDUCTION: [Voter1_vote, Coercer1_end]
-PERSISTENT: [ElectionAuthority1_t1, WBB1_t1, WBB1_vote1, Voter1_true_tr, Voter1_false_tr, Voter1_vote, Teller1_vote_Voter1, Coercer1_end]
+PERSISTENT: [EA1_t1, WBB1_t1, WBB1_vote1, Voter1_true_tr, Voter1_false_tr, Voter1_vote, Teller1_vote_Voter1, Coercer1_end]
 COALITION: [Voter1]
 FORMULA: <<Coercer1>>F(Coercer1_pun1=True)
