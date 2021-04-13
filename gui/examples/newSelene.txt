@@ -1,0 +1,24 @@
+% Teller+EA+WBB
+Agent Environment[1]:
+init: e_init
+generateTrackers_1: ea_init -> ea_gen [aID_t1=1]
+% Rozpoczynanie nowych faz - synchronizacja
+% Publikowanie trackerów - przekazujemy wiedzę o trackerach
+
+
+Agent Voter[1]:
+init:
+% Interakcja z przymuszaczem - przymuszenie lub nie
+% Zmienna persistent: na kogo mam głosować
+% Faza głosowania - jedna akcja
+% Synchronizacja na publikacji trackerów
+% Tworzymy fałszywy tracker lub nie
+% Synchronizacja - pobranie prawdziwego trackera
+% Weryfikacja głosu lub nie
+% Przekazanie trackera przymuszaczowi (prawdziwego lub fałszywego)
+% Synchronizacja pun i npun (może wyciąć w najprostszej wersji?)
+
+Agent Coercer[1]:
+init:
+% Wiedza: kogo przymusił i na jakiego kandydata, faza protokołu, stan WBB
+% W momencie odebrania trackera od głosującego już "weryfikujemy" go
