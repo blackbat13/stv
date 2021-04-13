@@ -195,9 +195,9 @@ class SeleneModelGenerator:
 
 
 if __name__ == "__main__":
-    teller_count = 2  # int(input("Teller Count: "))
-    voter_count = 2  # int(input("Voter Count: "))
-    cand_count = 3  # int(input("Candidates Count: "))
+    teller_count = 1  # int(input("Teller Count: "))
+    voter_count = 1  # int(input("Voter Count: "))
+    cand_count = 2  # int(input("Candidates Count: "))
     formula = 2  # int(input("Formula: "))
     selene_model_generator = SeleneModelGenerator(teller_count, voter_count, cand_count, formula)
     model = selene_model_generator.generate()

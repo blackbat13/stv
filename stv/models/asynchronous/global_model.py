@@ -534,8 +534,8 @@ class GlobalModel:
 
         if state.id == 0:
             return {'local_state': -1}
-        # epistemic_state = {'local_state': state.local_states[agent_id]}
-        epistemic_state = {'local_state': state.local_states[:]}
+        epistemic_state = {'local_state': state.local_states[agent_id]}
+        # epistemic_state = {'local_state': state.local_states[:]}
         props = {}
 
         agent_name: str = self._local_models[agent_id].agent_name
