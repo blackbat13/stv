@@ -1,0 +1,36 @@
+Generation time: 0.0
+Voters: 1 , Candidates: 2
+Reduction: False
+States count: 90
+Formula: <<Coercer1>>F(Voter1_vote=1)
+
+Approx low (False, 0.0)
+Approx up (False, 0.0)
+--------------------------------------------------
+Generation time: 0.015625
+Voters: 1 , Candidates: 2
+Reduction: True
+States count: 88
+Formula: <<Coercer1>>F(Voter1_vote=1)
+
+Approx low (False, 0.0)
+Approx up (False, 0.0)
+--------------------------------------------------
+Generation time: 2.59375
+Voters: 2 , Candidates: 2
+Reduction: False
+States count: 13191
+Formula: <<Coercer1>>F(Voter1_vote=1)
+
+Approx low (False, 0.09375)
+Approx up (False, 0.125)
+--------------------------------------------------
+Generation time: 30.75
+Voters: 2 , Candidates: 2
+Reduction: True
+States count: 11113
+Formula: <<Coercer1>>F(Voter1_vote=1)
+
+Approx low (False, 0.015625)
+Approx up (False, 0.109375)
+--------------------------------------------------
