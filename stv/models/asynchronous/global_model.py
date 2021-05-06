@@ -612,83 +612,19 @@ class GlobalModel:
     def set_coalition(self, coalition: List[str]):
         self.coalition = self.agent_name_coalition_to_ids(coalition)
 
-    def get_winning_states(self, formula_no: int, voters_count: int) -> Set[int]:
+    def get_winning_states(self) -> Set[int]:
         winning_states = set()
         for state in self._states:
-            ok = True
-            if formula_no == 1:
-                if ("pun1" not in state.props) or (not state.props["pun1"]):
-                    ok = False
-            elif formula_no == 2:
-                if "Coercer1_end" not in state.props:
-                    continue
-                for voter_id in range(1, voters_count + 1):
-                    if f"Voter{voter_id}_vote" not in state.props or state.props[f"Voter{voter_id}_vote"] == 1:
-                        ok = True
-                if not ok:
-                    for state_id in self._model.epistemic_class_for_state(state.id,
-                                                                          self.agent_name_to_id(self._coalition[0])):
-                        for voter_id in range(1, voters_count + 1):
-                            if f"Voter{voter_id}_vote" in self._states[state_id].props and self._states[state_id].props[f"Voter{voter_id}_vote"] != 1:
-                                ok = True
-                                break
-            elif formula_no == 3:
-                if "Coercer1_end" not in state.props:
-                    continue
-                ok = True
-                for voter_id in range(1, voters_count + 1):
-                    if f"Voter{voter_id}_vote" not in state.props or state.props[f"Voter{voter_id}_vote"] != 1:
-                        ok = False
-                if not ok:
-                    for voter_id in range(1, voters_count + 1):
-                        ok = True
-                        for state_id in self._model.epistemic_class_for_state(state.id,
-                                                                              self.agent_name_to_id(self._coalition[0])):
-                            if f"Voter{voter_id}_vote" in self._states[state_id].props and self._states[state_id].props[f"Voter{voter_id}_vote"] == 1:
-                                ok = False
-                                break
-                        if ok:
-                            break
-            elif formula_no == 4: ## 1 in article
-                if "Coercer1_end" not in state.props:
-                    continue
-                voter_id = 1
-                ok = True
-                if f"Voter{voter_id}_vote" not in state.props or state.props[f"Voter{voter_id}_vote"] == 1:
-                    ok = False
-                else:
-                    for state_id in self._model.epistemic_class_for_state(state.id,
-                                                                          self.agent_name_to_id(self._coalition[0])):
-                        if f"Voter{voter_id}_vote" in self._states[state_id].props and self._states[state_id].props[f"Voter{voter_id}_vote"] == 1:
-                            ok = False
-                            break
-            # elif formula_no == 5: ## 2 in article
+            ok = False
 
-
-            # actions_set = set()
-            # for st in self._model.get_possible_strategies(state.id):
-            #     actions_set.add(st[self.agent_name_to_id(self._coalition[0])])
-            # # print(len(self._model.epistemic_class_for_state(state.id, self.agent_name_to_id(self._coalition[0]))))
-            # for state_id in self._model.epistemic_class_for_state(state.id,
-            #                                                       self.agent_name_to_id(self._coalition[0])):
-            #     new_actions_set = set()
-            #     for st in self._model.get_possible_strategies(state_id):
-            #         new_actions_set.add(st[self.agent_name_to_id(self._coalition[0])])
-            #
-            #     if actions_set != new_actions_set:
-            #         print("DIFFERENCE")
-            #         print(actions_set)
-            #         print(new_actions_set)
-            #         print(state)
-            #         print(self._states[state_id])
-                    # print(actions_set, new_actions_set, state, self._states[state_id])
+            if "Voter1_vote" in state.props and state.props["Voter1_vote"] == 1:
+                ok = True
 
             if ok:
-                # print(state)
                 winning_states.add(state.id)
         return winning_states
 
-    def verify_approximation(self, perfect_inf: bool, formula_no: int, voters_count: int):
+    def verify_approximation(self, perfect_inf: bool):
         if perfect_inf:
             atl_model = self._model.to_atl_perfect(self.get_actions())
         else:
@@ -696,16 +632,16 @@ class GlobalModel:
 
         start = time.process_time()
         result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       self.get_winning_states(formula_no, voters_count))
+                                                       self.get_winning_states())
         end = time.process_time()
 
         return 0 in result, end - start
 
-    def verify_domino(self, formula_no, voters_count):
+    def verify_domino(self):
         agent_id = self.get_agent()
         strategy_comparer = StrategyComparer(self._model, self.get_actions()[agent_id])
         start = time.process_time()
-        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(formula_no, voters_count), [agent_id],
+        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(), [agent_id],
                                                         strategy_comparer.basic_h)
         end = time.process_time()
         # print(strategy)
@@ -733,12 +669,12 @@ class GlobalModel:
             result.append(self._local_models[agent_id].agent_name)
         return result
 
-    def save_to_file(self, filename: str, voters_count: int):
+    def save_to_file(self, filename: str):
         model_file = open(filename, "w")
         model_dump = self.model.dump_for_agent(self.get_agent())
         model_file.write(model_dump)
         # winning_states = self.get_formula_winning_states()
-        winning_states = self.get_winning_states(2, voters_count)
+        winning_states = self.get_winning_states()
         model_file.write(f"{len(winning_states)}\n")
         for state_id in winning_states:
             model_file.write(f"{state_id}\n")
@@ -751,76 +687,29 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voter = 4
+    voter = 3
     cand = 2
-    formula = 2
     reduction = False
-    model = GlobalModelParser().parse(f"Selene_2_{voter}_{cand}_{formula}.txt")
+    model = GlobalModelParser().parse(f"Selene_{voter}_{cand}.txt")
+    start = time.process_time()
     model.generate(reduction=reduction)
+    end = time.process_time()
+    print("Generation time:", end-start)
     # print(model.model.dump())
-    print(model.states_count)
+    print("Voters:", voter, ", Candidates:", cand)
+    print("Reduction:", reduction)
+    print("States count:", model.states_count)
     formula_parser = FormulaParser()
-    print(model._formula)
+    print("Formula:", model._formula)
     formula_obj = formula_parser.parseFormula(formulaStr=model._formula)
-    print(formula_obj.agents, formula_obj.type, formula_obj.expression)
+    # print(formula_obj.agents, formula_obj.type, formula_obj.expression)
     # print(model.get_formula_winning_states())
-    print(model.get_agent())
+    # print(model.get_agent())
 
-    model.save_to_file(f"Selene_2_{voter}_{cand}_{reduction}_{formula}_dump.txt", voter)
+    model.save_to_file(f"Selene_{voter}_{cand}_{reduction}_dump.txt")
 
-    print("Winning:", model.get_winning_states(formula, voter))
+    # print("Winning:", model.get_winning_states())
 
-    print("DominoDFS",model.verify_domino(formula, voter))
-    print("Approx low", model.verify_approximation(False, formula, voter))
-    print("Approx up", model.verify_approximation(True, formula, voter))
-
-    # model.model.simulate(model.get_agent())
-
-    # imp = model.model.to_atl_imperfect(model.get_actions())
-    #
-    # result = imp.minimum_formula_many_agents([model.get_agent()], set(model.get_formula_winning_states()))
-    #
-    # print(result)
-
-
-
-    # results_file = open("selene_results.txt", "a")
-    #
-    # teller_count = int(input("Teller Count: "))
-    # voter_count = int(input("Voter Count: "))
-    # cand_count = int(input("Candidates Count: "))
-    # reduction = int(input("Reduction: "))
-    #
-    # formula_no = int(input("Formula (1-pun, 2-K!vVoter1): "))
-    #
-    # file_name = f"Selene_{teller_count}_{voter_count}_{cand_count}_0.txt"
-    # model = GlobalModelParser().parse(file_name)
-    # start = time.process_time()
-    # model.generate(reduction=(reduction == 1))
-    # end = time.process_time()
-    #
-    # for state in model._states:
-    #     state.print()
-    #
-    # model.model.simulate(2)
-    #
-    # results_file.write(f"Teller Count: {teller_count}\n")
-    # results_file.write(f"Voter Count: {voter_count}\n")
-    # results_file.write(f"Candidates Count: {cand_count}\n")
-    # results_file.write(f"Reduction: {reduction == 1}\n")
-    # results_file.write(f"Model generated in {end - start} seconds.\n")
-    # results_file.write(f"Model has {model.states_count} states.\n")
-    # results_file.write(f"Model has {model.transitions_count} transitions.\n")
-    # results_file.write("\n")
-    #
-    # # model.model.simulate(model.agent_name_to_id("Coercer1"))
-    #
-    # result, comp_time = model.verify_approximation(perfect_inf=True, formula_no=formula_no)
-    #
-    # results_file.write(f"Perfect Information:\ntime: {comp_time} seconds, result: {0 in result}\n")
-    #
-    # result, comp_time = model.verify_approximation(perfect_inf=False, formula_no=formula_no)
-    # results_file.write(f"Imperfect Information Approximation:\ntime: {comp_time} seconds, result: {0 in result}\n")
-    # results_file.write(f"Formula: {formula_no}\n")
-    # results_file.write("\n\n")
-    # results_file.close()
+    # print("DominoDFS", model.verify_domino())
+    print("Approx low", model.verify_approximation(False))
+    print("Approx up", model.verify_approximation(True))
