@@ -1,0 +1,17 @@
+Agent Train[2]:
+init: wait
+shared a1_aID: wait -> tunnel [aID_in=true]
+shared a2_aID: tunnel -> away [aID_in=false]
+a3: away -> wait
+
+Agent Controller[1]:
+init: green
+shared a1_Train1: green -> red
+shared a1_Train2: green -> red
+shared a2_Train1: red -> green
+shared a2_Train2: red -> green
+
+REDUCTION: [in_Train1,in_Train2]
+COALITION: [Controller1]
+LOGIC: CTL
+FORMULA: AF(Train1_in=True | Train2_in=True)
