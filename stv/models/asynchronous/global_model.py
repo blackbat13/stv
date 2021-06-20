@@ -54,7 +54,7 @@ class GlobalModel:
 
     def _parse_formula(self):
         formula_parser = FormulaParser()
-        return formula_parser.parseFormula(self._formula)
+        return formula_parser.parse_formula(self._formula)
 
     def get_agent(self):
         return self.agent_name_to_id(self.coalition[0])
@@ -689,7 +689,7 @@ if __name__ == "__main__":
 
     voter = 3
     cand = 2
-    reduction = False
+    reduction = True
     model = GlobalModelParser().parse(f"Selene_{voter}_{cand}.txt")
     start = time.process_time()
     model.generate(reduction=reduction)
@@ -701,7 +701,7 @@ if __name__ == "__main__":
     print("States count:", model.states_count)
     formula_parser = FormulaParser()
     print("Formula:", model._formula)
-    formula_obj = formula_parser.parseFormula(formulaStr=model._formula)
+    formula_obj = formula_parser.parse_formula(formula_str=model._formula)
     # print(formula_obj.agents, formula_obj.type, formula_obj.expression)
     # print(model.get_formula_winning_states())
     # print(model.get_agent())

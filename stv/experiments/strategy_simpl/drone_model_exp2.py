@@ -1,4 +1,4 @@
-from stv.models.drone_model import *
+from stv.models.synchronous.drone_model import *
 from stv.comparing_strats.strategy_comparer import StrategyComparer
 import datetime
 import time

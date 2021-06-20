@@ -1,4 +1,4 @@
-from stv.models.machine_model import MachineModel, MachineModelWithCharging, MachineModelWithStorage
+from stv.models.synchronous.machine_model import MachineModel, MachineModelWithCharging, MachineModelWithStorage
 from enum import Enum
 import time
 import datetime

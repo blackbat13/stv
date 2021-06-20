@@ -1,6 +1,0 @@
-Agent: Check4Preferences
-p_checkWBB_1 -> check_number1
-p_wbb_check_pr -> check_number2
-(p_receipt_check_pr && j==m) -> end_second
-p_receipt_check_pr -> move_next
-true -> *

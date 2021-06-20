@@ -1,4 +1,4 @@
-from stv.models.castle_model import CastleModel
+from stv.models.synchronous.castle_model import CastleModel
 from typing import List
 import time
 import datetime

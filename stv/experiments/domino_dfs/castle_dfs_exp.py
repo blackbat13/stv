@@ -1,4 +1,4 @@
-from stv.models.castle_model import *
+from stv.models.synchronous.castle_model import *
 from stv.comparing_strats.strategy_comparer import StrategyComparer
 from typing import List
 import time

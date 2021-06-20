@@ -1,4 +1,4 @@
-from stv.models.simple_voting_model import SimpleVotingModel
+from stv.models.synchronous.simple_voting_model import SimpleVotingModel
 
 
 class SimpleVotingModelExperiments:
