@@ -35,11 +35,17 @@ class GlobalModel:
     :ivar _transitions_count
     """
 
-    def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str],
-                 coalition: List[str], goal: List[str], logicType: LogicType, formula: str, show_epistemic: bool):
+    def __init__(self,
+                 local_models: List[LocalModel], reduction: List[str],
+                 bounded_vars: List[str], persistent: List[str],
+                 coalition: List[str], goal: List[str],
+                 logicType: LogicType, formula: str,
+                 show_epistemic: bool):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
+        self._bounded_vars: Dict[str, str] = dict([(x.split(' ')[0], x.split(' ')[1]) for x in bounded_vars])
+        # print(f"LOG: bounded_vars = {self._bounded_vars}")
         self._persistent: List[str] = persistent
         self._coalition: List[str] = coalition
         self._goal: List[str] = goal
@@ -101,6 +107,10 @@ class GlobalModel:
     def model(self):
         """The model."""
         return self._model
+
+    @property
+    def local_models(self):
+        return self._local_models
 
     @property
     def states_count(self):
@@ -327,6 +337,9 @@ class GlobalModel:
 
     def _copy_props_to_state(self, state: GlobalState, transition: LocalTransition) -> GlobalState:
         for prop in transition.props:
+            # print(f"LOG: {prop} = {transition.props[prop]} ({type(transition.props[prop])})")
+            self._check_bounded_vars(prop, transition.props[prop])
+
             if type(transition.props[prop]) is str:
                 if transition.props[prop][0] == "?":
                     prop_name = transition.props[prop][1:]
@@ -343,6 +356,14 @@ class GlobalModel:
             else:
                 state.set_prop(prop, transition.props[prop])
         return state
+
+    def _check_bounded_vars(self, prop_name, prop_val):
+        if not self._bounded_vars:
+            return
+        if prop_name in self._bounded_vars:
+            min_val, max_val = self._bounded_vars[prop_name].strip("{").strip("}").split('..')
+            if prop_val<int(min_val) or prop_val>int(max_val):
+                print(f"WARN: Assigning an int out of bound values in '{prop_name}={prop_val}'")
 
     def _state_find(self, state: GlobalState) -> int:
         if state.to_str() in self._states_dict:
