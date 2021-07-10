@@ -10,7 +10,7 @@ from copy import deepcopy
 class Abstraction() :
 
 
-#-----------------------Initialization--------------------------------------------------------
+#-----------------------Initialisation--------------------------------------------------------
 
   def __init__(self, filename : str, template : str, variable : str, enable_trace : bool):
     self._model: GlobalModel  = GlobalModelParser().parse(filename)
@@ -27,13 +27,14 @@ class Abstraction() :
     self._domains : List[Set[int]] = [set() for _ in range(len(self._local_model._transitions))]
     self._enable_trace = enable_trace
     self._trace = f"{str(self)}\n\n"
+    self._other_domains : dict = dict()
     self._compute_adj()
     self._compute_priorities()
     
 
   def _compute_initial_domain(self):
     if self._abstracted_variable in self._model._bounded_vars:
-      self._inital_domain = self._parse_domain(self._abstracted_variable)
+      self._inital_domain = self._get_domain(self._abstracted_variable)
 
 
 
@@ -76,50 +77,43 @@ class Abstraction() :
 
 
 
-#-----------------Auxiliaries------------------------------------------------------------
+#----------------------------Compute Domains---------------------------------------------------
+
+  def _transitive_closure_update_aux(self,variable,acc,props):
+    """return concatenation of acc and transitive closure of variable for relation uRv iif there exists prop in props such that prop = (u,v)"""
+    for (lvar,val) in props:
+      if lvar==variable and isinstance(val,str) and val[0]=='?' and val[1:] not in acc :
+        rvar = val[1:]
+        acc.add(rvar)
+        tr_closure = self._transitive_closure_update_aux(rvar,acc,props)
+        acc.update(tr_closure)
+    return acc
 
 
-  def _get_state(self,state_id):
-    for items in self._local_model._states.items():
-      if items[1]==state_id:
-        return items[0]
+  def _transitive_closure_update(self,variable,props):
+    """return transitive closure of variable for relation uRv iif there exists prop in props such that prop = (u,v)"""
+    return self._transitive_closure_update_aux(variable,[variable],props)
+
+  
+  def _get_values(self,variable,props):
+    """return all values directly assigned to variable in a post-condition of props"""
+    domain = set()
+    for (var,val) in props:
+      if var==variable and (isinstance(val,int) or isinstance(val,bool)):
+        domain.add(val)
+    return domain
 
 
-  def filter_sat(self,domain, transition): #For now, we ignore guards which does not contain x and cannot be met such as 1>2
-    res = domain
-    for cond in transition._conditions:
-      if mem_cond(self._abstracted_variable,cond[1]): #Case (_ op x) are turned into (x op _)
-        if cond[2] == ">=":
-          cond = (cond[1],cond[0],"<=")
-        elif cond[2] == "<=":
-          cond = (cond[1],cond[0],">=")
-        elif cond[2] == ">":
-          cond = (cond[1],cond[0],"<")
-        elif cond[2] == "<":
-          cond = (cond[1],cond[0],">")
-        else :
-          cond = (cond[1],cond[0],cond[2])
-      if mem_cond(self._abstracted_variable,cond[0]):   #Case (x op _)
-          try:                                          #Subcase x=int
-            val = int(cond[1])
-            if cond[2] == "==":
-              res = res.intersection({val})
-            elif cond[2] == "!=":
-              res = res.difference({val})
-            elif cond[2] == "<=":
-              res ={x for x in res if x <= val}
-            elif cond[2] == ">=":
-              res ={x for x in res if x >= val}
-            elif cond[2] == "<":
-              res ={x for x in res if x < val}
-            elif cond[2] == ">":
-              res ={x for x in res if x > val}
-          except ValueError:                            #Subcase x=var
-            if cond[1] in self._model._bounded_vars:
-              res = res.intersection(self._parse_domain(cond[1]))
-    return res
+  def _extract_props(self):
+    """extract props as a couple (variable,value)"""
+    updates  = []
+    for lst in self._local_model.transitions:
+      for transition in lst:
+        updates.extend(list(transition.props.items()))
+    return updates
 
-  def _parse_domain(self,variable):
+
+  def _get_domain_bounded(self,variable):
     """return the domain of a bounded variable """
     if variable not in self._model._bounded_vars:
       raise Exception(f"Error in _compute_boundaries : variable {variable} is not bounded")
@@ -128,6 +122,28 @@ class Abstraction() :
     ubound = int(values.split('.')[2][:-1])
     return set(range(lbound,ubound+1))
 
+  def _parse_domain(self,variable):
+    """return domain of a not bounded variable """
+    domain = set()
+    props = self._extract_props()
+    for var in self._transitive_closure_update(variable,props):
+      domain.update(self._get_values(var,props))
+    if len(domain)==0:
+      return {0} #Default
+    return domain
+
+  def _get_domain(self,variable):
+    """return the domain of a variable and update self._other_domains dynamically """
+    if variable in self._other_domains:
+      return self._other_domains[variable]
+    if variable in self._model._bounded_vars:
+      domain = self._get_domain_bounded(variable)
+      self._other_domains[variable] = domain
+      return domain
+    domain = self._parse_domain(variable)
+    self._other_domains[variable] = domain
+    return domain
+  
 
   def _evaluate(self,expr): #For now, expression is either an integer or '?var'
     """return a set of all possible evaluation of an expression.
@@ -136,10 +152,9 @@ class Abstraction() :
       if expr[0]!='?':
         raise Exception("Evaluation exception : Only integers or '?var' are supported")
       expr = expr[1:]
-      if expr not in self._model._bounded_vars:
-        raise Exception(f"Evaluation exception : variable {expr} is not bounded")
-      return self._parse_domain(expr)
+      return self._get_domain(expr)
     return {expr}
+
 
   def _select_transitions(self,state_from : int,state_to : int):
     """Returns the list of transitions from state state_from to state state_to"""
@@ -231,6 +246,50 @@ class Abstraction() :
         self._save_queue()
         self._save_pred()
         self._save_domains()
+
+#------------------------Generate Local Abstracted Model---------------------------------------------------
+
+  def _get_state(self,state_id):
+    """return name of state with id state_id [for debug purpose]"""
+    for items in self._local_model._states.items():
+      if items[1]==state_id:
+        return items[0]
+
+
+  def filter_sat(self,domain, transition): #For now, we ignore pre-conditions which does not contain x  such as 1>2
+    """return the subset of the domain which satisfies the pre-conditions of transition"""
+    res = domain
+    for cond in transition._conditions:
+      if mem_cond(self._abstracted_variable,cond[1]): #Case (_ op x) are turned into (x op _)
+        if cond[2] == ">=":
+          cond = (cond[1],cond[0],"<=")
+        elif cond[2] == "<=":
+          cond = (cond[1],cond[0],">=")
+        elif cond[2] == ">":
+          cond = (cond[1],cond[0],"<")
+        elif cond[2] == "<":
+          cond = (cond[1],cond[0],">")
+        else :
+          cond = (cond[1],cond[0],cond[2])
+      if mem_cond(self._abstracted_variable,cond[0]):   #Case (x op _)
+          try:                                          #Subcase x=int
+            val = int(cond[1])
+            if cond[2] == "==":
+              res = res.intersection({val})
+            elif cond[2] == "!=":
+              res = res.difference({val})
+            elif cond[2] == "<=":
+              res ={x for x in res if x <= val}
+            elif cond[2] == ">=":
+              res ={x for x in res if x >= val}
+            elif cond[2] == "<":
+              res ={x for x in res if x < val}
+            elif cond[2] == ">":
+              res ={x for x in res if x > val}
+          except ValueError:                            #Subcase x=var
+            if cond[1] in self._model._bounded_vars:
+              res = res.intersection(self._get_domain(cond[1]))
+    return res
 
 
 
@@ -498,7 +557,7 @@ class Abstraction() :
 
 
 def _parse_agent_name(agent_name):
-  """return the template of agent named agent_name and the number of its instance"""
+  """return the template of agent named agent_name and its rank"""
   for i in range(len(agent_name)):
     if agent_name[i] in ['0','1','2','3','4','5','6','7','8','9']:
       try:
@@ -537,16 +596,7 @@ def substitution(expr,variable :str, value):
 
 
 
-#-----------------------Unused ---------------------------------------------------------------------------
-
-
-def extract_conditions(local_model):
-  """extract conditions as a triplet (variable,value,operator)"""
-  conds  = []
-  for lst in local_model.transitions:
-    for transition in lst:
-      conds.extend(transition.conditions)
-  return conds 
+#---------------------------------------Unused -------------------------------------------
 
 
 def extract_props(local_model):
@@ -586,6 +636,3 @@ if __name__ == "__main__":
   abstraction = Abstraction(filename_in,agent_name,variable,enable_trace=enable_trace)
   abstraction.generate()
   abstraction.save_to_file(filename_out)
-
-
-
