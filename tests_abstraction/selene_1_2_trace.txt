@@ -1,0 +1,282 @@
+Abstraction on agent Voter1 and variable Voter1_vote
+
+----------------  Initial Processing  -------------------
+
+Domains :
+v_init : {0}
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+----------------  v_request  -------------------
+Processing transition requestVoteFor1_Voter1 from v_init
+Processing transition requestVoteFor2_Voter1 from v_init
+Processing transition leave_Voter1 from v_init
+
+queue : [(-7, 2)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : {1}
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+----------------  v_start  -------------------
+Processing transition startVoting from v_request
+
+queue : [(-6, 3)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : {2}
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+----------------  v_fill  -------------------
+Processing transition fillVote1_Voter1 from v_start
+Processing transition fillVote2_Voter1 from v_start
+
+queue : [(-5, 4)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : {3}
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : {1, 2}
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+----------------  v_send  -------------------
+Processing transition sendVote_Voter1 from v_fill
+
+queue : [(-4, 5)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : {4}
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : {1, 2}
+v_send : {1, 2}
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+----------------  v_finish  -------------------
+Processing transition finishVoting from v_send
+
+queue : [(-3, 6)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : {5}
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : {1, 2}
+v_send : {1, 2}
+v_finish : {1, 2}
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+----------------  v_false_tr  -------------------
+Processing transition computeFalseTracker1_Voter1 from v_finish
+Processing transition dontComputeFalseAlphaTerm_Voter1 from v_finish
+
+queue : [(-2, 7)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : {6}
+v_wbb : set()
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : {1, 2}
+v_send : {1, 2}
+v_finish : {1, 2}
+v_false_tr : {1, 2}
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+----------------  v_send_tr  -------------------
+Processing transition sendTracker_Voter1 from v_false_tr
+
+queue : [(-1, 8)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : {7}
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : {1, 2}
+v_send : {1, 2}
+v_finish : {1, 2}
+v_false_tr : {1, 2}
+v_send_tr : {1, 2}
+v_wbb : set()
+v_show : set()
+
+----------------  v_wbb  -------------------
+Processing transition allTrackerSend from v_send_tr
+
+queue : [(0, 9)]
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : {8}
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : {1, 2}
+v_send : {1, 2}
+v_finish : {1, 2}
+v_false_tr : {1, 2}
+v_send_tr : {1, 2}
+v_wbb : {1, 2}
+v_show : set()
+
+----------------  v_show  -------------------
+Processing transition showTracker1_Voter1 from v_wbb
+Processing transition showTracker1_Voter1 from v_wbb
+
+queue : []
+
+Relevant Predecessors :
+v_init : set()
+v_request : set()
+v_start : set()
+v_fill : set()
+v_send : set()
+v_finish : set()
+v_false_tr : set()
+v_send_tr : set()
+v_wbb : set()
+v_show : set()
+
+Domains :
+v_init : {0}
+v_request : {0}
+v_start : {0}
+v_fill : {1, 2}
+v_send : {1, 2}
+v_finish : {1, 2}
+v_false_tr : {1, 2}
+v_send_tr : {1, 2}
+v_wbb : {1, 2}
+v_show : {1, 2}
+
