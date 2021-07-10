@@ -8,6 +8,8 @@ transition_12_0: state_1 -> state_2[y=3]
 transition_14_0: state_1 -> state_4
 transition_24_0: state_2 -> state_4
 transition_4_0: state_4 -> state_4
+transition_42_0: state_4 -> state_4
+transition_42_0: state_4 -> state_4
 transition_42_0: state_4 -> state_2[y=1]
 transition_42_1: state_4 -> state_2[y=19]
 transition_42_2: state_4 -> state_2[y=20]

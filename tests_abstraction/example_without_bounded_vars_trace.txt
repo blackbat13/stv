@@ -72,7 +72,11 @@ state_5 : set()
 Processing transition transition_14 from state_1
 Processing transition transition_24 from state_2
 Processing looping transition transition_4
+Processing looping transition transition_42
+Processing looping transition transition_42
 Processing looping transition transition_4
+Processing looping transition transition_42
+Processing looping transition transition_42
 
 queue : [(-3, 2), (0, 4), (0, 5)]
 
@@ -116,6 +120,8 @@ state_5 : set()
 ----------------  state_4  -------------------
 Processing transition transition_24 from state_2
 Processing looping transition transition_4
+Processing looping transition transition_42
+Processing looping transition transition_42
 
 queue : [(0, 4), (0, 5)]
 

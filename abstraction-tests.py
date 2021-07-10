@@ -16,7 +16,9 @@ agent_name = "Template"
 variable = "x"
 abstraction = Abstraction(filename_in,agent_name,variable,enable_trace=enable_trace)
 abstraction.generate()
+print("transition closure of relation R : ",abstraction.compute_variables())
 abstraction.save_trace(filename_trace)
 abstraction.save_to_file(filename_out)
+
 
 

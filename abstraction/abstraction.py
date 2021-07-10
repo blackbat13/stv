@@ -77,24 +77,25 @@ class Abstraction() :
 
 
 
-#----------------------------Compute Domains---------------------------------------------------
+#---------------------------- Extracting variables, conds and props ---------------------------------------------------
 
-  def _transitive_closure_update_aux(self,variable,acc,props):
-    """return concatenation of acc and transitive closure of variable for relation uRv iif there exists prop in props such that prop = (u,v)"""
+
+  def _transitive_closure_update_aux(self,variables,acc,props):
+    """return concatenation of acc and transitive closure of set of variables for relation uRv iif u=v or there exists prop in props such that prop = (u,v)"""
     for (lvar,val) in props:
-      if lvar==variable and isinstance(val,str) and val[0]=='?' and val[1:] not in acc :
+      if lvar in variables and isinstance(val,str) and val[0]=='?' and val[1:] not in acc :
         rvar = val[1:]
         acc.add(rvar)
-        tr_closure = self._transitive_closure_update_aux(rvar,acc,props)
+        tr_closure = self._transitive_closure_update_aux({rvar},acc,props)
         acc.update(tr_closure)
     return acc
 
 
-  def _transitive_closure_update(self,variable,props):
-    """return transitive closure of variable for relation uRv iif there exists prop in props such that prop = (u,v)"""
-    return self._transitive_closure_update_aux(variable,[variable],props)
+  def _transitive_closure_update(self,variables,props):
+    """return transitive closure of set of variables for relation uRv iif u=v or there exists prop in props such that prop = (u,v)"""
+    return self._transitive_closure_update_aux(variables,variables,props)
 
-  
+
   def _get_values(self,variable,props):
     """return all values directly assigned to variable in a post-condition of props"""
     domain = set()
@@ -104,8 +105,30 @@ class Abstraction() :
     return domain
 
 
-  def _extract_props(self):
-    """extract props as a couple (variable,value)"""
+  def _get_conds(self):
+    """return all conditions of all transitions of self._local.model as a list of tuple (variable,value,op)"""
+    conds  = []
+    for lst in self._local_model.transitions:
+      for transition in lst:
+        conds.extend(list(transition._conditions))
+    return conds
+
+
+  def _get_variables_from_cond(self,cond):
+    """return a set of variables that appear in cond"""
+    variables = set()
+    for i in [0,1]:
+      try :
+        _ = int(cond[i])
+      except ValueError:
+        if cond[i].lower() not in ['true','false']:
+          variables.add(cond[i])
+    return variables
+
+
+
+  def _get_props(self):
+    """return props as a list of couple (variable,value)"""
     updates  = []
     for lst in self._local_model.transitions:
       for transition in lst:
@@ -125,8 +148,8 @@ class Abstraction() :
   def _parse_domain(self,variable):
     """return domain of a not bounded variable """
     domain = set()
-    props = self._extract_props()
-    for var in self._transitive_closure_update(variable,props):
+    props = self._get_props()
+    for var in self._transitive_closure_update({variable},props):
       domain.update(self._get_values(var,props))
     if len(domain)==0:
       return {0} #Default
@@ -144,6 +167,10 @@ class Abstraction() :
     self._other_domains[variable] = domain
     return domain
   
+
+
+#----------------------------Compute Domains---------------------------------------------------
+
 
   def _evaluate(self,expr): #For now, expression is either an integer or '?var'
     """return a set of all possible evaluation of an expression.
@@ -371,7 +398,7 @@ class Abstraction() :
 
 
 
-  #---------------------------------Printing--------------------------------------------------------------
+  #---------------------------------Trace--------------------------------------------------------------
 
   def __str__(self):
     return f"Abstraction on agent {self._local_model._agent_name} and variable {self._abstracted_variable}"
@@ -487,9 +514,14 @@ class Abstraction() :
         res += f"{var},"
     return res[:-1]
 
+
+  def _write_logic(self):
+    """return a string encoding the persistent variables in the input file"""
+    return self._model._logicType.name
+
   def _write_formula(self):
     """return a string encoding the formula in the input file"""
-    res = ""
+    return ""
 
 
   def _write_template(self,local_model,template,count):
@@ -518,6 +550,8 @@ class Abstraction() :
       res+= f"PERSISTENT: [{self._write_persistent()}]\n"
     if len(self._model._coalition)>0:
       res+= f"COALITION: [{self._write_coalition()}]\n"
+    if len(self._model._coalition)>0:
+      res+= f"LOGIC: {self._write_logic()}\n"
     return res
 
 
@@ -549,7 +583,21 @@ class Abstraction() :
     trace_file = open(filename, "w")
     trace_file.write(self._trace)
     trace_file.close()
-    
+
+
+
+
+#-------------------------------------- Variable Domains to Store ------------------------------
+
+
+
+
+  def compute_variables(self):
+    variables = {self._abstracted_variable}
+    props = self._get_props()
+    for cond in self._get_conds():
+      variables.update(self._get_variables_from_cond(cond))
+    return self._transitive_closure_update(variables,props)
 
 
 
@@ -596,22 +644,11 @@ def substitution(expr,variable :str, value):
 
 
 
+
+
+
+
 #---------------------------------------Unused -------------------------------------------
-
-
-def extract_props(local_model):
-  """extract props as a couple (variable,value)"""
-  updates  = []
-  for lst in local_model.transitions:
-    for transition in lst:
-      updates.extend(list(transtion.props.items()))
-  return updates
-
-def extract_variables_from_condition(condition):
-  return condition[0]
-
-def extract_variables_from_prop(prop):
-  return prop[0]
 
 def compute_transitive_closure():
   print("TODO")

@@ -19,3 +19,4 @@ transition_45_0: state_4 -[failed==false]> state_5[end=True]
 BOUNDED_VARS: [z (19..22)]
 PERSISTENT: [y,z,failed,end]
 COALITION: [Template1]
+LOGIC: ATL

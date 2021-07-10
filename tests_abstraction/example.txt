@@ -15,4 +15,5 @@ transition_45 : state_4 -[failed==false]> state_5 [end=true]
 BOUNDED_VARS: [z (19..22)]
 PERSISTENT: [x,y,z,failed,end]
 COALITION: [Template1]
+LOGIC: ATL
 FORMULA: <<Template1>>G(end=1 & failed=false)
