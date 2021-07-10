@@ -1,0 +1,6 @@
+Agent: Check4SerialNumber
+p_checkWBB -> check_serial1
+p_wbb_check_sn -> check_serial2
+(p_receipt_check_sn && i==n) -> end_first
+p_receipt_check_sn -> move_next
+true -> *

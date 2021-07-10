@@ -1,0 +1,57 @@
+Agent FarmerBoat[1]:
+init: empty_left
+shared take_goat_l: empty_left -> left
+shared take_goat_r: empty_right -> right
+shared take cabbage_l: empty_left -> left
+shared take_cabbage_r: empty_right -> right
+shared take_wolf_l: empty_left -> left
+shared take_wolf_r: empty_right -> right
+shared cross_river: left -> empty_right
+shared cross_river: right -> empty_left
+shared cross_river: empty_left -> empty_right
+shared cross_river: empty_right -> empty_left
+
+Agent Goat[1]:
+init: left
+shared take_goat_l: left -> in_boat_l
+shared take_goat_r: right -> in_boat_r
+shared cross_river: in_boat_l -> right [aID_right=True]
+shared cross_river: in_boat_r -> left [aID_right=False]
+shared cross_river: left -> unattended_left
+shared cross_river: right -> unattended_right
+shared cross_river: unattended_left -> unattended_left
+shared cross_river: unattended_right -> unattended_right
+shared eat_cabbage_l: unattended_left -> left
+shared eat_cabbage_r: unattended_right -> right
+shared eat_goat_l: unattended_left -> eaten [aID_eaten=True]
+shared eat_goat_r: unattended_right -> eaten [aID_eaten=True]
+
+Agent Cabbage[1]:
+init: left
+shared take_cabbage_l: left -> in_boat_l
+shared take_cabbage_r: right -> in_boat_r
+shared cross_river: in_boat_l -> right [aID_right=True]
+shared cross_river: in_boat_r -> left [aID_right=False]
+shared cross_river: left -> unattended_left
+shared cross_river: right -> unattended_right
+shared cross_river: unattended_left -> unattended_left
+shared cross_river: unattended_right -> unattended_right
+shared eat_cabbage_l: unattended_left -> eaten [aID_eaten=True]
+shared eat_cabbage_r: unattended_right -> eaten [aID_eaten=True]
+
+Agent Wolf[1]:
+init: left
+shared take_wolf_l: left -> in_boat_l
+shared take_wolf_r: right -> in_boat_r
+shared cross_river: in_boat_l -> right [aID_right=True]
+shared cross_river: in_boat_r -> left [aID_right=False]
+shared cross_river: left -> unattended_left
+shared cross_river: right -> unattended_right
+shared cross_river: unattended_left -> unattended_left
+shared cross_river: unattended_right -> unattended_right
+shared eat_goat_l: unattended_left -> left
+shared eat_goat_r: unattended_right -> right
+
+PERSISTENT: [Goat1_eaten,Cabbage1_eaten,Goat1_right,Cabbage1_right,Wolf1_right]
+COALITION: [FarmerBoat1]
+FORMULA: <<FarmerBoat1>>F (Goat1_eaten!=True & Cabbage1_eaten!=True & Goat1_right=True & Cabbage1_right=True & Wolf1_right=True)

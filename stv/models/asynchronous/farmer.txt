@@ -1,0 +1,49 @@
+Agent FarmerBoat[1]:
+init: empty_left
+shared take_goat_l: empty_left -> left
+shared take_goat_r: empty_right -> right
+shared take cabbage_l: empty_left -> left
+shared take_cabbage_r: empty_right -> right
+shared take_wolf_l: empty_left -> left
+shared take_wolf_r: empty_right -> right
+shared cross_river: left -> empty_right
+shared cross_river: right -> empty_left
+shared cross_river: empty_left -> empty_right
+shared cross_river: empty_right -> empty_left
+
+Agent Goat[1]:
+init: left
+shared take_goat_l: left -> in_boat_l
+shared take_goat_r: right -> in_boat_r
+shared cross_river: in_boat_l -> right
+shared cross_river: in_boat_r -> left
+shared cross_river: left -> unattended_left
+shared cross_river: right -> unattended_right
+shared eat_cabbage_l: unattended_left -> left
+shared eat_cabbage_r: unattended_right -> right
+shared eat_goat_l: unattended_left -> eaten [aID_eaten=true]
+shared eat_goat_r: unattended_right -> eaten [aID_eaten=true]
+
+Agent Cabbage[1]:
+init: left
+shared take_cabbage_l: left -> in_boat_l
+shared take_cabbage_r: right -> in_boat_r
+shared cross_river: in_boat_l -> right
+shared cross_river: in_boat_r -> left
+shared cross_river: left -> unattended_left
+shared cross_river: right -> unattended_right
+shared eat_cabbage_l: unattended_left -> eaten [aID_eaten=true]
+shared eat_cabbage_r: unattended_right -> eaten [aID_eaten=true]
+
+Agent Wolf[1]:
+init: left
+shared take_wolf_l: left -> in_boat_l
+shared take_wolf_r: right -> in_boat_r
+shared cross_river: in_boat_l -> right
+shared cross_river: in_boat_r -> left
+shared cross_river: left -> unattended_left
+shared cross_river: right -> unattended_right
+shared eat_goat_l: unattended_left -> left
+shared eat_goat_r: unattended_right -> right
+
+PERSISTENT: [Goat1_eaten,Cabbage1_eaten]

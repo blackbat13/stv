@@ -1,0 +1,235 @@
+/*
+	TMN Protocol
+
+	A->S: B, {Ka}PK(S)
+	S->B: A
+	B->S: A, {Kb}PK(S)
+	S->A: B, {Kb}Ka
+*/
+
+
+theory TMNProtocol
+begin
+
+builtins: symmetric-encryption, asymmetric-encryption
+
+rule Generate_server:
+    [
+    ]
+  --[ GenerateServer( $S ) ]->
+    [
+        !ServerID( $S ),
+        Out($S)
+    ]
+
+rule Generate_key_pair:
+    [ 
+      Fr( ~sk ) 
+    ]
+  --[ GenerateKeyPair($A) ]->
+    [ 
+      !Sk( $A, ~sk ), 
+      !Pk( $A, pk( ~sk ) ) ,
+      Out( pk( ~sk ) ) // Attacker can learn public key
+    ]
+
+rule Alice_1:
+    [
+      !ServerID(S),
+      Fr( ~kA ),       // choose fresh key for Alice
+      !Pk( S, pkS )   // lookup public-key of server
+    ]
+  --[ AliceSendKeyToServer( $A, ~kA) ]->
+    [ 
+      Alice_1( ~kA ),                // remember your key for later use
+      Out( <$B, aenc( ~kA, pkS ), $A, S> ),  // send message to server
+      !AClientResp($B),
+      !AClientInit($A)
+    ]
+
+rule Server_1:
+    [
+      !ServerID(S),
+      !Sk( S, skS ),      // get server secret key
+      !Pk( S, pk(skS)),
+      In( <B, aenc(kA, pk(skS)), A, S> )   // get message from Alice
+    ]
+  --[ ReceiveKeyFromClient( A, kA ) ]->
+    [ 
+      ClientKey( A, kA ),
+      !ClientResp( B ),    // remember client id for later use
+      !ClientInit( A )
+      // ServerStep('1')
+    ]
+
+rule Server_2:
+    [
+      // ServerStep('1'),
+      !ClientResp( B ),
+      !ClientInit( A ),
+      !ServerID( S )
+    ]
+  --[ SendIDToClient( B ) ]->
+    [ 
+      Out( <A, S, B> )     // send alice id to bob
+      // ServerStep('2')
+    ]
+
+rule Bob_1:
+    [
+      !ServerID(S),
+      Fr( ~kB ),        // choose fresh key for bob
+      In( <A, S, B> ),         // get alice id from server
+      !Pk( S, pkS )    // lookup public-key of server
+    ]
+  --[ SendKeyToServer( B, ~kB ) ]->
+    [
+      Out( <A, aenc(~kB, pkS), B, S> )   // send message to server
+      // !BClientResp(B),
+      // !BClientInit(A)
+    ]
+
+rule Server_3:
+    [
+      // ServerStep('2'),
+      !ClientInit( A ),
+      !ClientResp( B ),
+      !ServerID(S),
+      !Pk( S, pkS),
+      !Sk( S, skS ),      // get server secret key
+      In( <A, aenc(kB, pkS), B, S> )   // get message from client
+    ]
+  --[ ReceiveKeyFromClient( B, kB ) ]->
+    [
+      ClientKey( B, kB )
+      // ServerStep('3')
+    ]
+
+rule Server_4:
+    [
+      !ClientInit( A ),
+      !ClientResp( B ),
+      // ServerStep('3'),
+      !ServerID( S ),
+      ClientKey( A, kA ),   // get alice key
+      ClientKey( B, kB )      // get bob key
+    ]
+  --[ SendClientKey( kB, A, kA ) ]->
+    [
+      Out( <B, senc( kB, kA ), S, A> )   // send bob key to alice
+    ]
+
+rule Alice_2:
+    [
+      !AClientInit(A),
+      !AClientResp(B),
+      !ServerID(S),
+      Alice_1( kA ),            // get alice key
+      In( <B, senc(kB,kA), S, A> )       // receive bob key from server
+    ]
+  --[ SessionKeyEstablished( B, kB ) ]->
+    [
+      !SessionKey( B, kB  )    // remember session key
+    ]
+
+restriction OneServer:
+  "All S1 S2 #i1 #i2. GenerateServer(S1) @i1 & GenerateServer(S2) @i2 ==> #i1 = #i2 & S1=S2"
+
+restriction OnePublicKey:
+  "All S1 S2 #i1 #i2. GenerateKeyPair(S1) @i1 & GenerateKeyPair(S2) @i2 ==> #i1 = #i2 & S1=S2"
+
+//restriction OneAlice:
+//  "All A1 A2 k1 k2 #i1 #i2. AliceSendKeyToServer(A1, k1) @i1 & AliceSendKeyToServer(A2, k2) @i2 ==> #i1 = #i2 & A1=A2 & k1=k2"
+
+/*
+
+lemma Key_generated_and_secret:
+  all-traces
+  " not(
+     Ex kB #i1 #i2.
+         SendKeyToServer( 'B', kB ) @ i1
+       & K( kB ) @ i2
+   )
+  "
+
+lemma Key_established_and_secret:
+  all-traces
+  " not(
+     Ex kB #i1 #i2.
+         SessionKeyEstablished( 'B', kB ) @ i1
+       & K( kB ) @ i2
+   )
+  "
+
+lemma Key_established_between_alice_and_bob:
+  exists-trace
+  " Ex kB #i1 #i2.
+        SendKeyToServer('B', kB) @ i1
+      & SessionKeyEstablished( 'B', kB ) @ i2
+  "
+*/
+
+lemma Whole_protocol:
+  exists-trace
+  " Ex A B kB kA #i1 #i2 #i3 #i4 #i5 #i6.
+        SendKeyToServer(A, kA) @ i1
+      & ReceiveKeyFromClient(A, kA) @i2
+      & SendIDToClient(B) @ i3
+      & SendKeyToServer(B, kB) @ i4
+      & SendClientKey(kB, A, kA) @ i5
+      & SessionKeyEstablished( B, kB ) @ i6
+      & i1 < i2 & i2 < i3 & i3 < i4 & i4 < i5 & i5 < i6
+  "
+
+lemma Key_established_between_alice_and_bob:
+  exists-trace
+  " Ex B kB #i1 #i2.
+        SendKeyToServer(B, kB) @ i1
+      & SessionKeyEstablished( B, kB ) @ i2
+      & i1 < i2
+  "
+
+lemma Key_established_between_alice_and_bob_ex:
+  exists-trace
+  " Ex B kB #i1.
+      SessionKeyEstablished( B, kB ) @ i1
+  "
+
+lemma Test_lemma:
+  exists-trace
+  " Ex B #i1.
+      SendIDToClient( B ) @ i1
+  "
+
+lemma Key_established_and_secret:
+  all-traces
+  " not(
+     Ex B kB #i1 #i2.
+         SessionKeyEstablished( B, kB ) @ i1
+       & K( kB ) @ i2
+   )
+  "
+
+lemma Key_generated_and_secret:
+  all-traces
+  " not(
+     Ex B kB #i1 #i2.
+         ReceiveKeyFromClient( B, kB ) @ i1
+       & K( kB ) @ i2
+   )
+  "
+
+lemma Key_established_and_not_secret:
+  exists-trace
+  " Ex B kB #i1 #i2.
+        SessionKeyEstablished(B, kB) @i1
+      &  K(kB) @i2
+  "
+
+lemma Key_generated_and_not_secret:
+  exists-trace
+  " Ex B kB #i1 #i2.
+        ReceiveKeyFromClient(B, kB) @i1
+      &  K(kB) @i2
+  "
+end

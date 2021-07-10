@@ -1,0 +1,6 @@
+Agent: Check4
+p_checkWBB -> check_serial
+p_checkWBB_ok -> ok
+p_checkWBB_1 -> check_preferences
+p_checkWBB_1_ok -> ok
+true -> *

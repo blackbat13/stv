@@ -1,0 +1,253 @@
+theory PretaVoter
+begin
+
+builtins: multiset, asymmetric-encryption
+
+// Note: Every Out rule is used only for adversary
+
+// ---------------- RULES ----------------
+
+rule AsymmetricKeySetup:
+    [
+        Fr(~f)
+    ]
+  --[ AsymmetricKeySetup($A, pk(~f), ~f) ]->
+    [
+        !Sk($A, ~f),
+        !Pk($A, pk(~f))
+    ]
+
+rule InitialSetup:
+    [
+    ]
+  --[ InitialSetup($A) ]->
+    [
+        GenerateVotersRule($A),
+        GenerateCandidatesRule($A),
+        GenerateBallotsRule($A),
+        GenerateCountersRule($A),
+        !ElectionAuthority($E)
+    ]
+
+// To change the number of voters change the output of this rule and rules for vote counting and publishing
+rule GenerateVoters:
+    [
+        GenerateVotersRule(A)
+    ]
+  --[ GenerateVoters() ]->
+    [
+        // n - number of voters
+        // for i in (1..n): append Voter($Vi)
+        Voter($V1),
+        Voter($V2),
+        Voter($V3),
+        Voter($V4)
+    ]
+
+rule GenerateCandidates:
+    [
+        GenerateCandidatesRule(A)
+    ]
+  --[ GenerateCandidates(A) ]->
+    [
+        !Candidate('C1'),
+        !Candidate('C2'),
+        !Candidate('C3')
+    ]
+
+rule GenerateCounters:
+    [
+        GenerateCountersRule(A)
+    ]
+  --[ GenerateCounters() ]->
+    [
+        VotesCasted('0'),
+        VotesCounted('0'),
+        Counter('C1', '0'),
+        Counter('C2', '0'),
+        Counter('C3', '0')
+    ]
+
+// --- BALLOT GENERATION ---
+
+rule GenerateBallots:
+    [
+        GenerateBallotsRule(A)
+    ]
+  --[ GenerateBallots() ]->
+    [
+        Ballot($B1),
+        Ballot($B2),
+        Ballot($B3),
+        Ballot($B4)
+    ]
+
+rule GenerateBallotWithOrder:
+    [
+        Ballot(B),
+        !Candidate(C1),
+        !Candidate(C2),
+        !Candidate(C3)
+    ]
+  --[ GenerateBallotWithOrder(B, C1, C2, C3) ]->
+    [
+        BallotWithOrder(B, C1, C2, C3) // order should be random (tamarin will decide, which value assign to C1, C2, ...)
+    ]
+
+rule GenerateBallotOnion:
+    let
+        onion = aenc(<C1, C2, C3, ~d>, pkE)
+    in
+    [
+        !ElectionAuthority(E),
+        !Pk(E, pkE),
+        Fr(~d),
+        BallotWithOrder(B, C1, C2, C3)
+    ]
+  --[ GenerateBallotOnion(onion) ]->
+    [
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+
+// --- VOTE CASTING ---
+
+rule CastVoteForFirst:
+    [
+        VotesCasted(x),
+        Voter(V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote(V, '1', onion) ]->
+    [
+        VotesCasted(x + '1'),
+        Vote('1', onion)
+    ]
+
+rule CastVoteForSecond:
+    [
+        VotesCasted(x),
+        Voter(V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote(V, '2', onion) ]->
+    [
+        VotesCasted(x + '1'),
+        Vote('2', onion)
+    ]
+
+rule CastVoteForThird:
+    [
+        VotesCasted(x),
+        Voter(V),
+        BallotWithOrderAndOnion(B, C1, C2, C3, onion)
+    ]
+  --[ CastVote(V, '3', onion) ]->
+    [
+        VotesCasted(x + '1'),
+        Vote('3', onion)
+    ]
+
+// --- VOTE PUBLISHING ---
+
+rule PublishVote:
+    [
+        // if all votes are casted
+        VotesCasted(('0' + '1' + '1' + '1' + '1')),
+        Vote(selection, onion)
+    ]
+  --[ PublishVote(selection, onion) ]->
+    [
+        VotesCasted(('0' + '1' + '1' + '1' + '1')),
+        !Board(selection, onion),
+        // We need non persistent facts for votes to count
+        // in order to count every vote only once
+        VoteToCount(selection, onion)
+        //Out(<selection, onion>)
+    ]
+
+// --- VOTE COUNTING ---
+
+rule CountVoteForFirst:
+    [
+        VotesCounted(x),
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        VoteToCount('1', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C1, x)
+    ]
+  --[ CountVote(C1) ]->
+    [
+        VotesCounted(x + '1'),
+        Counter(C1, x + '1')
+    ]
+
+rule CountVoteForSecond:
+    [
+        VotesCounted(x),
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        VoteToCount('2', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C2, x)
+    ]
+  --[ CountVote(C2) ]->
+    [
+        VotesCounted(x + '1'),
+        Counter(C2, x + '1')
+    ]
+
+rule CountVoteForThird:
+    [
+        VotesCounted(x),
+        !ElectionAuthority(E),
+        !Sk(E, skE),
+        VoteToCount('3', aenc(<C1, C2, C3, d>, pk(skE))),
+        Counter(C3, x)
+    ]
+  --[ CountVote(C3) ]->
+    [
+        VotesCounted(x + '1'),
+        Counter(C3, x + '1')
+    ]
+
+// --- RESULT PUBLISHING ---
+
+rule PublishResults:
+    [
+        // Only when all votes were counted results can be published
+        VotesCounted(('0' + '1' + '1' + '1' + '1')),
+        Counter(C, x)
+    ]
+  --[ PublishResult(C, x) ]->
+    [
+        VotesCounted(('0' + '1' + '1' + '1' + '1')),
+        !Result(C, x),
+        Out(<C, x>)
+    ]
+
+
+
+// ---------------- RESTRICTIONS ----------------
+
+restriction RunInitialSetupOnce:
+  "All A1 A2 #i1 #i2. InitialSetup(A1) @i1 & InitialSetup(A2) @i2 ==> #i1=#i2 & A1=A2"
+
+restriction Unique:
+  "All B C1 C2 C3 #i. GenerateBallotWithOrder(B, C1, C2, C3) @i ==> not(C1=C2 | C1=C3 | C2=C3)"
+
+// ---------------- LEMMAS ----------------
+
+lemma ResultsPublished:
+  exists-trace
+  " Ex x1 #i1.
+        PublishResult('C1', x1) @ #i1
+  "
+
+end
+
+// Add interaction with intruder
+
+// Publishing votes: missing some kind of signature
+
+// Search for lemma where votes publishing can be altered
+
+// What is non secure communication channel in this protocol

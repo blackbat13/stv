@@ -1,0 +1,7 @@
+Agent: Intruder
+p_start -> select_candidate(ca)
+p_infection -> infect_vm
+p_capture -> check_vote(v)
+p_ca_eq_v -> notify_ok
+p_ca_not_eq_v -> notify_not_ok
+true -> *

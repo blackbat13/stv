@@ -1,0 +1,7 @@
+Agent: Coercer
+p_start -> coerce(ca)
+p_coerce -> request
+p_request -> move_next
+(p_share1 || p_share2 || p_share3) -> not_punish
+(p_nshare1 || p_nshare2 || p_nshare3) -> punish
+true -> *

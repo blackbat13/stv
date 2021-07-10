@@ -1,0 +1,53 @@
+Agent Voter[2]:
+init: q0
+vote1: q0 -> v1
+vote2: q0 -> v2
+shared gv1_aID: v1 -> gv1  [aID_revealed1=true]
+shared ng1_aID: v1 -> ngv1
+shared gv2_aID: v2 -> gv2  [aID_revealed2=true]
+shared ng2_aID: v2 -> ngv2
+repeatG1: gv1 -> q0
+repeatN1: ngv1 -> q0
+repeatG2: gv2 -> q0
+repeatN2: ngv2 -> q0
+shared stopG1_aID: gv1 -> sg1 [aID_voted1=true]
+shared stopN1_aID: ngv1 -> sn1 [aID_voted1=true]
+shared stopG2_aID: gv2 -> sg2 [aID_voted2=true]
+shared stopN2_aID: ngv2 -> sn2 [aID_voted2=true]
+loopG1: sg1 -> sg1
+loopN1: sn1 -> sn1
+loopG2: sg2 -> sg2
+loopN2: sn2 -> sn2
+
+Agent Coercer[1]:
+init: q0
+shared gv1_Voter1: q0 -> q0
+shared ng1_Voter1: q0 -> q0
+shared gv2_Voter1: q0 -> q0
+shared ng2_Voter1: q0 -> q0
+shared gv1_Voter2: q0 -> q0
+shared ng1_Voter2: q0 -> q0
+shared gv2_Voter2: q0 -> q0
+shared ng2_Voter2: q0 -> q0
+shared stopG1_Voter1: q0 -> q1_Voter1
+shared stopN1_Voter1: q0 -> q1_Voter1
+shared stopG2_Voter1: q0 -> q2_Voter1
+shared stopN2_Voter1: q0 -> q2_Voter1
+shared stopG1_Voter2: q0 -> q1_Voter2
+shared stopN1_Voter2: q0 -> q1_Voter2
+shared stopG2_Voter2: q0 -> q2_Voter2
+shared stopN2_Voter2: q0 -> q2_Voter2
+np1_Voter1: q1_Voter1 -> q0
+np1_Voter2: q1_Voter2 -> q0
+np2_Voter1: q2_Voter1 -> q0
+np2_Voter2: q2_Voter2 -> q0
+pun1_Voter1: q1_Voter1 -> q1p_Voter1 [pun1_1=true]
+pun1_Voter2: q1_Voter2 -> q1p_Voter2 [pun1_2=true]
+pun2_Voter1: q2_Voter1 -> q2p_Voter1 [pun2_1=true]
+pun2_Voter2: q2_Voter2 -> q2p_Voter2 [pun2_2=true]
+return1_Voter1: q1p_Voter1 -> q0
+return1_Voter2: q1p_Voter2 -> q0
+return2_Voter1: q2p_Voter1 -> q0
+return2_Voter2: q2p_Voter2 -> q0
+
+REDUCTION: [pun1_1, pun1_2, pun2_1, pun2_2, Voter1_revealed1, Voter1_revealed2, Voter1_voted1, Voter1_voted2, Voter2_revealedA, Voter2_revealedB, Voter2_votedA, Voter2_votedB]

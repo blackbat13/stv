@@ -1,0 +1,23 @@
+% Simplified version of the 2-stage Voting model
+Agent Voter[1]:
+init: start
+shared wait: start -> voting
+shared vote1: voting -> voted1
+shared vote2: voting -> voted2
+shared pub: voted1 -> fin [aID_win1=True]
+shared pub: voted2 -> fin [aID_win2=True]
+shared loop: fin -> fin
+
+Agent Official[1]:
+init: start
+shared wait: start -> voting
+shared vote1: voting -> pub
+shared vote2: voting -> pub
+np: pub -> pub
+shared pub: pub -> fin
+shared loop: fin -> fin
+
+REDUCTION: [win1]
+COALITION: [Official1]
+PERSISTENT: [Voter1_win1, Voter1_win2]
+FORMULA: <<Official1>>F(win1=True)

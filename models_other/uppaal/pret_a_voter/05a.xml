@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+typedef struct 
+{ 
+  int p; // group Z_p order
+  int alfa; // generator of (Z_p)*
+  int beta;  // beta = alfa^k
+} PK;
+
+typedef struct{
+  int y1, y2; // alfa^r, m*(beta^r)
+} Ciphertext;
+
+// naive power modulo calculation 
+int pow(int a, int b, int c) // a^b mod c
+{
+  if(b==0){
+    return 1;
+  }else{
+    int i, curr = a;
+    for(i=1;i&lt;b;i++){
+      curr=curr*a%c;
+    }
+    return curr;
+  }
+}
+
+
+// config variables
+const int mt_total = 3; // # of mix tellers
+const int dt_total = 3; // # of decr tellers  ( Shamir's Secret (2,3) )
+const int c_total = 3; // # of candidates
+const int v_total = 3; // # of voters
+typedef int[0,v_total-1] voter_t;
+
+const bool with_absorb = true;
+
+const int[0,c_total] C[3] = {0,1,2}; // candidate list
+typedef struct 
+{ 
+  Ciphertext o; // value of "onion" at the bottom of the strip
+  int[0,c_total-1] i; // index of cell with X
+  // signature
+} Receipt;
+
+
+typedef struct{
+  Ciphertext onion;
+  int cl[c_total]; // position -&gt; candidate
+} Ballot;
+
+Ballot ballots[v_total];
+
+
+const int P_b[6][3] = { // permutations of terms
+  { 0,1,2 },
+  { 0,2,1 },
+  { 1,0,2 },
+  { 1,2,0 },
+  { 2,0,1 },
+  { 2,1,0 }
+};
+
+
+const int P_c[6][3] = { // permutations of C
+  { 0,1,2 },
+  { 0,2,1 },
+  { 1,0,2 },
+  { 1,2,0 },
+  { 2,0,1 },
+  { 2,1,0 }
+};
+const int S_c[3][3] = {  // cyclic shifts of C
+  { 0,1,2 },
+  { 1,2,0 },
+  { 2,0,1 } 
+};
+
+chan interract[v_total], show[v_total];
+chan punish[v_total], not_punish[v_total];
+chan cast;
+chan record;
+Receipt recorded, shown;
+
+int mturn;
+int dturn;
+
+int voted = 0;
+int votes = 0;
+int mixes = 0;
+int decryptions = 0;
+
+int mix_i;
+int term_i;
+chan reveal_left[mt_total], reveal_right[mt_total];
+int reveal_rand;
+int reveal_link;
+
+int rnd;
+
+int p = 11;
+int g = 6;
+const PK pub_k = { 11,6,7 }; // ElGamal public key
+const int priv_k = 3;        // ElGamal private key
+// hardcoded key shares
+const int priv_k_shares[dt_total] = {8,2,7};
+const int dt_min = 2;
+int dt_required = dt_min;
+
+
+const int b_cols = 1 + 2*mt_total + dt_min;  
+const int b_rows = v_total; // or v_max
+
+
+int gamma = 6; // group generator for seed to onion encr
+const int onion2seed[11] = {
+  -999,  // gamma^x = 0 NaN
+  0,
+  9,
+  2,
+  8,
+  6,
+  1,
+  3,
+  7,
+  4,
+  5
+};
+
+const int onion2negseed[11] = {
+  -999, //NaN
+  0,
+  1,
+  8,
+  2,
+  4,
+  9,
+  7,
+  3,
+  6,
+  5
+};
+
+const int seed2onion[11]={
+  1,
+  6,
+  3,
+  7,
+  9,
+  10,
+  5,
+  8,
+  4,
+  2,
+  1
+}; // neg_seed2onion[i] = seed2onion[11-i]
+
+// int board[b_cols][b_rows]; // WBB
+Ciphertext board[b_cols][b_rows]; // WBB
+Ciphertext batch[b_rows]; // temporary column values storage
+
+// int board_i[b_cols][b_rows]; // WBB i value part (only for the no absorb case)
+
+Receipt initial_batch[b_rows]; // "initial" column of WBB, in case of absorbed index may be hidden
+// int initial_batch_ptr = 0;
+
+
+// call in the update
+Ciphertext encr(int m, int r, const PK &amp;key){ // m = message, r = randomization factor
+  Ciphertext c;
+  int y1,y2;
+  
+  y1 = pow(key.alfa, r, key.p);  
+  y2 = m*pow(key.beta, r, key.p)%key.p;
+  
+  c.y1 = y1;
+  c.y2=y2;
+  return c;
+}
+
+int decr(Ciphertext &amp;cipher, int key, int p){
+  return (cipher.y2 / pow(cipher.y1, key, p) )%p;
+}
+
+
+/*
+void register1(Receipt &amp;a, int gamma, int r, const PK &amp;key){
+  initial_batch[voted] = a;
+
+  if(with_absorb &amp;&amp; false){
+    // todo: replace with encr call, as the gamma^(ind-s_i) is a msg
+    int y1 =  pow(key.alfa,r,key.p);
+    int y2 = ( pow(key.beta,r,key.p) * pow(gamma, a.i, key.p) * a.o) % key.p; // beta^y * gamma^ind * gamma^(-s), where gamma^(-s) is an onion value
+    
+    board[0][voted].y1 = y1;
+    board[0][voted].y2 = y2;
+  }else{
+    // todo: split into two separate files (w/ and w/o absorb) as the view gets flooded
+    // board[0][voted] = encr(a.o, r, key);
+    // board_i[0][voted] = a.i;
+  }
+  
+  voted++;
+}*/
+
+int[0,4] curr_phase=0; // 0 - ballot preparation, 1 - voting, 2 - mixing, 3 - decryption, 4 - counting
+</declaration><template><name x="5" y="5">Voter</name><parameter>const int[0,v_total-1] v_id</parameter><declaration>// Place local declarations here.
+
+// assosiate ballots[v_id] Ballot with each voter
+
+Receipt receipt; // here onion is same as v_id
+
+bool coercion = false;
+int[0, c_total-1] chosen; // candidate whom voter thinks he voted for
+
+ // ElGamal public key
+bool verify(){
+// reciept_exists &amp;&amp; receipt_correct
+// two parts - verify signature and verify the receipt
+// in this version we omit digital signature part
+  bool pass = exists(i:int[0,v_total-1]) initial_batch[i]==receipt;
+  return pass;
+}
+
+int c_index(int candidate){
+  int j;
+  for(j=0;j&lt;c_total;j++){
+    if ( ballots[v_id].cl[j] == candidate ) return j; // replace with my_ballot variable in next implementation
+  }
+  return -1;
+}</declaration><location id="id0" x="-1344" y="-408"><name x="-1352" y="-400">not_punished</name></location><location id="id1" x="-1920" y="-440"><name x="-1904" y="-424">shown_receipt</name></location><location id="id2" x="-1344" y="-664"><name x="-1352" y="-648">punished</name></location><location id="id3" x="-2752" y="-640"></location><location id="id4" x="-2600" y="-536"><name x="-2640" y="-528">has_ballot</name></location><location id="id5" x="-1520" y="-536"><name x="-1504" y="-528">end</name></location><location id="id6" x="-1656" y="-600"><name x="-1640" y="-600">passed</name></location><location id="id7" x="-1784" y="-536"><name x="-1768" y="-536">verification</name></location><location id="id8" x="-1656" y="-472"><name x="-1640" y="-472">failed</name></location><location id="id9" x="-2064" y="-536"><name x="-2112" y="-528">received_receipt</name></location><location id="id10" x="-2280" y="-536"><name x="-2328" y="-528">marked_choice</name></location><location id="id11" x="-2752" y="-536"><name x="-2768" y="-528">idle</name></location><init ref="id11"/><transition><source ref="id1"/><target ref="id5"/><nail x="-1896" y="-344"/><nail x="-1568" y="-344"/></transition><transition><source ref="id5"/><target ref="id0"/><label kind="guard" x="-1472" y="-432">coercion==true</label><label kind="synchronisation" x="-1472" y="-408">not_punish[v_id]?</label><nail x="-1472" y="-408"/></transition><transition><source ref="id1"/><target ref="id7"/><label kind="guard" x="-1896" y="-464">curr_phase&gt;1</label><nail x="-1792" y="-440"/></transition><transition><source ref="id5"/><target ref="id2"/><label kind="guard" x="-1472" y="-688">coercion==true</label><label kind="synchronisation" x="-1472" y="-664">punish[v_id]?</label><nail x="-1472" y="-664"/></transition><transition><source ref="id9"/><target ref="id1"/><label kind="guard" x="-2040" y="-464">coercion==true</label><label kind="synchronisation" x="-2040" y="-440">show[v_id]!</label><label kind="assignment" x="-2040" y="-424">shown:=receipt</label><nail x="-2056" y="-440"/></transition><transition><source ref="id3"/><target ref="id4"/><label kind="guard" x="-2720" y="-664">curr_phase==1</label><nail x="-2600" y="-640"/></transition><transition><source ref="id11"/><target ref="id3"/><label kind="synchronisation" x="-2848" y="-600">interract[v_id]?</label><label kind="assignment" x="-2848" y="-584">coercion:=true</label></transition><transition><source ref="id11"/><target ref="id4"/><label kind="guard" x="-2720" y="-560">curr_phase==1</label></transition><transition><source ref="id8"/><target ref="id5"/><nail x="-1584" y="-472"/></transition><transition><source ref="id6"/><target ref="id5"/><nail x="-1584" y="-600"/></transition><transition><source ref="id9"/><target ref="id5"/><nail x="-2024" y="-664"/><nail x="-1552" y="-664"/></transition><transition><source ref="id9"/><target ref="id7"/><label kind="guard" x="-1944" y="-560">curr_phase&gt;1</label></transition><transition><source ref="id7"/><target ref="id6"/><label kind="guard" x="-1776" y="-624">verify()==true</label><nail x="-1752" y="-600"/></transition><transition><source ref="id7"/><target ref="id8"/><label kind="guard" x="-1776" y="-472">verify()==false</label><nail x="-1752" y="-472"/></transition><transition><source ref="id10"/><target ref="id9"/><label kind="synchronisation" x="-2224" y="-592">record!</label><label kind="assignment" x="-2224" y="-568">recorded:=receipt</label><nail x="-2248" y="-568"/><nail x="-2096" y="-568"/></transition><transition><source ref="id4"/><target ref="id10"/><label kind="select" x="-2568" y="-600">X: int[0,c_total-1]</label><label kind="assignment" x="-2568" y="-568">receipt.o = ballots[v_id].onion,
+receipt.i = c_index(X),
+chosen = X</label><nail x="-2576" y="-568"/><nail x="-2312" y="-568"/></transition></template><template><name>Mteller</name><parameter>const int[0,2] mt_id</parameter><declaration>int repeats = 2;
+int mix_index;
+int ptr;
+
+int[0,pub_k.p-2] rand_vec[v_total]; // used for batch
+int rand_ptr = 0;
+
+int rand_factor[2][v_total]; // used for audit
+int link_map[2][v_total]; // to&lt;-from, from-&gt;to
+
+// todo: each term should have its own encr_r randomization (rather should)
+void do_mixing(int mix_r,const PK &amp;key){
+  int i,ptr = 1 + 2*mixes + (repeats==2 ? 0 : 1);
+  int post_mix_i;
+  int encr_r;
+
+  for(i=0;i&lt;v_total;i++){
+    post_mix_i = P_b[mix_r][i];
+    encr_r = rand_vec[i];     // each term in batch has it's own encr_r randomization factor
+
+    board[ptr][post_mix_i].y1 = board[ptr - 1][i].y1 * pow(key.alfa, encr_r, key.p) % key.p;
+    board[ptr][post_mix_i].y2 = board[ptr - 1][i].y2 * pow(key.beta, encr_r, key.p) % key.p;
+
+    rand_factor[(repeats==2 ? 0 : 1)][i] = rand_vec[i];
+    if(repeats==2){
+      link_map[0][post_mix_i] = i;
+    }else{
+      link_map[1][i] = post_mix_i;
+    }
+  }
+}
+
+
+</declaration><location id="id12" x="-1520" y="-680"></location><location id="id13" x="-1520" y="-400"><name x="-1536" y="-384">halt</name></location><location id="id14" x="-1520" y="-576"><name x="-1552" y="-568">mixing</name></location><location id="id15" x="-1696" y="-576"><name x="-1728" y="-568">idle</name></location><init ref="id15"/><transition><source ref="id13"/><target ref="id13"/><label kind="synchronisation" x="-1488" y="-456">reveal_right[mt_id]?</label><label kind="assignment" x="-1488" y="-440">reveal_rand = rand_factor[1][term_i],
+reveal_link = link_map[1][term_i]</label><nail x="-1456" y="-304"/><nail x="-1352" y="-304"/><nail x="-1352" y="-400"/></transition><transition><source ref="id13"/><target ref="id13"/><label kind="synchronisation" x="-1760" y="-456">reveal_left[mt_id]?</label><label kind="assignment" x="-1760" y="-440">reveal_rand = rand_factor[0][term_i],
+reveal_link = link_map[0][term_i]</label><nail x="-1608" y="-304"/><nail x="-1704" y="-304"/><nail x="-1704" y="-400"/></transition><transition><source ref="id12"/><target ref="id14"/><label kind="select" x="-1488" y="-656">r2: int[0,5]</label><label kind="guard" x="-1488" y="-680">rand_ptr==v_total</label><label kind="assignment" x="-1488" y="-640">do_mixing(r2, pub_k),
+repeats--</label><nail x="-1488" y="-624"/></transition><transition><source ref="id12"/><target ref="id12"/><label kind="select" x="-1552" y="-768">r1: int[0,pub_k.p-2]</label><label kind="guard" x="-1552" y="-792">rand_ptr&lt;v_total</label><label kind="assignment" x="-1552" y="-752">rand_vec[rand_ptr++] := r1</label><nail x="-1488" y="-728"/><nail x="-1552" y="-728"/></transition><transition><source ref="id14"/><target ref="id12"/><label kind="guard" x="-1616" y="-672">repeats&gt;0</label><label kind="assignment" x="-1616" y="-656">rand_ptr=0</label><nail x="-1552" y="-624"/></transition><transition><source ref="id14"/><target ref="id13"/><label kind="guard" x="-1600" y="-520">repeats==0</label><label kind="assignment" x="-1584" y="-504">mixes++</label></transition><transition><source ref="id15"/><target ref="id14"/><label kind="guard" x="-1664" y="-616">curr_phase==2 
+&amp;&amp; mixes==mt_id</label></transition></template><template><name>Dteller</name><parameter>const int[0,dt_total - 1] dt_id</parameter><declaration>int k_share = priv_k_shares[dt_id];
+int x = dt_id+1;
+
+// 1,8
+// 2,2
+// 3,7
+
+// Shamir (2,3) Threshold scheme
+
+
+
+void perform_decr(int p){
+  int i,ptr = 1 + 2*mt_total + decryptions;
+  for(i=0;i&lt;v_total;i++){
+    board[ptr][i].y1 = board[ptr-1][i].y1;
+    board[ptr][i].y2 = board[ptr-1][i].y2 * pow( board[ptr-1][i].y1, p-1 - k_share, p) % p;
+  }
+}</declaration><location id="id16" x="-992" y="-56"><name x="-976" y="-48">refused</name></location><location id="id17" x="-992" y="-288"><name x="-1024" y="-320">participating</name></location><location id="id18" x="-680" y="-168"><name x="-690" y="-198">halt</name></location><location id="id19" x="-912" y="-168"><name x="-912" y="-200">decrypting</name></location><location id="id20" x="-1088" y="-168"><name x="-1104" y="-200">idle</name></location><init ref="id20"/><transition><source ref="id20"/><target ref="id16"/><label kind="guard" x="-1240" y="-96">curr_phase==3 &amp;&amp; dt_required&gt;0</label></transition><transition><source ref="id17"/><target ref="id19"/><label kind="guard" x="-936" y="-272">dturn==-1</label><label kind="assignment" x="-936" y="-248">dturn:=dt_id,
+perform_decr(pub_k.p)</label></transition><transition><source ref="id20"/><target ref="id17"/><label kind="guard" x="-1240" y="-280">curr_phase==3 &amp;&amp; dt_required&gt;0</label><label kind="assignment" x="-1112" y="-264">dt_required--</label></transition><transition><source ref="id19"/><target ref="id18"/><label kind="assignment" x="-872" y="-168">dturn:=-1, decryptions++</label></transition></template><template><name>Sys</name><declaration>int[0, pub_k.p-1] r_vec[v_total];
+int[0,v_total] r_ptr=0;
+bool ballots_ready = false;
+bool results_ready = false;
+int vote_sum[c_total];
+
+bool generate_ballots(const PK &amp;key){     // assuming seed = v_id (here "i)"
+  int i,j; 
+  for(i=0;i&lt;v_total;i++){
+//    ballots[i].onion = encr(c_total - 1 - i, r_vec[i], key);
+    ballots[i].onion = encr(pow(gamma, p - 1 - i, p), r_vec[i], key); // gamma^(-s) == gamma^(p-1) * gamma^(-s) // gamma^(p-1) == 1
+    for(j=0;j&lt;c_total;j++){
+      ballots[i].cl[j] = S_c[(3-i)%3][j]; // replace with P_c for other implementation
+    }
+  }
+  return true;
+}
+
+void absorb_old(int r1, const PK&amp; pub_k, Receipt&amp; recorded){ 
+  /*
+  int y1 = pow(pub_k.alfa,r1,p);
+  int y2 = pow(pub_k.beta,r1,p) * ( recorded.o * pow(g, recorded.i, p) );
+   
+  board[0][voted].y1 = y1;
+  board[0][voted].y2 = y2%p;
+  
+  voted++;
+  */
+}
+
+void absorb_i(Receipt&amp; recorded){ 
+  board[0][voted].y1 = recorded.o.y1;
+  board[0][voted].y2 = recorded.o.y2 * pow(g, recorded.i, p) % p; ; 
+  voted++;
+}
+
+
+bool post_results(){
+  int i = b_cols-1,j,m;
+  int tmp;
+  for(j=0;j&lt;c_total;j++){
+    vote_sum[j]=0; // pre-init with zeroes
+  }
+  
+  for(j=0;j&lt;b_rows;j++){
+    m = board[i][j].y2; // gamma^(r-s)
+    if(m == 0) return false; // throw error, cannot dlog zero
+    tmp = onion2seed[m];
+    //if(tmp &gt; c_total)tmp = tmp - ((p-1)%c_total);
+    if(tmp &gt;= c_total)tmp = tmp - 1;
+    vote_sum[( tmp )%c_total]++; // candidate == (r-s)%c_total
+  }
+/*
+0 &lt;= r &lt; c_total
+0 &lt;= s &lt; 9999999
+-9999 &lt;= r-s &lt; c_total
+
+thus, if (r-s) is above c_total, it was multiplied by  ( g^(p-1) = 1 ) and should be reverted back to negative value
+
+*/  
+
+
+  return true;
+}</declaration><location id="id21" x="-632" y="-320"><name x="-680" y="-304">receipts_posted</name></location><location id="id22" x="-992" y="-320"><name x="-1120" y="-304">ballot_generation</name></location><location id="id23" x="-96" y="-320"><name x="-120" y="-304">results</name></location><location id="id24" x="-288" y="-320"><name x="-320" y="-304">decryption</name></location><location id="id25" x="-504" y="-320"><name x="-520" y="-304">mixing</name></location><location id="id26" x="-800" y="-320"><name x="-816" y="-304">voting</name></location><init ref="id22"/><transition><source ref="id23"/><target ref="id23"/><label kind="guard" x="-136" y="-424">!results_ready</label><label kind="assignment" x="-232" y="-408">results_ready = post_results()</label><nail x="-56" y="-384"/><nail x="-136" y="-384"/></transition><transition><source ref="id22"/><target ref="id22"/><label kind="guard" x="-1032" y="-256">r_ptr&gt;=v_total</label><label kind="assignment" x="-1032" y="-240">ballots_ready = generate_ballots(pub_k)</label><nail x="-952" y="-256"/><nail x="-1032" y="-256"/></transition><transition><source ref="id22"/><target ref="id22"/><label kind="select" x="-1032" y="-432">R: int[0,pub_k.p-1]</label><label kind="guard" x="-1032" y="-456">r_ptr&lt;v_total</label><label kind="assignment" x="-1032" y="-408">r_vec[r_ptr++]=R</label><nail x="-952" y="-384"/><nail x="-1032" y="-384"/></transition><transition><source ref="id26"/><target ref="id21"/><label kind="guard" x="-768" y="-344">voted == v_total</label><label kind="assignment" x="-768" y="-320">curr_phase:=2</label></transition><transition><source ref="id26"/><target ref="id26"/><label kind="synchronisation" x="-840" y="-440">record?</label><label kind="assignment" x="-840" y="-424">initial_batch[voted] = recorded,
+absorb_i(recorded)</label><nail x="-760" y="-384"/><nail x="-840" y="-384"/></transition><transition><source ref="id22"/><target ref="id26"/><label kind="guard" x="-944" y="-344">ballots_ready</label><label kind="assignment" x="-944" y="-320">curr_phase:=1</label></transition><transition><source ref="id24"/><target ref="id23"/><label kind="guard" x="-264" y="-344">decryptions==dt_min</label><label kind="assignment" x="-252" y="-320">curr_phase:=4</label></transition><transition><source ref="id25"/><target ref="id24"/><label kind="guard" x="-456" y="-344">mixes==mt_total</label><label kind="assignment" x="-456" y="-320">dturn:=-1,
+curr_phase:=3</label></transition><transition><source ref="id21"/><target ref="id25"/></transition></template><template><name>Coercer</name><declaration>bool coercion[v_total];
+
+bool seen[v_total];
+// Receipt shown_receipts[v_total];</declaration><location id="id27" x="-864" y="0"><name x="-904" y="-32">loop</name></location><init ref="id27"/><transition><source ref="id27"/><target ref="id27"/><label kind="select" x="-1120" y="32">v_id: int[0,v_total-1]</label><label kind="guard" x="-1120" y="64">coercion[v_id]</label><label kind="synchronisation" x="-1120" y="80">not_punish[v_id]!</label><label kind="assignment" x="-1120" y="104">coercion[v_id]=false</label><nail x="-896" y="128"/><nail x="-992" y="128"/><nail x="-992" y="32"/></transition><transition><source ref="id27"/><target ref="id27"/><label kind="select" x="-720" y="32">v_id: int[0,v_total-1]</label><label kind="guard" x="-720" y="64">coercion[v_id]</label><label kind="synchronisation" x="-720" y="80">punish[v_id]!</label><label kind="assignment" x="-720" y="104">coercion[v_id]=false</label><nail x="-736" y="32"/><nail x="-736" y="128"/><nail x="-832" y="128"/></transition><transition><source ref="id27"/><target ref="id27"/><label kind="select" x="-728" y="-144">v_id: int[0,v_total-1]</label><label kind="guard" x="-728" y="-120">coercion[v_id]</label><label kind="synchronisation" x="-728" y="-104">show[v_id]?</label><label kind="assignment" x="-728" y="-80">seen[v_id]=true</label><nail x="-832" y="-128"/><nail x="-736" y="-128"/><nail x="-736" y="-32"/></transition><transition><source ref="id27"/><target ref="id27"/><label kind="select" x="-1120" y="-144">v_id: int[0,v_total-1]</label><label kind="synchronisation" x="-1120" y="-104">interract[v_id]!</label><label kind="assignment" x="-1120" y="-80">coercion[v_id]=true</label><nail x="-992" y="-32"/><nail x="-992" y="-128"/><nail x="-896" y="-128"/></transition></template><template><name>Auditor</name><declaration>// randomized partial checking
+
+int half = b_rows/2;
+int curr = 0;
+
+
+const int comb_total = 3;
+int comb[3][2] = {{0,1}, {0,2}, {1,2}}; // Cnk where k = math.ceil(n/2)
+int chosen[2];
+
+bool audit_pass = true;
+
+bool check_mix(bool left, const PK&amp; key){
+  bool res = false;
+  int ptr = 1 + 2*mix_i;
+  
+  Ciphertext src = left ? board[ptr-1][reveal_link] : board[ptr][term_i];
+  Ciphertext trg = left ? board[ptr][term_i] : board[ptr+1][reveal_link];
+  
+  res = ( trg.y1 == ( src.y1 * pow(key.alfa, reveal_rand, key.p) % key.p) &amp;&amp; trg.y2 == ( src.y2 * pow(key.beta, reveal_rand, key.p) % key.p ) );
+
+
+  audit_pass = audit_pass &amp;&amp; res;
+  return res;
+}</declaration><location id="id28" x="-736" y="-440"><name x="-744" y="-424">mix_fail</name></location><location id="id29" x="-736" y="-256"><name x="-744" y="-240">mix_pass</name></location><location id="id30" x="-1104" y="-440"><name x="-1144" y="-432">auditing_mix_i</name></location><location id="id31" x="-1104" y="-576"></location><location id="id32" x="-944" y="-576"></location><location id="id33" x="-1264" y="-576"></location><location id="id34" x="-1344" y="-256"></location><location id="id35" x="-1104" y="-312"><name x="-1224" y="-312">auditing_mixes</name></location><init ref="id34"/><transition><source ref="id30"/><target ref="id28"/><label kind="guard" x="-896" y="-464">!audit_pass</label></transition><transition><source ref="id35"/><target ref="id29"/><label kind="guard" x="-896" y="-280">mix_i==mt_total</label><nail x="-1032" y="-256"/></transition><transition><source ref="id30"/><target ref="id31"/><label kind="guard" x="-1168" y="-528">curr&lt;half</label><label kind="assignment" x="-1096" y="-528">term_i = chosen[curr++]</label></transition><transition><source ref="id31"/><target ref="id32"/><label kind="synchronisation" x="-1080" y="-600">reveal_right[mix_i]!</label></transition><transition><source ref="id31"/><target ref="id33"/><label kind="synchronisation" x="-1240" y="-600">reveal_left[mix_i]!</label></transition><transition><source ref="id32"/><target ref="id30"/><label kind="assignment" x="-936" y="-552">check_mix(false, pub_k)</label><nail x="-944" y="-512"/></transition><transition><source ref="id33"/><target ref="id30"/><label kind="assignment" x="-1416" y="-552">check_mix(true, pub_k)</label><nail x="-1264" y="-512"/></transition><transition><source ref="id34"/><target ref="id35"/><label kind="assignment" x="-1280" y="-256">mix_i=0</label><nail x="-1168" y="-256"/></transition><transition><source ref="id30"/><target ref="id35"/><label kind="guard" x="-1104" y="-376">audit_pass &amp;&amp; curr==half</label><label kind="assignment" x="-1000" y="-360">mix_i++</label><nail x="-944" y="-416"/><nail x="-944" y="-312"/></transition><transition><source ref="id35"/><target ref="id30"/><label kind="select" x="-1256" y="-408">R: int[0,comb_total-1]</label><label kind="guard" x="-1256" y="-384">mix_i&lt;mixes</label><label kind="assignment" x="-1256" y="-352">curr=0,
+chosen=comb[R]</label><nail x="-1264" y="-312"/><nail x="-1264" y="-416"/></transition></template><system>// Place template instantiations here.
+
+// List one or more processes to be composed into a system.
+
+system Sys, Auditor, Voter, Coercer, Mteller, Dteller;</system></nta>

@@ -1,0 +1,22 @@
+theory TestFnSymb
+begin
+
+functions: fn/1
+
+rule Create:
+    [
+
+    ]
+  --[CreateAgent($A)]->
+    [
+        Agent($A)
+    ]
+
+lemma KnowFn:
+    exists-trace
+    " Ex A #i #j.
+        CreateAgent(A) @ #i &
+        K(fn(A)) @ #j
+    "
+
+end

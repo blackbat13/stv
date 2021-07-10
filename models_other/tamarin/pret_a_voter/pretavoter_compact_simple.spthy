@@ -1,0 +1,161 @@
+theory PretaVoterCompactSimple
+begin
+
+builtins: asymmetric-encryption
+
+// Note: Every Out rule is used only for adversary
+
+// ---------------- FUNCTIONS ----------------
+
+functions: select/2, iselect/2, s/1, z/0
+
+equations:
+    select(s(z), <x.1, x.2>) = x.1,
+    select(s(s(z)), <x.1, x.2>) = x.2,
+    iselect(<x.1, x.2>, x.1) = s(z),
+    iselect(<x.1, x.2>, x.2) = s(s(z))
+
+// ---------------- RULES ----------------
+
+// --- INITIAL GENERATION ---
+
+rule InitialSetup:
+    [
+        Fr(~f),
+        Fr(~d1),
+        Fr(~d2)
+    ]
+  --[ InitialSetup(), RunOnce() ]->
+    [
+        // -- Generate Voters --
+        Voter('v1', diff('c1', 'c2')),
+        Voter('v2', diff('c2', 'c1')),
+
+        !ElectionAuthority($E),
+        !Sk($E, ~f),
+        !Pk($E, pk(~f)),
+
+        // -- Generate Ballots --
+        BallotWithOrderAndOnion(diff('c1', 'c2'), diff('c2', 'c1'), aenc(<diff('c1', 'c2'), diff('c2', 'c1'), ~d1>, pk(~f))),
+        BallotWithOrderAndOnion(diff('c2', 'c1'), diff('c1', 'c2'), aenc(<diff('c2', 'c1'), diff('c1', 'c2'), ~d2>, pk(~f))),
+
+        Counter('c1', z),
+        Counter('c2', z)
+    ]
+
+// --- VOTE CASTING ---
+/*
+rule CastVotes:
+    [
+        Voter(V1, ch1),
+        Voter(V2, ch2), // Voter casting his vote
+        BallotWithOrderAndOnion(ch1, c1, onion1), // Ballot given to the voter
+        BallotWithOrderAndOnion(c2, ch2, onion2)
+    ]
+  --[ CastVote(ch1, onion1), CastVote(ch2, onion2) ]->
+    [
+        Vote(s(z), onion1), // Actual vote, used for publishing and counting
+        Vote(s(s(z)), onion2),
+        Receipt(V1, s(z), onion1), // A receipt for voter to verify that his vote was casted properly
+        Receipt(V2, s(s(z)), onion2)
+    ]
+    */
+rule CastVote:
+    let
+        selection = iselect(<C1,C2>, ch)
+    in
+    [
+        Voter(V, ch),
+        BallotWithOrderAndOnion(C1, C2, onion)
+    ]
+  --[ CastVote(selection, onion) ]->
+    [
+        Vote(selection, onion),
+        Receipt(V, selection, onion)
+    ]
+
+// --- VOTE PUBLISHING AND COUNTING ---
+
+/*
+rule PublishAndCountVote:
+    let
+        chosen = select(selection, <C1, C2>) // Get selected candidate from the onion order
+        onion = aenc(<C1, C2, d>, pk(skE))
+    in
+    [
+        !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
+        !Sk(E, skE), // Private key of the election authority
+        Vote(selection, onion), // Casted vote
+        Counter(chosen, x) // Counter for the candidate chosen in the counted vote
+    ]
+  --[ PublishVote(selection, onion), CountVote(chosen) ]->
+    [
+        !Board(selection, onion), // Publish vote on the bulletin board
+        Out(<selection, onion>),
+        Counter(chosen, s(x))
+    ]
+    */
+
+rule PublishAndCountVotes:
+    let
+        chosen1 = select(selection1, <C1.1, C2.1>) // Get selected candidate from the onion order
+        onion1 = aenc(<C1.1, C2.1, d.1>, pk(skE))
+        chosen2 = select(selection2, <C1.2, C2.2>)
+        onion2 = aenc(<C1.2, C2.2, d.2>, pk(skE))
+    in
+    [
+        !ElectionAuthority(E), // Election authority, that has key for decrypting the onions
+        !Sk(E, skE), // Private key of the election authority
+        Vote(selection1, onion1), // Casted vote
+        Vote(selection2, onion2), // Casted vote
+        Counter(chosen1, x1), // Counter for the candidate chosen in the counted vote
+        Counter(chosen2, x2)
+    ]
+  --[ PublishVote(selection1, onion1), CountVote(chosen1), PublishVote(selection2, onion2), CountVote(chosen2) ]->
+    [
+        !Board(selection1, onion1),
+        !Board(selection2, onion2), // Publish vote on the bulletin board
+        Counter(chosen1, s(x1)),
+        Counter(chosen2, s(x2))
+    ]
+
+// --- RESULT PUBLISHING ---
+
+rule PublishResults:
+    [
+        // Ensure that are votes are published
+        !Board(selection1, onion1),
+        !Board(selection2, onion2),
+        Counter(C, x) // Get counter for the candidate
+    ]
+  --[ PublishResult(C, x) ]->
+    [
+        !Result(C, x), // Published result
+        Out(<C, x>)
+    ]
+
+// --- VERIFYING VOTES ---
+/*
+rule VerifyVote:
+    [
+        Receipt(V, selection, onion), // Receipt form the casting phase
+        !Board(selection, onion) // Information published on the bulletin board
+    ]
+  --[ VerifyVote(V, selection, onion) ]->
+    [
+    ]
+*/
+
+// ---------------- RESTRICTIONS ----------------
+
+restriction RunInitialSetupOnce:
+  "All #i1 #i2. RunOnce() @i1 & RunOnce() @i2 ==> #i1=#i2"
+
+// ---------------- LEMMAS ----------------
+
+end
+
+
+# Utworzyć różne permutacje zasady liczenia głosów (osobny dla każdej permutacji) - za pomocą skryptu
+# Sprawdzić dla 2v, 2k, a potem dla 3v,3k (i innych układów)
+# Najpierw bez Out

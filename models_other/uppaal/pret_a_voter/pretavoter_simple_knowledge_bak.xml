@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+
+// config variables
+const int mt_total = 1; // # of mix tellers
+const int dt_total = 1; // # of decr tellers  ( Shamir's Secret (2,3) )
+const int v_total = 2; // # of voters
+
+const int c_total = 2; // # of candidates
+const int z_order = 7;
+
+typedef int[0,c_total-1] c_t;
+typedef int[0,v_total-1] v_t;
+typedef int[0,z_order-1] z_t;
+
+const z_t batch_rand[21][2] = {{0,1},{0,2},{0,3},{0,4},{0,5},{0,6},{1,2},{1,3},{1,4},{1,5},{1,6},{2,3},{2,4},{2,5},{2,6},{3,4},{3,5},{3,6},{4,5},{4,6},{5,6}};
+
+const struct{
+  z_t a; // alfa
+  z_t b; // beta = alfa^k
+}pk= { 3, 6 }; // public key for secret k=3
+
+typedef struct{
+  z_t y1, y2; // a pair of (a^r, m*(b^r)) where m=message, r=random
+} Ciphertext;
+
+const c_t C[c_total] = {0,1}; // candidate list
+
+// naive power modulo calculation in Z_p
+int zpow(z_t a, int b) // a^b mod p
+{
+  if(b==0){
+    return 1;
+  }else{
+    z_t x=a;
+    int i;
+    if(b&lt;0)b=(z_order - 1)*(-b);
+    b = b%(z_order - 1); // assuming p is prime
+    for (i=1;i&lt;b;i++){
+      x=(x*a)%z_order;
+    }
+    return x;
+  }
+}
+
+typedef struct 
+{ 
+  Ciphertext o; // value of "onion" at the bottom of the strip
+  c_t i; // index of cell with X
+} Receipt;
+
+
+typedef struct{
+  Ciphertext onion;
+  c_t cl[c_total]; // position -&gt; candidate
+} Ballot;
+
+
+const int P_b[2][c_total] = { 
+  { 0,1 },
+  { 1,0 }
+};
+
+const int P_c[2][c_total] = { 
+  { 0,1 },
+  { 1,0 }
+};
+
+
+//Coercer-Voter channels
+chan punish1, not_punish1;
+chan show1;
+chan nshow1;
+
+chan rpunish1, rnot_punish1;
+chan rshow1;
+chan rnshow1;
+
+//Voter-Sys channels
+chan cast;
+chan record;
+Receipt recorded;
+
+chan rcast;
+chan rrecord;
+
+const int b_cols = 1 + 2*mt_total + dt_total;  
+const int b_rows = v_total;
+
+typedef int[0,b_cols-1] b_j; // board col index 
+typedef int[0,b_rows-1] b_i; // board row index
+
+Ciphertext board[b_cols][b_rows]; // WBB
+Ciphertext batch[b_rows]; // temporary column values storage
+
+const int dlog[7]={-999,0,2,1,4,5,3};
+
+
+Ballot ballots[v_total];
+Receipt initial_batch[b_rows]; // "initial" column of WBB, in case of absorbed index may be hidden
+
+Ciphertext encr(z_t m, int r){ // m = message, r = randomization factor
+  Ciphertext c;
+  
+  c.y1 = zpow( pk.a, r);
+  c.y2 = zpow( pk.b, r) * m % z_order;
+  
+  return c;
+}
+
+z_t decr(Ciphertext &amp;c, int key){
+  return (c.y2 * zpow(c.y1, -key) )%z_order;
+}
+
+
+broadcast chan v_phase, m_phase, d_phase, c_phase;
+
+broadcast chan rv_phase, rm_phase, rd_phase, rc_phase;</declaration><template><name x="5" y="5">Voter1</name><declaration>// assosiate ballots[v_id] Ballot with each voter
+
+Receipt receipt; // here onion is same as v_id
+
+c_t chosen; // candidate whom voter thinks he voted for
+
+c_t c_index(c_t target){
+  for (cell_i: c_t){
+    if ( ballots[0].cl[cell_i] == target ) return cell_i; // replace with my_ballot variable in next implementation
+  }
+  return -1; // results in rangeException throw
+}
+
+bool rev;</declaration><location id="id0" x="-2336" y="-72"><name x="-2346" y="-102">rshow_p_1</name></location><location id="id1" x="-2432" y="-72"><name x="-2442" y="-102">rshow_np_1</name></location><location id="id2" x="-2552" y="-80"><name x="-2562" y="-110">rnshow_p_1</name></location><location id="id3" x="-2640" y="-80"><name x="-2650" y="-110">rnshow_np_1</name></location><location id="id4" x="-2888" y="-80"><name x="-2898" y="-110">rshow_p_0</name></location><location id="id5" x="-2976" y="-80"><name x="-2986" y="-110">rshow_np_0</name></location><location id="id6" x="-3104" y="-80"><name x="-3114" y="-110">rnshow_p_0</name></location><location id="id7" x="-3176" y="-80"><name x="-3186" y="-110">rnshow_np_0</name></location><location id="id8" x="-2352" y="-224"><name x="-2362" y="-254">rshow_1</name></location><location id="id9" x="-2552" y="-224"><name x="-2562" y="-254">rnot_show_1</name></location><location id="id10" x="-2904" y="-224"><name x="-2914" y="-254">rshow_0</name></location><location id="id11" x="-3072" y="-224"></location><location id="id12" x="-3072" y="-224"><name x="-3082" y="-254">rnot_show_0</name></location><location id="id13" x="-2440" y="-344"><name x="-2450" y="-374">rreceived_receipt_1</name></location><location id="id14" x="-2984" y="-360"><name x="-2994" y="-390">rreceived_receipt_0</name></location><location id="id15" x="-2552" y="-584"><name x="-2562" y="-614">rmarked_choice_1</name></location><location id="id16" x="-2856" y="-584"><name x="-2866" y="-614">rmarked_choice_0</name></location><location id="id17" x="-2688" y="-744"><name x="-2698" y="-774">rhas_ballot</name></location><location id="id18" x="-3872" y="-80"><name x="-3882" y="-110">nshow_np_1</name></location><location id="id19" x="-3280" y="-80"><name x="-3290" y="-110">show_p_1</name></location><location id="id20" x="-3472" y="-80"><name x="-3482" y="-110">show_np_1</name></location><location id="id21" x="-3728" y="-80"><name x="-3738" y="-110">nshow_p_1</name></location><location id="id22" x="-3368" y="-248"><name x="-3378" y="-278">show_1</name></location><location id="id23" x="-3768" y="-248"><name x="-3778" y="-278">not_show_1</name></location><location id="id24" x="-3568" y="-424"><name x="-3578" y="-454">received_receipt_1</name></location><location id="id25" x="-3688" y="-600"><name x="-3698" y="-630">marked_choice_1</name></location><location id="id26" x="-4720" y="-64"><name x="-4730" y="-94">nshow_np_0</name></location><location id="id27" x="-4528" y="-72"><name x="-4538" y="-102">nshow_p_0</name></location><location id="id28" x="-4392" y="-88"><name x="-4402" y="-118">show_np_0</name></location><location id="id29" x="-4240" y="-88"><name x="-4250" y="-118">show_p_0</name></location><location id="id30" x="-4584" y="-208"><name x="-4594" y="-238">not_show_0</name></location><location id="id31" x="-4312" y="-224"><name x="-4322" y="-254">show_0</name></location><location id="id32" x="-3896" y="-768"><name x="-3872" y="-776">has_ballot</name></location><location id="id33" x="-4352" y="-424"><name x="-4472" y="-416">received_receipt_0</name></location><location id="id34" x="-4152" y="-616"><name x="-4200" y="-608">marked_choice_0</name></location><location id="id35" x="-3896" y="-880"><name x="-3936" y="-880">idle</name></location><init ref="id35"/><transition><source ref="id26"/><target ref="id7"/><label kind="assignment" x="-4008" y="-72">rev=true</label><nail x="-4448" y="8"/><nail x="-4448" y="8"/></transition><transition><source ref="id27"/><target ref="id6"/><label kind="assignment" x="-3876" y="-76">rev=true</label><nail x="-4120" y="8"/><nail x="-4120" y="8"/></transition><transition><source ref="id28"/><target ref="id5"/><label kind="assignment" x="-3744" y="-84">rev=true</label><nail x="-3904" y="8"/><nail x="-3904" y="8"/></transition><transition><source ref="id29"/><target ref="id4"/><label kind="assignment" x="-3624" y="-84">rev=true</label><nail x="-3656" y="16"/></transition><transition><source ref="id18"/><target ref="id3"/><label kind="assignment" x="-3316" y="-80">rev=true</label><nail x="-3408" y="16"/><nail x="-3408" y="16"/></transition><transition><source ref="id21"/><target ref="id2"/><label kind="assignment" x="-3200" y="-80">rev=true</label><nail x="-3208" y="24"/><nail x="-3208" y="24"/></transition><transition><source ref="id20"/><target ref="id1"/><label kind="assignment" x="-3012" y="-76">rev=true</label><nail x="-2936" y="24"/><nail x="-2936" y="24"/></transition><transition><source ref="id19"/><target ref="id0"/><label kind="assignment" x="-2868" y="-76">rev=true</label><nail x="-2712" y="32"/></transition><transition><source ref="id30"/><target ref="id11"/><label kind="assignment" x="-3888" y="-216">rev=true</label><nail x="-3400" y="-288"/></transition><transition><source ref="id31"/><target ref="id10"/><label kind="assignment" x="-3668" y="-224">rev=true</label><nail x="-3008" y="-120"/></transition><transition><source ref="id23"/><target ref="id9"/><label kind="assignment" x="-3220" y="-236">rev=true</label><nail x="-2728" y="-120"/><nail x="-2728" y="-120"/></transition><transition><source ref="id22"/><target ref="id8"/><label kind="assignment" x="-2920" y="-236">rev=true</label><nail x="-2464" y="-128"/><nail x="-2464" y="-128"/></transition><transition><source ref="id33"/><target ref="id14"/><label kind="assignment" x="-3728" y="-392">rev=true</label><nail x="-3168" y="-488"/></transition><transition><source ref="id24"/><target ref="id13"/><label kind="assignment" x="-3064" y="-384">rev=true</label><nail x="-2608" y="-272"/></transition><transition><source ref="id34"/><target ref="id16"/><label kind="assignment" x="-3564" y="-600">rev=true</label><nail x="-3048" y="-680"/></transition><transition><source ref="id25"/><target ref="id15"/><label kind="assignment" x="-3180" y="-592">rev=true</label><nail x="-2616" y="-512"/></transition><transition><source ref="id32"/><target ref="id17"/><label kind="assignment" x="-3352" y="-756">rev=true</label></transition><transition><source ref="id17"/><target ref="id35"/></transition><transition><source ref="id15"/><target ref="id17"/></transition><transition><source ref="id13"/><target ref="id15"/><label kind="synchronisation" x="-2556" y="-479">rrecord!</label></transition><transition><source ref="id9"/><target ref="id13"/><label kind="synchronisation" x="-2556" y="-299">rnshow1!</label></transition><transition><source ref="id8"/><target ref="id13"/><label kind="synchronisation" x="-2456" y="-299">rshow1!</label></transition><transition><source ref="id0"/><target ref="id8"/><label kind="synchronisation" x="-2404" y="-163">rpunish1?</label></transition><transition><source ref="id1"/><target ref="id8"/><label kind="synchronisation" x="-2452" y="-163">rnot_punish1?</label></transition><transition><source ref="id2"/><target ref="id9"/><label kind="synchronisation" x="-2612" y="-167">rpunish1?</label></transition><transition><source ref="id3"/><target ref="id9"/><label kind="synchronisation" x="-2656" y="-167">rnot_punish1?</label></transition><transition><source ref="id16"/><target ref="id17"/></transition><transition><source ref="id14"/><target ref="id16"/><label kind="synchronisation" x="-2980" y="-487">rrecord!</label></transition><transition><source ref="id11"/><target ref="id14"/><label kind="synchronisation" x="-3088" y="-307">rnshow1!</label></transition><transition><source ref="id10"/><target ref="id14"/><label kind="synchronisation" x="-3004" y="-307">rshow1!</label></transition><transition><source ref="id4"/><target ref="id10"/><label kind="synchronisation" x="-2956" y="-167">rpunish1?</label></transition><transition><source ref="id5"/><target ref="id10"/><label kind="synchronisation" x="-3000" y="-167">rnot_punish1?</label></transition><transition><source ref="id6"/><target ref="id12"/><label kind="synchronisation" x="-3148" y="-167">rpunish1?</label></transition><transition><source ref="id12"/><target ref="id11"/></transition><transition><source ref="id7"/><target ref="id12"/><label kind="synchronisation" x="-3184" y="-167">rnot_punish1?</label></transition><transition><source ref="id23"/><target ref="id18"/><label kind="synchronisation" x="-3920" y="-184">not_punish1?</label></transition><transition><source ref="id22"/><target ref="id19"/><label kind="synchronisation" x="-3312" y="-184">punish1?</label></transition><transition><source ref="id22"/><target ref="id20"/><label kind="synchronisation" x="-3512" y="-184">not_punish1?</label></transition><transition><source ref="id24"/><target ref="id22"/><label kind="synchronisation" x="-3528" y="-351">show1!</label></transition><transition><source ref="id23"/><target ref="id21"/><label kind="synchronisation" x="-3744" y="-192">punish1?</label></transition><transition><source ref="id24"/><target ref="id23"/><label kind="synchronisation" x="-3728" y="-351">nshow1!</label></transition><transition><source ref="id25"/><target ref="id24"/><label kind="synchronisation" x="-3688" y="-527">record!</label><label kind="assignment" x="-3592" y="-512">recorded=receipt</label></transition><transition><source ref="id32"/><target ref="id25"/><label kind="assignment" x="-3736" y="-720">receipt.o = ballots[0].onion,
+receipt.i = c_index(1),
+chosen = 1</label><label kind="comments">Vote for 1</label></transition><transition><source ref="id30"/><target ref="id26"/><label kind="synchronisation" x="-4744" y="-160">not_punish1?</label></transition><transition><source ref="id30"/><target ref="id27"/><label kind="synchronisation" x="-4544" y="-160">punish1?</label></transition><transition><source ref="id31"/><target ref="id28"/><label kind="synchronisation" x="-4432" y="-176">not_punish1?</label></transition><transition><source ref="id31"/><target ref="id29"/><label kind="synchronisation" x="-4272" y="-168">punish1?</label></transition><transition><source ref="id33"/><target ref="id30"/><label kind="synchronisation" x="-4544" y="-336">nshow1!</label></transition><transition><source ref="id33"/><target ref="id31"/><label kind="synchronisation" x="-4384" y="-320">show1!</label></transition><transition><source ref="id35"/><target ref="id32"/><label kind="synchronisation" x="-3872" y="-840">v_phase?</label></transition><transition><source ref="id34"/><target ref="id33"/><label kind="synchronisation" x="-4360" y="-544">record!</label><label kind="assignment" x="-4248" y="-528">recorded=receipt</label></transition><transition><source ref="id32"/><target ref="id34"/><label kind="assignment" x="-4176" y="-744">receipt.o = ballots[0].onion,
+receipt.i = c_index(0),
+chosen = 0</label><label kind="comments">Vote for 0</label></transition></template><template><name>Mteller</name><declaration>int j=0; // M_j 
+
+void mix(int[0, 20] r_i, int[0,1] p_i){
+  for(i:b_i){
+    int pi = P_b[ p_i ][i];
+
+    board[j+1][pi].y1 = board[j][i].y1 * zpow(pk.a, batch_rand[r_i][i]) % z_order;
+    board[j+1][pi].y2 = board[j][i].y2 * zpow(pk.b, batch_rand[r_i][i]) % z_order;
+  }
+}
+
+bool rev;</declaration><location id="id36" x="-1296" y="-576"><name x="-1306" y="-606">rmixing</name><committed/></location><location id="id37" x="-1296" y="-448"><name x="-1306" y="-478">rhalt</name></location><location id="id38" x="-1760" y="-464"><name x="-1792" y="-456">halt</name></location><location id="id39" x="-1760" y="-576"><name x="-1800" y="-568">mixing</name><committed/></location><location id="id40" x="-1888" y="-576"><name x="-1904" y="-568">idle</name></location><init ref="id40"/><transition><source ref="id39"/><target ref="id36"/><label kind="assignment" x="-1576" y="-560">rev=true</label><nail x="-1464" y="-512"/></transition><transition><source ref="id38"/><target ref="id37"/><label kind="assignment" x="-1588" y="-456">rev=true</label></transition><transition><source ref="id37"/><target ref="id36"/></transition><transition><source ref="id36"/><target ref="id40"/><label kind="guard" x="-1496" y="-736">j==0</label><label kind="synchronisation" x="-1504" y="-664">rm_phase?</label><nail x="-1664" y="-800"/><nail x="-1664" y="-800"/></transition><transition><source ref="id36"/><target ref="id36"/><label kind="guard" x="-1200" y="-680">j&gt;0</label><label kind="assignment" x="-1192" y="-640">j--</label><nail x="-1136" y="-576"/><nail x="-1144" y="-640"/><nail x="-1240" y="-648"/></transition><transition><source ref="id39"/><target ref="id38"/><label kind="guard" x="-1848" y="-504">j==2*mt_total</label></transition><transition><source ref="id40"/><target ref="id39"/><label kind="synchronisation" x="-1864" y="-576">m_phase?</label><label kind="assignment" x="-1864" y="-560">j=0</label></transition><transition><source ref="id39"/><target ref="id39"/><label kind="select" x="-1720" y="-688">r_i:int[0,20],
+perm_i: int[0,1]</label><label kind="guard" x="-1720" y="-648">j&lt;2*mt_total</label><label kind="assignment" x="-1720" y="-624">mix(r_i, perm_i),
+j++</label><nail x="-1728" y="-624"/><nail x="-1616" y="-624"/><nail x="-1616" y="-576"/><nail x="-1720" y="-576"/></transition></template><template><name>Dteller</name><declaration>const int k = 3; // priv key
+
+void my_decr(){
+  b_j ptr = 1 + 2*mt_total;
+  for(i:b_i){
+    board[ptr][i].y1 = board[ptr-1][i].y1;
+    board[ptr][i].y2 = decr( board[ptr-1][i], k );
+  }
+}
+
+bool rev;</declaration><location id="id41" x="-1120" y="64"><name x="-1130" y="34">rwait</name><committed/></location><location id="id42" x="-952" y="64"><name x="-962" y="34">rhalt</name></location><location id="id43" x="-1280" y="-160"><name x="-1296" y="-144">idle</name></location><location id="id44" x="-960" y="-160"><name x="-968" y="-144">halt</name></location><location id="id45" x="-1120" y="-160"><name x="-1136" y="-144">wait</name><committed/></location><init ref="id43"/><transition><source ref="id44"/><target ref="id42"/><label kind="assignment" x="-944" y="-40">rev=true</label></transition><transition><source ref="id45"/><target ref="id41"/><label kind="assignment" x="-1112" y="-40">rev=true</label></transition><transition><source ref="id41"/><target ref="id43"/><label kind="synchronisation" x="-1260" y="-63">rd_phase?</label></transition><transition><source ref="id42"/><target ref="id41"/></transition><transition><source ref="id43"/><target ref="id45"/><label kind="synchronisation" x="-1232" y="-160">d_phase?</label></transition><transition><source ref="id45"/><target ref="id44"/><label kind="assignment" x="-1072" y="-160">my_decr()</label></transition></template><template><name>Sys</name><declaration>meta int[0,v_total] voted = 0;
+
+int vote_sum[c_total];
+
+void gen_ballots(int[0,20] r_i){     // assuming seed = v_id (here "i)"
+  for(i:v_t){
+    ballots[i].onion = encr(zpow(pk.a, -i), batch_rand[r_i][i]);              // gamma^(-s) == gamma^(p-1) * gamma^(-s) // gamma^(p-1) == 1
+    for(j:c_t){
+      ballots[i].cl[j] = P_c[(2+i)%2][j];                  
+    }
+  }
+}
+
+void absorb_i(Receipt&amp; recorded){ 
+  board[0][voted].y1 = recorded.o.y1;
+  board[0][voted].y2 = recorded.o.y2 * zpow(pk.a, recorded.i) % z_order; ; 
+}
+
+
+bool post_results(){
+  int i = b_cols-1,j,m;
+  int tmp;
+  for(j=0;j&lt;c_total;j++){
+    vote_sum[j]=0; // pre-init with zeroes
+  }
+  
+  for(j=0;j&lt;b_rows;j++){
+    m = board[i][j].y2; // gamma^(r-s)
+    if(m == 0) return false;
+    tmp = dlog[m];
+    vote_sum[( tmp )%c_total]++; // candidate == (r-s)%c_total
+  }
+  return true;
+}
+
+bool rev;</declaration><location id="id46" x="-360" y="-1728"><committed/></location><location id="id47" x="-568" y="-1720"><name x="-578" y="-1750">rvoting</name></location><location id="id48" x="-560" y="-1568"><name x="-570" y="-1598">rmixing</name></location><location id="id49" x="-344" y="-1560"><name x="-354" y="-1590">rdecryption</name></location><location id="id50" x="-176" y="-1552"><name x="-186" y="-1582">rresult</name></location><location id="id51" x="-1224" y="-1712"><name x="-1264" y="-1696">voting</name></location><location id="id52" x="-1440" y="-1712"><name x="-1464" y="-1696">start</name></location><location id="id53" x="-1072" y="-1712"><committed/></location><location id="id54" x="-1224" y="-1568"><name x="-1256" y="-1552">mixing</name></location><location id="id55" x="-912" y="-1568"><name x="-936" y="-1552">results</name></location><location id="id56" x="-1072" y="-1568"><name x="-1104" y="-1552">decryption</name></location><init ref="id52"/><transition><source ref="id53"/><target ref="id46"/><label kind="assignment" x="-776" y="-1720">rev=true</label><nail x="-488" y="-1616"/><nail x="-488" y="-1616"/></transition><transition><source ref="id51"/><target ref="id47"/><label kind="assignment" x="-956" y="-1716">rev=true</label><nail x="-808" y="-1608"/></transition><transition><source ref="id54"/><target ref="id48"/><label kind="assignment" x="-1120" y="-1464">rev=true</label><nail x="-936" y="-1392"/><nail x="-936" y="-1392"/></transition><transition><source ref="id56"/><target ref="id49"/><label kind="assignment" x="-952" y="-1488">rev=true</label><nail x="-648" y="-1392"/><nail x="-648" y="-1392"/></transition><transition><source ref="id55"/><target ref="id50"/><label kind="assignment" x="-808" y="-1544">rev=true</label><nail x="-456" y="-1376"/></transition><transition><source ref="id47"/><target ref="id52"/><label kind="guard" x="-896" y="-1872">voted==0</label><label kind="synchronisation" x="-864" y="-1792">rv_phase!</label><nail x="-1024" y="-1864"/><nail x="-1024" y="-1864"/></transition><transition><source ref="id47"/><target ref="id46"/><label kind="assignment" x="-480" y="-1664">voted--</label><nail x="-496" y="-1672"/><nail x="-416" y="-1672"/></transition><transition><source ref="id46"/><target ref="id47"/><label kind="synchronisation" x="-496" y="-1800">rrecord?</label><nail x="-416" y="-1768"/><nail x="-536" y="-1768"/></transition><transition><source ref="id48"/><target ref="id47"/><label kind="synchronisation" x="-624" y="-1659">rm_phase!</label></transition><transition><source ref="id49"/><target ref="id48"/><label kind="synchronisation" x="-512" y="-1579">rd_phase!</label></transition><transition><source ref="id50"/><target ref="id49"/></transition><transition><source ref="id53"/><target ref="id51"/><label kind="assignment" x="-1184" y="-1680">initial_batch[voted] = recorded,
+absorb_i(recorded),
+voted++</label><nail x="-1104" y="-1680"/><nail x="-1192" y="-1680"/></transition><transition><source ref="id52"/><target ref="id51"/><label kind="select" x="-1392" y="-1736">rand:int[0,20]</label><label kind="synchronisation" x="-1392" y="-1712">v_phase!</label><label kind="assignment" x="-1392" y="-1696">gen_ballots(rand),
+voted=0</label><nail x="-1240" y="-1712"/></transition><transition><source ref="id51"/><target ref="id54"/><label kind="guard" x="-1328" y="-1616">voted == v_total</label><label kind="synchronisation" x="-1216" y="-1616">m_phase!</label></transition><transition><source ref="id51"/><target ref="id53"/><label kind="synchronisation" x="-1184" y="-1744">record?</label><nail x="-1192" y="-1744"/><nail x="-1104" y="-1744"/></transition><transition><source ref="id56"/><target ref="id55"/><label kind="assignment" x="-1032" y="-1568">post_results()</label></transition><transition><source ref="id54"/><target ref="id56"/><label kind="synchronisation" x="-1184" y="-1568">d_phase!</label></transition></template><template><name>Coercer</name><declaration>bool coercion[v_total];
+
+bool seen[v_total];
+// Receipt shown_receipts[v_total];
+
+bool rev;
+bool ep;</declaration><location id="id57" x="-992" y="264"><name x="-1002" y="234">rev_show_pun_1</name></location><location id="id58" x="-1216" y="248"><name x="-1226" y="218">rev_show_npun_1</name></location><location id="id59" x="-1464" y="240"><name x="-1474" y="210">rev_nshow_pun_1</name></location><location id="id60" x="-1640" y="240"><name x="-1650" y="210">rev_nshow_npun_1</name></location><location id="id61" x="-1096" y="-24"><name x="-1106" y="-54">rev_show_1</name></location><location id="id62" x="-1528" y="-16"><name x="-1538" y="-46">rev_not_show_1</name></location><location id="id63" x="-2432" y="88"><name x="-2442" y="58">ep_v0_nshow_npun_1</name></location><location id="id64" x="-1904" y="176"><name x="-1914" y="146">ep_v1_show_pun_1</name></location><location id="id65" x="-1896" y="96"><name x="-1906" y="66">ep_v0_show_pun_1</name></location><location id="id66" x="-1896" y="96"></location><location id="id67" x="-2080" y="168"><name x="-2090" y="138">ep_v1_show_npun_1</name></location><location id="id68" x="-2072" y="80"><name x="-2082" y="50">ep_v0_show_npun_1</name></location><location id="id69" x="-2264" y="168"><name x="-2274" y="138">ep_v1_nshow_pun_1</name></location><location id="id70" x="-2256" y="80"><name x="-2266" y="50">ep_v0_nshow_pun_1</name></location><location id="id71" x="-2432" y="160"><name x="-2464" y="128">ep_v1_nshow_npun_1</name></location><location id="id72" x="-2432" y="88"></location><location id="id73" x="-1864" y="-184"><name x="-1874" y="-214">ep_v1_show_1</name></location><location id="id74" x="-2016" y="-184"><name x="-2026" y="-214">ep_v0_show_1</name></location><location id="id75" x="-2192" y="-184"><name x="-2202" y="-214">ep_v1_nshow_1</name></location><location id="id76" x="-2368" y="-184"><name x="-2378" y="-214">ep_v0_nshow_1</name></location><location id="id77" x="-3072" y="208"><name x="-3082" y="178">nshow_npun_1</name></location><location id="id78" x="-2880" y="216"><name x="-2890" y="186">nshow_pun_1</name></location><location id="id79" x="-2744" y="224"><name x="-2754" y="194">show_npun_1</name></location><location id="id80" x="-2536" y="224"><name x="-2546" y="194">show_pun_1</name></location><location id="id81" x="-2952" y="-32"><name x="-2962" y="-62">not_show_1</name><label kind="comments">Not seen Voter 0 receipt</label></location><location id="id82" x="-2632" y="-24"><name x="-2642" y="-54">show_1</name><label kind="comments">Seen voter 0 receipt</label></location><location id="id83" x="-2792" y="-256"></location><init ref="id83"/><transition><source ref="id71"/><target ref="id60"/><label kind="assignment" x="-2096" y="200">rev=true</label></transition><transition><source ref="id72"/><target ref="id60"/><label kind="assignment" x="-2096" y="164">rev=true</label></transition><transition><source ref="id69"/><target ref="id59"/><label kind="assignment" x="-1924" y="204">rev=true</label></transition><transition><source ref="id70"/><target ref="id59"/><label kind="assignment" x="-1920" y="160">rev=true</label></transition><transition><source ref="id67"/><target ref="id58"/><label kind="assignment" x="-1708" y="208">rev=true</label></transition><transition><source ref="id68"/><target ref="id58"/><label kind="assignment" x="-1704" y="164">rev=true</label></transition><transition><source ref="id64"/><target ref="id57"/><label kind="assignment" x="-1508" y="220">rev=true</label></transition><transition><source ref="id65"/><target ref="id57"/><label kind="assignment" x="-1504" y="180">rev=true</label></transition><transition><source ref="id76"/><target ref="id62"/><label kind="assignment" x="-2008" y="-100">rev=true</label></transition><transition><source ref="id75"/><target ref="id62"/><label kind="assignment" x="-1920" y="-100">rev=true</label></transition><transition><source ref="id74"/><target ref="id61"/><label kind="assignment" x="-1616" y="-104">rev=true</label></transition><transition><source ref="id73"/><target ref="id61"/><label kind="assignment" x="-1540" y="-104">rev=true</label></transition><transition><source ref="id61"/><target ref="id83"/><label kind="synchronisation" x="-1336" y="-288">rshow1?</label><nail x="-1440" y="-568"/></transition><transition><source ref="id62"/><target ref="id83"/><label kind="synchronisation" x="-1688" y="-248">rnshow1?</label><nail x="-1696" y="-432"/></transition><transition><source ref="id57"/><target ref="id61"/><label kind="synchronisation" x="-1104" y="105">rpunish1!</label></transition><transition><source ref="id58"/><target ref="id61"/><label kind="synchronisation" x="-1216" y="97">rnot_punish1!</label></transition><transition><source ref="id59"/><target ref="id62"/><label kind="synchronisation" x="-1556" y="97">rpunish1!</label></transition><transition><source ref="id60"/><target ref="id62"/><label kind="synchronisation" x="-1644" y="97">rnot_punish1!</label></transition><transition><source ref="id80"/><target ref="id64"/><label kind="assignment" x="-2280" y="200">ep=true</label></transition><transition><source ref="id80"/><target ref="id66"/><label kind="assignment" x="-2276" y="160">ep=true</label></transition><transition><source ref="id79"/><target ref="id67"/><label kind="assignment" x="-2472" y="196">ep=true</label></transition><transition><source ref="id79"/><target ref="id68"/><label kind="assignment" x="-2468" y="152">ep=true</label></transition><transition><source ref="id78"/><target ref="id69"/><label kind="assignment" x="-2632" y="192">ep=true</label></transition><transition><source ref="id78"/><target ref="id70"/><label kind="assignment" x="-2628" y="148">ep=true</label></transition><transition><source ref="id77"/><target ref="id71"/><label kind="assignment" x="-2812" y="184">ep=true</label></transition><transition><source ref="id77"/><target ref="id72"/><label kind="assignment" x="-2812" y="148">ep=true</label></transition><transition><source ref="id82"/><target ref="id73"/><label kind="assignment" x="-2308" y="-104">ep=true</label></transition><transition><source ref="id82"/><target ref="id74"/><label kind="assignment" x="-2384" y="-104">ep=true</label></transition><transition><source ref="id81"/><target ref="id75"/><label kind="assignment" x="-2632" y="-108">ep=true</label></transition><transition><source ref="id81"/><target ref="id76"/><label kind="assignment" x="-2720" y="-108">ep=true</label></transition><transition><source ref="id81"/><target ref="id77"/><label kind="synchronisation" x="-3128" y="88">not_punish1!</label></transition><transition><source ref="id81"/><target ref="id78"/><label kind="synchronisation" x="-2896" y="96">punish1!</label></transition><transition><source ref="id82"/><target ref="id79"/><label kind="synchronisation" x="-2776" y="80">not_punish1!</label></transition><transition><source ref="id82"/><target ref="id80"/><label kind="synchronisation" x="-2568" y="80">punish1!</label></transition><transition><source ref="id83"/><target ref="id81"/><label kind="synchronisation" x="-2928" y="-184">nshow1?</label><label kind="assignment" x="-2872" y="-136">seen[0]=false</label></transition><transition><source ref="id83"/><target ref="id82"/><label kind="synchronisation" x="-2704" y="-160">show1?</label><label kind="assignment" x="-2752" y="-96">seen[0]=true</label></transition></template><template><name>Voter2</name><declaration>// assosiate ballots[v_id] Ballot with each voter
+
+Receipt receipt; // here onion is same as v_id
+
+c_t chosen; // candidate whom voter thinks he voted for
+
+c_t c_index(c_t target){
+  for (cell_i: c_t){
+    if ( ballots[1].cl[cell_i] == target ) return cell_i; // replace with my_ballot variable in next implementation
+  }
+  return -1; // results in rangeException throw
+}
+
+bool rev;</declaration><location id="id84" x="616" y="-336"><name x="606" y="-366">rhas_ballot</name></location><location id="id85" x="752" y="-8"><name x="742" y="-38">rreceived_receipt_1</name></location><location id="id86" x="472" y="-16"><name x="462" y="-46">rreceived_receipt_0</name></location><location id="id87" x="744" y="-160"><name x="734" y="-190">rmarked_choice_1</name></location><location id="id88" x="480" y="-160"><name x="470" y="-190">rmarked_choice_0</name></location><location id="id89" x="480" y="-160"></location><location id="id90" x="56" y="-24"><name x="80" y="-40">received_receipt_1</name></location><location id="id91" x="-232" y="-32"><name x="-368" y="-40">received_receipt_0</name></location><location id="id92" x="56" y="-168"><name x="72" y="-176">marked_choice_1</name></location><location id="id93" x="-232" y="-176"><name x="-360" y="-184">marked_choice_0</name></location><location id="id94" x="-88" y="-328"><name x="-64" y="-336">has_ballot</name></location><location id="id95" x="-88" y="-472"></location><init ref="id95"/><transition><source ref="id94"/><target ref="id84"/><label kind="assignment" x="204" y="-332">rev=true</label></transition><transition><source ref="id93"/><target ref="id89"/><label kind="assignment" x="64" y="-168">rev=true</label><nail x="344" y="-72"/></transition><transition><source ref="id92"/><target ref="id87"/><label kind="assignment" x="340" y="-164">rev=true</label><nail x="632" y="-80"/></transition><transition><source ref="id91"/><target ref="id86"/><label kind="assignment" x="60" y="-24">rev=true</label><nail x="304" y="128"/></transition><transition><source ref="id90"/><target ref="id85"/><label kind="assignment" x="344" y="-16">rev=true</label><nail x="632" y="104"/></transition><transition><source ref="id84"/><target ref="id95"/><label kind="synchronisation" x="272" y="-448">rv_phase?</label><nail x="120" y="-552"/></transition><transition><source ref="id88"/><target ref="id84"/></transition><transition><source ref="id87"/><target ref="id84"/></transition><transition><source ref="id85"/><target ref="id87"/><label kind="synchronisation" x="688" y="-99">rrecord!</label></transition><transition><source ref="id86"/><target ref="id89"/><label kind="synchronisation" x="416" y="-103">rrecord!</label></transition><transition><source ref="id92"/><target ref="id90"/><label kind="synchronisation" x="-4" y="-103">record!</label><label kind="assignment" x="64" y="-96">recorded=receipt</label></transition><transition><source ref="id93"/><target ref="id91"/><label kind="synchronisation" x="-300" y="-119">record!</label><label kind="assignment" x="-224" y="-112">recorded=receipt</label></transition><transition><source ref="id94"/><target ref="id92"/><label kind="assignment" x="8" y="-280">receipt.o = ballots[1].onion,
+receipt.i = c_index(1),
+chosen = 1</label><label kind="comments">Vote for 1</label></transition><transition><source ref="id94"/><target ref="id93"/><label kind="assignment" x="-320" y="-280">receipt.o = ballots[1].onion,
+receipt.i = c_index(0),
+chosen = 0</label><label kind="comments">Vote for 0</label></transition><transition><source ref="id95"/><target ref="id94"/><label kind="synchronisation" x="-148" y="-415">v_phase?</label></transition></template><system>// Place template instantiations here.
+
+// List one or more processes to be composed into a system.
+
+system Sys, Voter1, Voter2, Coercer, Mteller, Dteller;</system></nta>

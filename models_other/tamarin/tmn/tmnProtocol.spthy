@@ -1,0 +1,158 @@
+/*
+	TMN Protocol
+
+	A->S: B, {Ka}PK(S)
+	S->B: A
+	B->S: A, {Kb}PK(S)
+	S->A: B, {Kb}Ka
+*/
+
+
+theory TMNProtocol
+begin
+
+builtins: symmetric-encryption, asymmetric-encryption
+
+rule Register_pk:
+    [ 
+      Fr( ~sk ) 
+    ]
+  -->
+    [ 
+      !Sk( $A, ~sk ), 
+      !Pk( $A, pk( ~sk ) ) 
+    ]
+
+rule Get_pk:
+    [ 
+      !Pk( A, pubkey ) 
+    ]
+  -->
+    [ 
+      Out( pubkey ) 
+    ]
+
+rule Reveal_sk:
+    [ 
+      !Sk( A, sk ) 
+    ]
+  --[ SkReveal( A ) ]->
+    [ 
+      Out( sk ) 
+    ]
+
+
+rule Alice_1:
+    [ 
+      Fr( ~kA ),       // choose fresh key for Alice
+      !Pk( $S, pkS )   // lookup public-key of server
+    ]
+  --[]->
+    [ 
+      Alice_1( ~kA ),                // remember your key for later use
+      Out( <$B, aenc( ~kA, pkS )> )  // send message to server
+    ]
+
+rule Server_1:
+    [ 
+      !Sk( $S, ~skS ),      // get server secret key
+      In( <$B, request> )   // get message from Alice
+    ]
+  --[]->
+    [ 
+      AliceKey( $A, adec( request, ~skS ) ),
+      Server_1( $B )    // remember bob id for later use
+    ]
+
+rule Server_2:
+    [ 
+      Server_1( $B )
+    ]
+  --[]->
+    [ 
+      Out( $A )     // send alice id to bob
+    ]
+
+rule Bob_1:
+    [ 
+      Fr( ~kB ),        // choose fresh key for bob
+      In( $A ),         // get alice id from server
+      !Pk( $S, pkS )    // lookup public-key of server
+    ]
+  --[]->
+    [ 
+      Out( <$A, aenc(~kB, pkS)> )   // send message to server
+    ]
+
+rule Server_3:
+    [ 
+      !Sk( $S, skS ),       // get server secret key
+      In( <$A, request> )   // receive message from bob
+    ]
+  --[]->
+    [ 
+      BobKey( $B, adec( request, skS ) )    // remember bob key for later use
+    ]
+
+rule Server_4:
+    [
+      AliceKey( $A, kA ),   // get alice key
+      BobKey( $B, kB )      // get bob key
+    ]
+  --[]->
+    [
+      Out( <$B, senc( kB, kA )> )   // send bob key to alice
+    ]
+
+rule Alice_2:
+    [
+      Alice_1( kA ),            // get alice key
+      In( <$B, message> )       // receive bob key from server
+    ]
+  --[ ]->
+    [
+      !SessionKey( $B, sdec( message, kA ) )    // remember session key
+    ]
+
+rule Alice_3:
+    [
+      !SessionKey( B, kB )
+    ]
+  --[ SessKey( B, kB ) ]->
+    [
+    ]
+
+
+lemma Client_session_key_secrecy:
+  " /* It cannot be that a  */
+    not(
+      Ex B k #i #j.
+        /* client has set up a session key 'k' with a client 'B' */
+        SessKey(B, k) @ #i
+        /* and the adversary knows 'k' */
+      & K(k) @ #j
+        /* without having performed a long-term key reveal on 'S'. */
+      & not(Ex S #r. SkReveal(S) @ r)
+    )
+  "
+
+lemma Client_session_key_no_secrecy:
+  exists-trace
+  " /* It cannot be that a  */
+      Ex B k #i #j.
+        /* client has set up a session key 'k' with a client 'B' */
+        SessKey(B, k) @ #i
+        /* and the adversary knows 'k' */
+      & K(k) @ #j
+        /* without having performed a long-term key reveal on 'S'. */
+      & not(Ex S #r. SkReveal(S) @ r)
+  "
+
+lemma Client_session_key_honest_setup:
+  exists-trace
+  " Ex B k #i.
+        SessKey(B, k) @ #i
+      & not(Ex S #r. SkReveal(S) @ r)
+  "
+
+end

@@ -1,0 +1,235 @@
+form {
+    background-color: beige;
+    height: 100%;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+form input, form button, form select {
+    width: 100%;
+}
+
+form select {
+    height: 30px;
+}
+
+form select {
+    cursor: pointer;
+}
+
+.display_none {
+    display: none !important;
+}
+
+.modal-body span {
+    font-weight: bold;
+}
+
+form div {
+    margin: 5px 0;
+}
+
+.btn {
+    width: 100%;
+}
+
+.form-check-input {
+    margin-top: -2px !important;
+}
+
+.box {
+    float: left;
+    border: 2px black solid;
+}
+
+.box h1 {
+    margin-left: 10px;
+    margin-top: 10px;
+    border: 1px black solid;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    border-radius: 25px;
+    background-color: blue;
+    color: whitesmoke;
+}
+
+.hidden {
+    visibility: hidden !important;
+}
+
+.open {
+    /*opacity: 0.5;*/
+}
+
+.closed {
+    opacity: 1;
+}
+
+#stack p:first-child {
+    color: red;
+}
+
+#moves p:last-child {
+    color: red;
+}
+
+
+/*.link {*/
+/*!*stroke: #c1c1c1;*!*/
+/*stroke-width: 10px;*/
+/*pointer-events: all;*/
+/*}*/
+
+.link {
+    stroke-opacity: .6;
+}
+
+.node circle {
+    pointer-events: all;
+    stroke: #777;
+    stroke-width: 1px;
+}
+
+path {
+    fill: none;
+    stroke-width: 3;
+}
+
+div.tooltip {
+    position: absolute;
+    background-color: white;
+    max-width: 200px;
+    height: auto;
+    padding: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    border-width: 1px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, .5);
+    pointer-events: none;
+}
+
+#btn_lower_approx, #btn_upper_approx {
+    font-size: large;
+    height: auto;
+}
+
+#formula {
+    max-width: 380px;
+    overflow: auto;
+    height: auto;
+    font-size: large;
+    font-weight: bold;
+}
+
+#param5Value,
+#param6Value,
+#param7Value {
+    display: block;
+    font-size: 14px;
+    line-height: 1.2em;
+    margin: -8px 0 4px 0;
+    word-break: break-all;
+}
+
+body[data-model="global"] #param1div,
+body[data-model="global"] #param2div,
+body[data-model="global"] #param3div,
+body[data-model="global"] #param4div,
+body[data-model="bisimulation"] #param1div,
+body[data-model="bisimulation"] #param2div,
+body[data-model="bisimulation"] #param3div,
+body[data-model="bisimulation"] #param4div {
+    display: none;
+}
+body[data-model="global"] #btn_generate {
+    display: none;
+}
+body:not([data-model="global"]) #btn_generate_global,
+body:not([data-model="global"]) #btn_generate_reduced {
+    display: none;
+}
+
+#tabs {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-div {
+    width: 100%;
+    height: calc(100% - 40px);
+    flex: 1 1 auto;
+}
+
+.main {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+.col-left {
+    flex: 1 1 66.66666666666%;
+    max-width: calc(100% - 400px);
+}
+.col-right {
+    flex: 0 0 400px;
+}
+.container-fluid {
+    padding: 0;
+}
+.row {
+    margin: 0;
+}
+.col-6 {
+    padding: 0;
+}
+.col-6:first-child {
+    padding-right: 15px;
+}
+.col-6:last-child {
+    padding-left: 15px;
+}
+
+html, body, .container-fluid, #div_graph {
+    width: 100%;
+    height: 100%;
+}
+
+.ui-tabs .ui-tabs-panel.panels {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+.ui-tabs .ui-tabs-panel.panels .panel {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.ui-tabs .ui-tabs-panel.panels.panels-single .panel {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+.svg-container {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+body.highlight-by-color circle.node:not(.highlighted-by-color) {
+    fill: #ccc !important;
+}
+g.node text {
+    pointer-events: none;
+}
+
+.reduced-part {
+    stroke: deepskyblue !important;
+    stroke-width: 3px !important;
+}
+
+.node_fixed {
+    stroke-width: 5px !important;
+}

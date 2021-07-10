@@ -1,0 +1,22 @@
+Agent Voter[1]:
+init: start
+shared wait: start -> voting
+shared vote1: voting -> voted1
+shared vote2: voting -> voted2
+shared pub: voted1 -> fin [win1=true]
+shared pub: voted2 -> fin [win2=true]
+shared loop: fin -> fin
+
+Agent Official[1]:
+init: start
+shared wait: start -> voting
+shared vote1: voting -> pub
+shared vote2: voting -> pub
+np: pub -> pub
+shared pub: pub -> fin
+shared loop: fin -> fin
+
+REDUCTION: []
+COALITION: [Official1]
+PERSISTENT: [win1, win2]
+FORMULA: <<Official1>>F(win1=true)

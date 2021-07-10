@@ -1,0 +1,23 @@
+% Train Gate Controller model with three trains and one controller
+Agent Train[3]:
+init: wait
+shared a1_aID: wait -> tunnel [aID_in=true]
+shared a2_aID: tunnel -> away [aID_in=false]
+a3: away -> wait
+
+Agent Controller[1]:
+init: green
+shared a1_Train1: green -> red
+shared a1_Train2: green -> red
+shared a1_Train3: green -> red
+shared a2_Train1: red -> green
+shared a2_Train2: red -> green
+shared a2_Train3: red -> green
+
+REDUCTION: [in_Train1,in_Train2,in_Train3]
+COALITION: [Controller1]
+FORMULA: <<Controller1>>F(Train1_in=True | Train2_in=True | Train3_in=True)
+% When SHOW_EPISTEMIC is False, epistemic classes will be generated, but will not be shown on the interface
+% Provides better performance for some models
+% By default this value is set to True
+SHOW_EPISTEMIC: False
