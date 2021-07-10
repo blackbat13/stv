@@ -18,6 +18,9 @@ class Formula:
     def __init__(self):
         pass
 
+    def convertToNNF(self):
+        self.expression = self.expression.convertToNNF(False)
+
     def __str__(self):
         return str(self.temporalOperator.value) + str(self.expression)
 
@@ -29,7 +32,7 @@ class AtlFormula(Formula):
 
 class CtlFormula(Formula):
     pathQuantifier = None
-    
+
     def __str__(self):
         return str(self.pathQuantifier.value) + super().__str__()
 
@@ -77,6 +80,44 @@ class SimpleExpression:
             return str(left) != str(right)
         else:
             raise Exception("Can't evaluate a SimpleExpression: unknown operator")
+
+
+    def _convertToNNF_aux(self,item,toggle):
+        if isinstance(item, SimpleExpression):
+            return item.convertToNNF(toggle)
+        elif isinstance(item, str) and toggle:
+            return self._simplify(f"!{item}")
+        return self._simplify(item)
+
+    def _simplify(self,atome):
+        """simplify double negation [parsing of double negation is not supported by stv yet]"""
+        while len(atome)>1 and atome[0:2]=="!!":
+            atome = atome.lstrip('!!')
+        return atome
+
+
+    def convertToNNF(self,toggle):
+        if self.operator == SimpleExpressionOperator.NOT:
+            return self._convertToNNF_aux(self.right,not toggle)
+        elif self.operator==SimpleExpressionOperator.AND :
+            left = self._convertToNNF_aux(self.left,toggle)
+            right = self._convertToNNF_aux(self.right,toggle)
+            if toggle:
+                return SimpleExpression(left,SimpleExpressionOperator.OR,right)    
+            return SimpleExpression(left,self.operator,right)
+        elif self.operator==SimpleExpressionOperator.OR :
+            left = self._convertToNNF_aux(self.left,toggle)
+            right = self._convertToNNF_aux(self.right,toggle)
+            if toggle:
+                return SimpleExpression(left,SimpleExpressionOperator.AND,right)    
+            return SimpleExpression(left,self.operator,right)
+        elif self.operator in [SimpleExpressionOperator.EQ,SimpleExpressionOperator.NEQ]:
+            left = self._simplify(self.left)
+            right = self._simplify(self.right)
+            return SimpleExpression(left,self.operator,right)
+        else:
+            raise Exception("Can't convert a SimpleExpression: unknown operator")
+
 
     def __str__(self):
         if self.operator == SimpleExpressionOperator.NOT:
@@ -206,7 +247,7 @@ class FormulaParser(Parser):
             elif arr[1] == "!=":
                 return SimpleExpression(left, SimpleExpressionOperator.NEQ, right)
 
-        return arr
+        return self.__convertToSimpleExpression(arr)
 
     def __convertToSimpleExpressionByOperator(self, arr, op):
         i = 0
