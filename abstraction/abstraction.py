@@ -34,7 +34,7 @@ class Abstraction() :
 
   def _compute_initial_domain(self):
     if self._abstracted_variable in self._model._bounded_vars:
-      self._inital_domain = self._get_domain(self._abstracted_variable)
+      self._inital_domain = self._get_domain_bounded(self._abstracted_variable)
 
 
 
@@ -57,7 +57,7 @@ class Abstraction() :
 
 
   def _compute_priorities(self):
-    """compute and assign self._priorities, an array containing the opposites of the number of local states reachable from the states.
+    """compute and assign self._priorities, an array containing the opposites of the number of local states reachable from each state.
         [Because heapq is the implementation of a min heap]"""
     adj_closure = self._compute_adj_closure()
     self._priorities = [0 for i in range(len(self._local_model._transitions))]
@@ -67,7 +67,7 @@ class Abstraction() :
           self._priorities[i] -=1
 
   def _find_local_model(self, agent_name : str):
-    """find a local model in self._model named agent_name and assign self._local_model"""
+    """find a local model in self._model named agent_name"""
     for local_model in self._model._local_models:
       if local_model._agent_name == agent_name:
         return local_model
@@ -81,7 +81,7 @@ class Abstraction() :
 
 
   def _transitive_closure_update_aux(self,variables,acc,props):
-    """return concatenation of acc and transitive closure of set of variables for relation uRv iif u=v or there exists prop in props such that prop = (u,v)"""
+    """return union of acc and transitive closure of set of variables for relation uRv iif there exists prop in props such that prop = (u,v)"""
     for (lvar,val) in props:
       if lvar in variables and isinstance(val,str) and val[0]=='?' and val[1:] not in acc :
         rvar = val[1:]
@@ -92,7 +92,7 @@ class Abstraction() :
 
 
   def _transitive_closure_update(self,variables,props):
-    """return transitive closure of set of variables for relation uRv iif u=v or there exists prop in props such that prop = (u,v)"""
+    """return reflexive transitive closure of set of variables for relation uRv iif exists prop in props such that prop = (u,v)"""
     return self._transitive_closure_update_aux(variables,variables,props)
 
 
@@ -106,7 +106,7 @@ class Abstraction() :
 
 
   def _get_conds(self):
-    """return all conditions of all transitions of self._local.model as a list of tuple (variable,value,op)"""
+    """return all pre-conditions of all transitions of self._local.model as a list of tuple (variable,value,op)"""
     conds  = []
     for lst in self._local_model.transitions:
       for transition in lst:
@@ -115,7 +115,7 @@ class Abstraction() :
 
 
   def _get_variables_from_cond(self,cond):
-    """return a set of variables that appear in cond"""
+    """return a set of variables that appear in pre-condition cond"""
     variables = set()
     for i in [0,1]:
       try :
@@ -128,7 +128,7 @@ class Abstraction() :
 
 
   def _get_props(self):
-    """return props as a list of couple (variable,value)"""
+    """return post-conditions as a list of couple (variable,value)"""
     updates  = []
     for lst in self._local_model.transitions:
       for transition in lst:
@@ -146,7 +146,7 @@ class Abstraction() :
     return set(range(lbound,ubound+1))
 
   def _parse_domain(self,variable):
-    """return domain of a not bounded variable """
+    """return domain of a not-bounded variable """
     domain = set()
     props = self._get_props()
     for var in self._transitive_closure_update({variable},props):
@@ -172,15 +172,55 @@ class Abstraction() :
 #----------------------------Compute Domains---------------------------------------------------
 
 
+
   def _evaluate(self,expr): #For now, expression is either an integer or '?var'
-    """return a set of all possible evaluation of an expression.
-       Precondition : Every variable of the expression (the abstracted one excepted) shall be bounded"""
+    """return a set of all possible values of an expression.
+       pre-condition : abstracted variable does not appear in expr"""
     if isinstance(expr,str):
       if expr[0]!='?':
         raise Exception("Evaluation exception : Only integers or '?var' are supported")
       expr = expr[1:]
       return self._get_domain(expr)
-    return {expr}
+    elif isinstance(expr,int):
+      return {expr}
+    else :
+      raise Exception("Evaluation exception : Only integers or '?var' are supported")
+
+
+  def filter_sat(self,domain, transition): #For now, we ignore pre-conditions which does not contain x such as 1>2
+    """return the subset of the domain which satisfies the pre-conditions of transition"""
+    res = domain
+    for cond in transition._conditions:
+      if mem_cond(self._abstracted_variable,cond[1]): #Case (_ op x) are turned into (x op _)
+        if cond[2] == ">=":
+          cond = (cond[1],cond[0],"<=")
+        elif cond[2] == "<=":
+          cond = (cond[1],cond[0],">=")
+        elif cond[2] == ">":
+          cond = (cond[1],cond[0],"<")
+        elif cond[2] == "<":
+          cond = (cond[1],cond[0],">")
+        else :
+          cond = (cond[1],cond[0],cond[2])
+      if mem_cond(self._abstracted_variable,cond[0]):   #Case (x op _)
+          try:                                          #Subcase x=int
+            val = int(cond[1])
+            if cond[2] == "==":
+              res = res.intersection({val})
+            elif cond[2] == "!=":
+              res = res.difference({val})
+            elif cond[2] == "<=":
+              res ={x for x in res if x <= val}
+            elif cond[2] == ">=":
+              res ={x for x in res if x >= val}
+            elif cond[2] == "<":
+              res ={x for x in res if x < val}
+            elif cond[2] == ">":
+              res ={x for x in res if x > val}
+          except ValueError:                            #Subcase x=var
+            if cond[1] in self._model._bounded_vars:
+              res = res.intersection(self._get_domain(cond[1]))
+    return res
 
 
   def _select_transitions(self,state_from : int,state_to : int):
@@ -207,18 +247,18 @@ class Abstraction() :
 
   def _proc_post_cond(self,transition):
     """update the domain of target state with regard to the update of the transition and the domain of source state"""
-    new_domain = deepcopy(self._domains[self._local_model._states[transition._state_from]])
+    new_domain = self._domains[self._local_model._states[transition._state_from]].copy()
     new_domain = self.filter_sat(new_domain,transition)
     for prop in transition.props :
+      if len(new_domain)==0:
+        return set()
       if mem_prop_left(self._abstracted_variable,prop) : 
-        #print(f"Transition to {transition._state_to}: {prop}={transition.props[prop]}")
         if mem_prop_right(self._abstracted_variable,transition.props[prop]) : 
           buf = set()
           for value in new_domain:
             buf.update(self._evaluate(substitution(transition.props[prop],self._abstracted_variable, value)))
           new_domain = buf                                                           
         else :
-          #print(transition.props[prop])
           new_domain = self._evaluate(transition.props[prop])
     return new_domain
 
@@ -276,55 +316,17 @@ class Abstraction() :
 
 #------------------------Generate Local Abstracted Model---------------------------------------------------
 
-  def _get_state(self,state_id):
-    """return name of state with id state_id [for debug purpose]"""
-    for items in self._local_model._states.items():
-      if items[1]==state_id:
-        return items[0]
-
-
-  def filter_sat(self,domain, transition): #For now, we ignore pre-conditions which does not contain x  such as 1>2
-    """return the subset of the domain which satisfies the pre-conditions of transition"""
-    res = domain
-    for cond in transition._conditions:
-      if mem_cond(self._abstracted_variable,cond[1]): #Case (_ op x) are turned into (x op _)
-        if cond[2] == ">=":
-          cond = (cond[1],cond[0],"<=")
-        elif cond[2] == "<=":
-          cond = (cond[1],cond[0],">=")
-        elif cond[2] == ">":
-          cond = (cond[1],cond[0],"<")
-        elif cond[2] == "<":
-          cond = (cond[1],cond[0],">")
-        else :
-          cond = (cond[1],cond[0],cond[2])
-      if mem_cond(self._abstracted_variable,cond[0]):   #Case (x op _)
-          try:                                          #Subcase x=int
-            val = int(cond[1])
-            if cond[2] == "==":
-              res = res.intersection({val})
-            elif cond[2] == "!=":
-              res = res.difference({val})
-            elif cond[2] == "<=":
-              res ={x for x in res if x <= val}
-            elif cond[2] == ">=":
-              res ={x for x in res if x >= val}
-            elif cond[2] == "<":
-              res ={x for x in res if x < val}
-            elif cond[2] == ">":
-              res ={x for x in res if x > val}
-          except ValueError:                            #Subcase x=var
-            if cond[1] in self._model._bounded_vars:
-              res = res.intersection(self._get_domain(cond[1]))
-    return res
-
-
-
-
 
   def _reachable_states(self) :
     """returns a dictionnary of relevant states of the abstracted model"""
-    return dict([(key,value) for (key,value) in self._local_model._states.items() if len(self._domains[value])>0 ]) #those with non-empty x-domain are reachable
+    counter = 0
+    res= dict()
+    for (key,value) in self._local_model._states.items():
+      if len(self._domains[value])>0: #Getting rid of states with empty domain
+        res[key]=counter
+        counter +=1
+    return res
+    #return dict([(key,value) for (key,value) in self._local_model._states.items() if len(self._domains[value])>0 ]) doesn't modify state identifiers
 
   def _filter_cond(self,cond):
     """return true iif the abstracted variable does not appear in cond"""
@@ -332,7 +334,7 @@ class Abstraction() :
 
   def _fix_transition(self,transition):
     """return a list of the transitions of the abstracted model generated by a transition of the concrete model"""
-    action = transition._action.split(' ')[0]
+    action = transition._action.rstrip(f"_{self._template}1").rstrip(" ")
     res = []
     conditions = list(filter(self._filter_cond,transition._conditions))
     lprops = []
@@ -372,8 +374,8 @@ class Abstraction() :
     res = []
     for state in states:  
       transitions = []
-      for transition in self._local_model._transitions[state]:
-        if self._local_model._states[transition._state_to] in states:
+      for transition in self._local_model._transitions[self._local_model._states[state]]:
+        if transition._state_to in states:
           transitions.extend(self._fix_transition(transition))
       res.append(transitions)
     return res
@@ -388,7 +390,9 @@ class Abstraction() :
     protocol = self._local_model._protocol
     agent_name = self._local_model._agent_name + f"_{self._abstracted_variable}_abstracted" 
     states = self._reachable_states()
-    transitions = self._compute_transitions(states.values()) 
+    transitions = self._compute_transitions(states.keys()) 
+    #print("states of abstracted model : ",states)
+    #print("outcoming transitions count) :",[(self._get_state_aux(item[0],states),len(item[1])) for item in enumerate(transitions)])
     self._abstracted_model = LocalModel(agent_id,agent_name,states,transitions,protocol,actions)
     if self._enable_trace:
       self.save_trace()
@@ -403,6 +407,20 @@ class Abstraction() :
   def __str__(self):
     return f"Abstraction on agent {self._local_model._agent_name} and variable {self._abstracted_variable}"
 
+
+  def _get_state_aux(self,state_id,states):
+    """[UNUSED] return name of state with id state_id in dict states [for debug and printing purposes]"""
+    for item in states.items():
+      if item[1]==state_id:
+        return item[0]
+
+
+
+  def _get_state(self,state_id):
+    """return name of state with id state_id in local concrete model [only used for the trace]"""
+    for item in self._local_model._states.items():
+      if item[1]==state_id:
+        return item[0]
 
 
   def _save_pred(self):
@@ -427,21 +445,21 @@ class Abstraction() :
 
 #-------------------------------Output----------------------------------------------------------------
 
-  def _count_instances(self):
-    """count instances of template on which abstraction is computed"""
+  def _count_current_template(self):
+    """return count of instances of template on which abstraction is computed"""
     i=1
     while f"{self._template}{i}" in [model._agent_name for model in self._model._local_models]:
       i=i+1
     return i-1
 
-  def _parse_model(self):
-    """return a dict associating templates with the number of its instances """
+  def _count_all_templates(self):
+    """return a dict associating every templates with the number of its instances """
     res = dict()
     for agent in self._model._local_models:
       (template,count) = _parse_agent_name(agent._agent_name)
       if template!= self._template and (template not in res or res[template] < count):
         res[template] = count
-    res[self._template]=self._count_instances()
+    res[self._template]=self._count_current_template()
     return res
 
   def _to_aid(self,string,substring):
@@ -521,7 +539,7 @@ class Abstraction() :
 
   def _write_formula(self):
     """return a string encoding the formula in the input file"""
-    return ""
+    return str(self._model._formula)
 
 
   def _write_template(self,local_model,template,count):
@@ -538,25 +556,28 @@ class Abstraction() :
   def _write_output(self,local_model,template):
     """return a string encoding the model in the input file"""
     res=""
-    for (template,count) in self._parse_model().items():
+    for (template,count) in self._count_all_templates().items():
       local_model = self._find_local_model(f"{template}1")
       if template == self._template:
         local_model = self._abstracted_model
       res += self._write_template(local_model,template,count)
       res += "\n\n"
     if len(self._model._bounded_vars)>0:
-      res+= f"BOUNDED_VARS: [{self._write_bounded_vars()}]\n"
+      res+= f"BOUNDED_VARS: [{self._write_bounded_vars()}]\n" #We must process the case bounded vars = {x : _} because BOUNDED VARS [] is not admissible
     if len(self._model._persistent)>0:
-      res+= f"PERSISTENT: [{self._write_persistent()}]\n"
+      res+= f"PERSISTENT: [{self._write_persistent()}]\n" #We must process the case persistent = [x]
     if len(self._model._coalition)>0:
       res+= f"COALITION: [{self._write_coalition()}]\n"
-    if len(self._model._coalition)>0:
+    if self._model._logicType!=None:
       res+= f"LOGIC: {self._write_logic()}\n"
+    if len(self._model._formula)>0:
+      res+= f"FORMULA: {self._write_formula()}\n"
+    
     return res
 
 
   def save_to_file(self, filename=f"default"):
-    """save the abstracted model in a text file"""
+    """save the abstracted local model in a text file"""
     if filename=="default":
       filename = f"tests_abstraction/abstracted_{self._local_model._agent_name}.txt"
     model_file = open(filename, "w")
@@ -564,8 +585,8 @@ class Abstraction() :
     model_file.write(lines)
     model_file.close()
 
-  def save_former_model(self,filename=f"default"):
-    """save the abstracted local model in a text file [for debug purpose]"""
+  def save_concrete_local_model(self,filename=f"default"):
+    """save the concrete local model in a text file [for debug purpose]"""
     if filename=="default":
       filename = f"tests_abstraction/former_{self._local_model._agent_name}.txt"
     model_file = open(filename, "w")
@@ -593,6 +614,7 @@ class Abstraction() :
 
 
   def compute_variables(self):
+    """return the reflexive transitive closure of {x}.union(vars(conds)) for relation uRv iif there exist prop and f s.t prop = (u,f(v))"""
     variables = {self._abstracted_variable}
     props = self._get_props()
     for cond in self._get_conds():
@@ -641,20 +663,6 @@ def substitution(expr,variable :str, value):
     if expr== '?' + variable:
       return value
   return expr
-
-
-
-
-
-
-
-#---------------------------------------Unused -------------------------------------------
-
-def compute_transitive_closure():
-  print("TODO")
-        
-
-
 
 
 if __name__ == "__main__":

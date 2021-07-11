@@ -20,4 +20,3 @@ BOUNDED_VARS: [z (19..22)]
 PERSISTENT: [y,z,failed,end]
 COALITION: [Template1]
 LOGIC: ATL
-FORMULA: <<Template1>>G(end=1 & failed=false)

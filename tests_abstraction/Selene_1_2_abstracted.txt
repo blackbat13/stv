@@ -41,3 +41,4 @@ PROTOCOL: [[leave_aID,requestVoteFor1_aID,requestVoteFor2_aID]]
 
 PERSISTENT: [EA1_t1,EA1_vote1,Coercer1_req1,Coercer1_tr1,Coercer1_wbb1,Voter1_true_tr,Voter1_req,Voter1_false_tr,Coercer1_end]
 COALITION: [Voter1]
+LOGIC: ATL
