@@ -22,23 +22,25 @@ PROTOCOL: [[showTracker1_Voter1]]
 
 Agent Voter[1]:
 init: v_init
-shared requestVoteFor1_aID_0: v_init -> v_request[aID_req=1]
-shared requestVoteFor2_aID_0: v_init -> v_request[aID_req=2]
-shared leave_aID_0: v_init -> v_request[aID_req=0]
+shared requestVoteF_0: v_init -> v_request[aID_req=1]
+shared requestVoteFor2_0: v_init -> v_request[aID_req=2]
+shared leav_0: v_init -> v_request[aID_req=0]
 shared startVoting_0: v_request -> v_start
-fillVote1_aID_0: v_start -> v_fill
-fillVote2_aID_0: v_start -> v_fill
-shared sendVote_aID_0: v_fill -> v_send
+fill_0: v_start -> v_fill
+fillVote2_0: v_start -> v_fill
+shared send_0: v_fill -> v_send
 shared finishVoting_0: v_send -> v_finish
-computeFalseTracker1_aID_0: v_finish -> v_false_tr[aID_false_tr=1]
-dontComputeFalseAlphaTerm_aID_0: v_finish -> v_false_tr
-shared sendTracker_aID_0: v_false_tr -> v_send_tr
+computeFalseTrack_0: v_finish -> v_false_tr[aID_false_tr=1]
+dontComputeFalseAlphaTerm_0: v_finish -> v_false_tr
+shared sendTrack_0: v_false_tr -> v_send_tr
 shared allTrackerSend_0: v_send_tr -> v_wbb
-shared showTracker1_aID_0: v_wbb -[aID_true_tr==1]> v_show
-shared showTracker1_aID_0: v_wbb -[aID_false_tr==1]> v_show
+shared showTrack_0: v_wbb -[aID_true_tr==1]> v_show
+shared showTrack_0: v_wbb -[aID_false_tr==1]> v_show
 PROTOCOL: [[leave_aID,requestVoteFor1_aID,requestVoteFor2_aID]]
 
 
 PERSISTENT: [EA1_t1,EA1_vote1,Coercer1_req1,Coercer1_tr1,Coercer1_wbb1,Voter1_true_tr,Voter1_req,Voter1_false_tr,Coercer1_end]
 COALITION: [Voter1]
 LOGIC: ATL
+FORMULA: <<Voter1>>F(Voter1_vote=1)
+

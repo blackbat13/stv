@@ -12,7 +12,7 @@ class Abstraction() :
 
 #-----------------------Initialisation--------------------------------------------------------
 
-  def __init__(self, filename : str, template : str, variable : str, enable_trace : bool):
+  def __init__(self, filename : str, template : str, variable : str, enable_trace=False):
     self._model: GlobalModel  = GlobalModelParser().parse(filename)
     self._template : str = template
     self._local_model: LocalModel = self._find_local_model(f"{template}1")
@@ -562,11 +562,11 @@ class Abstraction() :
         local_model = self._abstracted_model
       res += self._write_template(local_model,template,count)
       res += "\n\n"
-    if len(self._model._bounded_vars)>0:
-      res+= f"BOUNDED_VARS: [{self._write_bounded_vars()}]\n" #We must process the case bounded vars = {x : _} because BOUNDED VARS [] is not admissible
-    if len(self._model._persistent)>0:
-      res+= f"PERSISTENT: [{self._write_persistent()}]\n" #We must process the case persistent = [x]
-    if len(self._model._coalition)>0:
+    if not set(self._model._bounded_vars.keys()) <= {self._abstracted_variable}:
+      res+= f"BOUNDED_VARS: [{self._write_bounded_vars()}]\n"
+    if not set(self._model._persistent) <= {self._abstracted_variable}:
+      res+= f"PERSISTENT: [{self._write_persistent()}]\n"
+    if self._model.isAtl():
       res+= f"COALITION: [{self._write_coalition()}]\n"
     if self._model._logicType!=None:
       res+= f"LOGIC: {self._write_logic()}\n"
@@ -620,6 +620,23 @@ class Abstraction() :
     for cond in self._get_conds():
       variables.update(self._get_variables_from_cond(cond))
     return self._transitive_closure_update(variables,props)
+
+
+#-------------------------------------Other------------------------------------------------------
+
+
+  def reset(self,var,template):
+    self._template=template
+    self._local_model: LocalModel = self._find_local_model(f"{template}1")
+    self._abstracted_variable = var
+    self._initial_domain : Set[int] = {0}
+    self._compute_initial_domain()
+    self._adj : List[List[bool]] = []
+    self._queue : heapq = []
+    self._abstracted_model : LocalModel = None
+    self._domains : List[Set[int]] = [set() for _ in range(len(self._local_model._transitions))]
+    self._trace = f"{str(self)}\n\n"
+    
 
 
 
