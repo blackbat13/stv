@@ -14,11 +14,11 @@ class Abstraction() :
 
   def __init__(self, filename : str, template : str, variable : str, enable_trace=False):
     self._model: GlobalModel  = GlobalModelParser().parse(filename)
-    self._template : str = template
-    self._local_model: LocalModel = self._find_local_model(f"{template}1")
     self._abstracted_variable = variable
+    self._template : str = template
+    self._templates : dict = dict()
+    self._local_model: LocalModel = self._find_local_model(f"{template}1")
     self._initial_domain : Set[int] = {0}
-    self._compute_initial_domain()
     self._adj : List[List[bool]] = []
     self._priorities : List[int] = []
     self._predecessors : List[Set[int]] = [set() for _ in range(len(self._local_model._transitions))]
@@ -28,9 +28,10 @@ class Abstraction() :
     self._enable_trace = enable_trace
     self._trace = f"{str(self)}\n\n"
     self._other_domains : dict = dict()
+    self._compute_templates()
+    self._compute_initial_domain()
     self._compute_adj()
     self._compute_priorities()
-    
 
   def _compute_initial_domain(self):
     if self._abstracted_variable in self._model._bounded_vars:
@@ -66,18 +67,29 @@ class Abstraction() :
         if i!=j and adj_closure[i][j]:
           self._priorities[i] -=1
 
-  def _find_local_model(self, agent_name : str):
-    """find a local model in self._model named agent_name"""
-    for local_model in self._model._local_models:
-      if local_model._agent_name == agent_name:
-        return local_model
-    raise Exception(f"Can't find agent named {agent_name} ")
+
+
+  def _count_current_template(self):
+    """return count of instances of template on which abstraction is computed"""
+    i=1
+    names = [model._agent_name for model in self._model._local_models]
+    while f"{self._template}{i}" in names:
+      i=i+1
+    return i-1
+
+  def _compute_templates(self):
+    """find every templates, count their instances and assign self._templates"""
+    self._templates[self._template]=self._count_current_template()
+    for agent in self._model._local_models:
+      (template,count) = _parse_agent_name(agent._agent_name)
+      if template!= self._template and (template not in self._templates or self._templates[template] < count):
+        self._templates[template] = count
 
 
 
 
 
-#---------------------------- Extracting variables, conds and props ---------------------------------------------------
+#---------------------------- Extracting local models, variables, domains, conds and props  [Should be moved to LocalModel/GlobalModel] ------------------------
 
 
   def _transitive_closure_update_aux(self,variables,acc,props):
@@ -166,7 +178,15 @@ class Abstraction() :
     domain = self._parse_domain(variable)
     self._other_domains[variable] = domain
     return domain
-  
+
+  def _find_local_model(self, agent_name : str):
+    """find a local model in self._model named agent_name"""
+    for local_model in self._model._local_models:
+      if local_model._agent_name == agent_name:
+        return local_model
+    raise Exception(f"Can't find agent named {agent_name} ")
+
+
 
 
 #----------------------------Compute Domains---------------------------------------------------
@@ -362,11 +382,28 @@ class Abstraction() :
     all_props = []
     for items in rprops_product:
       all_props.append([(lprop,rprop) for lprop,rprop in zip(lprops,items)])
-    i=0
     for props in all_props:
-      res.append(LocalTransition(transition._state_from,transition._state_to,f"{action}_{i}",transition._shared,conditions,dict(props)))
-      i+=1
+      tr = LocalTransition(transition._state_from,transition._state_to,action,transition._shared,conditions,dict(props))
+      res.append(tr)
     return res
+
+
+  def _check_membership(self,transition,transitions):
+    """return true iif transition as same props and cond that an element of transitions"""
+    for transition2 in transitions:
+      if transition._state_to !=  transition2._state_to:
+        continue
+      if transition._props != transition2._props:
+        continue
+      if set(transition._conditions) != set(transition2._conditions):
+        continue
+      return True
+    return False
+
+
+
+
+
 
 
   def _compute_transitions(self,states):
@@ -374,9 +411,11 @@ class Abstraction() :
     res = []
     for state in states:  
       transitions = []
-      for transition in self._local_model._transitions[self._local_model._states[state]]:
-        if transition._state_to in states:
-          transitions.extend(self._fix_transition(transition))
+      for old_transition in self._local_model._transitions[self._local_model._states[state]]:
+        if old_transition._state_to in states:
+          for new_transition in self._fix_transition(old_transition):
+            if not self._check_membership(new_transition,transitions):
+              transitions.append(new_transition)
       res.append(transitions)
     return res
 
@@ -388,11 +427,10 @@ class Abstraction() :
     agent_id = self._local_model._agent_id
     actions = self._local_model._actions
     protocol = self._local_model._protocol
-    agent_name = self._local_model._agent_name + f"_{self._abstracted_variable}_abstracted" 
-    states = self._reachable_states()
+    agent_name = self._local_model._agent_name 
+    states= self._local_model._states  
+    #states = self._reachable_states() #Uncomment to get rid of states with empty domain for x
     transitions = self._compute_transitions(states.keys()) 
-    #print("states of abstracted model : ",states)
-    #print("outcoming transitions count) :",[(self._get_state_aux(item[0],states),len(item[1])) for item in enumerate(transitions)])
     self._abstracted_model = LocalModel(agent_id,agent_name,states,transitions,protocol,actions)
     if self._enable_trace:
       self.save_trace()
@@ -444,23 +482,6 @@ class Abstraction() :
     
 
 #-------------------------------Output----------------------------------------------------------------
-
-  def _count_current_template(self):
-    """return count of instances of template on which abstraction is computed"""
-    i=1
-    while f"{self._template}{i}" in [model._agent_name for model in self._model._local_models]:
-      i=i+1
-    return i-1
-
-  def _count_all_templates(self):
-    """return a dict associating every templates with the number of its instances """
-    res = dict()
-    for agent in self._model._local_models:
-      (template,count) = _parse_agent_name(agent._agent_name)
-      if template!= self._template and (template not in res or res[template] < count):
-        res[template] = count
-    res[self._template]=self._count_current_template()
-    return res
 
   def _to_aid(self,string,substring):
     """replace substring in string by "aID" """
@@ -556,7 +577,7 @@ class Abstraction() :
   def _write_output(self,local_model,template):
     """return a string encoding the model in the input file"""
     res=""
-    for (template,count) in self._count_all_templates().items():
+    for (template,count) in self._templates.items():
       local_model = self._find_local_model(f"{template}1")
       if template == self._template:
         local_model = self._abstracted_model
