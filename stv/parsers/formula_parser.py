@@ -2,21 +2,36 @@ from enum import Enum
 from .parser import Parser
 
 
-class FormulaType(Enum):
+class TemporalOperator(Enum):
     F = "F"
     G = "G"
+    
+class PathQuantifier(Enum):
+    A = "A"
+    E = "E"
 
 
 class Formula:
-    agents = []
-    type = None
     expression = None
+    temporalOperator = None
 
     def __init__(self):
         pass
 
     def __str__(self):
-        return "<<" + (", ".join(self.agents)) + ">>" + str(self.type.value) + str(self.expression)
+        return str(self.temporalOperator.value) + str(self.expression)
+
+class AtlFormula(Formula):
+    agents = []
+    
+    def __str__(self):
+        return "<<" + (", ".join(self.agents)) + ">>" + super().__str__()
+
+class CtlFormula(Formula):
+    pathQuantifier = None
+    
+    def __str__(self):
+        return str(self.pathQuantifier.value) + super().__str__()
 
 
 class SimpleExpressionOperator(Enum):
@@ -75,14 +90,24 @@ class FormulaParser(Parser):
     def __init__(self):
         pass
 
-    def parseFormula(self, formulaStr):
+    def parseAtlFormula(self, formulaStr):
         self.setStr(formulaStr)
-
-        formula = Formula()
+        
+        formula = AtlFormula()
         formula.agents = self.__parseFormulaAgents()
-        formula.type = self.__parseFormulaType()
+        formula.temporalOperator = self.__parseFormulaTemporalOperator()
         formula.expression = self.__parseFormulaExpression()
+        
+        return formula
 
+    def parseCtlFormula(self, formulaStr):
+        self.setStr(formulaStr)
+        
+        formula = CtlFormula()
+        formula.pathQuantifier = self.__parseFormulaPathQuantifier()
+        formula.temporalOperator = self.__parseFormulaTemporalOperator()
+        formula.expression = self.__parseFormulaExpression()
+        
         return formula
 
     def __parseFormulaAgents(self):
@@ -100,14 +125,23 @@ class FormulaParser(Parser):
         self.consume(">>")
         return agents
 
-    def __parseFormulaType(self):
+    def __parseFormulaTemporalOperator(self):
         c = self.read(1)
         if c == "F":
-            return FormulaType.F
+            return TemporalOperator.F
         elif c == "G":
-            return FormulaType.G
+            return TemporalOperator.G
         else:
-            raise Exception("Unknown formula type")
+            raise Exception("Unknown formula temporal operator")
+
+    def __parseFormulaPathQuantifier(self):
+        c = self.read(1)
+        if c == "A":
+            return PathQuantifier.A
+        elif c == "E":
+            return PathQuantifier.E
+        else:
+            raise Exception("Unknown formula path quantifier")
 
     def __parseFormulaExpression(self):
         self.consume("(")

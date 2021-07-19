@@ -1,4 +1,6 @@
+from stv.parsers.formula_parser import AtlFormula, CtlFormula, PathQuantifier
 from typing import List, Dict, Any, Set, Tuple
+from enum import Enum
 import time
 from stv.models.asynchronous.global_state import GlobalState
 from stv.models.asynchronous.local_model import LocalModel
@@ -7,6 +9,9 @@ from stv.models import SimpleModel
 from stv.comparing_strats import StrategyComparer
 from stv.parsers import FormulaParser
 
+class LogicType(Enum):
+    ATL = "ATL"
+    CTL = "CTL"
 
 class GlobalModel:
     """
@@ -31,31 +36,59 @@ class GlobalModel:
     """
 
     def __init__(self, local_models: List[LocalModel], reduction: List[str], persistent: List[str],
-                 coalition: List[str], goal: List[str], formula: str, show_epistemic: bool):
+                 coalition: List[str], goal: List[str], logicType: LogicType, formula: str, show_epistemic: bool):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
         self._persistent: List[str] = persistent
         self._coalition: List[str] = coalition
         self._goal: List[str] = goal
+        self._logicType = logicType
         self._formula = formula
-        self._formula_obj = self._parse_formula()
+        if self.isAtl():
+            self._formula_obj = self._parseAtlFormula()
+        elif self.isCtl():
+            self._formula_obj = self._parseCtlFormula()
         self._states: List[GlobalState] = []
         self._agents_count: int = 0
         self._states_dict: Dict[str, int] = dict()
         self._stack1: List[Any] = []
         self._stack2: List[int] = []
         self._G: List = []
-        self.coalition: List = self._formula_obj.agents
+        if self.isAtl():
+            self.coalition: List = self._formula_obj.agents
+        elif self.isCtl():
+            self.coalition: List = self._getCtlCoalition()
         self._stack1_dict: Dict[str, int] = dict()
         self._transitions_count: int = 0
         self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
         self._show_epistemic = show_epistemic
-
-    def _parse_formula(self):
+    
+    def _parseAtlFormula(self):
         formula_parser = FormulaParser()
-        return formula_parser.parseFormula(self._formula)
-
+        return formula_parser.parseAtlFormula(self._formula)
+    
+    def _parseCtlFormula(self):
+        formula_parser = FormulaParser()
+        return formula_parser.parseCtlFormula(self._formula)
+    
+    def _getCtlCoalition(self):
+        coalition: List[str] = []
+        if self._formula_obj.pathQuantifier == PathQuantifier.A:
+            # Empty set of agents
+            coalition.append("__ctl_pseudo_agent__")
+        elif self._formula_obj.pathQuantifier == PathQuantifier.E:
+            # Set of all agents
+            for localModel in self._local_models:
+                coalition.append(localModel.agent_name)
+        return coalition
+    
+    def isAtl(self):
+        return self._logicType == LogicType.ATL
+    
+    def isCtl(self):
+        return self._logicType == LogicType.CTL
+    
     def get_agent(self):
         return self.agent_name_to_id(self.coalition[0])
 
@@ -247,7 +280,7 @@ class GlobalModel:
         new_state = self._copy_props_to_state(new_state, transition)
         return new_state
 
-    def _new_state_after_shared_transition(self, state: GlobalState, actual_transition) -> (GlobalState, List[int]):
+    def _new_state_after_shared_transition(self, state: GlobalState, actual_transition) -> Tuple[GlobalState, List[int]]:
         new_state = GlobalState.copy_state(state, self._persistent)
         agents = []
         for act_tran in actual_transition:
@@ -701,8 +734,8 @@ if __name__ == "__main__":
     print("States count:", model.states_count)
     formula_parser = FormulaParser()
     print("Formula:", model._formula)
-    formula_obj = formula_parser.parseFormula(formulaStr=model._formula)
-    # print(formula_obj.agents, formula_obj.type, formula_obj.expression)
+    formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
+    # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
     # print(model.get_formula_winning_states())
     # print(model.get_agent())
 
