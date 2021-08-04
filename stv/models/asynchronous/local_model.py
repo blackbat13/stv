@@ -24,8 +24,10 @@ class LocalModel:
         self._actions: Set[str] = actions
         self._protocol: List[List[str]] = protocol
         self._props: List[str] = []
+        self._updates: List[str] = []
+        self._conditions: List[str] = []
         self._model: SimpleModel = None
-        self._compute_props()
+        self._compute_all()
         self._apply_protocol()
 
     @property
@@ -47,6 +49,24 @@ class LocalModel:
     def actions(self):
         """Set of action names"""
         return self._actions
+
+    @property
+    def states(self):
+        """states"""
+        return self._states
+
+    @property
+    def updates(self):
+        """Set of updates"""
+        return self._updates
+
+    @property
+    def conditions(self):
+        """Set of pre-conditions"""
+        return self._conditions
+        
+
+
 
     def generate(self):
         self._model = SimpleModel(no_agents=1)
@@ -75,6 +95,38 @@ class LocalModel:
         self._props = list(props_set)
         self._props.sort()
 
+
+    def _compute_updates(self) -> None:
+        updates  = set()
+        for lst in local_model.transitions:
+            for transition in lst:
+                updates.update(transition.props.items())
+        self._updates = list(updates)
+
+    def _compute_conditions(self) -> None:
+        conditions  = set()
+        for lst in local_model.transitions:
+            for transition in lst:
+                conditions.update(transition.conditions)
+        self._conditions = list(conditions)
+
+
+
+    def _compute_all(self) -> None:
+      props  = set()
+      updates  = set()
+      conditions  = set()
+      for ls in self._transitions:
+        for tr in ls:
+          props.update(tr.props.keys())
+          updates.update(tr.props.items())
+          conditions.update(tr.conditions)
+      self._props = list(props)
+      self._props.sort()
+      self._updates = list(updates)
+      self._conditions = list(conditions)
+
+
     def transitions_from_state(self, state_id: int) -> List[LocalTransition]:
         return self._transitions[state_id]
 
@@ -90,6 +142,12 @@ class LocalModel:
     def get_state_id(self, state_name: str) -> int:
         return self._states[state_name]
 
+    def get_state_label(self, state_id: int) -> str:
+        for item in self._states.items():
+            if item[1]==state_id:
+                return item[0]
+        raise Exception(f"Exception in get_state_label() : could not find any state with id {state_id}")
+
     def get_transitions(self) -> List[LocalTransition]:
         result = []
         for transition_list in self._transitions:
@@ -99,8 +157,38 @@ class LocalModel:
         result.sort(key=lambda x: x.id)
         return result
 
+
     def print(self):
         print(self._agent_name)
         for transition_list in self._transitions:
             for transition in transition_list:
                 transition.print()
+
+
+    def _transitive_closure_update_rec(self,variables: Set[str],acc: Set[str]):
+        """return union of acc and transitive closure of set of variables for relation uRv iif there exists prop in props such that prop = (u,v)"""
+        for (lvar,val) in self.updates:
+            if lvar in variables and isinstance(val,str) and val[0]=='?' and val[1:] not in acc :
+                rvar = val[1:]
+                acc.add(rvar)
+                tr_closure = self._transitive_closure_update_rec({rvar},acc)
+                acc.update(tr_closure)
+        return acc
+
+
+    def transitive_closure_update(self,variables: Set[str]):
+      """return reflexive transitive closure of set of variables for relation uRv iif exists prop in props such that prop = (u,v)"""
+      return self._transitive_closure_update_rec(variables,variables)
+
+
+    def get_conditions_variables(self):
+      """return a set of variables that appear in pre-condition cond"""
+      variables = set()
+      for cond in self.conditions:
+        for i in [0,1]:
+          try :
+            _ = int(cond[i])
+          except ValueError:
+            if cond[i].lower() not in ['true','false']:
+              variables.add(cond[i])
+      return variables

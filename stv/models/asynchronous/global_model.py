@@ -56,7 +56,7 @@ class GlobalModel:
         elif self.isCtl():
             self._formula_obj = self._parseCtlFormula()
         self._states: List[GlobalState] = []
-        self._agents_count: int = 0
+        self._agents_count: int = len(self._local_models)
         self._states_dict: Dict[str, int] = dict()
         self._stack1: List[Any] = []
         self._stack2: List[int] = []

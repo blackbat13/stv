@@ -28,6 +28,7 @@ class LocalTransitionParser:
             transition_str = transition_str[7:]
 
         action, transition_str = transition_str.split(":")
+        action = action.strip(" ")
 
         # parsing the pre-condition
         if transition_str.find("->") == -1:
