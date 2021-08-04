@@ -1,0 +1,16 @@
+Agent p_abstracted[1]:
+init: p_init
+shared a_shared_transition: p_init -[some_condition==True]> p_final
+another_transition: p_init -> p_final
+
+
+Agent q_abstracted[1]:
+init: q_init
+shared a_shared_transition: q_init -[True==True]> q_final[transition_taken_aID=True]
+loop: p_final -> p_final
+
+
+PERSISTENT: [some_condition]
+LOGIC: CTL
+FORMULA: AF(x_p1=1)
+

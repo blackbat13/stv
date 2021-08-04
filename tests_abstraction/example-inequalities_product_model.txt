@@ -1,0 +1,12 @@
+Agent Template[1]:
+init: state_0
+transition_0: state_0 -> state_0[x=1]
+transition_01: state_0 -> state_1
+transition_1: state_1 -[x==1]> state_1[x=2]
+transition_12: state_1 -> state_2[x=3,y=?x]
+transition_14: state_1 -[x==2]> state_4
+transition_23: state_2 -[x==5]> state_3[failed=True,end=True]
+transition_24: state_2 -[x>=3,x<=3]> state_4[x=?z]
+transition_4: state_4 -> state_4[x=4]
+transition_42: state_4 -> state_2[y=?x]
+transition_45: state_4 -[failed==false,x<10]> state_5[end=True]

@@ -1,0 +1,23 @@
+Agent EA_one x Voter_one[1]:
+init: ea_init x v_init
+shared generateTrackers_1: ea_init x v_init -> ea_gen x v_init[EA1_t1=1]
+shared requestVoteFor1: ea_init x v_init -> ea_init x v_request[Voter1_req=1]
+shared requestVoteFor2: ea_init x v_init -> ea_init x v_request[Voter1_req=2]
+shared leave: ea_init x v_init -> ea_init x v_request[Voter1_req=0]
+shared requestVoteFor1: ea_gen x v_init -> ea_gen x v_request[Voter1_req=1]
+shared requestVoteFor2: ea_gen x v_init -> ea_gen x v_request[Voter1_req=2]
+shared leave: ea_gen x v_init -> ea_gen x v_request[Voter1_req=0]
+shared startVoting: ea_gen x v_request -> ea_start x v_start
+: ea_start x v_start -> ea_start x v_fill[Voter1_vote=1]
+: ea_start x v_start -> ea_start x v_fill[Voter1_vote=2]
+shared sendVote_Voter1: ea_start x v_fill -[EA1_t1==1]> ea_start x v_send[EA1_vote1=?Voter1_vote]
+shared finishVoting: ea_start x v_send -> ea_finish x v_finish
+: ea_finish x v_finish -> ea_finish x v_false_tr[Voter1_false_tr=1]
+: ea_finish x v_finish -> ea_finish x v_false_tr
+shared sendTracker_Voter1: ea_finish x v_false_tr -[EA1_t1==1]> ea_finish x v_send_tr[Voter1_true_tracker=1]
+shared allTrackerSend: ea_finish x v_send_tr -> ea_send x v_wbb
+shared coercerWBB1: ea_send x v_wbb -> ea_send x v_wbb[Coercer1_wbb1=?EA1_vote1]
+shared showTracker1: ea_send x v_wbb -[Voter1_true_tr==1]> ea_send x v_show
+shared coercerWBB1: ea_send x v_show -> ea_send x v_show[Coercer1_wbb1=?EA1_vote1]
+shared generateTrackers_1: ea_init x v_request -> ea_gen x v_request[EA1_t1=1]
+PROTOCOL: [[leave_Voter1,requestVoteFor1_Voter1,requestVoteFor2_Voter1]]

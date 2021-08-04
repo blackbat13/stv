@@ -1,0 +1,23 @@
+Agent p_abstracted[1]:
+init: p_init
+shared transition1: p_init -[some_condition==True]> p_final
+
+
+Agent q_abstracted[1]:
+init: q_init
+shared transition1: q_init -[True==True]> q_final[transition_taken_aID=True]
+
+
+Agent r_abstracted[1]:
+init: r_init
+transition2: r_init -> r_final
+
+
+Agent s_abstracted[1]:
+init: s_init
+transition3: s_init -> s_final
+
+
+LOGIC: CTL
+FORMULA: AF(x_p1=1)
+

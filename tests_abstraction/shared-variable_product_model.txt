@@ -1,0 +1,3 @@
+Agent p_one x q_one[1]:
+init: p_init x q_init
+shared transition1: p_init x q_init -[some_condition==True,x_p1<=10]> p_final x q_final[x_p1=1,transition_taken_q1=True]

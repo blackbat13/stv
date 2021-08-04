@@ -2,7 +2,9 @@ Abstraction of variable x on agent Template1
 
 ----------------  Initial Processing  -------------------
 Processing looping transition transition_0_Template1
+Processing looping transition transition_0_bis_Template1
 Processing looping transition transition_0_Template1
+Processing looping transition transition_0_bis_Template1
 
 queue : [(-4, 1)]
 
@@ -25,7 +27,9 @@ state_5 : set()
 ----------------  state_1  -------------------
 Processing transition transition_01_Template1 from state_0
 Processing looping transition transition_1_Template1
+Processing looping transition transition_1_bis_Template1
 Processing looping transition transition_1_Template1
+Processing looping transition transition_1_bis_Template1
 
 queue : [(-3, 2), (-3, 3)]
 

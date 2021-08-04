@@ -3,6 +3,7 @@ init: state_0
 transition_0: state_0 -> state_0
 transition_01: state_0 -> state_1
 transition_1: state_1 -[True==True]> state_1
+transition_1_bis: state_1 -> state_1
 transition_12_y=0: state_1 -> state_2[y=0]
 transition_12_y=1: state_1 -> state_2[y=1]
 transition_12_y=2: state_1 -> state_2[y=2]

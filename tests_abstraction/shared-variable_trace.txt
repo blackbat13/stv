@@ -1,0 +1,27 @@
+Abstraction of variable x_p1 on agents p1 and q1
+
+----------------  Initial Processing  -------------------
+
+queue : [(0, 1)]
+
+Relevant Predecessors :
+p_init x q_init : set()
+p_final x q_final : {0}
+
+Domains :
+p_init x q_init : {0}
+p_final x q_final : set()
+
+----------------  p_final x q_final  -------------------
+Processing transition transition1 from p_init x q_init
+
+queue : []
+
+Relevant Predecessors :
+p_init x q_init : set()
+p_final x q_final : set()
+
+Domains :
+p_init x q_init : {0}
+p_final x q_final : {1}
+

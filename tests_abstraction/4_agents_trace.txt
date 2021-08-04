@@ -1,0 +1,206 @@
+Abstraction of variable x_p1 on agents p1, q1, r1 and s1
+
+----------------  Initial Processing  -------------------
+
+queue : [(-3, 1), (-3, 5), (-3, 7)]
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : {0}
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : {0}
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : {0}
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : set()
+
+----------------  p_final x q_final x r_init x s_init  -------------------
+Processing transition transition1 from p_init x q_init x r_init x s_init
+
+queue : [(-3, 5), (-3, 7), (-1, 2), (-1, 4)]
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : {1}
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : {1}
+p_init x q_init x r_final x s_init : {0}
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : {0}
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : {1}
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : set()
+
+----------------  p_init x q_init x r_final x s_init  -------------------
+Processing transition transition2 from p_init x q_init x r_init x s_init
+
+queue : [(-3, 7), (-1, 4), (-1, 2), (-1, 6)]
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : {1}
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : {1, 5}
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : {5}
+p_init x q_init x r_init x s_final : {0}
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : {1}
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : {4}
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : set()
+
+----------------  p_init x q_init x r_init x s_final  -------------------
+Processing transition transition3 from p_init x q_init x r_init x s_init
+
+queue : [(-1, 2), (-1, 4), (-1, 6)]
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : {1, 7}
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : {1, 5}
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : {5, 7}
+p_init x q_init x r_init x s_final : set()
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : {1}
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : {4}
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : {5}
+
+----------------  p_final x q_final x r_init x s_final  -------------------
+Processing transition transition3 from p_final x q_final x r_init x s_init
+Processing transition transition1 from p_init x q_init x r_init x s_final
+
+queue : [(-1, 4), (-1, 6), (0, 3)]
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : {2}
+p_final x q_final x r_final x s_init : {1, 5}
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : {5, 7}
+p_init x q_init x r_init x s_final : set()
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : {1}
+p_final x q_final x r_init x s_final : {1, 5}
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : {4}
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : {5}
+
+----------------  p_final x q_final x r_final x s_init  -------------------
+Processing transition transition2 from p_final x q_final x r_init x s_init
+Processing transition transition1 from p_init x q_init x r_final x s_init
+
+queue : [(-1, 6), (0, 3)]
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : {2, 4}
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : {5, 7}
+p_init x q_init x r_init x s_final : set()
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : {1}
+p_final x q_final x r_init x s_final : {1, 5}
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : {1, 4}
+p_init x q_init x r_final x s_init : {4}
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : {5}
+
+----------------  p_init x q_init x r_final x s_final  -------------------
+Processing transition transition3 from p_init x q_init x r_final x s_init
+Processing transition transition2 from p_init x q_init x r_init x s_final
+
+queue : [(0, 3)]
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : {2, 4, 6}
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : set()
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : {1}
+p_final x q_final x r_init x s_final : {1, 5}
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : {1, 4}
+p_init x q_init x r_final x s_init : {4}
+p_init x q_init x r_final x s_final : {4, 5}
+p_init x q_init x r_init x s_final : {5}
+
+----------------  p_final x q_final x r_final x s_final  -------------------
+Processing transition transition2 from p_final x q_final x r_init x s_final
+Processing transition transition3 from p_final x q_final x r_final x s_init
+Processing transition transition1 from p_init x q_init x r_final x s_final
+
+queue : []
+
+Relevant Predecessors :
+p_init x q_init x r_init x s_init : set()
+p_final x q_final x r_init x s_init : set()
+p_final x q_final x r_init x s_final : set()
+p_final x q_final x r_final x s_final : set()
+p_final x q_final x r_final x s_init : set()
+p_init x q_init x r_final x s_init : set()
+p_init x q_init x r_final x s_final : set()
+p_init x q_init x r_init x s_final : set()
+
+Domains :
+p_init x q_init x r_init x s_init : {0}
+p_final x q_final x r_init x s_init : {1}
+p_final x q_final x r_init x s_final : {1, 5}
+p_final x q_final x r_final x s_final : {1, 4, 5}
+p_final x q_final x r_final x s_init : {1, 4}
+p_init x q_init x r_final x s_init : {4}
+p_init x q_init x r_final x s_final : {4, 5}
+p_init x q_init x r_init x s_final : {5}
+

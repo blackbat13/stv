@@ -1,0 +1,20 @@
+-----Single Agent----------
+
+example : A simple model with one template, one instance, various kind of transitions [loops, guards/updates with/without abstracted variable]
+
+example-no-bounded-var : same model as example but abstracted variable is not in the header BOUNDED VARS
+
+example-inequalities : a model similar to example but includes comparisons in some guards
+
+example-redundant-transitions: a model similar to example but some transitions leads to indistinguishable transitions in the abstracted model
+
+
+-----Multi Agent----------
+
+shared-variable : a model with two agents and a shared transition between them involving the abstracted variable 
+
+2agents : A model slightly more complex than shared-variable with other transitions than the shared one
+
+4agents : A model slightly more complex than shared-variable with 4 agents that uses the abstracted variable
+
+shared-transitions : a model with multiples agents and a few basic shared transitions between them

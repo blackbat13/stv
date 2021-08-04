@@ -1,6 +1,7 @@
 Agent Template_abstracted[1]:
 init: state_0
 transition_0: state_0 -> state_0
+transition_0_0: state_0 -> state_0[z=19]
 transition_01: state_0 -> state_1
 transition_1: state_1 -[True==True]> state_1
 transition_12_y=0: state_1 -> state_2[y=0]
@@ -10,16 +11,15 @@ transition_14: state_1 -[True==True]> state_4
 transition_23: state_2 -[True==False]> state_3[failed=True,end=True]
 transition_24: state_2 -[True==True]> state_4
 transition_4: state_4 -> state_4
-transition_42_y=2: state_4 -> state_2[y=2]
-transition_42_y=4: state_4 -> state_2[y=4]
+transition_42_y=1: state_4 -> state_2[y=1]
 transition_42_y=19: state_4 -> state_2[y=19]
 transition_42_y=20: state_4 -> state_2[y=20]
-transition_42_y=21: state_4 -> state_2[y=21]
-transition_42_y=22: state_4 -> state_2[y=22]
-transition_45: state_4 -> state_5[failed=False,end=True]
+transition_42_y=4: state_4 -> state_2[y=4]
+transition_45: state_4 -[failed==false]> state_5[end=True]
+transition_33: state_3 -[True==False]> state_3[z=20]
 
 
-BOUNDED_VARS: [z (19..22)]
-PERSISTENT: [y,z,end,failed]
-LOGIC: CTL
-FORMULA: AG(end=true & failed=false)
+PERSISTENT: [y,z,failed,end]
+COALITION: [Template1]
+LOGIC: ATL
+FORMULA: <<Template1>>G(end=1 & failed=false)

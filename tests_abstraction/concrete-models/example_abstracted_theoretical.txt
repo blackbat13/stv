@@ -1,0 +1,78 @@
+Concrete Model :
+
+Agent Template[1]:
+init: state_0
+transition_0 : state_0 -> state_0 [x=1]
+transition_01 : state_0 -> state_1
+transition_1 : state_1 -[x==1]> state_1  [x=2]
+transition_12 : state_1 -> state_2  [x=3,y=?x]
+transition_14 : state_1 -[x==2]> state_4
+transition_23 : state_2 -[x==5]> state_3 [failed=true,end=true]
+transition_24 : state_2 -[x==y]> state_4 [x=?z]
+transition_4 : state_4 -> state_4 [x=4]
+transition_42 : state_4 -> state_2 [y=?x]
+transition_45 : state_4 -> state_5 [failed=false,end=true]
+
+
+BOUNDED_VARS: [z (19..22)]
+PERSISTENT: [x,y,z,end,failed]
+LOGIC: CTL
+FORMULA: AG(end=true & failed=false)
+
+
+
+
+
+Abstracted Model (Without keeping non-reachable states):
+
+
+Agent Template[1]:
+init: state_0
+transition_0_0: state_0 -> state_0
+transition_01_0: state_0 -> state_1
+transition_1_0: state_1 -> state_1
+transition_12_0: state_1 -> state_2[y=3]
+transition_14_0: state_1 -> state_4
+transition_24_0: state_2 -> state_4
+transition_4_0: state_4 -> state_4
+transition_42_0: state_4 -> state_2[y=2]
+transition_42_1: state_4 -> state_2[y=4]
+transition_42_2: state_4 -> state_2[y=19]
+transition_42_3: state_4 -> state_2[y=20]
+transition_42_4: state_4 -> state_2[y=21]
+transition_42_5: state_4 -> state_2[y=22]
+transition_45_0: state_4 -> state_5[failed=False,end=True]
+
+
+BOUNDED_VARS: [z (19..22)]
+PERSISTENT: [y,z,end,failed]
+LOGIC: CTL
+FORMULA: AG(end=true & failed=false)
+
+
+Abstracted Model (With the keeping of reachable states):
+
+
+Agent Template[1]:
+init: state_0
+transition_0: state_0 -> state_0
+transition_01: state_0 -> state_1
+transition_1: state_1 -> state_1
+transition_12: state_1 -> state_2[y=3]
+transition_14: state_1 -> state_4
+transition_23: state_2 -> state_3[failed=True,end=True]
+transition_24: state_2 -> state_4
+transition_4: state_4 -> state_4
+transition_42: state_4 -> state_2[y=2]
+transition_42: state_4 -> state_2[y=4]
+transition_42: state_4 -> state_2[y=19]
+transition_42: state_4 -> state_2[y=20]
+transition_42: state_4 -> state_2[y=21]
+transition_42: state_4 -> state_2[y=22]
+transition_45: state_4 -> state_5[failed=False,end=True]
+
+
+BOUNDED_VARS: [z (19..22)]
+PERSISTENT: [y,z,end,failed]
+LOGIC: CTL
+FORMULA: AG(end=true & failed=false)
