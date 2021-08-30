@@ -236,13 +236,13 @@ class SimpleModel:
 
         return list(possible_actions)
 
-    def to_atl_perfect(self, actions) -> ATLIrModel:
+    def to_atl_perfect(self, actions, isVisitedStatesTrackingEnabled = False) -> ATLIrModel:
         """
         Creates Alternating-Time Temporal Logic model with perfect information
         :param actions:
         :return: ATLIr model
         """
-        atl_model = ATLIrModel(self._no_agents)
+        atl_model = ATLIrModel(self._no_agents, isVisitedStatesTrackingEnabled)
         atl_model = self._copy_model(atl_model, self._actions, epistemic=False)
         return atl_model
 
@@ -975,3 +975,32 @@ class SimpleModel:
             result.append([states_left[:], states_right[:]])
 
         return result, coalition
+    
+    def dropNotVisitedStates(self, visitedStates: Set[int]):
+        newEpistemicClasses: List[List[Set[int]]] = []
+        for agentId in range(0, len(self.epistemic_classes)):
+            agentEpiClss = self.epistemic_classes[agentId]
+            newEpistemicClasses.append([])
+            for epiClsId in range(0, len(agentEpiClss)):
+                epiCls = agentEpiClss[epiClsId]
+                if len(epiCls) < 2:
+                    newEpistemicClasses[agentId].append(epiCls)
+                    continue
+                hasVisitedStates = False
+                statesToRm = set()
+                for stateId in epiCls:
+                    if stateId in visitedStates:
+                        hasVisitedStates = True
+                        break
+                    else:
+                        statesToRm.add(stateId)
+                if not hasVisitedStates:
+                    newEpistemicClasses[agentId].append(epiCls)
+                    continue
+                newEpiCls: Set[int] = set()
+                for stateId in epiCls:
+                    if not(stateId in statesToRm):
+                        newEpiCls.add(stateId)
+                newEpistemicClasses[agentId].append(newEpiCls)
+        self._epistemic_classes = newEpistemicClasses
+    

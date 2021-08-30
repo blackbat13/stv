@@ -7,7 +7,7 @@ import itertools
 class SimpleVotingModel(ModelGenerator):
 
     def __init__(self, number_of_candidates: int, number_of_voters: int):
-        super().__init__(agents_count=(number_of_candidates + 1))
+        super().__init__(agents_count=(number_of_voters + 1))
         self._number_of_candidates = number_of_candidates
         self._number_of_voters = number_of_voters
 

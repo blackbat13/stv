@@ -2,9 +2,9 @@ from stv.tools.number_tools import NumberTools
 from stv.tools.disjoint_set import DisjointSet
 from stv.logics.atl.transition import Transition
 from typing import List, Set
+from enum import Enum
 import itertools
 import copy
-
 
 class ATLIrModel:
     """Class for creating ATL models with perfect information and imperfect recall"""
@@ -77,9 +77,27 @@ class ATLIrModel:
     def strategy(self, value: List):
         self._strategy = value
 
-    def __init__(self, number_of_agents: int):
+    @property
+    def isVisitedStatesTrackingEnabled(self) -> bool:
+        return self._isVisitedStatesTrackingEnabled
+
+    @isVisitedStatesTrackingEnabled.setter
+    def isVisitedStatesTrackingEnabled(self, value: bool):
+        self._isVisitedStatesTrackingEnabled = value
+
+    @property
+    def visitedStates(self) -> Set[int]:
+        return self._visitedStates
+
+    @visitedStates.setter
+    def visitedStates(self, value: Set[int]):
+        self._visitedStates = value
+
+    def __init__(self, number_of_agents: int, isVisitedStatesTrackingEnabled: bool = False):
         self.number_of_agents = number_of_agents
         self.number_of_states = 0
+        self.isVisitedStatesTrackingEnabled = isVisitedStatesTrackingEnabled
+        self.visitedStates = set()
         self.init_transitions()
         self.init_agent_actions()
         self.init_states()
@@ -231,9 +249,13 @@ class ATLIrModel:
 
         for state_id in pre_image:
             if is_winning_state[state_id]:
+                if self.isVisitedStatesTrackingEnabled:
+                    self.visitedStates.add(state_id)
                 continue
             for action in itertools.product(*actions):
                 if self.is_reachable_by_agents(agent_ids, state_id, list(action), is_winning_state):
+                    if self.isVisitedStatesTrackingEnabled:
+                        self.visitedStates.add(state_id)
                     self.strategy[state_id] = list(action)
                     result_states.add(state_id)
                     is_winning_state[state_id] = True
@@ -268,7 +290,8 @@ class ATLIrModel:
                 result = True
                 if not is_winning_state[transition.next_state]:
                     return False
-
+        if result and self.isVisitedStatesTrackingEnabled:
+            self.visitedStates.add(state_id)
         return result
 
     def minimum_formula_no_agents(self, winning_states: Set[int]) -> Set[int]:
