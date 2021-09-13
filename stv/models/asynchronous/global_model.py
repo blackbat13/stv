@@ -723,26 +723,27 @@ if __name__ == "__main__":
     voter = 3
     cand = 2
     reduction = False
-    model = GlobalModelParser().parse(f"Selene_{voter}_{cand}.txt")
+    model = GlobalModelParser().parse(f"trains_lm.txt")
     start = time.process_time()
-    model.generate(reduction=reduction)
+    model.generate(reduction=False)
     end = time.process_time()
     print("Generation time:", end-start)
+    model.model.simulate(0)
     # print(model.model.dump())
-    print("Voters:", voter, ", Candidates:", cand)
-    print("Reduction:", reduction)
-    print("States count:", model.states_count)
-    formula_parser = FormulaParser()
-    print("Formula:", model._formula)
-    formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
-    # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
-    # print(model.get_formula_winning_states())
-    # print(model.get_agent())
-
-    model.save_to_file(f"Selene_{voter}_{cand}_{reduction}_dump.txt")
-
-    # print("Winning:", model.get_winning_states())
-
-    # print("DominoDFS", model.verify_domino())
-    print("Approx low", model.verify_approximation(False))
-    print("Approx up", model.verify_approximation(True))
+    # print("Voters:", voter, ", Candidates:", cand)
+    # print("Reduction:", reduction)
+    # print("States count:", model.states_count)
+    # formula_parser = FormulaParser()
+    # print("Formula:", model._formula)
+    # formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
+    # # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
+    # # print(model.get_formula_winning_states())
+    # # print(model.get_agent())
+    #
+    # model.save_to_file(f"Selene_{voter}_{cand}_{reduction}_dump.txt")
+    #
+    # # print("Winning:", model.get_winning_states())
+    #
+    # # print("DominoDFS", model.verify_domino())
+    # print("Approx low", model.verify_approximation(False))
+    # print("Approx up", model.verify_approximation(True))

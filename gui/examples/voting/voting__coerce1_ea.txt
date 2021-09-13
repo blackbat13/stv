@@ -1,0 +1,49 @@
+% Simple voting model, two voters (one coerced, one not), two candidates, one coercer, one EA
+Agent EA[1]:
+init start
+shared start_voting: start -> voting
+shared send_vote_Voter1: voting -> voting
+shared send_vote_VoterC1: voting -> voting
+shared finish_voting: voting -> finish
+
+Agent Voter[1]:
+init start
+shared start_voting: start -> voting
+vote1: voting -> vote [aID_vote=1]
+vote2: voting -> vote [aID_vote=2]
+shared send_vote_aID: vote -> send [EA1_aID_vote=?aID_vote]
+shared finish_voting: send -> finish
+PROTOCOL: [[punish_aID, not_punish_aID]]
+
+Agent VoterC[1]:
+init start
+shared coerce1: start -> coerced [aID_required=1]
+shared coerce2: start -> coerced [aID_required=2]
+shared start_voting: coerced -> voting
+vote1: voting -> vote [aID_vote=1]
+vote2: voting -> vote [aID_vote=2]
+shared send_vote_aID: vote -> send [EA1_aID_vote=?aID_vote]
+shared finish_voting: send -> finish
+shared give: finish -> interact [Coercer1_vote=?aID_vote]
+shared not_give: finish -> interact [Coercer1_vote=0]
+shared punish: interact -> end [aID_punish=true]
+shared not_punish: interact -> end [aID_punish=false]
+PROTOCOL: [[coerce1, coerce2], [punish, not_punish]]
+
+Agent Coercer[1]:
+init start
+shared coerce1: start -> coerced [aID_required=1]
+shared coerce2: start -> coerced [aID_required=2]
+shared start_voting: coerced -> voting
+shared finish_voting: voting -> finish
+shared give: finish -> interact
+shared not_give: finish -> interact
+shared punish: interact -> end
+shared not_punish: interact -> end
+PROTOCOL: [[give, not_give]]
+
+REDUCTION: [Coercer1_pun1]
+COALITION: [Coercer1]
+PERSISTENT: [Voter1_vote, VoterC1_vote, VoterC1_required, Coercer1_vote, Coercer1_required, EA1_Voter1_vote, EA1_VoterC1_vote]
+FORMULA: <<Coercer1>>F(Coercer1_vote=1 || Coercer1_vote=2)
+SHOW_EPISTEMIC: True
