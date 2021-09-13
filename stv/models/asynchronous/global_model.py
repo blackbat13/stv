@@ -720,14 +720,14 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voter = 3
-    cand = 2
-    reduction = False
-    model = GlobalModelParser().parse(f"trains_lm.txt")
+    # voter = 3
+    # cand = 2
+    # reduction = False
+    model = GlobalModelParser().parse(f"voting__coerce_many_ea_trackers_revoting.txt")
     start = time.process_time()
-    model.generate(reduction=False)
+    model.generate(reduction=True)
     end = time.process_time()
-    print("Generation time:", end-start)
+    print(f"Generation time: {end-start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
     model.model.simulate(0)
     # print(model.model.dump())
     # print("Voters:", voter, ", Candidates:", cand)
