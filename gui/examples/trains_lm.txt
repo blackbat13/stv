@@ -1,0 +1,24 @@
+Agent Train[2]:
+init: initial
+shared ini: initial -> wait [x_ID=0]
+wt_t1: wait -[s==ID]> tunnel [x_ID=1]
+ta_t1: tunnel -> away [x_ID=2]
+aw0_t1: away -[s==0]> wait [x_ID=0]
+aw1_t1: away -[s==1]> wait [x_ID=0]
+aw2_t1: away -[s==2]> wait [x_ID=0]
+
+Agent Controller[1]:
+init: initial
+shared ini: initial -> idle [s=0]
+it1: idle -[x_1==0]> t1 [s=1]
+it2: idle -[x_2==0]> t2 [s=2]
+t1i: t1 -[x_1==2]> idle [s=0]
+t2i: t2 -[x_2==2]> idle [s=0]
+
+REDUCTION: []
+COALITION: [Train1,Train2]
+PERSISTENT: [s,x_1,x_2]
+% FORMULA: <<>>G!(x_1=1 & x_2=1)
+FORMUlA: <<Train1,Train2>>F((x_1=1 & x_2=2) | (x_2=1 & x_1=2))
+% FORMULA: <<Train1>>F(x_2=1)  TRUE
+% FORMULA: <<Train1>>F(x_1=1)  FALSE

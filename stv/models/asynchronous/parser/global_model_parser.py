@@ -1,3 +1,4 @@
+from stv.models.asynchronous.global_model import LogicType
 from stv.tools import StringTools
 from stv.models.asynchronous import GlobalModel
 from stv.models.asynchronous.parser.local_model_parser import LocalModelParser
@@ -26,6 +27,7 @@ class GlobalModelParser:
         persistent = []
         coalition = []
         goal = []
+        logicType = LogicType.ATL
         formula = ""
         show_epistemic = True
         i = 0
@@ -55,14 +57,17 @@ class GlobalModelParser:
             elif self._is_goal_header(lines[i]):
                 goal = self._parse_list(lines[i])
                 i += 1
+            elif self._is_logic_header(lines[i]):
+                logicType = self._parse_logic(lines[i])
+                i += 1
             elif self._is_formula_header(lines[i]):
                 formula = self._parse_formula(lines[i])
                 i += 1
             elif self._is_show_epistemic_header(lines[i]):
                 show_epistemic = self._parse_show_epistemic(lines[i])
                 i += 1
-
-        return GlobalModel(local_models, reduction, persistent, coalition, goal, formula, show_epistemic)
+        
+        return GlobalModel(local_models, reduction, persistent, coalition, goal, logicType, formula, show_epistemic)
 
     @staticmethod
     def _is_show_epistemic_header(line: str):
@@ -91,11 +96,15 @@ class GlobalModelParser:
     @staticmethod
     def _is_goal_header(line: str):
         return line[0:4] == "GOAL"
-
+    
+    @staticmethod
+    def _is_logic_header(line: str):
+        return line[0:5] == "LOGIC"
+    
     @staticmethod
     def _is_formula_header(line: str):
         return line[0:7] == "FORMULA"
-
+    
     @staticmethod
     def _parse_list(line: str) -> List[str]:
         line = line.split(":")[1]
@@ -112,9 +121,19 @@ class GlobalModelParser:
         return 1
 
     @staticmethod
+    def _parse_logic(line: str) -> LogicType:
+        logicStr = line.split(":")[1].strip(" ").strip()
+        if logicStr == "ATL":
+            return LogicType.ATL
+        elif logicStr == "CTL":
+            return LogicType.CTL
+        else:
+            return LogicType.ATL
+    
+    @staticmethod
     def _parse_formula(line: str) -> str:
         return line.split(":")[1].strip(" ")
-
+    
     @staticmethod
     def _parse_show_epistemic(line: str) -> bool:
         return line.split(":")[1].strip(" ").casefold() == "true"
