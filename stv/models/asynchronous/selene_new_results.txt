@@ -34,3 +34,6 @@ Formula: <<Coercer1>>F(Voter1_vote=1)
 Approx low (False, 0.015625)
 Approx up (False, 0.109375)
 --------------------------------------------------
+Voters: 2 , Candidates: 2
+Reduction: False
+Out of Memory

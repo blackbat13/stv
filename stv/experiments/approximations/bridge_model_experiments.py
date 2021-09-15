@@ -1,4 +1,4 @@
-from stv.models.bridge_model import BridgeModel
+from stv.models.synchronous.bridge_model import BridgeModel
 
 
 class BridgeModelExperiments:

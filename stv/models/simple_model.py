@@ -5,9 +5,16 @@ from typing import List, Set, Dict
 import ast
 import itertools
 import json
+from deprecated import deprecated
 
 
 class SimpleModel:
+    """
+    Main class for model representation.
+    Used for (almost) all models.
+    Contains basic information about the model that is required for model checking.
+    """
+
     def __init__(self, no_agents: int):
         self._no_states: int = 0
         self._no_transitions: int = 0
@@ -24,8 +31,17 @@ class SimpleModel:
             self._epistemic_classes.append([])
             self._epistemic_class_membership.append([])
 
+    @deprecated
     def set_coalition(self, coalition: List[int]):
         self._coalition = coalition
+
+    @property
+    def coalition(self) -> List[int]:
+        return self._coalition
+
+    @coalition.setter
+    def coalition(self, value: List[int]):
+        self._coalition = value
 
     @property
     def graph(self) -> List[List[Transition]]:
@@ -71,18 +87,23 @@ class SimpleModel:
     def states(self, value: List):
         self._states = value
 
-    def has_transition(self, transition: Transition):
+    def has_transition(self, transition: Transition) -> bool:
+        """
+        Checks if the model contains the given transition
+        :param transition: transition to search for
+        :return: True, if the model contains the transition, False otherwise
+        """
         for l in self._graph:
             if transition in l:
                 return True
 
         return False
 
-    def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]) -> None:
+    def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]):
         """
-        Adds transition between to states in the model
-        :param from_state_id:
-        :param to_state_id:
+        Adds transition between two states in the model
+        :param from_state_id: identifier of the first state
+        :param to_state_id: identifier of the second state
         :param actions: List of actions for the transition
         :return: None
         """
@@ -94,9 +115,15 @@ class SimpleModel:
         self._add_actions(actions)
 
     def _add_actions(self, actions: List[str]):
+        """
+        Add actions from the transition to the model
+        :param actions: list of actions to add, one per agent
+        :return: None
+        """
         for agent_id, action in enumerate(actions):
             self._actions[agent_id].add(action)
 
+    @deprecated
     def is_unique_transition(self, transition: Transition, state_id: int) -> bool:
         for tr in self._graph[state_id]:
             if tr.actions == transition.actions and tr.next_state == transition.next_state:
@@ -104,9 +131,9 @@ class SimpleModel:
 
         return True
 
-    def resize_to_state(self, state_id: int) -> None:
+    def resize_to_state(self, state_id: int):
         """
-        Resize used structures to hold more states
+        Resizes used structures to hold more states
         :param state_id:
         :return:
         """
@@ -120,7 +147,7 @@ class SimpleModel:
 
         self._no_states = max(self._no_states, state_id + 1)
 
-    def add_epistemic_relation(self, state_id_1: int, state_id_2: int, agent_number: int) -> None:
+    def add_epistemic_relation(self, state_id_1: int, state_id_2: int, agent_number: int):
         """
         Adds epistemic relation between two states for the given agent to the model
         :param state_id_1:
@@ -145,7 +172,7 @@ class SimpleModel:
             self._epistemic_class_membership[agent_number][state_id_2] = self._epistemic_class_membership[agent_number][
                 state_id_1]
 
-    def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]) -> None:
+    def add_epistemic_class(self, agent_id: int, epistemic_class: Set[int]):
         """
         Adds epistemic class to the model
         :param agent_id: Agent id for which epistemic class is specified
@@ -204,19 +231,8 @@ class SimpleModel:
         :param states:
         :return:
         """
-        possible_actions = []
-        for state in states:
-            possible_actions.append(self.get_possible_strategies(state))
-
-        strategies = []
-        for pr in itertools.product(*possible_actions):
-            strat = []
-
-            for i in range(len(pr)):
-                strat.append(pr[i])
-
-            strategies.append(strat)
-
+        possible_actions = [self.get_possible_strategies(state) for state in states]
+        strategies = [[item for item in pr] for pr in itertools.product(*possible_actions)]
         return strategies
 
     def get_possible_strategies_for_coalition(self, state_id: int, coalition: List[int]) -> List[tuple]:
@@ -236,30 +252,27 @@ class SimpleModel:
 
         return list(possible_actions)
 
-    def to_atl_perfect(self, actions) -> ATLIrModel:
+    def to_atl_perfect(self) -> ATLIrModel:
         """
         Creates Alternating-Time Temporal Logic model with perfect information
-        :param actions:
         :return: ATLIr model
         """
         atl_model = ATLIrModel(self._no_agents)
         atl_model = self._copy_model(atl_model, self._actions, epistemic=False)
         return atl_model
 
-    def to_atl_imperfect(self, actions) -> ATLirModel:
+    def to_atl_imperfect(self) -> ATLirModel:
         """
         Creates Alternating-Time Temporal Logic model with imperfect information
-        :param actions:
         :return: ATLir model
         """
         atl_model = ATLirModel(self._no_agents)
         atl_model = self._copy_model(atl_model, self._actions, epistemic=True)
         return atl_model
 
-    def to_mvatl_imperfect(self, actions, lattice):
+    def to_mvatl_imperfect(self, lattice):
         """
         Creates Multi-Valued Alternating-Time Temporal Logic model with imperfect information
-        :param actions:
         :param lattice:
         :return: MvATLir model
         """
@@ -267,10 +280,9 @@ class SimpleModel:
         mvatl_model = self._copy_model(mvatl_model, self._actions, epistemic=True)
         return mvatl_model
 
-    def to_sl_perfect(self, actions) -> SLIr:
+    def to_sl_perfect(self) -> SLIr:
         """
         Creates Strategy Logic model with perfect information
-        :param actions:
         :return: SLIr model
         """
         sl_model = SLIr(self._no_agents)
@@ -306,7 +318,7 @@ class SimpleModel:
 
         return model
 
-    def to_subjective(self, coalition: List[int]) -> None:
+    def to_subjective(self, coalition: List[int]):
         """
         Converts model to subjective semantics for ATLir
         Adds one more state to the model and marks it as the initial state
@@ -324,7 +336,7 @@ class SimpleModel:
         self._first_state_id = state_id
         self._states.append(self._states[0])
 
-    def simulate(self, agent_number: int) -> None:
+    def simulate(self, agent_number: int):
         print("----SIMULATION START-----")
         current_state = 0
         while True:
@@ -856,6 +868,13 @@ class SimpleModel:
         return result
 
     def check_bisimulation(self, sim_model, mapping: Dict[int, List[int]], coalition: List[int]) -> bool:
+        """
+        Checks if two models are in a A-bisimulation
+        :param sim_model:
+        :param mapping:
+        :param coalition: coalition A
+        :return:
+        """
         # agent_id = self._coalition[0]
         agent_id = coalition[0]
         for epistemic_class in self.epistemic_classes[agent_id]:
@@ -874,7 +893,7 @@ class SimpleModel:
                             sim_trans = sim_partial_strats[sim_action]
                             ok = True
                             for sim_state_id in sim_group:
-                                if not self.match(state_id, sim_state_id, sim_model, agent_id):
+                                if not self.match(state_id, sim_state_id, sim_model):
                                     ok = False
                                     break
 
@@ -896,9 +915,7 @@ class SimpleModel:
                             return False
         return True
 
-    def match(self, state_id: int, sim_state_id: int, sim_model, agent_id: int) -> bool:
-        # print(self.states[state_id]['Propositions'], sim_model.states[sim_state_id]['Propositions'])
-        # print(self.states[state_id])
+    def match(self, state_id: int, sim_state_id: int, sim_model) -> bool:
         return self.states[state_id]['Propositions'] == sim_model.states[sim_state_id]['Propositions']
 
     def simulepist(self, state_id: int, sim_state_id: int, sim_model, agent_id: int,

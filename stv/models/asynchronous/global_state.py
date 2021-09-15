@@ -12,8 +12,8 @@ class GlobalState:
         self._props: Dict = props.copy()
 
     @classmethod
-    def initial_state(cls, agent_count: int):
-        return cls([0 for _ in range(agent_count)], {}, 0)
+    def initial_state(cls, agent_count: int, props: Dict):
+        return cls([0 for _ in range(agent_count)], props, 0)
 
     @classmethod
     def copy_state(cls, state, persistent: List[str]):

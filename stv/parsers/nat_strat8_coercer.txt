@@ -1,6 +1,0 @@
-Agent: Coercer
-p_start -> coerce(ca)
-p_coerce -> request
-(p_share1 || p_nshare1) -> not_punish
-(p_share2 || p_nshare2) -> punish
-true -> *
