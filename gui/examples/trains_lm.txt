@@ -1,11 +1,11 @@
 SEMANTICS: synchronous
 Agent Train[2]:
 init: wait
-wt_aID: wait -[s==ID]> tunnel [x_ID=1]
-ta_aID: tunnel -> away [x_ID=2]
-aw0_aID: away -[s==0]> wait [x_ID=0]
-aw1_aID: away -[s==1]> wait [x_ID=0]
-aw2_aID: away -[s==2]> wait [x_ID=0]
+wt: wait -[s==ID]> tunnel [x_ID=1]
+ta: tunnel -> away [x_ID=2]
+aw0: away -[s==0]> wait [x_ID=0]
+aw1: away -[s==1]> wait [x_ID=0]
+aw2: away -[s==2]> wait [x_ID=0]
 
 Agent Controller[1]:
 init: idle
