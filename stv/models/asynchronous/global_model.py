@@ -290,6 +290,17 @@ class GlobalModel:
         new_state = self._copy_props_to_state(new_state, transition)
         return new_state
 
+    def _check_correct_synchronous_transitions(self, transitions: List[LocalTransition]):
+        agents = set()
+        for transition in transitions:
+            agent_id = transition.agent_id
+            if agent_id in agents:
+                return False
+
+            agents.add(agent_id)
+
+        return True
+
     def _new_state_after_synchronous_transitions(self, state: GlobalState,
                                                  transitions: List[LocalTransition]) -> GlobalState:
         new_state = GlobalState.copy_state(state, self._persistent)
@@ -339,6 +350,8 @@ class GlobalModel:
                 # TODO check if transitions dont change variables from other conditions
                 # if not self._check_synchronous_transitions(transitions):
                 #     continue
+                if not self._check_correct_synchronous_transitions(transitions):
+                    continue
                 new_state = self._new_state_after_synchronous_transitions(state, transitions)
                 new_state_id = self._add_state(new_state)
                 self._add_synchronous_transitions(current_state_id, new_state_id, transitions)
