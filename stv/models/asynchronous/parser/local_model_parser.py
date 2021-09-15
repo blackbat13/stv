@@ -31,7 +31,7 @@ class LocalModelParser:
         for i in range(2, len(lines)):
             line = lines[i].strip()
             line = line.replace("aID", agent_name)
-            line = line.replace("ID", str(agent_id))
+            line = line.replace("ID", str(agent_id + 1))
             if self._is_protocol_line(line):
                 protocol = self._parse_protocol(line)
                 continue

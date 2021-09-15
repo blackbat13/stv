@@ -19,7 +19,3 @@ COALITION: [Train1,Train2]
 PERSISTENT: [s,x_1,x_2]
 INITIAL: [x_1=0, x_2=0, s=0]
 FORMULA: <<Train1,Train2>>F((x_1=1 & x_2=2) | (x_2=1 & x_1=2))
-SHOW_EPISTEMIC: False
-% FORMULA: <<>>G!(x_1=1 & x_2=1)
-% FORMULA: <<Train1>>F(x_2=1)  TRUE
-% FORMULA: <<Train1>>F(x_1=1)  FALSE
