@@ -8,18 +8,18 @@ def lstripLines(str):
 
 def train_controller():
     input_filename = "train_controller.mako"
-    output_filename = "train_controller_2_1.txt"
     config = {"N_Trains": 2,
               "N_Controllers": 1}
+    output_filename = f"train_controller_{config['N_Trains']}_{config['N_Controllers']}.txt"
 
     return input_filename, output_filename, config
 
 
 def train_controller_synchronous():
     input_filename = "train_controller_synchronous.mako"
-    output_filename = "train_controller_synchronous_2_1.txt"
     config = {"N_Trains": 2,
               "N_Controllers": 1}
+    output_filename = f"train_controller_synchronous_{config['N_Trains']}_{config['N_Controllers']}.txt"
 
     return input_filename, output_filename, config
 
