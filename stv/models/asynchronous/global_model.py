@@ -290,7 +290,19 @@ class GlobalModel:
         new_state = self._copy_props_to_state(new_state, transition)
         return new_state
 
-    def _new_state_after_synchronous_transitions(self, state: GlobalState, transitions: List[LocalTransition]) -> GlobalState:
+    def _check_correct_synchronous_transitions(self, transitions: List[LocalTransition]):
+        agents = set()
+        for transition in transitions:
+            agent_id = transition.agent_id
+            if agent_id in agents:
+                return False
+
+            agents.add(agent_id)
+
+        return True
+
+    def _new_state_after_synchronous_transitions(self, state: GlobalState,
+                                                 transitions: List[LocalTransition]) -> GlobalState:
         new_state = GlobalState.copy_state(state, self._persistent)
         for transition in transitions:
             agent_id = transition.agent_id
@@ -335,9 +347,32 @@ class GlobalModel:
 
         for i in range(2, len(private_transitions) + 1):
             for transitions in itertools.combinations(private_transitions, i):
+                # TODO check if transitions dont change variables from other conditions
+                # if not self._check_synchronous_transitions(transitions):
+                #     continue
+                if not self._check_correct_synchronous_transitions(transitions):
+                    continue
                 new_state = self._new_state_after_synchronous_transitions(state, transitions)
                 new_state_id = self._add_state(new_state)
                 self._add_synchronous_transitions(current_state_id, new_state_id, transitions)
+
+    def _check_synchronous_transitions(self, transitions: List[LocalTransition]):
+        conditions = set()
+        props = set()
+        for tran in transitions:
+            if len(tran.conditions) > 0:
+                conditions.add(tran.conditions[0][0])
+
+            props.update(list(tran.props.keys()))
+
+        for prop in props:
+            if prop in conditions:
+                return False
+        for cond in conditions:
+            if cond in props:
+                return False
+
+        return True
 
     def _compute_next_for_state_for_agent(self, state: GlobalState, current_state_id: int, agent_id: int,
                                           visited: List[str],
@@ -786,7 +821,7 @@ if __name__ == "__main__":
     model.generate(reduction=False)
     end = time.process_time()
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-    # model.model.simulate(0)
+    # model.model.simulate(2)
     # print(model.model.dump())
     # print("Voters:", voter, ", Candidates:", cand)
     # print("Reduction:", reduction)

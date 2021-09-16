@@ -487,11 +487,11 @@ class SimpleModel:
 
                 actions = transition.actions
 
-                if asynchronous:
-                    for act in actions:
-                        if len(act) > 0:
-                            actions = act
-                            break
+                # if asynchronous:
+                #     for act in actions:
+                #         if len(act) > 0:
+                #             actions = act
+                #             break
 
                 links.append(
                     {"id": transition_id, "source": state_id, "target": transition.next_state, "T": actions,

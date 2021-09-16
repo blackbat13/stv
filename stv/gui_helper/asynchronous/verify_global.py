@@ -11,9 +11,9 @@ global_model.generate(reduction=False)
 global_model.generate_local_models()
 
 if v == 1:
-    atl_model_global = global_model.model.to_atl_imperfect(global_model.get_actions())
+    atl_model_global = global_model.model.to_atl_imperfect()
 else:
-    atl_model_global = global_model.model.to_atl_perfect(global_model.get_actions())
+    atl_model_global = global_model.model.to_atl_perfect()
 
 winning_global = global_model.get_formula_winning_states()
 result_global = atl_model_global.minimum_formula_many_agents([global_model.get_agent()], winning_global)
