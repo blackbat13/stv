@@ -1,0 +1,23 @@
+Agent Voter[2]:
+init: v_idle
+shared openVoting: v_idle -> v_entered
+shared sendVote_aID_1: v_entered -> v_voted [aID_choice=1]
+shared sendVote_aID_2: v_entered -> v_voted [aID_choice=2]
+
+Agent Auth[1]:
+init: a_idle
+shared openVoting: a_idle -> a_collecting [aID_collected_1=0,aID_collected_2=0]
+shared sendVote_Voter1_1: a_collecting -> a_collecting [aID_recorded_1=1,aID_collected_1=1]
+shared sendVote_Voter1_2: a_collecting -> a_collecting [aID_recorded_1=2,aID_collected_1=1]
+shared sendVote_Voter2_1: a_collecting -> a_collecting [aID_recorded_2=1,aID_collected_2=1]
+shared sendVote_Voter2_2: a_collecting -> a_collecting [aID_recorded_2=2,aID_collected_2=1]
+closeVoting: a_collecting -[aID_collected_1==1, aID_collected_2==1]> a_counting
+announce_draw: a_counting -[aID_recorded_1!=aID_recorded_2]> a_end [aID_won=0]
+announce_winner_1: a_counting -[aID_recorded_1==1]> a_end [aID_won=1]
+announce_winner_2: a_counting -[aID_recorded_1==2]> a_end [aID_won=2]
+
+BOUNDED_VARS: [Voter1_choice {1..2}, Voter2_choice {1..2}]
+PERSISTENT: [Auth1_recorded_1, Auth1_recorded_2, Voter1_choice, Voter2_choice, Auth1_collected_1, Auth1_collected_2]
+COALITION: []
+LOGIC: CTL
+FORMULA: EF(Auth1_won=0)
