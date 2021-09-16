@@ -17,7 +17,7 @@ else:
 
 winning_global = global_model.get_formula_winning_states()
 result_global = atl_model_global.minimum_formula_many_agents([global_model.get_agent()], winning_global)
-
+# print(result_global)
 reduced_model = None
 if mode == "reduced":
     reduced_model = GlobalModelParser().parse(filePath)

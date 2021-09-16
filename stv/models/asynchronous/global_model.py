@@ -752,13 +752,14 @@ class GlobalModel:
 
     def verify_approximation(self, perfect_inf: bool):
         if perfect_inf:
-            atl_model = self._model.to_atl_perfect(self.get_actions())
+            atl_model = self._model.to_atl_perfect()
         else:
-            atl_model = self._model.to_atl_imperfect(self.get_actions())
+            atl_model = self._model.to_atl_imperfect()
 
         start = time.process_time()
         result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
                                                        self.get_winning_states())
+        print(result)
         end = time.process_time()
 
         return 0 in result, end - start
@@ -821,6 +822,7 @@ if __name__ == "__main__":
     model.generate(reduction=False)
     end = time.process_time()
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
+    print(model.verify_approximation(True))
     # model.model.simulate(2)
     # print(model.model.dump())
     # print("Voters:", voter, ", Candidates:", cand)
