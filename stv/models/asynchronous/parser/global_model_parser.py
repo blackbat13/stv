@@ -24,6 +24,7 @@ class GlobalModelParser:
         input_file.close()
         local_models = []
         reduction = []
+        bounded_vars = []
         persistent = []
         coalition = []
         goal = []
@@ -34,6 +35,7 @@ class GlobalModelParser:
         i = 0
         initial = {}
         while i < len(lines):
+            # print(f"LOG: parsing line{i}")
             if StringTools.is_blank_line(lines[i]) or self._is_comment_line(lines[i]):
                 i += 1
                 continue
@@ -49,6 +51,9 @@ class GlobalModelParser:
                     local_models.append(local_model)
             elif self._is_reduction_header(lines[i]):
                 reduction = self._parse_list(lines[i])
+                i += 1
+            elif self._is_bounded_vars_header(lines[i]):
+                bounded_vars = self._parse_list(lines[i])
                 i += 1
             elif self._is_persistent_header(lines[i]):
                 persistent = self._parse_list(lines[i])
@@ -75,7 +80,7 @@ class GlobalModelParser:
                 initial = self._parse_initial(lines[i])
                 i += 1
 
-        return GlobalModel(local_models, reduction, persistent, coalition, goal, logicType, formula, show_epistemic,
+        return GlobalModel(local_models, reduction, bounded_vars, persistent, coalition, goal, logicType, formula, show_epistemic,
                            semantics, initial)
 
     @staticmethod
@@ -93,6 +98,10 @@ class GlobalModelParser:
     @staticmethod
     def _is_reduction_header(line: str):
         return line[0:9] == "REDUCTION"
+
+    @staticmethod
+    def _is_bounded_vars_header(line: str):
+        return line[0:12] == "BOUNDED_VARS"
 
     @staticmethod
     def _is_persistent_header(line: str):
@@ -145,8 +154,8 @@ class GlobalModelParser:
 
     @staticmethod
     def _parse_list(line: str) -> List[str]:
-        line = line.split(":")[1]
-        line = line.strip().strip("[").strip("]")
+        line = line.split(":")[1] # string after the colon
+        line = line.strip().strip("[").strip("]") # strip whitespace and square brackets
         red = []
         for element in line.split(","):
             red.append(element.strip())
