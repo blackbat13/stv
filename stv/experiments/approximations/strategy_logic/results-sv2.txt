@@ -1,0 +1,32 @@
+no_candidates: 2
+no_voters: 2
+no_states: 395
+generation time: 0.043768
+verification time: 0.023996199999999995
+formula result: False
+
+
+no_candidates: 2
+no_voters: 2
+no_states: 395
+generation time: 0.04212070000000001
+verification time: 0.024519200000000005
+formula result: False
+
+
+no_candidates: 2
+no_voters: 2
+no_states: 395
+generation time: 0.0419679
+verification time: 0.211488
+formula result: True
+
+
+no_candidates: 2
+no_voters: 3
+no_states: 5573
+generation time: 1.2897411
+verification time: 49.2425997
+formula result: True
+
+
