@@ -1,0 +1,32 @@
+#    M1  X   O   O   O
+#    R1  O   R2  M2  O
+#    O   O   X   O   O
+#    O   O   X   O   M3
+map: >
+    OXOOO
+    OOOOO
+    OOXOO
+    OOXOO
+machines:
+    M1: 
+        x: 1
+        y: 1
+        requirements: { }
+        maxItems: 9
+    M2:
+        x: 4
+        y: 2
+        requirements: { M1: 3 }
+        maxItems: 2
+    M3:
+        x: 5
+        y: 4
+        requirements: { M1: 3, M2: 2 }
+        maxItems: 1
+robots:
+    R1:
+        x: 1
+        y: 2
+    R2:
+        x: 3
+        y: 2
