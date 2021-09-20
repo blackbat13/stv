@@ -1,0 +1,26 @@
+SEMANTICS: synchronous
+Agent Train[3]:
+init: wait
+wt: wait -[s==ID]> tunnel [x_ID=1]
+ta: tunnel -> away [x_ID=2]
+aw0: away -[s==0]> wait [x_ID=0]
+aw1: away -[s==1]> wait [x_ID=0]
+aw2: away -[s==2]> wait [x_ID=0]
+aw3: away -[s==3]> wait [x_ID=0]
+
+Agent Controller[1]:
+init: idle
+it1: idle -[x_1==0]> t1 [s=1]
+t1i: t1 -[x_1==2]> idle [s=0]
+it2: idle -[x_2==0]> t2 [s=2]
+t2i: t2 -[x_2==2]> idle [s=0]
+it3: idle -[x_3==0]> t3 [s=3]
+t3i: t3 -[x_3==2]> idle [s=0]
+
+REDUCTION: []
+COALITION: [Train1, Train2, Train3]
+PERSISTENT: [s, x_1, x_2, x_3]
+LOGIC: ATL
+INITIAL: [s=0, x_1=0, x_2=0, x_3=0]
+FORMULA: <<Train1, Train2, Train3>>F((x_1=1 & x_2=2) | (x_2=1 & x_1=2))
+SHOW_EPISTEMIC: False
