@@ -31,6 +31,7 @@ class LocalModelParser:
         for i in range(2, len(lines)):
             line = lines[i].strip()
             line = line.replace("aID", agent_name)
+            line = line.replace("ID", str(agent_id + 1))
             if self._is_protocol_line(line):
                 protocol = self._parse_protocol(line)
                 continue
@@ -41,6 +42,7 @@ class LocalModelParser:
             transition_id += 1
             if not local_transition.shared:
                 local_transition.action += f"_{agent_name}"
+                local_transition.prot_name = local_transition.action
 
             actions.add(local_transition.action)
             state_from = local_transition.state_from
@@ -60,7 +62,10 @@ class LocalModelParser:
 
         while len(transitions) < len(states):
             transitions.append([])
-
+        #
+        # for tran in transitions:
+        #     for tr in tran:
+        #         print(tr.prot_name)
         return LocalModel(agent_id, agent_name, states, transitions, protocol, actions)
 
     @staticmethod

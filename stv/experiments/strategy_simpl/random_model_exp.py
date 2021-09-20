@@ -1,4 +1,4 @@
-from stv.models.random_model import *
+from stv.models.synchronous.random_model import *
 from stv.comparing_strats.strategy_comparer import StrategyComparer
 import datetime
 import time

@@ -230,8 +230,10 @@ class ATLIrModel:
         actions = self.get_agents_actions(agent_ids)
 
         for state_id in pre_image:
+            if is_winning_state[state_id]:
+                continue
             for action in itertools.product(*actions):
-                if self.is_reachable_by_agents(agent_ids, state_id, action, is_winning_state):
+                if self.is_reachable_by_agents(agent_ids, state_id, list(action), is_winning_state):
                     self.strategy[state_id] = list(action)
                     result_states.add(state_id)
                     is_winning_state[state_id] = True

@@ -1,4 +1,3 @@
-% Train Gate Controller model with two trains and one controller
 Agent Train[2]:
 init: wait
 shared a1_aID: wait -> tunnel [aID_in=true]

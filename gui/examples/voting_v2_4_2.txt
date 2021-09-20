@@ -1,0 +1,34 @@
+Agent Voter[4]:
+init: q0
+vote1: q0 -> q1 [aID_vote=1]
+vote2: q0 -> q1 [aID_vote=2]
+shared gv_aID: q1 -> q2 [Coercer1_aID_vote=?aID_vote]
+shared ng_aID: q1 -> q2
+shared pun_aID: q2 -> q3
+shared npun_aID: q2 -> q3
+PROTOCOL: [[pun_aID, npun_aID]]
+
+Agent Coercer[1]:
+init: q0
+shared gv_Voter1: q0 -> q0 [aID_Voter1_gv=true]
+shared ng_Voter1: q0 -> q0 [aID_Voter1_ng=true]
+shared pun_Voter1: q0 -> q0 [aID_pun1=true]
+shared npun_Voter1: q0 -> q0 [aID_npun1=true]
+shared gv_Voter2: q0 -> q0 [aID_Voter2_gv=true]
+shared ng_Voter2: q0 -> q0 [aID_Voter2_ng=true]
+shared pun_Voter2: q0 -> q0 [aID_pun2=true]
+shared npun_Voter2: q0 -> q0 [aID_npun2=true]
+shared gv_Voter3: q0 -> q0 [aID_Voter3_gv=true]
+shared ng_Voter3: q0 -> q0 [aID_Voter3_ng=true]
+shared pun_Voter3: q0 -> q0 [aID_pun3=true]
+shared npun_Voter3: q0 -> q0 [aID_npun3=true]
+shared gv_Voter4: q0 -> q0 [aID_Voter4_gv=true]
+shared ng_Voter4: q0 -> q0 [aID_Voter4_ng=true]
+shared pun_Voter4: q0 -> q0 [aID_pun4=true]
+shared npun_Voter4: q0 -> q0 [aID_npun4=true]
+PROTOCOL: [[gv_Voter1,ng_Voter1],[gv_Voter2,ng_Voter2],[gv_Voter3,ng_Voter3],[gv_Voter4,ng_Voter4]]
+
+REDUCTION: [Coercer1_pun1]
+PERSISTENT: [Voter1_vote, Coercer1_Voter1_vote, Coercer1_pun1, Coercer1_npun1, Voter2_vote, Coercer1_Voter2_vote, Coercer1_pun2, Coercer1_npun2, Voter3_vote, Coercer1_Voter3_vote, Coercer1_pun3, Coercer1_npun3, Voter4_vote, Coercer1_Voter4_vote, Coercer1_pun4, Coercer1_npun4]
+COALITION: [Coercer1]
+FORMULA: <<Coercer1>>F(Coercer1_pun1=True)

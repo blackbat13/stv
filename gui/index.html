@@ -961,6 +961,7 @@
                     pyshell.run('../gui.py', {args: ['global', 'verify', mode, filePath, 0]}, function (err, results) {
                         if (err) throw err;
                         console.log('verify_global.py finished.');
+                        console.log(results)
                         const dumpedModels = JSON.parse(results[0]);
                         modelsForRecoloring = dumpedModels;
                         recolorGraph(JSON.parse(dumpedModels.globalModel), dumpedModels.localModels.length, 0);

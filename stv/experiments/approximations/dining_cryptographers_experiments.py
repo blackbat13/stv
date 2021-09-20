@@ -1,4 +1,4 @@
-from stv.models.dining_cryptographers import DiningCryptographers
+from stv.models.synchronous.dining_cryptographers import DiningCryptographers
 
 
 class DiningCryptographersExperiments:

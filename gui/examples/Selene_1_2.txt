@@ -1,0 +1,42 @@
+Agent EA[1]:
+init: ea_init
+shared generateTrackers_1: ea_init -> ea_gen [aID_t1=1]
+shared startVoting: ea_gen -> ea_start
+shared sendVote_Voter1: ea_start -[aID_t1==1]> ea_start [aID_vote1=?Voter1_vote]
+shared finishVoting: ea_start -> ea_finish
+shared sendTracker_Voter1: ea_finish -[aID_t1==1]> ea_finish [Voter1_true_tracker=1]
+shared allTrackerSend: ea_finish -> ea_send
+shared coercerWBB1: ea_send -> ea_send [Coercer1_wbb1=?aID_vote1]
+
+Agent Voter[1]:
+init: v_init
+shared requestVoteFor1_aID: v_init -> v_request [aID_req=1]
+shared requestVoteFor2_aID: v_init -> v_request [aID_req=2]
+shared leave_aID: v_init -> v_request [aID-req=0]
+shared startVoting: v_request -> v_start
+fillVote1: v_start -> v_fill [aID_vote=1]
+fillVote2: v_start -> v_fill [aID_vote=2]
+shared sendVote_aID: v_fill -> v_send 
+shared finishVoting: v_send -> v_finish
+computeFalseTracker1: v_finish -> v_false_tr [aID_false_tr=1]
+dontComputeFalseAlphaTerm: v_finish -> v_false_tr
+shared sendTracker_aID: v_false_tr -> v_send_tr
+shared allTrackerSend: v_send_tr -> v_wbb
+shared showTracker1_aID: v_wbb -[aID_true_tr==1]> v_show
+shared showTracker1_aID: v_wbb -[aID_false_tr==1]> v_show
+PROTOCOL: [[leave_aID,requestVoteFor1_aID,requestVoteFor2_aID]]
+
+Agent Coercer[1]:
+init: c_init
+shared requestVoteFor1_Voter1: c_init -> c_init [aID_req1=1]
+shared requestVoteFor2_Voter1: c_init -> c_init [aID_req1=2]
+shared leave_Voter1: c_init -> c_init [aID_req1=0]
+shared finishVoting: c_init -> c_finish
+shared coercerWBB1: c_finish -> c_finish
+shared showTracker1_Voter1: c_finish -> c_finish [aID_tr1=1]
+PROTOCOL: [[showTracker1_Voter1]]
+
+REDUCTION: [Voter1_vote, Coercer1_end]
+PERSISTENT: [EA1_t1, EA1_vote1, Coercer1_req1, Coercer1_tr1, Coercer1_wbb1, Voter1_true_tr, Voter1_req, Voter1_false_tr, Voter1_vote, Coercer1_end]
+COALITION: [Coercer1]
+FORMULA: <<Coercer1>>F(Voter1_vote=1)

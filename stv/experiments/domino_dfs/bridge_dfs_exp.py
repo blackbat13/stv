@@ -1,4 +1,4 @@
-from stv.models.bridge_model import *
+from stv.models.synchronous.bridge_model import *
 from stv.comparing_strats.strategy_comparer import StrategyComparer
 from stv.experiments.aexperiment import AExperiment
 from stv.tools.list_tools import ListTools

@@ -1,2 +1,4 @@
-pyparsing
-networkx
+pyparsing~=2.4.7
+networkx~=2.4
+Python-Deprecated
+Mako

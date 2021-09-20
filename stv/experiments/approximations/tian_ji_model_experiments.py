@@ -1,4 +1,4 @@
-from stv.models.tian_ji_model import TianJiModel
+from stv.models.synchronous.tian_ji_model import TianJiModel
 
 
 class TianJiModelExperiments:

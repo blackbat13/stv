@@ -1,0 +1,24 @@
+% Simple voting model with one voter, one coercer and two candidates
+Agent Voter[1]:
+init: q0
+vote1: q0 -> q1 [aID_vote=1]
+vote2: q0 -> q1 [aID_vote=2]
+shared gv_aID: q1 -> q2 [Coercer1_aID_vote=?aID_vote]
+shared ng_aID: q1 -> q2
+shared pun_aID: q2 -> q3
+shared npun_aID: q2 -> q3
+PROTOCOL: [[pun_aID, npun_aID]]
+
+Agent Coercer[1]:
+init: q0
+shared gv_Voter1: q0 -> q0 [aID_Voter1_gv=true]
+shared ng_Voter1: q0 -> q0 [aID_Voter1_ngv=true]
+shared pun_Voter1: q0 -> q0 [aID_pun1=true]
+shared npun_Voter1: q0 -> q0 [aID_npun1=true]
+PROTOCOL: [[gv_Voter1,ng_Voter1]]
+
+REDUCTION: [Coercer1_pun1]
+COALITION: [Coercer1]
+PERSISTENT: [Voter1_vote, Voter1_revealed, Coercer1_Voter1_vote, Coercer1_pun1, Coercer1_npun1]
+FORMULA: <<Coercer1>>F(Coercer1_pun1=True)
+SHOW_EPISTEMIC: True
