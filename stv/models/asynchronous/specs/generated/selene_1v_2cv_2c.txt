@@ -1,4 +1,4 @@
-
+% Global: Generation time: 319.765625, #states: 946359, #transitions: 2934978
 
 Agent EA[1]:
 init start

@@ -62,6 +62,8 @@ class LocalTransitionParser:
                     val = True
                 elif val.casefold() == "false":
                     val = False
+                elif val[0] == "?":
+                    pass
                 else:
                     try:
                         val = int(val)

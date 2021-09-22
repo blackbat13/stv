@@ -416,6 +416,8 @@ class SimpleModel:
     def dump_transitions_for_agent(self, agent_id) -> str:
         actions_dict = dict()
         action_ind = 0
+        actions_dict[""] = 0
+        action_ind += 1
         result = f"{self._no_transitions}\n"
         for state_id in range(0, self._no_states):
             for transition in self._graph[state_id]:

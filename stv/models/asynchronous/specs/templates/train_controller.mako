@@ -7,8 +7,8 @@ a3: away -> wait
 Agent Controller[${N_Controllers}]:
 init: green
 % for i in range(1,N_Trains+1):
-shared a1_Train${i}: green -> red
-shared a2_Train${i}: red -> green
+    shared a1_Train${i}: green -> red
+    shared a2_Train${i}: red -> green
 % endfor
 
 REDUCTION: [${ (', ').join([f"in_Train{i}" for i in range(1,N_Trains+1)]) }]

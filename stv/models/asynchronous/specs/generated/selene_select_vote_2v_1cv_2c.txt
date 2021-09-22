@@ -1,7 +1,12 @@
-% Global: Generation time: 29.1875, #states: 83025, #transitions: 315932
-% Reduced: Generation time: 1679.765625, #states: 82519, #transitions: 314118
+% Global: Generation time: 30.046875, #states: 83349, #transitions: 316460
+% Approx low (True, 0.703125)
+% Approx up (True, 5.984375)
+% Parallel 12602 usec, 2 threads, True
+% Parallel 7116 usec, 1 threads, True
+
 Agent EA[1]:
-init start
+init prepare
+shared is_ready: prepare -> start
 gen_trackers1: start -> generate [aID_tracker1=1, aID_tracker2=2, aID_tracker3=3]
 gen_trackers2: start -> generate [aID_tracker1=1, aID_tracker2=3, aID_tracker3=2]
 gen_trackers3: start -> generate [aID_tracker1=2, aID_tracker2=1, aID_tracker3=3]
@@ -58,11 +63,13 @@ shared check_tracker3_aID: check -> end
 
 Agent VoterC[1]:
 init start
-shared coerce1_aID: start -> coerced [aID_required=1]
-shared coerce2_aID: start -> coerced [aID_required=2]
+select_vote1: start -> prepared [aID_vote=1]
+select_vote2: start -> prepared [aID_vote=2]
+shared is_ready: prepared -> ready
+shared coerce1_aID: ready -> coerced [aID_required=1]
+shared coerce2_aID: ready -> coerced [aID_required=2]
 shared start_voting: coerced -> voting
-vote1: voting -> vote [aID_vote=1]
-vote2: voting -> vote [aID_vote=2]
+vote: voting -> vote
 shared send_vote_aID: vote -> send
 shared finish_voting: send -> finish
 shared send_tracker_aID: finish -> tracker

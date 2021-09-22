@@ -1,7 +1,8 @@
-% Global: Generation time: 0.5, #states: 2877, #transitions: 5904
-% Reduced: Generation time: 2.625, #states: 2859, #transitions: 5850
+% Global: Generation time: 0.515625, #states: 2909, #transitions: 5940
+
 Agent EA[1]:
-init start
+init prepare
+shared is_ready: prepare -> start
 gen_trackers1: start -> generate [aID_tracker1=1, aID_tracker2=2]
 gen_trackers2: start -> generate [aID_tracker1=2, aID_tracker2=1]
 shared start_voting: generate -> voting
@@ -37,11 +38,13 @@ shared check_tracker2_aID: check -> end
 
 Agent VoterC[1]:
 init start
-shared coerce1_aID: start -> coerced [aID_required=1]
-shared coerce2_aID: start -> coerced [aID_required=2]
+select_vote1: start -> prepared [aID_vote=1]
+select_vote2: start -> prepared [aID_vote=2]
+shared is_ready: prepared -> ready
+shared coerce1_aID: ready -> coerced [aID_required=1]
+shared coerce2_aID: ready -> coerced [aID_required=2]
 shared start_voting: coerced -> voting
-vote1: voting -> vote [aID_vote=1]
-vote2: voting -> vote [aID_vote=2]
+vote: voting -> vote
 shared send_vote_aID: vote -> send
 shared finish_voting: send -> finish
 shared send_tracker_aID: finish -> tracker
@@ -78,4 +81,5 @@ REDUCTION: [Coercer1_VoterC1_tracker]
 COALITION: [VoterC1]
 PERSISTENT: [Voter1_vote, Voter1_tracker, VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, EA1_tracker1, EA1_tracker1_vote, EA1_tracker2, EA1_tracker2_vote]
 FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
+% FORMULA: <<VoterC1>>F(VoterC1_vote=1)
 SHOW_EPISTEMIC: False

@@ -73,6 +73,7 @@ class GlobalModel:
             self.coalition: List = self._getCtlCoalition()
         self._stack1_dict: Dict[str, int] = dict()
         self._transitions_count: int = 0
+        self._epistemic_states: list = []
         self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
         self._show_epistemic = show_epistemic
 
@@ -166,6 +167,13 @@ class GlobalModel:
         # for i in range(self._agents_count):
         #     for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
         #         self.model.add_epistemic_class(i, epistemic_class)
+
+        for ep in self._epistemic_states:
+            epistemic_state, state_id, agent_id = ep
+            epistemic_state["actions"] = set()
+            for action in self._model.get_partial_strategies(state_id, agent_id):
+                epistemic_state["actions"].add(action)
+            self._add_to_epistemic_dictionary(epistemic_state, state_id, agent_id)
 
         i = self.get_agent()
         for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
@@ -643,7 +651,8 @@ class GlobalModel:
             #     self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
             i = self.get_agent()
             epistemic_state = self._get_epistemic_state(state, i)
-            self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
+            self._epistemic_states.append((epistemic_state, state_id, i))
+            # self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
 
         state.id = state_id
         return state_id
@@ -778,8 +787,8 @@ class GlobalModel:
 
         start = time.process_time()
         result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       self.get_winning_states())
-        print(result)
+                                                       set(self.get_formula_winning_states()))
+        # print(result)
         end = time.process_time()
 
         return 0 in result, end - start
@@ -788,7 +797,7 @@ class GlobalModel:
         agent_id = self.get_agent()
         strategy_comparer = StrategyComparer(self._model, self.get_actions()[agent_id])
         start = time.process_time()
-        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(), [agent_id],
+        result, strategy = strategy_comparer.domino_dfs(0, set(self.get_formula_winning_states()), [agent_id],
                                                         strategy_comparer.basic_h)
         end = time.process_time()
         # print(strategy)
@@ -820,8 +829,8 @@ class GlobalModel:
         model_file = open(filename, "w")
         model_dump = self.model.dump_for_agent(self.get_agent())
         model_file.write(model_dump)
-        # winning_states = self.get_formula_winning_states()
-        winning_states = self.get_winning_states()
+        winning_states = self.get_formula_winning_states()
+        # winning_states = self.get_winning_states()
         model_file.write(f"{len(winning_states)}\n")
         for state_id in winning_states:
             model_file.write(f"{state_id}\n")
@@ -834,31 +843,31 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    # voter = 3
-    # cand = 2
-    # reduction = False
-    model = GlobalModelParser().parse(f"trains_lm.txt")
+    filename = "selene_select_vote_1v_2cv_2c"
+    reduction = False
+
+    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
-    model.generate(reduction=False)
+    model.generate(reduction=reduction)
     end = time.process_time()
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-    print(model.verify_approximation(True))
+    # print(model.verify_approximation(True))
     # model.model.simulate(2)
     # print(model.model.dump())
     # print("Voters:", voter, ", Candidates:", cand)
     # print("Reduction:", reduction)
     # print("States count:", model.states_count)
-    # formula_parser = FormulaParser()
-    # print("Formula:", model._formula)
-    # formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
+    formula_parser = FormulaParser()
+    print("Formula:", model._formula)
+    formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
     # # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
-    # # print(model.get_formula_winning_states())
+    # print("Winning:", model.get_formula_winning_states())
     # # print(model.get_agent())
     #
-    # model.save_to_file(f"Selene_{voter}_{cand}_{reduction}_dump.txt")
+    model.save_to_file(f"{filename}_r{reduction}_dump.txt")
     #
     # # print("Winning:", model.get_winning_states())
     #
     # # print("DominoDFS", model.verify_domino())
-    # print("Approx low", model.verify_approximation(False))
-    # print("Approx up", model.verify_approximation(True))
+    print("Approx low", model.verify_approximation(False))
+    print("Approx up", model.verify_approximation(True))
