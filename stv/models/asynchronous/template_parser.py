@@ -53,11 +53,22 @@ def selene_select_vote():
     return input_filename, output_filename, config
 
 
+def selene_select_vote_revoting():
+    input_filename = "selene_select_vote_revoting.mako"
+    config = {"N_Voters": 1,
+              "N_CVoters": 1,
+              "N_Revote": 50,
+              "N_Candidates": 5}
+    output_filename = f"selene_select_vote_revoting_{config['N_Voters']}v_{config['N_CVoters']}cv_{config['N_Candidates']}c_{config['N_Revote']}rev.txt"
+
+    return input_filename, output_filename, config
+
+
 if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = selene_select_vote()
+    input_filename, output_filename, config = selene_select_vote_revoting()
 
     template = Template(filename=input_path + input_filename)
 

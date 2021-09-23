@@ -843,7 +843,7 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    filename = "selene_select_vote_1v_2cv_2c"
+    filename = "selene_select_vote_revoting_1v_1cv_5c_50rev"
     reduction = False
 
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
