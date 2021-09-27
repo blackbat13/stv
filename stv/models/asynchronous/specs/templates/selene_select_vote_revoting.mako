@@ -70,7 +70,7 @@ vote: voting -> vote
 shared send_vote_aID: vote -> send
 % for j in range(1, N_Revote + 1):
     % for i in range(1, N_Candidates + 1):
-        revote_vote${i}_${j}: send -[aID_revote==${j}}]> voting [aID_vote=${i}, aID_revote=${j+1}]
+        revote_vote${i}_${j}: send -[aID_revote==${j}]> voting [aID_vote=${i}, aID_revote=${j+1}]
     % endfor
 % endfor
 shared finish_voting: send -> finish

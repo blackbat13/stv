@@ -21,6 +21,7 @@ class LocalTransitionParser:
         state_from: str = ""
         state_to: str = ""
         cond = []
+        cond_str = ""
         props = {}
 
         if transition_str[0:6] == "shared":
@@ -33,6 +34,7 @@ class LocalTransitionParser:
         if transition_str.find("->") == -1:
             state_from, transition_str = transition_str.split("-[")
             conditions, transition_str = transition_str.split("]>")
+            cond_str = conditions
             conditions = conditions.split(',')  # assume that conditions list represents their conjunction
             for condition in conditions:
                 recognized_op = False
@@ -77,4 +79,4 @@ class LocalTransitionParser:
         state_from = state_from.strip()
         state_to = state_to.strip()
 
-        return LocalTransition(state_from, state_to, action, shared, cond, props)
+        return LocalTransition(state_from, state_to, action, shared, cond, props, cond_str)
