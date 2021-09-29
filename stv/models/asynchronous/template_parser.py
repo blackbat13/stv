@@ -67,7 +67,7 @@ def selene_select_vote_revoting():
 def robots():
     input_filename = "robots.mako"
     config = {"N_Robots": 2,
-              "N_Fields": 3}
+              "N_Fields": 6}
     output_filename = f"robots_{config['N_Robots']}r_{config['N_Fields']}f.txt"
 
     return input_filename, output_filename, config

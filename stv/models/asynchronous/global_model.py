@@ -852,13 +852,15 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    model = GlobalModelParser().parse("specs/generated/robots_2r_3f.txt")
+    reduction = False
+    filename = "robots_2r_6f"
+    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
-    model.generate(reduction=False)
+    model.generate(reduction=reduction)
     end = time.process_time()
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
     # model.model.simulate(0)
-    model.save_to_file(f"robots_2r_3f_dump.txt")
+    model.save_to_file(f"{filename}_{reduction}_dump.txt")
 
     print("Approx low", model.verify_approximation(False))
     print("Approx up", model.verify_approximation(True))
