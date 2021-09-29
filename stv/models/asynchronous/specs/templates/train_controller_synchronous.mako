@@ -4,14 +4,14 @@ init: wait
 wt: wait -[s==ID]> tunnel [x_ID=1]
 ta: tunnel -> away [x_ID=2]
 % for i in range(N_Trains+1):
-aw${i}: away -[s==${i}]> wait [x_ID=0]
+    aw${i}: away -[s==${i}]> wait [x_ID=0]
 % endfor
 
 Agent Controller[${N_Controllers}]:
 init: idle
 % for i in range(1,N_Trains+1):
-it${i}: idle -[x_${i}==0]> t${i} [s=${i}]
-t${i}i: t${i} -[x_${i}==2]> idle [s=0]
+    it${i}: idle -[x_${i}==0]> t${i} [s=${i}]
+    t${i}i: t${i} -[x_${i}==2]> idle [s=0]
 % endfor
 
 REDUCTION: []
