@@ -140,6 +140,8 @@ class GlobalModelParser:
         for variable in variables:
             variable = variable.strip(" ")
             prop, val = variable.split("=")
+            prop = prop.strip(" ")
+            val = val.strip(" ")
             if val.casefold() == "true":
                 val = True
             elif val.casefold() == "false":

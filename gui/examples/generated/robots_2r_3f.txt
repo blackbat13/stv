@@ -1,6 +1,6 @@
-% Global: Generation time: 55.09375, #states: 36156, #transitions: 123402
 
-SEMANTICS: asynchronous
+
+SEMANTICS: synchronous
 Agent Robot[2]:
 init: idle
 INTERFACE: [f_1_a_1, f_1_a_2, f_1_s, f_2_a_1, f_2_a_2, f_2_s, f_3_a_1, f_3_a_2, f_3_s]
@@ -39,25 +39,25 @@ Agent Field[3]:
 init: idle
 INTERFACE: [r_1_x, r_1_t, r_1_p, r_1_d, r_2_x, r_2_t, r_2_p, r_2_d]
 LOCAL: [f_ID_s, f_ID_a_1, f_ID_a_2]
-pick1: idle -[r_1_x==ID and f_ID_a_1==1 and r_1_t==1]> s_pick1 [f_ID_a_1=0, f_ID_s=1]
-fin_pick1: s_pick1 -[r_1_t==1 and r_1_p==1]> idle [f_ID_s=0]
-pick2: idle -[r_2_x==ID and f_ID_a_2==1 and r_2_t==1]> s_pick2 [f_ID_a_2=0, f_ID_s=2]
-fin_pick2: s_pick2 -[r_2_t==1 and r_2_p==1]> idle [f_ID_s=0]
-drop1_a1: idle -[r_1_x==ID and f_ID_a_1==0 and r_1_t==2 and r_1_d==1]> s_drop1_a1 [f_ID_a_1=1, f_ID_s=1]
-fin_drop1_a1: s_drop1_a1 -[r_1_t==2 and r_1_p==0]> idle [f_ID_s=0]
-drop1_a2: idle -[r_1_x==ID and f_ID_a_2==0 and r_1_t==2 and r_1_d==2]> s_drop1_a2 [f_ID_a_2=1, f_ID_s=1]
-fin_drop1_a2: s_drop1_a2 -[r_1_t==2 and r_1_p==0]> idle [f_ID_s=0]
-drop2_a1: idle -[r_2_x==ID and f_ID_a_1==0 and r_2_t==2 and r_2_d==1]> s_drop2_a1 [f_ID_a_1=1, f_ID_s=2]
-fin_drop2_a1: s_drop2_a1 -[r_2_t==2 and r_2_p==0]> idle [f_ID_s=0]
-drop2_a2: idle -[r_2_x==ID and f_ID_a_2==0 and r_2_t==2 and r_2_d==2]> s_drop2_a2 [f_ID_a_2=1, f_ID_s=2]
-fin_drop2_a2: s_drop2_a2 -[r_2_t==2 and r_2_p==0]> idle [f_ID_s=0]
+pick1: idle -[r_1_x == ID and f_ID_a_1 == 1 and r_1_t == 1]> s_pick1 [f_ID_a_1 = 0, f_ID_s = 1]
+fin_pick1: s_pick1 -[r_1_t == 1 and r_1_p == 1]> idle [f_ID_s = 0]
+pick2: idle -[r_2_x == ID and f_ID_a_2 == 1 and r_2_t == 1]> s_pick2 [f_ID_a_2 = 0, f_ID_s = 2]
+fin_pick2: s_pick2 -[r_2_t == 1 and r_2_p == 1]> idle [f_ID_s = 0]
+drop1_a1: idle -[r_1_x == ID and f_ID_a_1 == 0 and r_1_t == 2 and r_1_d == 1]> s_drop1_a1 [f_ID_a_1 = 1, f_ID_s = 1]
+fin_drop1_a1: s_drop1_a1 -[r_1_t == 2 and r_1_p == 0]> idle [f_ID_s = 0]
+drop1_a2: idle -[r_1_x == ID and f_ID_a_2 == 0 and r_1_t == 2 and r_1_d == 2]> s_drop1_a2 [f_ID_a_2 = 1, f_ID_s = 1]
+fin_drop1_a2: s_drop1_a2 -[r_1_t == 2 and r_1_p == 0]> idle [f_ID_s = 0]
+drop2_a1: idle -[r_2_x == ID and f_ID_a_1 == 0 and r_2_t == 2 and r_2_d == 1]> s_drop2_a1 [f_ID_a_1 = 1, f_ID_s = 2]
+fin_drop2_a1: s_drop2_a1 -[r_2_t == 2 and r_2_p == 0]> idle [f_ID_s = 0]
+drop2_a2: idle -[r_2_x == ID and f_ID_a_2 == 0 and r_2_t == 2 and r_2_d == 2]> s_drop2_a2 [f_ID_a_2 = 1, f_ID_s = 2]
+fin_drop2_a2: s_drop2_a2 -[r_2_t == 2 and r_2_p == 0]> idle [f_ID_s = 0]
 
-INITIAL: [r_1_x=1, r_1_e=5, r_1_p=0, r_1_t=0, r_1_d=0, r_2_x=1, r_2_e=5, r_2_p=0, r_2_t=0, r_2_d=0, f_1_s=0, f_2_s=0, f_3_s=0, f_1_a_1=1, f_1_a_2=1, f_2_a_1=0, f_2_a_2=0, f_3_a_1=0, f_3_a_2=0]
+INITIAL: [r_1_x = 1, r_1_e = 5, r_1_p = 0, r_1_t = 0, r_1_d = 0, r_2_x = 1, r_2_e = 5, r_2_p = 0, r_2_t = 0, r_2_d = 0, f_1_s = 0, f_2_s = 0, f_3_s = 0, f_1_a_1 = 1, f_1_a_2 = 1, f_2_a_1 = 0, f_2_a_2 = 0, f_3_a_1 = 0, f_3_a_2 = 0]
 REDUCTION: []
 COALITION: [Robot1]
 PERSISTENT: [r_1_x, r_1_e, r_1_p, r_1_t, r_1_d, r_2_x, r_2_e, r_2_p, r_2_t, r_2_d, f_1_s, f_2_s, f_3_s, f_1_a_1, f_1_a_2, f_2_a_1, f_2_a_2, f_3_a_1, f_3_a_2]
 LOGIC: ATL
-FORMULA: <<Robot1>>F(f_3_a_1=1 || f_3_a_2=1)
+FORMULA: <<Robot1>>F(p3_a1==1 || p3_a2==1)
 % FORMULA: <<Robot1>>(r1_e>0 && r2_e>0)U(p3_a1==1 || p3_a2==1)
 SHOW_EPISTEMIC: False
 

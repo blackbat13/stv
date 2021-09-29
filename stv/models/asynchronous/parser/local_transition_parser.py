@@ -35,7 +35,7 @@ class LocalTransitionParser:
             state_from, transition_str = transition_str.split("-[")
             conditions, transition_str = transition_str.split("]>")
             cond_str = conditions
-            conditions = conditions.split(',')  # assume that conditions list represents their conjunction
+            conditions = conditions.split('and')  # assume that conditions list represents their conjunction
             for condition in conditions:
                 recognized_op = False
                 for op in ["==", "!=", ">=", "<=", ">", "<"]:
@@ -72,7 +72,14 @@ class LocalTransitionParser:
                     except ValueError:
                         print(f"ERR: Attempt to assign a non-integer value to a variable in '{prop}={val}'")
                         pass
-                props[prop] = val
+                if prop[-1] == "+":
+                    prop = prop.rstrip("+")
+                    props[prop] = ("+", val)
+                elif prop[-1] == "-":
+                    prop = prop.rstrip("-")
+                    props[prop] = ("-", val)
+                else:
+                    props[prop] = ("", val)
         else:
             state_to = transition_str
 

@@ -414,23 +414,32 @@ class GlobalModel:
     def _copy_props_to_state(self, state: GlobalState, transition: LocalTransition) -> GlobalState:
         for prop in transition.props:
             # print(f"LOG: {prop} = {transition.props[prop]} ({type(transition.props[prop])})")
-            self._check_bounded_vars(prop, transition.props[prop])
+            op, val = transition.props[prop]
 
-            if type(transition.props[prop]) is str:
-                if transition.props[prop][0] == "?":
-                    prop_name = transition.props[prop][1:]
+            self._check_bounded_vars(prop, val)
+
+            if type(val) is str:
+                if val[0] == "?":
+                    prop_name = val[1:]
                     # print(prop_name, state.props, prop)
                     if prop_name in transition.props:
-                        state.set_prop(prop, transition.props[prop_name])
+                        state.set_prop(prop, transition.props[prop_name][1])
                     elif prop_name in state.props:
                         state.set_prop(prop, state.props[prop_name])
-            elif type(transition.props[prop]) is bool:
-                if not transition.props[prop]:
+            elif type(val) is bool:
+                if not val:
                     state.remove_prop(prop)
                 else:
-                    state.set_prop(prop, transition.props[prop])
+                    state.set_prop(prop, val)
+            elif type(val) is int:
+                if op == "+":
+                    state.change_prop(prop, val)
+                elif op == "-":
+                    state.change_prop(prop, -val)
+                else:
+                    state.set_prop(prop, val)
             else:
-                state.set_prop(prop, transition.props[prop])
+                state.set_prop(prop, val)
         return state
 
     def _check_bounded_vars(self, prop_name, prop_val):
@@ -438,7 +447,7 @@ class GlobalModel:
             return
         if prop_name in self._bounded_vars:
             min_val, max_val = self._bounded_vars[prop_name].strip("{").strip("}").split('..')
-            if prop_val<int(min_val) or prop_val>int(max_val):
+            if prop_val < int(min_val) or prop_val > int(max_val):
                 print(f"WARN: Assigning an int out of bound values in '{prop_name}={prop_val}'")
 
     def _state_find(self, state: GlobalState) -> int:
@@ -843,31 +852,42 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    filename = "selene_select_vote_revoting_1v_1cv_2c_5rev"
-    reduction = False
-
-    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
+    model = GlobalModelParser().parse("specs/generated/robots_2r_3f.txt")
     start = time.process_time()
-    model.generate(reduction=reduction)
+    model.generate(reduction=False)
     end = time.process_time()
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-    # print(model.verify_approximation(True))
-    # model.model.simulate(2)
-    # print(model.model.dump())
-    # print("Voters:", voter, ", Candidates:", cand)
-    # print("Reduction:", reduction)
-    # print("States count:", model.states_count)
-    formula_parser = FormulaParser()
-    print("Formula:", model._formula)
-    formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
-    # # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
-    # print("Winning:", model.get_formula_winning_states())
-    # # print(model.get_agent())
-    #
-    model.save_to_file(f"{filename}_r{reduction}_dump.txt")
-    #
-    # # print("Winning:", model.get_winning_states())
-    #
-    # # print("DominoDFS", model.verify_domino())
+    # model.model.simulate(0)
+    model.save_to_file(f"robots_2r_3f_dump.txt")
+
     print("Approx low", model.verify_approximation(False))
     print("Approx up", model.verify_approximation(True))
+
+    # filename = "selene_select_vote_revoting_1v_1cv_2c_5rev"
+    # reduction = False
+    #
+    # model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
+    # start = time.process_time()
+    # model.generate(reduction=reduction)
+    # end = time.process_time()
+    # print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
+    # # print(model.verify_approximation(True))
+    # # model.model.simulate(2)
+    # # print(model.model.dump())
+    # # print("Voters:", voter, ", Candidates:", cand)
+    # # print("Reduction:", reduction)
+    # # print("States count:", model.states_count)
+    # formula_parser = FormulaParser()
+    # print("Formula:", model._formula)
+    # formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
+    # # # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
+    # # print("Winning:", model.get_formula_winning_states())
+    # # # print(model.get_agent())
+    # #
+    # model.save_to_file(f"{filename}_r{reduction}_dump.txt")
+    # #
+    # # # print("Winning:", model.get_winning_states())
+    # #
+    # # # print("DominoDFS", model.verify_domino())
+    # print("Approx low", model.verify_approximation(False))
+    # print("Approx up", model.verify_approximation(True))

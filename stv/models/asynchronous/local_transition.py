@@ -104,6 +104,7 @@ class LocalTransition:
         """
         if self._conditions_str == "":
             return True
+        # print(self._conditions_str, state.props, eval(self._conditions_str, {}, state.props))
         return eval(self._conditions_str, {}, state.props)
 
     def print(self):

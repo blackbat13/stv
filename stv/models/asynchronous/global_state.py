@@ -45,6 +45,9 @@ class GlobalState:
     def set_prop(self, key: str, value):
         self._props[key] = value
 
+    def change_prop(self, key: str, value: int):
+        self._props[key] += value
+
     def remove_prop(self, key: str):
         if key in self._props:
             self._props.pop(key)

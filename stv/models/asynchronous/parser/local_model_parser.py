@@ -31,9 +31,13 @@ class LocalModelParser:
         for i in range(2, len(lines)):
             line = lines[i].strip()
             line = line.replace("aID", agent_name)
-            line = line.replace("ID", str(agent_id + 1))
+            line = line.replace("ID", str(agent_no))
             if self._is_protocol_line(line):
                 protocol = self._parse_protocol(line)
+                continue
+            elif self._is_local_line(line):
+                continue
+            elif self._is_interface_line(line):
                 continue
 
             local_transition = LocalTransitionParser().parse(line)
@@ -71,6 +75,14 @@ class LocalModelParser:
     @staticmethod
     def _is_protocol_line(line: str) -> bool:
         return line[:8] == "PROTOCOL"
+
+    @staticmethod
+    def _is_local_line(line: str) -> bool:
+        return line[:5] == "LOCAL"
+
+    @staticmethod
+    def _is_interface_line(line: str) -> bool:
+        return line[:9] == "INTERFACE"
 
     def _parse_protocol(self, line: str) -> (str, List[List[str]]):
         line = line.split(":")
