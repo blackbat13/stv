@@ -853,7 +853,7 @@ if __name__ == "__main__":
     from stv.parsers import FormulaParser
 
     reduction = False
-    filename = "robots_2r_6f"
+    filename = "robots_3r_2f_2e"
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
     model.generate(reduction=reduction)
