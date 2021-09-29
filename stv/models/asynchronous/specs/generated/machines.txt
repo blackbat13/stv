@@ -1,0 +1,325 @@
+Agent R[2]:
+init: r_init1
+init1: r_init1 -> r_init2 [aID_carriedItemMachineNum = 0]
+init2: r_init2 -[R1_carriedItemMachineNum == 0]> r_empty [aID_fieldId = 6, mapField_6_locked = 1]
+init2: r_init2 -[R2_carriedItemMachineNum == 0]> r_empty [aID_fieldId = 8, mapField_8_locked = 1]
+move1_r_empty_1_6: r_empty -[aID_fieldId == 1]> r_empty_movingTo_6
+move2_r_empty_1_6: r_empty_movingTo_6 -[mapField_6_locked != 1]> r_empty [mapField_6_locked = 1, mapField_1_locked = 0, aID_fieldId = 6]
+move_cancel_r_empty_1_6: r_empty_movingTo_6 -> r_empty
+move1_r_empty_6_7: r_empty -[aID_fieldId == 6]> r_empty_movingTo_7
+move2_r_empty_6_7: r_empty_movingTo_7 -[mapField_7_locked != 1]> r_empty [mapField_7_locked = 1, mapField_6_locked = 0, aID_fieldId = 7]
+move_cancel_r_empty_6_7: r_empty_movingTo_7 -> r_empty
+move1_r_empty_6_1: r_empty -[aID_fieldId == 6]> r_empty_movingTo_1
+move2_r_empty_6_1: r_empty_movingTo_1 -[mapField_1_locked != 1]> r_empty [mapField_1_locked = 1, mapField_6_locked = 0, aID_fieldId = 1]
+move_cancel_r_empty_6_1: r_empty_movingTo_1 -> r_empty
+move1_r_empty_6_11: r_empty -[aID_fieldId == 6]> r_empty_movingTo_11
+move2_r_empty_6_11: r_empty_movingTo_11 -[mapField_11_locked != 1]> r_empty [mapField_11_locked = 1, mapField_6_locked = 0, aID_fieldId = 11]
+move_cancel_r_empty_6_11: r_empty_movingTo_11 -> r_empty
+move1_r_empty_11_12: r_empty -[aID_fieldId == 11]> r_empty_movingTo_12
+move2_r_empty_11_12: r_empty_movingTo_12 -[mapField_12_locked != 1]> r_empty [mapField_12_locked = 1, mapField_11_locked = 0, aID_fieldId = 12]
+move_cancel_r_empty_11_12: r_empty_movingTo_12 -> r_empty
+move1_r_empty_11_6: r_empty -[aID_fieldId == 11]> r_empty_movingTo_6
+move2_r_empty_11_6: r_empty_movingTo_6 -[mapField_6_locked != 1]> r_empty [mapField_6_locked = 1, mapField_11_locked = 0, aID_fieldId = 6]
+move_cancel_r_empty_11_6: r_empty_movingTo_6 -> r_empty
+move1_r_empty_11_16: r_empty -[aID_fieldId == 11]> r_empty_movingTo_16
+move2_r_empty_11_16: r_empty_movingTo_16 -[mapField_16_locked != 1]> r_empty [mapField_16_locked = 1, mapField_11_locked = 0, aID_fieldId = 16]
+move_cancel_r_empty_11_16: r_empty_movingTo_16 -> r_empty
+move1_r_empty_16_17: r_empty -[aID_fieldId == 16]> r_empty_movingTo_17
+move2_r_empty_16_17: r_empty_movingTo_17 -[mapField_17_locked != 1]> r_empty [mapField_17_locked = 1, mapField_16_locked = 0, aID_fieldId = 17]
+move_cancel_r_empty_16_17: r_empty_movingTo_17 -> r_empty
+move1_r_empty_16_11: r_empty -[aID_fieldId == 16]> r_empty_movingTo_11
+move2_r_empty_16_11: r_empty_movingTo_11 -[mapField_11_locked != 1]> r_empty [mapField_11_locked = 1, mapField_16_locked = 0, aID_fieldId = 11]
+move_cancel_r_empty_16_11: r_empty_movingTo_11 -> r_empty
+move1_r_empty_7_6: r_empty -[aID_fieldId == 7]> r_empty_movingTo_6
+move2_r_empty_7_6: r_empty_movingTo_6 -[mapField_6_locked != 1]> r_empty [mapField_6_locked = 1, mapField_7_locked = 0, aID_fieldId = 6]
+move_cancel_r_empty_7_6: r_empty_movingTo_6 -> r_empty
+move1_r_empty_7_8: r_empty -[aID_fieldId == 7]> r_empty_movingTo_8
+move2_r_empty_7_8: r_empty_movingTo_8 -[mapField_8_locked != 1]> r_empty [mapField_8_locked = 1, mapField_7_locked = 0, aID_fieldId = 8]
+move_cancel_r_empty_7_8: r_empty_movingTo_8 -> r_empty
+move1_r_empty_7_12: r_empty -[aID_fieldId == 7]> r_empty_movingTo_12
+move2_r_empty_7_12: r_empty_movingTo_12 -[mapField_12_locked != 1]> r_empty [mapField_12_locked = 1, mapField_7_locked = 0, aID_fieldId = 12]
+move_cancel_r_empty_7_12: r_empty_movingTo_12 -> r_empty
+move1_r_empty_12_11: r_empty -[aID_fieldId == 12]> r_empty_movingTo_11
+move2_r_empty_12_11: r_empty_movingTo_11 -[mapField_11_locked != 1]> r_empty [mapField_11_locked = 1, mapField_12_locked = 0, aID_fieldId = 11]
+move_cancel_r_empty_12_11: r_empty_movingTo_11 -> r_empty
+move1_r_empty_12_7: r_empty -[aID_fieldId == 12]> r_empty_movingTo_7
+move2_r_empty_12_7: r_empty_movingTo_7 -[mapField_7_locked != 1]> r_empty [mapField_7_locked = 1, mapField_12_locked = 0, aID_fieldId = 7]
+move_cancel_r_empty_12_7: r_empty_movingTo_7 -> r_empty
+move1_r_empty_12_17: r_empty -[aID_fieldId == 12]> r_empty_movingTo_17
+move2_r_empty_12_17: r_empty_movingTo_17 -[mapField_17_locked != 1]> r_empty [mapField_17_locked = 1, mapField_12_locked = 0, aID_fieldId = 17]
+move_cancel_r_empty_12_17: r_empty_movingTo_17 -> r_empty
+move1_r_empty_17_16: r_empty -[aID_fieldId == 17]> r_empty_movingTo_16
+move2_r_empty_17_16: r_empty_movingTo_16 -[mapField_16_locked != 1]> r_empty [mapField_16_locked = 1, mapField_17_locked = 0, aID_fieldId = 16]
+move_cancel_r_empty_17_16: r_empty_movingTo_16 -> r_empty
+move1_r_empty_17_12: r_empty -[aID_fieldId == 17]> r_empty_movingTo_12
+move2_r_empty_17_12: r_empty_movingTo_12 -[mapField_12_locked != 1]> r_empty [mapField_12_locked = 1, mapField_17_locked = 0, aID_fieldId = 12]
+move_cancel_r_empty_17_12: r_empty_movingTo_12 -> r_empty
+move1_r_empty_3_4: r_empty -[aID_fieldId == 3]> r_empty_movingTo_4
+move2_r_empty_3_4: r_empty_movingTo_4 -[mapField_4_locked != 1]> r_empty [mapField_4_locked = 1, mapField_3_locked = 0, aID_fieldId = 4]
+move_cancel_r_empty_3_4: r_empty_movingTo_4 -> r_empty
+move1_r_empty_3_8: r_empty -[aID_fieldId == 3]> r_empty_movingTo_8
+move2_r_empty_3_8: r_empty_movingTo_8 -[mapField_8_locked != 1]> r_empty [mapField_8_locked = 1, mapField_3_locked = 0, aID_fieldId = 8]
+move_cancel_r_empty_3_8: r_empty_movingTo_8 -> r_empty
+move1_r_empty_8_7: r_empty -[aID_fieldId == 8]> r_empty_movingTo_7
+move2_r_empty_8_7: r_empty_movingTo_7 -[mapField_7_locked != 1]> r_empty [mapField_7_locked = 1, mapField_8_locked = 0, aID_fieldId = 7]
+move_cancel_r_empty_8_7: r_empty_movingTo_7 -> r_empty
+move1_r_empty_8_9: r_empty -[aID_fieldId == 8]> r_empty_movingTo_9
+move2_r_empty_8_9: r_empty_movingTo_9 -[mapField_9_locked != 1]> r_empty [mapField_9_locked = 1, mapField_8_locked = 0, aID_fieldId = 9]
+move_cancel_r_empty_8_9: r_empty_movingTo_9 -> r_empty
+move1_r_empty_8_3: r_empty -[aID_fieldId == 8]> r_empty_movingTo_3
+move2_r_empty_8_3: r_empty_movingTo_3 -[mapField_3_locked != 1]> r_empty [mapField_3_locked = 1, mapField_8_locked = 0, aID_fieldId = 3]
+move_cancel_r_empty_8_3: r_empty_movingTo_3 -> r_empty
+move1_r_empty_4_3: r_empty -[aID_fieldId == 4]> r_empty_movingTo_3
+move2_r_empty_4_3: r_empty_movingTo_3 -[mapField_3_locked != 1]> r_empty [mapField_3_locked = 1, mapField_4_locked = 0, aID_fieldId = 3]
+move_cancel_r_empty_4_3: r_empty_movingTo_3 -> r_empty
+move1_r_empty_4_5: r_empty -[aID_fieldId == 4]> r_empty_movingTo_5
+move2_r_empty_4_5: r_empty_movingTo_5 -[mapField_5_locked != 1]> r_empty [mapField_5_locked = 1, mapField_4_locked = 0, aID_fieldId = 5]
+move_cancel_r_empty_4_5: r_empty_movingTo_5 -> r_empty
+move1_r_empty_4_9: r_empty -[aID_fieldId == 4]> r_empty_movingTo_9
+move2_r_empty_4_9: r_empty_movingTo_9 -[mapField_9_locked != 1]> r_empty [mapField_9_locked = 1, mapField_4_locked = 0, aID_fieldId = 9]
+move_cancel_r_empty_4_9: r_empty_movingTo_9 -> r_empty
+move1_r_empty_9_8: r_empty -[aID_fieldId == 9]> r_empty_movingTo_8
+move2_r_empty_9_8: r_empty_movingTo_8 -[mapField_8_locked != 1]> r_empty [mapField_8_locked = 1, mapField_9_locked = 0, aID_fieldId = 8]
+move_cancel_r_empty_9_8: r_empty_movingTo_8 -> r_empty
+move1_r_empty_9_10: r_empty -[aID_fieldId == 9]> r_empty_movingTo_10
+move2_r_empty_9_10: r_empty_movingTo_10 -[mapField_10_locked != 1]> r_empty [mapField_10_locked = 1, mapField_9_locked = 0, aID_fieldId = 10]
+move_cancel_r_empty_9_10: r_empty_movingTo_10 -> r_empty
+move1_r_empty_9_4: r_empty -[aID_fieldId == 9]> r_empty_movingTo_4
+move2_r_empty_9_4: r_empty_movingTo_4 -[mapField_4_locked != 1]> r_empty [mapField_4_locked = 1, mapField_9_locked = 0, aID_fieldId = 4]
+move_cancel_r_empty_9_4: r_empty_movingTo_4 -> r_empty
+move1_r_empty_9_14: r_empty -[aID_fieldId == 9]> r_empty_movingTo_14
+move2_r_empty_9_14: r_empty_movingTo_14 -[mapField_14_locked != 1]> r_empty [mapField_14_locked = 1, mapField_9_locked = 0, aID_fieldId = 14]
+move_cancel_r_empty_9_14: r_empty_movingTo_14 -> r_empty
+move1_r_empty_14_15: r_empty -[aID_fieldId == 14]> r_empty_movingTo_15
+move2_r_empty_14_15: r_empty_movingTo_15 -[mapField_15_locked != 1]> r_empty [mapField_15_locked = 1, mapField_14_locked = 0, aID_fieldId = 15]
+move_cancel_r_empty_14_15: r_empty_movingTo_15 -> r_empty
+move1_r_empty_14_9: r_empty -[aID_fieldId == 14]> r_empty_movingTo_9
+move2_r_empty_14_9: r_empty_movingTo_9 -[mapField_9_locked != 1]> r_empty [mapField_9_locked = 1, mapField_14_locked = 0, aID_fieldId = 9]
+move_cancel_r_empty_14_9: r_empty_movingTo_9 -> r_empty
+move1_r_empty_14_19: r_empty -[aID_fieldId == 14]> r_empty_movingTo_19
+move2_r_empty_14_19: r_empty_movingTo_19 -[mapField_19_locked != 1]> r_empty [mapField_19_locked = 1, mapField_14_locked = 0, aID_fieldId = 19]
+move_cancel_r_empty_14_19: r_empty_movingTo_19 -> r_empty
+move1_r_empty_19_20: r_empty -[aID_fieldId == 19]> r_empty_movingTo_20
+move2_r_empty_19_20: r_empty_movingTo_20 -[mapField_20_locked != 1]> r_empty [mapField_20_locked = 1, mapField_19_locked = 0, aID_fieldId = 20]
+move_cancel_r_empty_19_20: r_empty_movingTo_20 -> r_empty
+move1_r_empty_19_14: r_empty -[aID_fieldId == 19]> r_empty_movingTo_14
+move2_r_empty_19_14: r_empty_movingTo_14 -[mapField_14_locked != 1]> r_empty [mapField_14_locked = 1, mapField_19_locked = 0, aID_fieldId = 14]
+move_cancel_r_empty_19_14: r_empty_movingTo_14 -> r_empty
+move1_r_empty_5_4: r_empty -[aID_fieldId == 5]> r_empty_movingTo_4
+move2_r_empty_5_4: r_empty_movingTo_4 -[mapField_4_locked != 1]> r_empty [mapField_4_locked = 1, mapField_5_locked = 0, aID_fieldId = 4]
+move_cancel_r_empty_5_4: r_empty_movingTo_4 -> r_empty
+move1_r_empty_5_10: r_empty -[aID_fieldId == 5]> r_empty_movingTo_10
+move2_r_empty_5_10: r_empty_movingTo_10 -[mapField_10_locked != 1]> r_empty [mapField_10_locked = 1, mapField_5_locked = 0, aID_fieldId = 10]
+move_cancel_r_empty_5_10: r_empty_movingTo_10 -> r_empty
+move1_r_empty_10_9: r_empty -[aID_fieldId == 10]> r_empty_movingTo_9
+move2_r_empty_10_9: r_empty_movingTo_9 -[mapField_9_locked != 1]> r_empty [mapField_9_locked = 1, mapField_10_locked = 0, aID_fieldId = 9]
+move_cancel_r_empty_10_9: r_empty_movingTo_9 -> r_empty
+move1_r_empty_10_5: r_empty -[aID_fieldId == 10]> r_empty_movingTo_5
+move2_r_empty_10_5: r_empty_movingTo_5 -[mapField_5_locked != 1]> r_empty [mapField_5_locked = 1, mapField_10_locked = 0, aID_fieldId = 5]
+move_cancel_r_empty_10_5: r_empty_movingTo_5 -> r_empty
+move1_r_empty_10_15: r_empty -[aID_fieldId == 10]> r_empty_movingTo_15
+move2_r_empty_10_15: r_empty_movingTo_15 -[mapField_15_locked != 1]> r_empty [mapField_15_locked = 1, mapField_10_locked = 0, aID_fieldId = 15]
+move_cancel_r_empty_10_15: r_empty_movingTo_15 -> r_empty
+move1_r_empty_15_14: r_empty -[aID_fieldId == 15]> r_empty_movingTo_14
+move2_r_empty_15_14: r_empty_movingTo_14 -[mapField_14_locked != 1]> r_empty [mapField_14_locked = 1, mapField_15_locked = 0, aID_fieldId = 14]
+move_cancel_r_empty_15_14: r_empty_movingTo_14 -> r_empty
+move1_r_empty_15_10: r_empty -[aID_fieldId == 15]> r_empty_movingTo_10
+move2_r_empty_15_10: r_empty_movingTo_10 -[mapField_10_locked != 1]> r_empty [mapField_10_locked = 1, mapField_15_locked = 0, aID_fieldId = 10]
+move_cancel_r_empty_15_10: r_empty_movingTo_10 -> r_empty
+move1_r_empty_15_20: r_empty -[aID_fieldId == 15]> r_empty_movingTo_20
+move2_r_empty_15_20: r_empty_movingTo_20 -[mapField_20_locked != 1]> r_empty [mapField_20_locked = 1, mapField_15_locked = 0, aID_fieldId = 20]
+move_cancel_r_empty_15_20: r_empty_movingTo_20 -> r_empty
+move1_r_empty_20_19: r_empty -[aID_fieldId == 20]> r_empty_movingTo_19
+move2_r_empty_20_19: r_empty_movingTo_19 -[mapField_19_locked != 1]> r_empty [mapField_19_locked = 1, mapField_20_locked = 0, aID_fieldId = 19]
+move_cancel_r_empty_20_19: r_empty_movingTo_19 -> r_empty
+move1_r_empty_20_15: r_empty -[aID_fieldId == 20]> r_empty_movingTo_15
+move2_r_empty_20_15: r_empty_movingTo_15 -[mapField_15_locked != 1]> r_empty [mapField_15_locked = 1, mapField_20_locked = 0, aID_fieldId = 15]
+move_cancel_r_empty_20_15: r_empty_movingTo_15 -> r_empty
+move1_r_carrying_1_6: r_carrying -[aID_fieldId == 1]> r_carrying_movingTo_6
+move2_r_carrying_1_6: r_carrying_movingTo_6 -[mapField_6_locked != 1]> r_carrying [mapField_6_locked = 1, mapField_1_locked = 0, aID_fieldId = 6]
+move_cancel_r_carrying_1_6: r_carrying_movingTo_6 -> r_carrying
+move1_r_carrying_6_7: r_carrying -[aID_fieldId == 6]> r_carrying_movingTo_7
+move2_r_carrying_6_7: r_carrying_movingTo_7 -[mapField_7_locked != 1]> r_carrying [mapField_7_locked = 1, mapField_6_locked = 0, aID_fieldId = 7]
+move_cancel_r_carrying_6_7: r_carrying_movingTo_7 -> r_carrying
+move1_r_carrying_6_1: r_carrying -[aID_fieldId == 6]> r_carrying_movingTo_1
+move2_r_carrying_6_1: r_carrying_movingTo_1 -[mapField_1_locked != 1]> r_carrying [mapField_1_locked = 1, mapField_6_locked = 0, aID_fieldId = 1]
+move_cancel_r_carrying_6_1: r_carrying_movingTo_1 -> r_carrying
+move1_r_carrying_6_11: r_carrying -[aID_fieldId == 6]> r_carrying_movingTo_11
+move2_r_carrying_6_11: r_carrying_movingTo_11 -[mapField_11_locked != 1]> r_carrying [mapField_11_locked = 1, mapField_6_locked = 0, aID_fieldId = 11]
+move_cancel_r_carrying_6_11: r_carrying_movingTo_11 -> r_carrying
+move1_r_carrying_11_12: r_carrying -[aID_fieldId == 11]> r_carrying_movingTo_12
+move2_r_carrying_11_12: r_carrying_movingTo_12 -[mapField_12_locked != 1]> r_carrying [mapField_12_locked = 1, mapField_11_locked = 0, aID_fieldId = 12]
+move_cancel_r_carrying_11_12: r_carrying_movingTo_12 -> r_carrying
+move1_r_carrying_11_6: r_carrying -[aID_fieldId == 11]> r_carrying_movingTo_6
+move2_r_carrying_11_6: r_carrying_movingTo_6 -[mapField_6_locked != 1]> r_carrying [mapField_6_locked = 1, mapField_11_locked = 0, aID_fieldId = 6]
+move_cancel_r_carrying_11_6: r_carrying_movingTo_6 -> r_carrying
+move1_r_carrying_11_16: r_carrying -[aID_fieldId == 11]> r_carrying_movingTo_16
+move2_r_carrying_11_16: r_carrying_movingTo_16 -[mapField_16_locked != 1]> r_carrying [mapField_16_locked = 1, mapField_11_locked = 0, aID_fieldId = 16]
+move_cancel_r_carrying_11_16: r_carrying_movingTo_16 -> r_carrying
+move1_r_carrying_16_17: r_carrying -[aID_fieldId == 16]> r_carrying_movingTo_17
+move2_r_carrying_16_17: r_carrying_movingTo_17 -[mapField_17_locked != 1]> r_carrying [mapField_17_locked = 1, mapField_16_locked = 0, aID_fieldId = 17]
+move_cancel_r_carrying_16_17: r_carrying_movingTo_17 -> r_carrying
+move1_r_carrying_16_11: r_carrying -[aID_fieldId == 16]> r_carrying_movingTo_11
+move2_r_carrying_16_11: r_carrying_movingTo_11 -[mapField_11_locked != 1]> r_carrying [mapField_11_locked = 1, mapField_16_locked = 0, aID_fieldId = 11]
+move_cancel_r_carrying_16_11: r_carrying_movingTo_11 -> r_carrying
+move1_r_carrying_7_6: r_carrying -[aID_fieldId == 7]> r_carrying_movingTo_6
+move2_r_carrying_7_6: r_carrying_movingTo_6 -[mapField_6_locked != 1]> r_carrying [mapField_6_locked = 1, mapField_7_locked = 0, aID_fieldId = 6]
+move_cancel_r_carrying_7_6: r_carrying_movingTo_6 -> r_carrying
+move1_r_carrying_7_8: r_carrying -[aID_fieldId == 7]> r_carrying_movingTo_8
+move2_r_carrying_7_8: r_carrying_movingTo_8 -[mapField_8_locked != 1]> r_carrying [mapField_8_locked = 1, mapField_7_locked = 0, aID_fieldId = 8]
+move_cancel_r_carrying_7_8: r_carrying_movingTo_8 -> r_carrying
+move1_r_carrying_7_12: r_carrying -[aID_fieldId == 7]> r_carrying_movingTo_12
+move2_r_carrying_7_12: r_carrying_movingTo_12 -[mapField_12_locked != 1]> r_carrying [mapField_12_locked = 1, mapField_7_locked = 0, aID_fieldId = 12]
+move_cancel_r_carrying_7_12: r_carrying_movingTo_12 -> r_carrying
+move1_r_carrying_12_11: r_carrying -[aID_fieldId == 12]> r_carrying_movingTo_11
+move2_r_carrying_12_11: r_carrying_movingTo_11 -[mapField_11_locked != 1]> r_carrying [mapField_11_locked = 1, mapField_12_locked = 0, aID_fieldId = 11]
+move_cancel_r_carrying_12_11: r_carrying_movingTo_11 -> r_carrying
+move1_r_carrying_12_7: r_carrying -[aID_fieldId == 12]> r_carrying_movingTo_7
+move2_r_carrying_12_7: r_carrying_movingTo_7 -[mapField_7_locked != 1]> r_carrying [mapField_7_locked = 1, mapField_12_locked = 0, aID_fieldId = 7]
+move_cancel_r_carrying_12_7: r_carrying_movingTo_7 -> r_carrying
+move1_r_carrying_12_17: r_carrying -[aID_fieldId == 12]> r_carrying_movingTo_17
+move2_r_carrying_12_17: r_carrying_movingTo_17 -[mapField_17_locked != 1]> r_carrying [mapField_17_locked = 1, mapField_12_locked = 0, aID_fieldId = 17]
+move_cancel_r_carrying_12_17: r_carrying_movingTo_17 -> r_carrying
+move1_r_carrying_17_16: r_carrying -[aID_fieldId == 17]> r_carrying_movingTo_16
+move2_r_carrying_17_16: r_carrying_movingTo_16 -[mapField_16_locked != 1]> r_carrying [mapField_16_locked = 1, mapField_17_locked = 0, aID_fieldId = 16]
+move_cancel_r_carrying_17_16: r_carrying_movingTo_16 -> r_carrying
+move1_r_carrying_17_12: r_carrying -[aID_fieldId == 17]> r_carrying_movingTo_12
+move2_r_carrying_17_12: r_carrying_movingTo_12 -[mapField_12_locked != 1]> r_carrying [mapField_12_locked = 1, mapField_17_locked = 0, aID_fieldId = 12]
+move_cancel_r_carrying_17_12: r_carrying_movingTo_12 -> r_carrying
+move1_r_carrying_3_4: r_carrying -[aID_fieldId == 3]> r_carrying_movingTo_4
+move2_r_carrying_3_4: r_carrying_movingTo_4 -[mapField_4_locked != 1]> r_carrying [mapField_4_locked = 1, mapField_3_locked = 0, aID_fieldId = 4]
+move_cancel_r_carrying_3_4: r_carrying_movingTo_4 -> r_carrying
+move1_r_carrying_3_8: r_carrying -[aID_fieldId == 3]> r_carrying_movingTo_8
+move2_r_carrying_3_8: r_carrying_movingTo_8 -[mapField_8_locked != 1]> r_carrying [mapField_8_locked = 1, mapField_3_locked = 0, aID_fieldId = 8]
+move_cancel_r_carrying_3_8: r_carrying_movingTo_8 -> r_carrying
+move1_r_carrying_8_7: r_carrying -[aID_fieldId == 8]> r_carrying_movingTo_7
+move2_r_carrying_8_7: r_carrying_movingTo_7 -[mapField_7_locked != 1]> r_carrying [mapField_7_locked = 1, mapField_8_locked = 0, aID_fieldId = 7]
+move_cancel_r_carrying_8_7: r_carrying_movingTo_7 -> r_carrying
+move1_r_carrying_8_9: r_carrying -[aID_fieldId == 8]> r_carrying_movingTo_9
+move2_r_carrying_8_9: r_carrying_movingTo_9 -[mapField_9_locked != 1]> r_carrying [mapField_9_locked = 1, mapField_8_locked = 0, aID_fieldId = 9]
+move_cancel_r_carrying_8_9: r_carrying_movingTo_9 -> r_carrying
+move1_r_carrying_8_3: r_carrying -[aID_fieldId == 8]> r_carrying_movingTo_3
+move2_r_carrying_8_3: r_carrying_movingTo_3 -[mapField_3_locked != 1]> r_carrying [mapField_3_locked = 1, mapField_8_locked = 0, aID_fieldId = 3]
+move_cancel_r_carrying_8_3: r_carrying_movingTo_3 -> r_carrying
+move1_r_carrying_4_3: r_carrying -[aID_fieldId == 4]> r_carrying_movingTo_3
+move2_r_carrying_4_3: r_carrying_movingTo_3 -[mapField_3_locked != 1]> r_carrying [mapField_3_locked = 1, mapField_4_locked = 0, aID_fieldId = 3]
+move_cancel_r_carrying_4_3: r_carrying_movingTo_3 -> r_carrying
+move1_r_carrying_4_5: r_carrying -[aID_fieldId == 4]> r_carrying_movingTo_5
+move2_r_carrying_4_5: r_carrying_movingTo_5 -[mapField_5_locked != 1]> r_carrying [mapField_5_locked = 1, mapField_4_locked = 0, aID_fieldId = 5]
+move_cancel_r_carrying_4_5: r_carrying_movingTo_5 -> r_carrying
+move1_r_carrying_4_9: r_carrying -[aID_fieldId == 4]> r_carrying_movingTo_9
+move2_r_carrying_4_9: r_carrying_movingTo_9 -[mapField_9_locked != 1]> r_carrying [mapField_9_locked = 1, mapField_4_locked = 0, aID_fieldId = 9]
+move_cancel_r_carrying_4_9: r_carrying_movingTo_9 -> r_carrying
+move1_r_carrying_9_8: r_carrying -[aID_fieldId == 9]> r_carrying_movingTo_8
+move2_r_carrying_9_8: r_carrying_movingTo_8 -[mapField_8_locked != 1]> r_carrying [mapField_8_locked = 1, mapField_9_locked = 0, aID_fieldId = 8]
+move_cancel_r_carrying_9_8: r_carrying_movingTo_8 -> r_carrying
+move1_r_carrying_9_10: r_carrying -[aID_fieldId == 9]> r_carrying_movingTo_10
+move2_r_carrying_9_10: r_carrying_movingTo_10 -[mapField_10_locked != 1]> r_carrying [mapField_10_locked = 1, mapField_9_locked = 0, aID_fieldId = 10]
+move_cancel_r_carrying_9_10: r_carrying_movingTo_10 -> r_carrying
+move1_r_carrying_9_4: r_carrying -[aID_fieldId == 9]> r_carrying_movingTo_4
+move2_r_carrying_9_4: r_carrying_movingTo_4 -[mapField_4_locked != 1]> r_carrying [mapField_4_locked = 1, mapField_9_locked = 0, aID_fieldId = 4]
+move_cancel_r_carrying_9_4: r_carrying_movingTo_4 -> r_carrying
+move1_r_carrying_9_14: r_carrying -[aID_fieldId == 9]> r_carrying_movingTo_14
+move2_r_carrying_9_14: r_carrying_movingTo_14 -[mapField_14_locked != 1]> r_carrying [mapField_14_locked = 1, mapField_9_locked = 0, aID_fieldId = 14]
+move_cancel_r_carrying_9_14: r_carrying_movingTo_14 -> r_carrying
+move1_r_carrying_14_15: r_carrying -[aID_fieldId == 14]> r_carrying_movingTo_15
+move2_r_carrying_14_15: r_carrying_movingTo_15 -[mapField_15_locked != 1]> r_carrying [mapField_15_locked = 1, mapField_14_locked = 0, aID_fieldId = 15]
+move_cancel_r_carrying_14_15: r_carrying_movingTo_15 -> r_carrying
+move1_r_carrying_14_9: r_carrying -[aID_fieldId == 14]> r_carrying_movingTo_9
+move2_r_carrying_14_9: r_carrying_movingTo_9 -[mapField_9_locked != 1]> r_carrying [mapField_9_locked = 1, mapField_14_locked = 0, aID_fieldId = 9]
+move_cancel_r_carrying_14_9: r_carrying_movingTo_9 -> r_carrying
+move1_r_carrying_14_19: r_carrying -[aID_fieldId == 14]> r_carrying_movingTo_19
+move2_r_carrying_14_19: r_carrying_movingTo_19 -[mapField_19_locked != 1]> r_carrying [mapField_19_locked = 1, mapField_14_locked = 0, aID_fieldId = 19]
+move_cancel_r_carrying_14_19: r_carrying_movingTo_19 -> r_carrying
+move1_r_carrying_19_20: r_carrying -[aID_fieldId == 19]> r_carrying_movingTo_20
+move2_r_carrying_19_20: r_carrying_movingTo_20 -[mapField_20_locked != 1]> r_carrying [mapField_20_locked = 1, mapField_19_locked = 0, aID_fieldId = 20]
+move_cancel_r_carrying_19_20: r_carrying_movingTo_20 -> r_carrying
+move1_r_carrying_19_14: r_carrying -[aID_fieldId == 19]> r_carrying_movingTo_14
+move2_r_carrying_19_14: r_carrying_movingTo_14 -[mapField_14_locked != 1]> r_carrying [mapField_14_locked = 1, mapField_19_locked = 0, aID_fieldId = 14]
+move_cancel_r_carrying_19_14: r_carrying_movingTo_14 -> r_carrying
+move1_r_carrying_5_4: r_carrying -[aID_fieldId == 5]> r_carrying_movingTo_4
+move2_r_carrying_5_4: r_carrying_movingTo_4 -[mapField_4_locked != 1]> r_carrying [mapField_4_locked = 1, mapField_5_locked = 0, aID_fieldId = 4]
+move_cancel_r_carrying_5_4: r_carrying_movingTo_4 -> r_carrying
+move1_r_carrying_5_10: r_carrying -[aID_fieldId == 5]> r_carrying_movingTo_10
+move2_r_carrying_5_10: r_carrying_movingTo_10 -[mapField_10_locked != 1]> r_carrying [mapField_10_locked = 1, mapField_5_locked = 0, aID_fieldId = 10]
+move_cancel_r_carrying_5_10: r_carrying_movingTo_10 -> r_carrying
+move1_r_carrying_10_9: r_carrying -[aID_fieldId == 10]> r_carrying_movingTo_9
+move2_r_carrying_10_9: r_carrying_movingTo_9 -[mapField_9_locked != 1]> r_carrying [mapField_9_locked = 1, mapField_10_locked = 0, aID_fieldId = 9]
+move_cancel_r_carrying_10_9: r_carrying_movingTo_9 -> r_carrying
+move1_r_carrying_10_5: r_carrying -[aID_fieldId == 10]> r_carrying_movingTo_5
+move2_r_carrying_10_5: r_carrying_movingTo_5 -[mapField_5_locked != 1]> r_carrying [mapField_5_locked = 1, mapField_10_locked = 0, aID_fieldId = 5]
+move_cancel_r_carrying_10_5: r_carrying_movingTo_5 -> r_carrying
+move1_r_carrying_10_15: r_carrying -[aID_fieldId == 10]> r_carrying_movingTo_15
+move2_r_carrying_10_15: r_carrying_movingTo_15 -[mapField_15_locked != 1]> r_carrying [mapField_15_locked = 1, mapField_10_locked = 0, aID_fieldId = 15]
+move_cancel_r_carrying_10_15: r_carrying_movingTo_15 -> r_carrying
+move1_r_carrying_15_14: r_carrying -[aID_fieldId == 15]> r_carrying_movingTo_14
+move2_r_carrying_15_14: r_carrying_movingTo_14 -[mapField_14_locked != 1]> r_carrying [mapField_14_locked = 1, mapField_15_locked = 0, aID_fieldId = 14]
+move_cancel_r_carrying_15_14: r_carrying_movingTo_14 -> r_carrying
+move1_r_carrying_15_10: r_carrying -[aID_fieldId == 15]> r_carrying_movingTo_10
+move2_r_carrying_15_10: r_carrying_movingTo_10 -[mapField_10_locked != 1]> r_carrying [mapField_10_locked = 1, mapField_15_locked = 0, aID_fieldId = 10]
+move_cancel_r_carrying_15_10: r_carrying_movingTo_10 -> r_carrying
+move1_r_carrying_15_20: r_carrying -[aID_fieldId == 15]> r_carrying_movingTo_20
+move2_r_carrying_15_20: r_carrying_movingTo_20 -[mapField_20_locked != 1]> r_carrying [mapField_20_locked = 1, mapField_15_locked = 0, aID_fieldId = 20]
+move_cancel_r_carrying_15_20: r_carrying_movingTo_20 -> r_carrying
+move1_r_carrying_20_19: r_carrying -[aID_fieldId == 20]> r_carrying_movingTo_19
+move2_r_carrying_20_19: r_carrying_movingTo_19 -[mapField_19_locked != 1]> r_carrying [mapField_19_locked = 1, mapField_20_locked = 0, aID_fieldId = 19]
+move_cancel_r_carrying_20_19: r_carrying_movingTo_19 -> r_carrying
+move1_r_carrying_20_15: r_carrying -[aID_fieldId == 20]> r_carrying_movingTo_15
+move2_r_carrying_20_15: r_carrying_movingTo_15 -[mapField_15_locked != 1]> r_carrying [mapField_15_locked = 1, mapField_20_locked = 0, aID_fieldId = 15]
+move_cancel_r_carrying_20_15: r_carrying_movingTo_15 -> r_carrying
+dropoff1_M2: r_carrying -[aID_fieldId == 9]> r_tryDropoff_M2
+dropoff1_M2_cancel: r_tryDropoff_M2 -> r_carrying
+dropoff2_M2: r_tryDropoff_M2 -[aID_carriedItemMachineNum == 2]> r_dropoff_M2
+dropoff2_M2_cancel: r_dropoff_M2 -> r_carrying
+dropoff_M2_M1_0: r_dropoff_M2 -[M2_numStoredItems_M1 == 0]> r_empty [M2_numStoredItems_M1 = 1, aID_carriedItemMachineNum = 0]
+dropoff_M2_M1_1: r_dropoff_M2 -[M2_numStoredItems_M1 == 1]> r_empty [M2_numStoredItems_M1 = 2, aID_carriedItemMachineNum = 0]
+dropoff_M2_M1_2: r_dropoff_M2 -[M2_numStoredItems_M1 == 2]> r_empty [M2_numStoredItems_M1 = 3, aID_carriedItemMachineNum = 0]
+dropoff1_M3: r_carrying -[aID_fieldId == 20]> r_tryDropoff_M3
+dropoff1_M3_cancel: r_tryDropoff_M3 -> r_carrying
+dropoff2_M3: r_tryDropoff_M3 -[aID_carriedItemMachineNum == 3]> r_dropoff_M3
+dropoff2_M3_cancel: r_dropoff_M3 -> r_carrying
+dropoff_M3_M1_0: r_dropoff_M3 -[M3_numStoredItems_M1 == 0]> r_empty [M3_numStoredItems_M1 = 1, aID_carriedItemMachineNum = 0]
+dropoff_M3_M1_1: r_dropoff_M3 -[M3_numStoredItems_M1 == 1]> r_empty [M3_numStoredItems_M1 = 2, aID_carriedItemMachineNum = 0]
+dropoff_M3_M1_2: r_dropoff_M3 -[M3_numStoredItems_M1 == 2]> r_empty [M3_numStoredItems_M1 = 3, aID_carriedItemMachineNum = 0]
+dropoff_M3_M2_0: r_dropoff_M3 -[M3_numStoredItems_M2 == 0]> r_empty [M3_numStoredItems_M2 = 1, aID_carriedItemMachineNum = 0]
+dropoff_M3_M2_1: r_dropoff_M3 -[M3_numStoredItems_M2 == 1]> r_empty [M3_numStoredItems_M2 = 2, aID_carriedItemMachineNum = 0]
+pickup_M1: r_empty -[aID_fieldId == 1]> r_pickup_M1_step_0
+pickup_M1_0_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 0]> r_carrying [M1_numProducedItems = 1, aID_carriedItemMachineNum = 1]
+pickup_M1_0_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_1_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 1]> r_carrying [M1_numProducedItems = 2, aID_carriedItemMachineNum = 1]
+pickup_M1_1_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_2_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 2]> r_carrying [M1_numProducedItems = 3, aID_carriedItemMachineNum = 1]
+pickup_M1_2_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_3_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 3]> r_carrying [M1_numProducedItems = 4, aID_carriedItemMachineNum = 1]
+pickup_M1_3_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_4_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 4]> r_carrying [M1_numProducedItems = 5, aID_carriedItemMachineNum = 1]
+pickup_M1_4_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_5_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 5]> r_carrying [M1_numProducedItems = 6, aID_carriedItemMachineNum = 1]
+pickup_M1_5_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_6_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 6]> r_carrying [M1_numProducedItems = 7, aID_carriedItemMachineNum = 1]
+pickup_M1_6_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_7_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 7]> r_carrying [M1_numProducedItems = 8, aID_carriedItemMachineNum = 1]
+pickup_M1_7_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M1_8_step_0: r_pickup_M1_step_0 -[M1_numProducedItems == 8]> r_carrying [M1_numProducedItems = 9, aID_carriedItemMachineNum = 1]
+pickup_M1_8_step_0_cancel: r_pickup_M1_step_0 -> r_empty
+pickup_M2: r_empty -[aID_fieldId == 9]> r_pickup_M2_step_0
+pickup_M2_0_step_0: r_pickup_M2_step_0 -[M2_numStoredItems_M1 == 3]> r_pickup_M2_step_1
+pickup_M2_0_step_0_cancel: r_pickup_M2_step_0 -> r_empty
+pickup_M2_0_step_1: r_pickup_M2_step_1 -[M2_numProducedItems == 0]> r_carrying [M2_numStoredItems_M1 = 0, M2_numProducedItems = 1, aID_carriedItemMachineNum = 2]
+pickup_M2_0_step_1_cancel: r_pickup_M2_step_1 -> r_empty
+pickup_M2_1_step_0: r_pickup_M2_step_0 -[M2_numStoredItems_M1 == 3]> r_pickup_M2_step_1
+pickup_M2_1_step_0_cancel: r_pickup_M2_step_0 -> r_empty
+pickup_M2_1_step_1: r_pickup_M2_step_1 -[M2_numProducedItems == 1]> r_carrying [M2_numStoredItems_M1 = 0, M2_numProducedItems = 2, aID_carriedItemMachineNum = 2]
+pickup_M2_1_step_1_cancel: r_pickup_M2_step_1 -> r_empty
+pickup_M3: r_empty -[aID_fieldId == 20]> r_pickup_M3_step_0
+pickup_M3_0_step_0: r_pickup_M3_step_0 -[M3_numStoredItems_M1 == 3]> r_pickup_M3_step_1
+pickup_M3_0_step_0_cancel: r_pickup_M3_step_0 -> r_empty
+pickup_M3_0_step_1: r_pickup_M3_step_1 -[M3_numStoredItems_M2 == 2]> r_pickup_M3_step_2
+pickup_M3_0_step_1_cancel: r_pickup_M3_step_1 -> r_empty
+pickup_M3_0_step_2: r_pickup_M3_step_2 -[M3_numProducedItems == 0]> r_carrying [M3_numStoredItems_M1 = 0, M3_numStoredItems_M2 = 0, M3_numProducedItems = 1, aID_carriedItemMachineNum = 3]
+pickup_M3_0_step_2_cancel: r_pickup_M3_step_2 -> r_empty
+
+REDUCTION: []
+PERSISTENT: [R1_fieldId,R1_carriedItemMachineNum,M2_numStoredItems_M1,mapField_10_locked,mapField_4_locked,mapField_11_locked,M3_numStoredItems_M1,R2_carriedItemMachineNum,mapField_13_locked,mapField_18_locked,mapField_8_locked,mapField_12_locked,mapField_3_locked,M2_numProducedItems,M1_numProducedItems,mapField_6_locked,M3_numStoredItems_M2,R2_fieldId,mapField_5_locked,mapField_15_locked,mapField_7_locked,mapField_16_locked,mapField_9_locked,mapField_19_locked,mapField_14_locked,mapField_1_locked,mapField_20_locked,mapField_2_locked,M3_numProducedItems,mapField_17_locked]
+COALITION: [R1,R2]
+FORMULA: <<R1,R2>>F(M3_numProducedItems = 1)

@@ -55,10 +55,10 @@ def selene_select_vote():
 
 def selene_select_vote_revoting():
     input_filename = "selene_select_vote_revoting.mako"
-    config = {"N_Voters": 1,
+    config = {"N_Voters": 0,
               "N_CVoters": 1,
-              "N_Revote": 50,
-              "N_Candidates": 5}
+              "N_Revote": 100,
+              "N_Candidates": 2}
     output_filename = f"selene_select_vote_revoting_{config['N_Voters']}v_{config['N_CVoters']}cv_{config['N_Candidates']}c_{config['N_Revote']}rev.txt"
 
     return input_filename, output_filename, config

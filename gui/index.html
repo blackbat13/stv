@@ -890,6 +890,7 @@
                     pyshell.run('../gui.py', {args: ['global', 'run', mode, filePath]}, function (err, results) {
                         if (err) throw err;
                         console.log('run_global.py finished.');
+                        console.log(err, results);
                         const dumpedModels = JSON.parse(results[0]);
                         const formula = dumpedModels.formula;
                         $pFormula.text(formula);

@@ -42,19 +42,21 @@ shared finish_sending_trackers: finish -> check
 % endfor
 PROTOCOL: [${', '.join(['['+(', '.join([f"check_tracker{t_i}_Voter{v_i}" for t_i in range(1, N_Voters + N_CVoters + 1) ]))+']' for v_i in range(1,N_Voters+1)])}, ${', '.join(['['+(', '.join([f"check_tracker{t_i}_VoterC{v_i}" for t_i in range(1, N_Voters + N_CVoters + 1) ]))+']' for v_i in range(1,N_CVoters+1)])}, [${', '.join([f"check_tracker{t_i}_Coercer1" for t_i in range(1, N_Voters + N_CVoters + 1) ])}]]
 
-Agent Voter[${N_Voters}]:
-init start
-shared start_voting: start -> voting
-% for i in range(1, N_Candidates + 1):
-    vote${i}: voting -> vote [aID_vote=${i}]
-% endfor
-shared send_vote_aID: vote -> send
-shared finish_voting: send -> finish
-shared send_tracker_aID: finish -> tracker
-shared finish_sending_trackers: tracker -> check
-% for ti in range(1, N_Voters + N_CVoters + 1):
-    shared check_tracker${ti}_aID: check -> end
-% endfor
+% if N_Voters > 0:
+    Agent Voter[${N_Voters}]:
+    init start
+    shared start_voting: start -> voting
+    % for i in range(1, N_Candidates + 1):
+        vote${i}: voting -> vote [aID_vote=${i}]
+    % endfor
+    shared send_vote_aID: vote -> send
+    shared finish_voting: send -> finish
+    shared send_tracker_aID: finish -> tracker
+    shared finish_sending_trackers: tracker -> check
+    % for ti in range(1, N_Voters + N_CVoters + 1):
+        shared check_tracker${ti}_aID: check -> end
+    % endfor
+% endif
 
 Agent VoterC[${N_CVoters}]:
 init start
@@ -70,7 +72,7 @@ vote: voting -> vote
 shared send_vote_aID: vote -> send
 % for j in range(1, N_Revote + 1):
     % for i in range(1, N_Candidates + 1):
-        revote_vote${i}_${j}: send -[aID_revote==${j}}]> voting [aID_vote=${i}, aID_revote=${j+1}]
+        revote_vote${i}_${j}: send -[aID_revote==${j}]> voting [aID_vote=${i}, aID_revote=${j+1}]
     % endfor
 % endfor
 shared finish_voting: send -> finish
@@ -118,6 +120,7 @@ PROTOCOL: [${','.join(['['+(', '.join([f"give{t_i}_VoterC{v_i}" for t_i in range
 INITIAL: [${', '.join([f"VoterC{v_i}_revote=1" for v_i in range(1,N_CVoters+1)])}]
 REDUCTION: [Coercer1_VoterC1_tracker]
 COALITION: [VoterC1]
-PERSISTENT: [${', '.join([f"Voter{v_i}_vote, Voter{v_i}_tracker" for v_i in range(1,N_Voters+1)])}, ${', '.join([f"VoterC{v_i}_vote, VoterC{v_i}_tracker, VoterC{v_i}_required, Coercer1_VoterC{v_i}_tracker, Coercer1_VoterC{v_i}_required" for v_i in range(1,N_CVoters+1)])}, ${', '.join([f"EA1_tracker{t_i}, EA1_tracker{t_i}_vote" for t_i in range(1,N_Voters+N_CVoters+1)])}]
-FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
+PERSISTENT: [${', '.join([f"Voter{v_i}_vote, Voter{v_i}_tracker" for v_i in range(1,N_Voters+1)])}, ${', '.join([f"VoterC{v_i}_vote, VoterC{v_i}_tracker, VoterC{v_i}_required, Coercer1_VoterC{v_i}_tracker, Coercer1_VoterC{v_i}_required, VoterC{v_i}_revote" for v_i in range(1,N_CVoters+1)])}, ${', '.join([f"EA1_tracker{t_i}, EA1_tracker{t_i}_vote" for t_i in range(1,N_Voters+N_CVoters+1)])}]
+%% FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
+FORMULA: <<VoterC1>>F(VoterC1_punish=True)
 SHOW_EPISTEMIC: False

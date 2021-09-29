@@ -1,4 +1,6 @@
-
+% Global: Generation time: 9.21875, #states: 44996, #transitions: 92295
+% Approx low (False, 0.3125)
+% Approx up (False, 0.328125)
 
 Agent EA[1]:
 init prepare
@@ -343,5 +345,5 @@ INITIAL: [VoterC1_revote=1]
 REDUCTION: [Coercer1_VoterC1_tracker]
 COALITION: [VoterC1]
 PERSISTENT: [Voter1_vote, Voter1_tracker, VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, EA1_tracker1, EA1_tracker1_vote, EA1_tracker2, EA1_tracker2_vote]
-FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
+FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 && Coercer1_VoterC1_tracker=2)
 SHOW_EPISTEMIC: False
