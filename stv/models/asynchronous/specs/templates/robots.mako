@@ -10,13 +10,13 @@ LOCAL: [r_ID_x, r_ID_e, r_ID_t, r_ID_p]
 move_f: idle -[r_ID_x<${N_Fields} and r_ID_e>0 and r_ID_t==0]> idle [r_ID_x+=1, r_ID_e-=1]
 move_b: idle -[r_ID_x>1 and r_ID_e>0 and r_ID_t==0]> idle [r_ID_x-=1, r_ID_e-=1]
 % for i in range(1, N_Fields+1):
-    pick${i}: idle -[r_ID_x==1 and f_${i}_a_ID==1 and r_ID_p==0 and r_ID_e>0]> s_pick${i} [r_ID_t=1]
+    pick${i}: idle -[r_ID_x==${i} and f_${i}_a_ID==1 and r_ID_p==0 and r_ID_e>0]> s_pick${i} [r_ID_t=1]
     cont_pick${i}: s_pick${i} -[f_${i}_s==ID]> cont_pick${i} [r_ID_p=1, r_ID_e-=1]
     fin_pick${i}: cont_pick1 -[f_${i}_s!=ID]> idle [r_ID_t=0]
 % endfor
 % for i in range(1, N_Fields+1):
     % for j in range(1, N_Robots + 1):
-        drop${i}_a${j}: idle -[r_ID_x==1 and r_ID_p==1 and f_${i}_a_${j}==0 and ID!=${j}]> s_drop${i} [r_ID_t=2, r_ID_d=${j}]
+        drop${i}_a${j}: idle -[r_ID_x==${i} and r_ID_p==1 and f_${i}_a_${j}==0 and ID!=${j}]> s_drop${i} [r_ID_t=2, r_ID_d=${j}]
         cont_drop${i}_a${j}: s_drop${i} -[f_${i}_s==ID]> cont_drop${i} [r_ID_p=0]
         fin_drop${i}_a${j}: cont_drop${i} -[f_${i}_s!=ID]> idle [r_ID_t=0]
     % endfor
@@ -42,7 +42,7 @@ REDUCTION: []
 COALITION: [Robot1]
 PERSISTENT: [${ (', ').join([f"r_{i}_x, r_{i}_e, r_{i}_p, r_{i}_t, r_{i}_d" for i in range(1,N_Robots+1)]) }, ${ (', ').join([f"f_{i}_s" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}" for i, j in itertools.product(range(1, N_Fields + 1), range(1, N_Robots + 1))]) }]
 LOGIC: ATL
-FORMULA: <<Robot1>>F(f_3_a_1=1 || f_3_a_2=1)
+FORMULA: <<Robot1>>F(${(' || ').join([f"f_{N_Fields}_a_{i}=1" for i in range(1, N_Robots + 1)])})
 %% FORMULA: <<Robot1>>(r1_e>0 && r2_e>0)U(p3_a1==1 || p3_a2==1)
 SHOW_EPISTEMIC: False
 
