@@ -38,7 +38,7 @@ LOCAL: [f_ID_s, ${ (', ').join([f"f_ID_a_{i}" for i in range(1,N_Robots+1)]) }]
 % endfor
 
 INITIAL: [${ (', ').join([f"r_{i}_x=1, r_{i}_e={Energy}, r_{i}_p=0, r_{i}_t=0, r_{i}_d=0" for i in range(1,N_Robots+1)]) }, ${ (', ').join([f"f_{i}_s=0" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}=1" for i, j in itertools.product(range(1, 2), range(1, N_Robots + 1))]) }, ${ (', ').join([f"f_{i}_a_{j}=0" for i, j in itertools.product(range(2, N_Fields + 1), range(1, N_Robots + 1))]) }]
-REDUCTION: []
+REDUCTION: [${(', ').join([f"f_{N_Fields}_a_{i}" for i in range(1, N_Robots + 1)])}]
 COALITION: [Robot1]
 PERSISTENT: [${ (', ').join([f"r_{i}_x, r_{i}_e, r_{i}_p, r_{i}_t, r_{i}_d" for i in range(1,N_Robots+1)]) }, ${ (', ').join([f"f_{i}_s" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}" for i, j in itertools.product(range(1, N_Fields + 1), range(1, N_Robots + 1))]) }]
 LOGIC: ATL
