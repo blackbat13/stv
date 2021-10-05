@@ -122,5 +122,5 @@ REDUCTION: [Coercer1_VoterC1_tracker]
 COALITION: [VoterC1]
 PERSISTENT: [${', '.join([f"Voter{v_i}_vote, Voter{v_i}_tracker" for v_i in range(1,N_Voters+1)])}, ${', '.join([f"VoterC{v_i}_vote, VoterC{v_i}_tracker, VoterC{v_i}_required, Coercer1_VoterC{v_i}_tracker, Coercer1_VoterC{v_i}_required, VoterC{v_i}_revote" for v_i in range(1,N_CVoters+1)])}, ${', '.join([f"EA1_tracker{t_i}, EA1_tracker{t_i}_vote" for t_i in range(1,N_Voters+N_CVoters+1)])}]
 %% FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
-FORMULA: <<VoterC1>>F(VoterC1_punish=True)
+FORMULA: <<VoterC1>>F(VoterC1_vote=${N_Candidates} & (Coercer1_VoterC1_tracker=1 | Coercer1_VoterC1_tracker=2))
 SHOW_EPISTEMIC: False
