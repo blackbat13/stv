@@ -513,6 +513,9 @@
                     <button type="button" class="btn btn-lg btn-primary" id="btn_freeze">Freeze</button>
                 </div>
                 <div>
+                    <button type="button" class="btn btn-lg btn-primary" id="btn_save_img">Save as image</button>
+                </div>
+                <div>
                     <a href="https://github.com/blackbat13/stv" target="_blank">
                         <button type="button" class="btn btn-lg btn-info" id="btn_source">Source</button>
                     </a>
@@ -545,6 +548,7 @@
         let $buttonZoomIn = $("#btn_zoom_in");
         let $buttonZoomOut = $("#btn_zoom_out");
         let $buttonFreeze = $("#btn_freeze");
+        let $buttonSaveImg = $("#btn_save_img");
         let $param1Label = $("#param1Label");
         let $param1Input = $("#param1Input");
         let $param2Label = $("#param2Label");
@@ -600,6 +604,8 @@
         let $coalitionDiv = $("#coalition_div");
         let $coalitionSpan = $("#coalition_span");
 
+        let currentTabId = -1;
+
         $("#openStatsModal").on("click", () => {
             showModelStatsModal(modelStatsModalData);
         });
@@ -636,6 +642,10 @@
         let onTabActivated = tabId => {
         };
 
+        $buttonSaveImg.click(function(){
+            saveSvgAsPng(document.getElementById("graph-" + currentTabId + "-0"), "model.png");
+        });
+
         function createTabs(tabs, panels) {
             $("#div_graph").html(`<div id="tabs">
                 <ul id="tab-ul">
@@ -658,6 +668,7 @@
                 activate: (evt, ui) => {
                     if (onTabActivated) {
                         const tabId = ui.newTab.data("tab-id");
+                        currentTabId = tabId;
                         onTabActivated(tabId);
                     }
                 },

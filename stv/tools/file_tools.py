@@ -16,9 +16,9 @@ class FileTools:
         :return: name of the created file
         """
         file_name = FileTools.add_extension(file_name, extension)
-        f = open(f"{file_name}", "w")
-        f.write(content)
-        f.close()
+        with open(f"{file_name}", "w") as file:
+            file.write(content)
+
         return file_name
 
     @staticmethod
@@ -31,5 +31,5 @@ class FileTools:
         """
         if file_name.endswith("." + extension):
             return file_name
-        else:
-            return file_name + "." + extension
+
+        return file_name + "." + extension

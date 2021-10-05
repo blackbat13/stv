@@ -1,4 +1,3 @@
-# import stv.gui_helper.run_tian_ji
 import sys
 
 if __name__ == "__main__":
