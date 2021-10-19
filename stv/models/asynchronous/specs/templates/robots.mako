@@ -2,48 +2,47 @@
     import itertools
 %>
 
-SEMANTICS: asynchronous
-Agent Robot[${N_Robots}]:
-init: idle
-INTERFACE: [${ (', ').join([f"f_{i}_a_1, f_{i}_a_2, f_{i}_s" for i in range(1,N_Fields+1)]) }]
-LOCAL: [r_ID_x, r_ID_e, r_ID_t, r_ID_p]
-move_f: idle -[r_ID_x<${N_Fields} and r_ID_e>0 and r_ID_t==0]> idle [r_ID_x+=1, r_ID_e-=1]
-move_b: idle -[r_ID_x>1 and r_ID_e>0 and r_ID_t==0]> idle [r_ID_x-=1, r_ID_e-=1]
-% for i in range(1, N_Fields+1):
-    pick${i}: idle -[r_ID_x==${i} and f_${i}_a_ID==1 and r_ID_p==0 and r_ID_e>0]> s_pick${i} [r_ID_t=1]
-    cont_pick${i}: s_pick${i} -[f_${i}_s==ID]> cont_pick${i} [r_ID_p=1, r_ID_e-=1]
-    fin_pick${i}: cont_pick1 -[f_${i}_s!=ID]> idle [r_ID_t=0]
-% endfor
-% for i in range(1, N_Fields+1):
-    % for j in range(1, N_Robots + 1):
-        drop${i}_a${j}: idle -[r_ID_x==${i} and r_ID_p==1 and f_${i}_a_${j}==0 and ID!=${j}]> s_drop${i} [r_ID_t=2, r_ID_d=${j}]
-        cont_drop${i}_a${j}: s_drop${i} -[f_${i}_s==ID]> cont_drop${i} [r_ID_p=0]
-        fin_drop${i}_a${j}: cont_drop${i} -[f_${i}_s!=ID]> idle [r_ID_t=0]
+SEMANTICS: synchronous
+% for r_id in range(0, N_Robots):
+    Agent Robot${r_id}[1]:
+    init: idle
+    INTERFACE: [${ (', ').join([f"f_{i}_a_1, f_{i}_a_2, f_{i}_s" for i in range(1,N_Fields+1)]) }]
+    LOCAL: [aID_r_x, aID_r_e, aID_r_t, aID_r_p]
+    move_f: idle -[aID_r_x<${N_Fields} and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x+=1, aID_r_e-=1]
+    move_b: idle -[aID_r_x>1 and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x-=1, aID_r_e-=1]
+    % for i in range(1, N_Fields+1):
+        pick${i}: idle -[aID_r_x==${i} and f_${i}_a_${r_id}==1 and aID_r_p==0 and aID_r_e>0]> s_pick${i} [aID_r_t=1]
+        cont_pick${i}: s_pick${i} -[f_${i}_s==${r_id}]> cont_pick${i} [aID_r_p=1]
+        fin_pick${i}: cont_pick${i} -[f_${i}_s!=${r_id}]> idle [aID_r_t=0]
     % endfor
+    % for i in range(1, N_Fields+1):
+        drop${i}: idle -[aID_r_x==${i} and aID_r_p==1 and f_${i}_a_${(r_id+1)%N_Robots}==0]> s_drop${i} [aID_r_t=2]
+        cont_drop${i}: s_drop${i} -[f_${i}_s==${r_id}]> cont_drop${i} [aID_r_p=0]
+        fin_drop${i}: cont_drop${i} -[f_${i}_s!=${r_id}]> idle [aID_r_t=0]
+    % endfor
+
 % endfor
 
 Agent Field[${N_Fields}]:
 init: idle
 INTERFACE: [${ (', ').join([f"r_{i}_x, r_{i}_t, r_{i}_p, r_{i}_d" for i in range(1,N_Robots+1)]) }]
-LOCAL: [f_ID_s, ${ (', ').join([f"f_ID_a_{i}" for i in range(1,N_Robots+1)]) }]
-% for i in range(1, N_Robots + 1):
-    pick${i}: idle -[r_${i}_x==ID and f_ID_a_${i}==1 and r_${i}_t==1]> s_pick${i} [f_ID_a_${i}=0, f_ID_s=${i}]
-    fin_pick${i}: s_pick${i} -[r_${i}_t==1 and r_${i}_p==1]> idle [f_ID_s=0]
+LOCAL: [aID_f_s, ${ (', ').join([f"aID_f_a_{i}" for i in range(0,N_Robots)]) }]
+% for i in range(0, N_Robots):
+    pick${i}: idle -[Robot${i}1_r_x==ID and f_ID_a_${i}==1 and Robot${i}1_r_t==1]> s_pick${i} [f_ID_a_${i}=0, f_ID_s=${i}]
+    fin_pick${i}: s_pick${i} -[Robot${i}1_r_t==1 and Robot${i}1_r_p==1]> idle [f_ID_s=-1]
 % endfor
-% for i in range(1, N_Robots + 1):
-    % for j in range(1, N_Robots + 1):
-        drop${i}_a${j}: idle -[r_${i}_x==ID and f_ID_a_${j}==0 and r_${i}_t==2 and r_${i}_d==${j}]> s_drop${i}_a${j} [f_ID_a_${j}=1, f_ID_s=${i}]
-        fin_drop${i}_a${j}: s_drop${i}_a${j} -[r_${i}_t==2 and r_${i}_p==0]> idle [f_ID_s=0]
-    % endfor
+% for i in range(0, N_Robots):
+    drop${i}: idle -[Robot${i}1_r_x==ID and f_ID_a_${(i+1)%N_Robots}==0 and Robot${i}1_r_t==2]> s_drop${i} [f_ID_a_${(i+1)%N_Robots}=1, f_ID_s=${i}]
+    fin_drop${i}: s_drop${i} -[Robot${i}1_r_t==2 and Robot${i}1_r_p==0]> idle [f_ID_s=-1]
 % endfor
 
-INITIAL: [${ (', ').join([f"r_{i}_x=1, r_{i}_e={Energy}, r_{i}_p=0, r_{i}_t=0, r_{i}_d=0" for i in range(1,N_Robots+1)]) }, ${ (', ').join([f"f_{i}_s=0" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}=1" for i, j in itertools.product(range(1, 2), range(1, N_Robots + 1))]) }, ${ (', ').join([f"f_{i}_a_{j}=0" for i, j in itertools.product(range(2, N_Fields + 1), range(1, N_Robots + 1))]) }]
+INITIAL: [${ (', ').join([f"Robot{i}1_r_x=1, Robot{i}1_r_e={Energy}, Robot{i}1_r_p=0, Robot{i}1_r_t=0" for i in range(0,N_Robots)]) }, ${ (', ').join([f"f_{i}_s=-1" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}=1" for i, j in itertools.product(range(1, 2), range(0, N_Robots))]) }, ${ (', ').join([f"f_{i}_a_{j}=0" for i, j in itertools.product(range(2, N_Fields + 1), range(0, N_Robots))]) }]
 REDUCTION: [${(', ').join([f"f_{N_Fields}_a_{i}" for i in range(1, N_Robots + 1)])}]
-COALITION: [Robot1]
-PERSISTENT: [${ (', ').join([f"r_{i}_x, r_{i}_e, r_{i}_p, r_{i}_t, r_{i}_d" for i in range(1,N_Robots+1)]) }, ${ (', ').join([f"f_{i}_s" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}" for i, j in itertools.product(range(1, N_Fields + 1), range(1, N_Robots + 1))]) }]
+COALITION: [${(', ').join([f"Robot{i}1" for i in range(N_Robots)])}]
+PERSISTENT: [${ (', ').join([f"Robot{i}1_r_x, Robot{i}1_r_e, Robot{i}1_r_p, Robot{i}1_r_t" for i in range(0,N_Robots)]) }, ${ (', ').join([f"f_{i}_s" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}" for i, j in itertools.product(range(1, N_Fields + 1), range(0, N_Robots))]) }]
 LOGIC: ATL
-FORMULA: <<Robot1>>F(${(' || ').join([f"f_{N_Fields}_a_{i}=1" for i in range(1, N_Robots + 1)])})
-%% FORMULA: <<Robot1>>(r1_e>0 && r2_e>0)U(p3_a1==1 || p3_a2==1)
+FORMULA: <<${(', ').join([f"Robot{i}1" for i in range(N_Robots)])}>>F(${(' | ').join([f"f_{N_Fields}_a_{i}=1" for i in range(0, N_Robots)])})
+%% FORMULA: <<Robot01>>(r1_e>0 && r2_e>0)U(p3_a1==1 || p3_a2==1)
 SHOW_EPISTEMIC: False
 
 %% x - wspolrzedna,

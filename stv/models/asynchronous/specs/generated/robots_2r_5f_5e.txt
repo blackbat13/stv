@@ -1,0 +1,107 @@
+
+
+SEMANTICS: asynchronous
+Agent Robot0[1]:
+init: idle
+INTERFACE: [f_1_a_1, f_1_a_2, f_1_s, f_2_a_1, f_2_a_2, f_2_s, f_3_a_1, f_3_a_2, f_3_s, f_4_a_1, f_4_a_2, f_4_s, f_5_a_1, f_5_a_2, f_5_s]
+LOCAL: [aID_r_x, aID_r_e, aID_r_t, aID_r_p]
+move_f: idle -[aID_r_x<5 and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x+=1, aID_r_e-=1]
+move_b: idle -[aID_r_x>1 and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x-=1, aID_r_e-=1]
+pick1: idle -[aID_r_x==1 and f_1_a_0==1 and aID_r_p==0 and aID_r_e>0]> s_pick1 [aID_r_t=1]
+cont_pick1: s_pick1 -[f_1_s==0]> cont_pick1 [aID_r_p=1]
+fin_pick1: cont_pick1 -[f_1_s!=0]> idle [aID_r_t=0]
+pick2: idle -[aID_r_x==2 and f_2_a_0==1 and aID_r_p==0 and aID_r_e>0]> s_pick2 [aID_r_t=1]
+cont_pick2: s_pick2 -[f_2_s==0]> cont_pick2 [aID_r_p=1]
+fin_pick2: cont_pick2 -[f_2_s!=0]> idle [aID_r_t=0]
+pick3: idle -[aID_r_x==3 and f_3_a_0==1 and aID_r_p==0 and aID_r_e>0]> s_pick3 [aID_r_t=1]
+cont_pick3: s_pick3 -[f_3_s==0]> cont_pick3 [aID_r_p=1]
+fin_pick3: cont_pick3 -[f_3_s!=0]> idle [aID_r_t=0]
+pick4: idle -[aID_r_x==4 and f_4_a_0==1 and aID_r_p==0 and aID_r_e>0]> s_pick4 [aID_r_t=1]
+cont_pick4: s_pick4 -[f_4_s==0]> cont_pick4 [aID_r_p=1]
+fin_pick4: cont_pick4 -[f_4_s!=0]> idle [aID_r_t=0]
+pick5: idle -[aID_r_x==5 and f_5_a_0==1 and aID_r_p==0 and aID_r_e>0]> s_pick5 [aID_r_t=1]
+cont_pick5: s_pick5 -[f_5_s==0]> cont_pick5 [aID_r_p=1]
+fin_pick5: cont_pick5 -[f_5_s!=0]> idle [aID_r_t=0]
+drop1: idle -[aID_r_x==1 and aID_r_p==1 and f_1_a_1==0]> s_drop1 [aID_r_t=2]
+cont_drop1: s_drop1 -[f_1_s==0]> cont_drop1 [aID_r_p=0]
+fin_drop1: cont_drop1 -[f_1_s!=0]> idle [aID_r_t=0]
+drop2: idle -[aID_r_x==2 and aID_r_p==1 and f_2_a_1==0]> s_drop2 [aID_r_t=2]
+cont_drop2: s_drop2 -[f_2_s==0]> cont_drop2 [aID_r_p=0]
+fin_drop2: cont_drop2 -[f_2_s!=0]> idle [aID_r_t=0]
+drop3: idle -[aID_r_x==3 and aID_r_p==1 and f_3_a_1==0]> s_drop3 [aID_r_t=2]
+cont_drop3: s_drop3 -[f_3_s==0]> cont_drop3 [aID_r_p=0]
+fin_drop3: cont_drop3 -[f_3_s!=0]> idle [aID_r_t=0]
+drop4: idle -[aID_r_x==4 and aID_r_p==1 and f_4_a_1==0]> s_drop4 [aID_r_t=2]
+cont_drop4: s_drop4 -[f_4_s==0]> cont_drop4 [aID_r_p=0]
+fin_drop4: cont_drop4 -[f_4_s!=0]> idle [aID_r_t=0]
+drop5: idle -[aID_r_x==5 and aID_r_p==1 and f_5_a_1==0]> s_drop5 [aID_r_t=2]
+cont_drop5: s_drop5 -[f_5_s==0]> cont_drop5 [aID_r_p=0]
+fin_drop5: cont_drop5 -[f_5_s!=0]> idle [aID_r_t=0]
+
+Agent Robot1[1]:
+init: idle
+INTERFACE: [f_1_a_1, f_1_a_2, f_1_s, f_2_a_1, f_2_a_2, f_2_s, f_3_a_1, f_3_a_2, f_3_s, f_4_a_1, f_4_a_2, f_4_s, f_5_a_1, f_5_a_2, f_5_s]
+LOCAL: [aID_r_x, aID_r_e, aID_r_t, aID_r_p]
+move_f: idle -[aID_r_x<5 and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x+=1, aID_r_e-=1]
+move_b: idle -[aID_r_x>1 and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x-=1, aID_r_e-=1]
+pick1: idle -[aID_r_x==1 and f_1_a_1==1 and aID_r_p==0 and aID_r_e>0]> s_pick1 [aID_r_t=1]
+cont_pick1: s_pick1 -[f_1_s==1]> cont_pick1 [aID_r_p=1]
+fin_pick1: cont_pick1 -[f_1_s!=1]> idle [aID_r_t=0]
+pick2: idle -[aID_r_x==2 and f_2_a_1==1 and aID_r_p==0 and aID_r_e>0]> s_pick2 [aID_r_t=1]
+cont_pick2: s_pick2 -[f_2_s==1]> cont_pick2 [aID_r_p=1]
+fin_pick2: cont_pick2 -[f_2_s!=1]> idle [aID_r_t=0]
+pick3: idle -[aID_r_x==3 and f_3_a_1==1 and aID_r_p==0 and aID_r_e>0]> s_pick3 [aID_r_t=1]
+cont_pick3: s_pick3 -[f_3_s==1]> cont_pick3 [aID_r_p=1]
+fin_pick3: cont_pick3 -[f_3_s!=1]> idle [aID_r_t=0]
+pick4: idle -[aID_r_x==4 and f_4_a_1==1 and aID_r_p==0 and aID_r_e>0]> s_pick4 [aID_r_t=1]
+cont_pick4: s_pick4 -[f_4_s==1]> cont_pick4 [aID_r_p=1]
+fin_pick4: cont_pick4 -[f_4_s!=1]> idle [aID_r_t=0]
+pick5: idle -[aID_r_x==5 and f_5_a_1==1 and aID_r_p==0 and aID_r_e>0]> s_pick5 [aID_r_t=1]
+cont_pick5: s_pick5 -[f_5_s==1]> cont_pick5 [aID_r_p=1]
+fin_pick5: cont_pick5 -[f_5_s!=1]> idle [aID_r_t=0]
+drop1: idle -[aID_r_x==1 and aID_r_p==1 and f_1_a_0==0]> s_drop1 [aID_r_t=2]
+cont_drop1: s_drop1 -[f_1_s==1]> cont_drop1 [aID_r_p=0]
+fin_drop1: cont_drop1 -[f_1_s!=1]> idle [aID_r_t=0]
+drop2: idle -[aID_r_x==2 and aID_r_p==1 and f_2_a_0==0]> s_drop2 [aID_r_t=2]
+cont_drop2: s_drop2 -[f_2_s==1]> cont_drop2 [aID_r_p=0]
+fin_drop2: cont_drop2 -[f_2_s!=1]> idle [aID_r_t=0]
+drop3: idle -[aID_r_x==3 and aID_r_p==1 and f_3_a_0==0]> s_drop3 [aID_r_t=2]
+cont_drop3: s_drop3 -[f_3_s==1]> cont_drop3 [aID_r_p=0]
+fin_drop3: cont_drop3 -[f_3_s!=1]> idle [aID_r_t=0]
+drop4: idle -[aID_r_x==4 and aID_r_p==1 and f_4_a_0==0]> s_drop4 [aID_r_t=2]
+cont_drop4: s_drop4 -[f_4_s==1]> cont_drop4 [aID_r_p=0]
+fin_drop4: cont_drop4 -[f_4_s!=1]> idle [aID_r_t=0]
+drop5: idle -[aID_r_x==5 and aID_r_p==1 and f_5_a_0==0]> s_drop5 [aID_r_t=2]
+cont_drop5: s_drop5 -[f_5_s==1]> cont_drop5 [aID_r_p=0]
+fin_drop5: cont_drop5 -[f_5_s!=1]> idle [aID_r_t=0]
+
+
+Agent Field[5]:
+init: idle
+INTERFACE: [r_1_x, r_1_t, r_1_p, r_1_d, r_2_x, r_2_t, r_2_p, r_2_d]
+LOCAL: [aID_f_s, aID_f_a_0, aID_f_a_1]
+pick0: idle -[Robot01_r_x==ID and f_ID_a_0==1 and Robot01_r_t==1]> s_pick0 [f_ID_a_0=0, f_ID_s=0]
+fin_pick0: s_pick0 -[Robot01_r_t==1 and Robot01_r_p==1]> idle [f_ID_s=-1]
+pick1: idle -[Robot11_r_x==ID and f_ID_a_1==1 and Robot11_r_t==1]> s_pick1 [f_ID_a_1=0, f_ID_s=1]
+fin_pick1: s_pick1 -[Robot11_r_t==1 and Robot11_r_p==1]> idle [f_ID_s=-1]
+drop0: idle -[Robot01_r_x==ID and f_ID_a_1==0 and Robot01_r_t==2]> s_drop0 [f_ID_a_1=1, f_ID_s=0]
+fin_drop0: s_drop0 -[Robot01_r_t==2 and Robot01_r_p==0]> idle [f_ID_s=-1]
+drop1: idle -[Robot11_r_x==ID and f_ID_a_0==0 and Robot11_r_t==2]> s_drop1 [f_ID_a_0=1, f_ID_s=1]
+fin_drop1: s_drop1 -[Robot11_r_t==2 and Robot11_r_p==0]> idle [f_ID_s=-1]
+
+INITIAL: [Robot01_r_x=1, Robot01_r_e=5, Robot01_r_p=0, Robot01_r_t=0, Robot11_r_x=1, Robot11_r_e=5, Robot11_r_p=0, Robot11_r_t=0, f_1_s=-1, f_2_s=-1, f_3_s=-1, f_4_s=-1, f_5_s=-1, f_1_a_0=1, f_1_a_1=1, f_2_a_0=0, f_2_a_1=0, f_3_a_0=0, f_3_a_1=0, f_4_a_0=0, f_4_a_1=0, f_5_a_0=0, f_5_a_1=0]
+REDUCTION: [f_5_a_1, f_5_a_2]
+COALITION: [Robot01, Robot11]
+PERSISTENT: [Robot01_r_x, Robot01_r_e, Robot01_r_p, Robot01_r_t, Robot11_r_x, Robot11_r_e, Robot11_r_p, Robot11_r_t, f_1_s, f_2_s, f_3_s, f_4_s, f_5_s, f_1_a_0, f_1_a_1, f_2_a_0, f_2_a_1, f_3_a_0, f_3_a_1, f_4_a_0, f_4_a_1, f_5_a_0, f_5_a_1]
+LOGIC: ATL
+FORMULA: <<Robot01, Robot11>>F(f_5_a_0=1 | f_5_a_1=1)
+% FORMULA: <<Robot01>>(r1_e>0 && r2_e>0)U(p3_a1==1 || p3_a2==1)
+SHOW_EPISTEMIC: False
+
+% x - wspolrzedna,
+% e - energia
+% p - plecak
+% t - tryb: 0 - idle, 1 - pick, 2 - drop
+% d - destination (dla kogo drop)
+% s - semafor
+% a - adresat

@@ -105,6 +105,13 @@ class GlobalModel:
     def get_agent(self):
         return self.agent_name_to_id(self.coalition[0])
 
+    def get_coalition(self):
+        result = []
+        for a_str in self.coalition:
+            result.append(self.agent_name_to_id(a_str))
+
+        return result
+
     @property
     def formula(self):
         """Formula string"""
@@ -819,7 +826,28 @@ class GlobalModel:
             actions[-1].add("")
         return actions
 
-    def get_formula_winning_states(self):
+    def get_formula_winning_states(self, revote: int, cand: int):
+        expr = self._formula_obj.expression
+        result = []
+        for state in self._states:
+            if expr.evaluate(state.props):
+                if state.props["VoterC1_revote"] != revote:
+                    result.append(state.id)
+                elif state.props["VoterC1_vote"] == cand:
+                    ok = True
+                    for ep in self.model.epistemic_class_for_state(state.id, self.get_agent()):
+                        ep_state = self._states[ep]
+                        if ep_state.props["VoterC1_vote"] != state.props["VoterC1_vote"]:
+                            ok = False
+                            break
+
+                    if ok:
+                        result.append(state.id)
+
+        # print(result)
+        return result
+
+    def get_real_formula_winning_states(self):
         expr = self._formula_obj.expression
         result = []
         for state in self._states:
@@ -834,12 +862,36 @@ class GlobalModel:
             result.append(self._local_models[agent_id].agent_name)
         return result
 
-    def save_to_file(self, filename: str):
+    def save_to_file(self, filename: str, revote: int, cand: int):
         model_file = open(filename, "w")
         model_dump = self.model.dump_for_agent(self.get_agent())
         model_file.write(model_dump)
-        winning_states = self.get_formula_winning_states()
+        winning_states = self.get_formula_winning_states(revote, cand)
         # winning_states = self.get_winning_states()
+        model_file.write(f"{len(winning_states)}\n")
+        for state_id in winning_states:
+            model_file.write(f"{state_id}\n")
+
+        model_file.write("0\n")
+        model_file.close()
+
+    def classic_save_to_file(self, filename: str):
+        model_file = open(filename, "w")
+        model_dump = self.model.dump_for_agent(self.get_agent())
+        model_file.write(model_dump)
+        winning_states = self.get_real_formula_winning_states()
+        model_file.write(f"{len(winning_states)}\n")
+        for state_id in winning_states:
+            model_file.write(f"{state_id}\n")
+
+        model_file.write("0\n")
+        model_file.close()
+
+    def classic_save_to_file_coal(self, filename: str):
+        model_file = open(filename, "w")
+        model_dump = self.model.dump_for_coalition(self.get_coalition())
+        model_file.write(model_dump)
+        winning_states = self.get_real_formula_winning_states()
         model_file.write(f"{len(winning_states)}\n")
         for state_id in winning_states:
             model_file.write(f"{state_id}\n")
@@ -852,18 +904,36 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    reduction = False
-    filename = "selene_select_vote_1v_1cv_5c"
+    # cand = 3
+    # revote = 10
+    # reduction = False
+    # filename = f"selene_select_vote_revoting_1v_1cv_{cand}c_{revote}rev_share"
+    # model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
+    # start = time.process_time()
+    # model.generate(reduction=reduction)
+    # end = time.process_time()
+    # print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
+    # # model.model.simulate(3)
+    # model.save_to_file(f"specs/dumps/{filename}_{reduction}_frev{revote - 1}_fcand{1}_dump.txt", revote - 1, 1)
+    # model.save_to_file(f"specs/dumps/{filename}_{reduction}_frev{revote - 1}_fcand{cand}_dump.txt", revote - 1, cand)
+    # model.save_to_file(f"specs/dumps/{filename}_{reduction}_frev{revote}_fcand{1}_dump.txt", revote, 1)
+    # model.save_to_file(f"specs/dumps/{filename}_{reduction}_frev{revote}_fcand{cand}_dump.txt", revote, cand)
+
+    robots = 4
+    fields = 2
+    energy = 2
+    filename = f"robots_assumption_{robots}r_{fields}f_{energy}e"
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
-    model.generate(reduction=reduction)
+    model.generate(reduction=False)
     end = time.process_time()
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-    # model.model.simulate(0)
-    model.save_to_file(f"specs/dumps/{filename}_{reduction}_dump.txt")
+    model.classic_save_to_file_coal(f"specs/dumps/{filename}_dump.txt")
 
-    print("Approx low", model.verify_approximation(False))
-    print("Approx up", model.verify_approximation(True))
+    # model.model.simulate(0)
+
+    # print("Approx low", model.verify_approximation(False))
+    # print("Approx up", model.verify_approximation(True))
 
     # filename = "selene_select_vote_revoting_1v_1cv_2c_5rev"
     # reduction = False

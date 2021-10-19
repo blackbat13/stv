@@ -389,6 +389,15 @@ class SimpleModel:
         result += self.dump_epistemic_classes_for_agent(agent_id)
         return result
 
+    def dump_for_coalition(self, agents_id: List[int]) -> str:
+        result = ""
+        result += f"{self._no_states}\n"
+        result += "1\n"
+        # result += self.dump_states()
+        result += self.dump_transitions_for_coalition(agents_id)
+        result += self.dump_epistemic_classes_for_agent(agents_id[0])
+        return result
+
     def dump_states(self) -> str:
         result = ""
         for state in self._states:
@@ -428,6 +437,28 @@ class SimpleModel:
                     action_ind += 1
 
                 result += f" {actions_dict[action]}"
+                result += "\n"
+
+        return result
+
+    def dump_transitions_for_coalition(self, agents_id: List[int]) -> str:
+        actions_dict = dict()
+        action_ind = 0
+        actions_dict[tuple(["" for _ in agents_id])] = 0
+        action_ind += 1
+        result = f"{self._no_transitions}\n"
+        for state_id in range(0, self._no_states):
+            for transition in self._graph[state_id]:
+                result += f"{state_id} {transition.next_state}"
+                actions = []
+                for a_id in agents_id:
+                    actions.append(transition.actions[a_id])
+                actions = tuple(actions)
+                if actions not in actions_dict:
+                    actions_dict[actions] = action_ind
+                    action_ind += 1
+
+                result += f" {actions_dict[actions]}"
                 result += "\n"
 
         return result
