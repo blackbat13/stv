@@ -8,7 +8,7 @@ def lstripLines(str):
 
 def train_controller():
     input_filename = "train_controller.mako"
-    config = {"N_Trains": 2,
+    config = {"N_Trains": 5,
               "N_Controllers": 1}
     output_filename = f"train_controller_{config['N_Trains']}t_{config['N_Controllers']}c.txt"
 
@@ -77,8 +77,8 @@ def selene_select_vote_revoting_share():
 
 def robots():
     input_filename = "robots.mako"
-    config = {"N_Robots": 3,
-              "N_Fields": 3,
+    config = {"N_Robots": 2,
+              "N_Fields": 2,
               "Energy": 2}
     output_filename = f"robots_{config['N_Robots']}r_{config['N_Fields']}f_{config['Energy']}e.txt"
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = robots_assumption()
+    input_filename, output_filename, config = robots()
 
     template = Template(filename=input_path + input_filename)
 

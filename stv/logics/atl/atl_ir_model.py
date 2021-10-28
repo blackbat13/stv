@@ -132,6 +132,74 @@ class ATLIrModel:
 
         return result_states
 
+    def run_dfs_synthesis_one_agent(self, agent_id: int, winning_states: Set[int]) -> bool:
+        self.strategy = [None for _ in range(self.number_of_states)]
+        is_winning_state = self.marked_winning_states(winning_states)
+
+        return self.dfs_alg_one_agent(0, agent_id, is_winning_state)
+
+    def dfs_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool]) -> bool:
+        if is_winning_state[current_state_id]:
+            return True
+
+        if self.strategy[current_state_id] is not None:  # TODO Change!
+            return False
+
+        current_strategy = self.strategy.copy()
+        for action in self.agents_actions[agent_id]:
+            result = False
+            self.strategy = current_strategy.copy()
+            self.strategy[current_state_id] = action
+            for transition in self.transitions[current_state_id]:
+                if transition.actions[agent_id] == action:
+                    result = self.dfs_alg_one_agent(transition.next_state, agent_id, is_winning_state)
+                    if not result:
+                        break
+
+            if result:
+                return True
+
+        self.strategy = current_strategy.copy()
+        return False
+
+    def run_dfs_counting_synthesis_one_agent(self, agent_id: int, winning_states: Set[int]) -> bool:
+        self.strategy = dict()
+        self.visits = dict()
+        is_winning_state = self.marked_winning_states(winning_states)
+
+        return self.dfs_counting_alg_one_agent(0, agent_id, is_winning_state)
+
+    def dfs_counting_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool]) -> bool:
+        if is_winning_state[current_state_id]:
+            return True
+
+        visits = 1
+        if current_state_id not in self.visits:
+            self.visits[current_state_id] = visits
+        else:
+            self.visits[current_state_id] += 1
+            visits = self.visits[current_state_id]
+
+        if (current_state_id, visits) in self.strategy:  # TODO Change!
+            return False
+
+        current_strategy = self.strategy.copy()
+        for action in self.agents_actions[agent_id]:
+            result = False
+            self.strategy = current_strategy.copy()
+            self.strategy[(current_state_id, visits)] = action
+            for transition in self.transitions[current_state_id]:
+                if transition.actions[agent_id] == action:
+                    result = self.dfs_counting_alg_one_agent(transition.next_state, agent_id, is_winning_state)
+                    if not result:
+                        break
+
+            if result:
+                return True
+
+        self.strategy = current_strategy.copy()
+        return False
+
     def prepare_result_states(self, winning_states: Set[int]) -> Set[int]:
         result_states = set()
         result_states.update(winning_states)
@@ -410,6 +478,77 @@ class ATLirModel(ATLIrModel):
 
         return result
 
+    def dfs_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool]) -> bool:
+        if is_winning_state[current_state_id]:
+            return True
+
+        if self.strategy[current_state_id] is not None:  # TODO Change!
+            return False
+
+        current_strategy = self.strategy.copy()
+        for action in self.agents_actions[agent_id]:
+            result = False
+            uniform = True
+            for epistemic_state_id in self.epistemic_class_for_state_one_agent(current_state_id, agent_id):
+                if self.strategy[epistemic_state_id] is not None and self.strategy[epistemic_state_id] != action:
+                    uniform = False
+                    break
+            if not uniform:
+                continue
+
+            self.strategy = current_strategy.copy()
+            self.strategy[current_state_id] = action
+            for transition in self.transitions[current_state_id]:
+                if transition.actions[agent_id] == action:
+                    result = self.dfs_alg_one_agent(transition.next_state, agent_id, is_winning_state)
+                    if not result:
+                        break
+
+            if result:
+                return True
+
+        self.strategy = current_strategy.copy()
+        return False
+
+    def dfs_counting_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool]) -> bool:
+        if is_winning_state[current_state_id]:
+            return True
+
+        visits = 1
+
+        epistemic_class_id = self.epistemic_class_membership[agent_id][current_state_id]
+
+        if epistemic_class_id not in self.visits:
+            self.visits[epistemic_class_id] = visits
+        else:
+            self.visits[epistemic_class_id] += 1
+            visits = self.visits[epistemic_class_id]
+
+        visits = 1
+
+        if (epistemic_class_id, visits) in self.strategy:
+            return False
+
+        current_strategy = self.strategy.copy()
+        for action in self.agents_actions[agent_id]:
+            result = False
+            self.strategy = current_strategy.copy()
+            if (epistemic_class_id, visits) in self.strategy and self.strategy[(epistemic_class_id, visits)] != action:
+                continue
+
+            self.strategy[(epistemic_class_id, visits)] = action
+            for transition in self.transitions[current_state_id]:
+                if transition.actions[agent_id] == action:
+                    result = self.dfs_counting_alg_one_agent(transition.next_state, agent_id, is_winning_state)
+                    if not result:
+                        break
+
+            if result:
+                return True
+
+        self.strategy = current_strategy.copy()
+        return False
+
     def basic_formula_many_agents(self, agents_ids: List[int], current_states: Set[int],
                                   is_winning_state: List[bool]) -> Set[int]:
         result_states = set()
@@ -423,7 +562,7 @@ class ATLirModel(ATLIrModel):
                 for action in itertools.product(*actions):
                     res, new_epi = self.is_reachable_by_agents(agents_ids, pre_state, action, is_winning_state)
                     if res:
-                        epistemic_class = new_epi # self.epistemic_class_for_state_multiple_agents(pre_state, agents_ids)
+                        epistemic_class = new_epi  # self.epistemic_class_for_state_multiple_agents(pre_state, agents_ids)
                         result_states.update(epistemic_class)
                         for epistemic_state_id in epistemic_class:
                             is_winning_state[epistemic_state_id] = True

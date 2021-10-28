@@ -13,9 +13,9 @@ reduced_model = None
 if mode == "reduced":
     reduced_model = GlobalModelParser().parse(filePath)
     reduced_model.generate(reduction=True)
-    winning_reduced = reduced_model.get_formula_winning_states()
+    winning_reduced = reduced_model.get_real_formula_winning_states()
 
-winning_global = global_model.get_formula_winning_states()
+winning_global = global_model.get_real_formula_winning_states()
 
 # for state in global_model._states:
 #     state.print()

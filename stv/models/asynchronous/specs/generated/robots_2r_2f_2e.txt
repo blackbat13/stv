@@ -1,11 +1,6 @@
-% Generation time: 5.140625, #states: 8170, #transitions: 25313
-% DFS: 779 usec, True
-% Imperfect verification time: 97643 usec
-% Imperfect verification result: FALSE
-% Perfect verification time: 510223 usec
-% Perfect verification result: TRUE
 
-SEMANTICS: synchronous
+
+SEMANTICS: asynchronous
 Agent Robot0[1]:
 init: idle
 INTERFACE: [f_1_a_1, f_1_a_2, f_1_s, f_2_a_1, f_2_a_2, f_2_s]
@@ -60,7 +55,7 @@ fin_drop1: s_drop1 -[Robot11_r_t==2 and Robot11_r_p==0]> idle [f_ID_s=-1]
 
 INITIAL: [Robot01_r_x=1, Robot01_r_e=2, Robot01_r_p=0, Robot01_r_t=0, Robot11_r_x=1, Robot11_r_e=2, Robot11_r_p=0, Robot11_r_t=0, f_1_s=-1, f_2_s=-1, f_1_a_0=1, f_1_a_1=1, f_2_a_0=0, f_2_a_1=0]
 REDUCTION: [f_2_a_1, f_2_a_2]
-COALITION: [Robot01]
+COALITION: [Robot01, Robot11]
 PERSISTENT: [Robot01_r_x, Robot01_r_e, Robot01_r_p, Robot01_r_t, Robot11_r_x, Robot11_r_e, Robot11_r_p, Robot11_r_t, f_1_s, f_2_s, f_1_a_0, f_1_a_1, f_2_a_0, f_2_a_1]
 LOGIC: ATL
 FORMULA: <<Robot01, Robot11>>F(f_2_a_0=1 | f_2_a_1=1)

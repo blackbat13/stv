@@ -847,7 +847,7 @@ class GlobalModel:
         # print(result)
         return result
 
-    def get_real_formula_winning_states(self):
+    def get_real_formula_winning_states(self) -> List[int]:
         expr = self._formula_obj.expression
         result = []
         for state in self._states:
@@ -904,6 +904,8 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
+    trains = 2
+
     # cand = 3
     # revote = 10
     # reduction = False
@@ -919,16 +921,16 @@ if __name__ == "__main__":
     # model.save_to_file(f"specs/dumps/{filename}_{reduction}_frev{revote}_fcand{1}_dump.txt", revote, 1)
     # model.save_to_file(f"specs/dumps/{filename}_{reduction}_frev{revote}_fcand{cand}_dump.txt", revote, cand)
 
-    robots = 4
-    fields = 2
-    energy = 2
-    filename = f"robots_assumption_{robots}r_{fields}f_{energy}e"
-    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
-    start = time.process_time()
-    model.generate(reduction=False)
-    end = time.process_time()
-    print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-    model.classic_save_to_file_coal(f"specs/dumps/{filename}_dump.txt")
+    # robots = 4
+    # fields = 2
+    # energy = 2
+    # filename = f"robots_assumption_{robots}r_{fields}f_{energy}e"
+    # model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
+    # start = time.process_time()
+    # model.generate(reduction=False)
+    # end = time.process_time()
+    # print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
+    # model.classic_save_to_file_coal(f"specs/dumps/{filename}_dump.txt")
 
     # model.model.simulate(0)
 
