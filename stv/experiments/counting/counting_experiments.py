@@ -24,7 +24,10 @@ class CountingExperiments():
 
     def _verify_all(self, model, winning):
         result = model.run_dfs_synthesis_one_agent(0, winning)
-        print(f"Imperfect knowledge: {result}")
+        print(f"Imperfect recall: {result}")
+
+        result = model.run_dfs_perfect_recall_bounded_synthesis_one_agent(0, winning)
+        print(f"Perfect recall: {result}")
 
         result = model.run_dfs_counting_bounded_synthesis_one_agent(0, winning)
         print(f"Counting: {result}")
