@@ -109,11 +109,11 @@ class ATLIrModel:
             self.reverse_transitions.append([])
             self.pre_states.append(set())
 
-    def add_transition(self, from_state: int, to_state: int, actions: List[str]):
+    def add_transition(self, from_state: int, to_state: int, actions: List[str], time: int = 1):
         self.enlarge_transitions(max(to_state, from_state) + 1)  # TODO This is slow. Better idea?
         self.number_of_states = max(self.number_of_states, to_state + 1)
-        self.transitions[from_state].append(Transition(next_state=to_state, actions=actions))
-        self.reverse_transitions[to_state].append(Transition(next_state=from_state, actions=actions))
+        self.transitions[from_state].append(Transition(next_state=to_state, actions=actions, time=time))
+        self.reverse_transitions[to_state].append(Transition(next_state=from_state, actions=actions, time=time))
         self.pre_states[to_state].add(from_state)
 
     def minimum_formula_one_agent(self, agent_id: int, winning_states: Set[int]) -> Set[int]:
@@ -214,7 +214,8 @@ class ATLIrModel:
 
         return True
 
-    def dfs_counting_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool], depth: int, bound: int) -> bool:
+    def dfs_counting_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool],
+                                           depth: int, bound: int) -> bool:
         if is_winning_state[current_state_id]:
             return True
 
@@ -231,7 +232,6 @@ class ATLIrModel:
         if (current_state_id, visits) in self.strategy:  # TODO Change!
             return False
 
-
         current_strategy = self.strategy.copy()
         for action in self.agents_actions[agent_id]:
             result = False
@@ -239,7 +239,8 @@ class ATLIrModel:
             self.strategy[(current_state_id, visits)] = action
             for transition in self.transitions[current_state_id]:
                 if transition.actions[agent_id] == action:
-                    result = self.dfs_counting_bounded_alg_one_agent(transition.next_state, agent_id, is_winning_state, depth + 1, bound)
+                    result = self.dfs_counting_bounded_alg_one_agent(transition.next_state, agent_id, is_winning_state,
+                                                                     depth + 1, bound)
                     if not result:
                         break
 
@@ -612,7 +613,8 @@ class ATLirModel(ATLIrModel):
                 self.epistemic_class_membership[agent_id][i] = max_ep_id
                 max_ep_id += 1
 
-        while not self.dfs_counting_bounded_alg_one_agent(0, agent_id, visits_dict, is_winning_state, 0, bound) and bound < 10**9:
+        while not self.dfs_counting_bounded_alg_one_agent(0, agent_id, visits_dict, is_winning_state, 0,
+                                                          bound) and bound < 10 ** 9:
             self.strategy = dict()
             visits_dict = dict()
             bound = bound + (bound * percent) // 100
@@ -622,7 +624,8 @@ class ATLirModel(ATLIrModel):
             return False
         return True
 
-    def dfs_counting_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, visits_dict: dict, is_winning_state: List[bool], depth: int, bound: int) -> bool:
+    def dfs_counting_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, visits_dict: dict,
+                                           is_winning_state: List[bool], depth: int, bound: int) -> bool:
         if is_winning_state[current_state_id]:
             return True
 
@@ -653,7 +656,79 @@ class ATLirModel(ATLIrModel):
             # print(self.strategy,"visits:", visits_dict)
             for transition in self.transitions[current_state_id]:
                 if transition.actions[agent_id] == action:
-                    result = self.dfs_counting_bounded_alg_one_agent(transition.next_state, agent_id, visits_dict.copy(), is_winning_state, depth + 1, bound)
+                    result = self.dfs_counting_bounded_alg_one_agent(transition.next_state, agent_id,
+                                                                     visits_dict.copy(), is_winning_state, depth + 1,
+                                                                     bound)
+                    if not result:
+                        break
+
+            if result:
+                return True
+
+        self.strategy = current_strategy.copy()
+        return False
+
+    def run_dfs_time_counting_bounded_synthesis_one_agent(self, agent_id: int, winning_states: Set[int]) -> bool:
+        is_winning_state = self.marked_winning_states(winning_states)
+        bound = self.number_of_states
+        self.strategy = dict()
+        visits_dict = dict()
+        percent = 50
+
+        max_ep_id = max(self.epistemic_class_membership[agent_id])
+        max_ep_id += 1
+        for i in range(len(self.epistemic_class_membership[agent_id])):
+            if self.epistemic_class_membership[agent_id][i] == -1:
+                self.epistemic_class_membership[agent_id][i] = max_ep_id
+                max_ep_id += 1
+
+        while not self.dfs_time_counting_bounded_alg_one_agent(0, agent_id, visits_dict, is_winning_state, 0, 0,
+                                                               bound) and bound < 10 ** 9:
+            self.strategy = dict()
+            visits_dict = dict()
+            bound = bound + (bound * percent) // 100
+
+        # return self.dfs_counting_bounded_alg_one_agent(0, agent_id, visits_dict, is_winning_state, 0, bound)
+        if bound >= 10 ** 9:
+            return False
+        return True
+
+    def dfs_time_counting_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, visits_dict: dict,
+                                                is_winning_state: List[bool], time: int, depth: int,
+                                                bound: int) -> bool:
+        if is_winning_state[current_state_id]:
+            return True
+
+        if depth > bound:
+            return False
+
+        visits = 1
+
+        epistemic_class_id = self.epistemic_class_membership[agent_id][current_state_id]
+
+        if epistemic_class_id not in visits_dict:
+            visits_dict[epistemic_class_id] = visits
+        else:
+            visits_dict[epistemic_class_id] += 1
+            visits = visits_dict[epistemic_class_id]
+
+        # if (epistemic_class_id, visits) in self.strategy:
+        #     return False
+
+        current_strategy = self.strategy.copy()
+        for action in self.agents_actions[agent_id]:
+            result = False
+            self.strategy = current_strategy.copy()
+            if (epistemic_class_id, visits, time) in self.strategy and self.strategy[(epistemic_class_id, visits, time)] != action:
+                continue
+
+            self.strategy[(epistemic_class_id, visits, time)] = action
+            # print(self.strategy,"visits:", visits_dict)
+            for transition in self.transitions[current_state_id]:
+                if transition.actions[agent_id] == action:
+                    result = self.dfs_time_counting_bounded_alg_one_agent(transition.next_state, agent_id,
+                                                                          visits_dict.copy(), is_winning_state,
+                                                                          time + transition.time, depth + 1, bound)
                     if not result:
                         break
 
@@ -676,7 +751,7 @@ class ATLirModel(ATLIrModel):
                 self.epistemic_class_membership[agent_id][i] = max_ep_id
                 max_ep_id += 1
 
-        while not self.dfs_clock_bounded_alg_one_agent(0, agent_id, is_winning_state, 0, bound) and bound < 10**9:
+        while not self.dfs_clock_bounded_alg_one_agent(0, agent_id, is_winning_state, 0, bound) and bound < 10 ** 9:
             self.strategy = dict()
             bound = bound + (bound * percent) // 100
 
@@ -684,7 +759,8 @@ class ATLirModel(ATLIrModel):
             return False
         return True
 
-    def dfs_clock_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool], depth: int, bound: int) -> bool:
+    def dfs_clock_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool],
+                                        depth: int, bound: int) -> bool:
         if is_winning_state[current_state_id]:
             return True
 
@@ -703,7 +779,60 @@ class ATLirModel(ATLIrModel):
             self.strategy[(epistemic_class_id, depth)] = action
             for transition in self.transitions[current_state_id]:
                 if transition.actions[agent_id] == action:
-                    result = self.dfs_clock_bounded_alg_one_agent(transition.next_state, agent_id, is_winning_state, depth + 1, bound)
+                    result = self.dfs_clock_bounded_alg_one_agent(transition.next_state, agent_id, is_winning_state,
+                                                                  depth + 1, bound)
+                    if not result:
+                        break
+
+            if result:
+                return True
+
+        self.strategy = current_strategy.copy()
+        return False
+
+    def run_dfs_time_bounded_synthesis_one_agent(self, agent_id: int, winning_states: Set[int]) -> bool:
+        is_winning_state = self.marked_winning_states(winning_states)
+        bound = self.number_of_states
+        self.strategy = dict()
+        percent = 50
+
+        max_ep_id = max(self.epistemic_class_membership[agent_id])
+        max_ep_id += 1
+        for i in range(len(self.epistemic_class_membership[agent_id])):
+            if self.epistemic_class_membership[agent_id][i] == -1:
+                self.epistemic_class_membership[agent_id][i] = max_ep_id
+                max_ep_id += 1
+
+        while not self.dfs_time_bounded_alg_one_agent(0, agent_id, is_winning_state, 0, 0, bound) and bound < 10 ** 9:
+            self.strategy = dict()
+            bound = bound + (bound * percent) // 100
+
+        if bound >= 10 ** 9:
+            return False
+        return True
+
+    def dfs_time_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, is_winning_state: List[bool],
+                                       time: int, depth: int, bound: int) -> bool:
+        if is_winning_state[current_state_id]:
+            return True
+
+        if depth > bound:
+            return False
+
+        epistemic_class_id = self.epistemic_class_membership[agent_id][current_state_id]
+
+        current_strategy = self.strategy.copy()
+        for action in self.agents_actions[agent_id]:
+            result = False
+            self.strategy = current_strategy.copy()
+            if (epistemic_class_id, time) in self.strategy and self.strategy[(epistemic_class_id, time)] != action:
+                continue
+
+            self.strategy[(epistemic_class_id, time)] = action
+            for transition in self.transitions[current_state_id]:
+                if transition.actions[agent_id] == action:
+                    result = self.dfs_time_bounded_alg_one_agent(transition.next_state, agent_id, is_winning_state,
+                                                                 time + transition.time, depth + 1, bound)
                     if not result:
                         break
 
@@ -727,7 +856,8 @@ class ATLirModel(ATLIrModel):
                 self.epistemic_class_membership[agent_id][i] = max_ep_id
                 max_ep_id += 1
 
-        while not self.dfs_perfect_recall_bounded_alg_one_agent(0, agent_id, history, is_winning_state, 0, bound) and bound < 10**9:
+        while not self.dfs_perfect_recall_bounded_alg_one_agent(0, agent_id, history, is_winning_state, 0, 0,
+                                                                bound) and bound < 10 ** 9:
             self.strategy = dict()
             bound = bound + (bound * percent) // 100
 
@@ -735,7 +865,9 @@ class ATLirModel(ATLIrModel):
             return False
         return True
 
-    def dfs_perfect_recall_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, history: List[int], is_winning_state: List[bool], depth: int, bound: int) -> bool:
+    def dfs_perfect_recall_bounded_alg_one_agent(self, current_state_id: int, agent_id: int, history: List[tuple],
+                                                 is_winning_state: List[bool], time: int, depth: int,
+                                                 bound: int) -> bool:
         if is_winning_state[current_state_id]:
             return True
 
@@ -743,7 +875,7 @@ class ATLirModel(ATLIrModel):
             return False
 
         epistemic_class_id = self.epistemic_class_membership[agent_id][current_state_id]
-        history.append(epistemic_class_id)
+        history.append((epistemic_class_id, time))
         current_strategy = self.strategy.copy()
         for action in self.agents_actions[agent_id]:
             result = False
@@ -754,7 +886,9 @@ class ATLirModel(ATLIrModel):
             self.strategy[(str(history), depth)] = action
             for transition in self.transitions[current_state_id]:
                 if transition.actions[agent_id] == action:
-                    result = self.dfs_perfect_recall_bounded_alg_one_agent(transition.next_state, agent_id, history.copy(), is_winning_state, depth + 1, bound)
+                    result = self.dfs_perfect_recall_bounded_alg_one_agent(transition.next_state, agent_id,
+                                                                           history.copy(), is_winning_state,
+                                                                           time + transition.time, depth + 1, bound)
                     if not result:
                         break
 

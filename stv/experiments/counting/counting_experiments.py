@@ -22,26 +22,13 @@ class CountingExperiments():
         model.add_epistemic_relation(3, 4, 0)
         return model.to_atl_imperfect()
 
-    def _verify_all(self, model, winning):
-        result = model.run_dfs_synthesis_one_agent(0, winning)
-        print(f"Imperfect recall: {result}")
-
-        result = model.run_dfs_perfect_recall_bounded_synthesis_one_agent(0, winning)
-        print(f"Perfect recall: {result}")
-
-        result = model.run_dfs_counting_bounded_synthesis_one_agent(0, winning)
-        print(f"Counting: {result}")
-
-        result = model.run_dfs_clock_bounded_synthesis_one_agent(0, winning)
-        print(f"Clock: {result}")
-
     def _second_model(self):
         model = SimpleModel(1)
-        model.add_transition(0, 1, ["A"])
-        model.add_transition(0, 2, ["A"])
-        model.add_transition(1, 3, ["A"])
-        model.add_transition(2, 4, ["A"])
-        model.add_transition(3, 4, ["B"])
+        model.add_transition(0, 1, ["A"], 2)
+        model.add_transition(0, 2, ["A"], 7)
+        model.add_transition(1, 3, ["A"], 5)
+        model.add_transition(2, 4, ["A"], 1)
+        model.add_transition(3, 4, ["B"], 1)
 
         model.add_epistemic_class(0, {1, 2, 3})
 
@@ -49,10 +36,10 @@ class CountingExperiments():
 
     def _third_model(self):
         model = SimpleModel(1)
-        model.add_transition(0, 1, ["A"])
-        model.add_transition(0, 2, ["A"])
-        model.add_transition(1, 3, ["A"])
-        model.add_transition(2, 3, ["B"])
+        model.add_transition(0, 1, ["A"], 1)
+        model.add_transition(0, 2, ["A"], 2)
+        model.add_transition(1, 3, ["A"], 1)
+        model.add_transition(2, 3, ["B"], 1)
 
         model.add_epistemic_class(0, {1, 2})
 
@@ -60,13 +47,13 @@ class CountingExperiments():
 
     def _fourth_model(self):
         model = SimpleModel(1)
-        model.add_transition(0, 1, ["A"])
-        model.add_transition(0, 2, ["A"])
-        model.add_transition(1, 3, ["A"])
-        model.add_transition(2, 4, ["B"])
-        model.add_transition(3, 5, ["A"])
-        model.add_transition(4, 6, ["A"])
-        model.add_transition(5, 6, ["B"])
+        model.add_transition(0, 1, ["A"], 1)
+        model.add_transition(0, 2, ["A"], 2)
+        model.add_transition(1, 3, ["A"], 2)
+        model.add_transition(2, 4, ["B"], 2)
+        model.add_transition(3, 5, ["A"], 1)
+        model.add_transition(4, 6, ["A"], 1)
+        model.add_transition(5, 6, ["B"], 1)
 
         model.add_epistemic_class(0, {1, 2})
         model.add_epistemic_class(0, {3, 4, 5})
@@ -75,12 +62,12 @@ class CountingExperiments():
 
     def _fifth_model(self):
         model = SimpleModel(1)
-        model.add_transition(0, 1, ["A"])
-        model.add_transition(0, 2, ["A"])
-        model.add_transition(1, 3, ["A"])
-        model.add_transition(2, 4, ["B"])
-        model.add_transition(3, 5, ["A"])
-        model.add_transition(4, 5, ["B"])
+        model.add_transition(0, 1, ["A"], 1)
+        model.add_transition(0, 2, ["A"], 2)
+        model.add_transition(1, 3, ["A"], 2)
+        model.add_transition(2, 4, ["B"], 1)
+        model.add_transition(3, 5, ["A"], 1)
+        model.add_transition(4, 5, ["B"], 1)
 
         model.add_epistemic_class(0, {1, 2, 3, 4})
 
@@ -110,6 +97,25 @@ class CountingExperiments():
         model.add_epistemic_class(0, {2, 3, 4})
 
         return model.to_atl_imperfect()
+
+    def _verify_all(self, model, winning):
+        result = model.run_dfs_synthesis_one_agent(0, winning)
+        print(f"Imperfect recall: {result}")
+
+        result = model.run_dfs_perfect_recall_bounded_synthesis_one_agent(0, winning)
+        print(f"Perfect recall: {result}")
+
+        result = model.run_dfs_counting_bounded_synthesis_one_agent(0, winning)
+        print(f"Counting: {result}")
+
+        result = model.run_dfs_clock_bounded_synthesis_one_agent(0, winning)
+        print(f"Clock: {result}")
+
+        result = model.run_dfs_time_bounded_synthesis_one_agent(0, winning)
+        print(f"Time: {result}")
+
+        result = model.run_dfs_time_counting_bounded_synthesis_one_agent(0, winning)
+        print(f"Time + Counting: {result}")
 
     def verify(self):
         print("-----FIRST MODEL-----")

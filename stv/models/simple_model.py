@@ -99,7 +99,7 @@ class SimpleModel:
 
         return False
 
-    def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]):
+    def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str], time: int = 1):
         """
         Adds transition between two states in the model
         :param from_state_id: identifier of the first state
@@ -109,7 +109,7 @@ class SimpleModel:
         """
         self.resize_to_state(max(from_state_id, to_state_id))
         # if self.is_unique_transition(Transition(to_state_id, actions), from_state_id):
-        self._graph[from_state_id].append(Transition(to_state_id, actions))
+        self._graph[from_state_id].append(Transition(to_state_id, actions, time))
         self._pre_image[to_state_id].append(from_state_id)
         self._no_transitions += 1
         self._add_actions(actions)
@@ -307,7 +307,7 @@ class SimpleModel:
     def _add_transitions_to_model(self, model):
         for state_id in range(0, len(self._graph)):
             for transition in self._graph[state_id]:
-                model.add_transition(state_id, transition.next_state, transition.actions)
+                model.add_transition(state_id, transition.next_state, transition.actions, transition.time)
 
         return model
 
