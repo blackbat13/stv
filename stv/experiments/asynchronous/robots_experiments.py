@@ -31,7 +31,7 @@ class RobotsExperiments(AExperiment):
         atl_model = self._model.model.to_atl_imperfect()
         start = time.process_time()
 
-        result = atl_model.run_dfs_counting_synthesis_one_agent(self._model.agent_name_to_id(self._model.coalition[0]),
+        result = atl_model.run_dfs_counting_bounded_synthesis_one_agent(self._model.agent_name_to_id(self._model.coalition[0]),
                                                        set(self._model.get_real_formula_winning_states()))
         end = time.process_time()
         print(f"Verification time: {end - start}, result: {result}")
