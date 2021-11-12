@@ -190,18 +190,17 @@ class ATLIrModel:
 
     def minimum_formula_many_agents(self, agent_ids: List[int], winning_states: Set[int]) -> Set[int]:
         result_states = self.prepare_result_states(winning_states)
-        result_states_length = len(result_states)
+        curr_st_len = len(result_states)
         current_states = winning_states.copy()
         is_winning_state = self.marked_winning_states(winning_states)
         self.strategy = [None for _ in range(self.number_of_states)]
         while True:
+            prev_st_len = curr_st_len
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             result_states.update(current_states)
-            if result_states_length == len(result_states):
+            curr_st_len = len(result_states)
+            if prev_st_len == curr_st_len:   # if fix(f) was reached
                 break
-
-            result_states_length = len(result_states)
-
         return result_states
 
     def maximum_formula_many_agents(self, agent_ids: List[int], winning_states: Set[int]) -> Set[int]:
@@ -400,6 +399,11 @@ class ATLirModel(ATLIrModel):
         return result_states
 
     def is_reachable_by_agent(self, agent_id: int, state_id: int, action: str, is_winning_state: List[bool]):
+        """
+        Checks if an agent agent_id can afford an action-labelled transition
+        s.t. for all states in epistemic class of state_id
+        holds <*action*>(winning state) & [*action*](winning state)
+        """
         result = False
         epistemic_class = self.epistemic_class_for_state_one_agent(state_id, agent_id)
         for state_id in epistemic_class:

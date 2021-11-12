@@ -430,7 +430,7 @@ class GlobalModel:
             return
         if prop_name in self._bounded_vars:
             min_val, max_val = self._bounded_vars[prop_name].strip("{").strip("}").split('..')
-            if prop_val<int(min_val) or prop_val>int(max_val):
+            if prop_val < int(min_val) or prop_val > int(max_val):
                 print(f"WARN: Assigning an int out of bound values in '{prop_name}={prop_val}'")
 
     def _state_find(self, state: GlobalState) -> int:
@@ -656,8 +656,8 @@ class GlobalModel:
         :return: Epistemic representation of the given state.
         """
 
-        if state.id == 0:
-            return {'local_state': -1}
+        # if state.id == 0:
+        #     return {'local_state': -1}
         epistemic_state = {'local_state': state.local_states[agent_id]}
         # epistemic_state = {'local_state': state.local_states[:]}
         props = {}
@@ -770,6 +770,125 @@ class GlobalModel:
                 winning_states.add(state.id)
         return winning_states
 
+    def tmp_print_approximation_results(self):
+        atl_model = self._model.to_atl_imperfect()
+        winning_global = self.get_formula_winning_states()
+        result = atl_model.minimum_formula_many_agents([self.get_agent()], winning_global)
+        print(f'under-approximation: {"holds" if 0 in result else "does not have to hold"}, ', end='')
+        print(result)
+
+        atl_model = self._model.to_atl_perfect()
+        winning_global = self.get_formula_winning_states()
+        result = atl_model.minimum_formula_many_agents([self.get_agent()], winning_global)
+        print(f'over-approximation: {"might hold" if 0 in result else "does not hold"}, ', end='')
+        print(result)
+        # return result
+
+    def verify_under_approximation(self, refined: bool = False):
+        states = []
+        if refined:
+            green_states = self.get_approximation_results(True)
+            atl_model = self._model.to_atl_imperfect()
+
+            simple_model = self._model
+            # test = atl_model.states
+            # print(atl_model.states)
+            # print(atl_model.agents_actions)
+            # print(self._model.states)
+            # print(self._model._actions)
+            # print(self._model._graph)
+            # print(self._model._epistemic_classes)
+            # print(self._model._epistemic_class_membership)
+
+            new_states = []
+            for i, st in enumerate(simple_model.states):
+                if i in green_states:
+                    new_states.append(st)
+
+            new_graph = []
+            for i, tt in enumerate(simple_model._graph):
+                new_graph.append([])
+                for t in tt:
+                    # print(t.to_str())
+                    if t.next_state not in green_states:
+                        continue
+                    else:
+                        new_graph[i].append(t)
+
+
+            new_epistemic_classes = []
+            for i, ii in enumerate(simple_model.epistemic_classes):
+                new_epistemic_classes.append([])
+                for jj in ii:
+                    eles = set()
+                    for kk in jj:
+                        if kk in green_states:
+                            eles.add(kk)
+                    new_epistemic_classes[i].append(eles)
+            simple_model._epistemic_classes = new_epistemic_classes
+
+            new_epistemic_class_membership = []
+            for i, ii in enumerate(simple_model.epistemic_class_membership):
+                new_epistemic_class_membership.append([])
+                for j, jj in enumerate(ii):
+                    if j in green_states:
+                        new_epistemic_class_membership[i].append(j)
+            simple_model._epistemic_class_membership = new_epistemic_class_membership
+
+            simple_model.graph = new_graph
+            simple_model.states = new_states
+
+            atl_model = simple_model.to_atl_imperfect()
+
+            # # print(atl_model.transitions)
+            # print(self.model._actions)
+            # for tt in atl_model.transitions:
+            #     for t in tt:
+            #         print(t.to_str())
+            #
+            # green_transitions = []
+            # green_actions = set()
+            #
+            # for i, _ in enumerate(atl_model.states):
+            #     green_transitions.append([])
+            #     if i not in green_states:
+            #         continue
+            #     else:
+            #         for t in atl_model.transitions[i]:
+            #             if t.next_state not in green_states:
+            #                 continue
+            #             else:
+            #                 green_transitions[i].append(t)
+            #                 green_actions.update(t.actions)
+            #
+            # atl_model.transitions = green_transitions
+            # atl_model.states = list(filter(lambda s: atl_model.states.index(s) in green_states, atl_model.states))
+            # atl_model.agents_actions = green_actions
+            #
+            # print("=====================")
+            # print(atl_model.agents_actions)
+
+            winning_global = self.get_formula_winning_states()
+            states = atl_model.minimum_formula_many_agents([self.get_agent()], winning_global)
+            # print(states)
+        else:
+            states = self.get_approximation_results(False)
+
+        return 0 in states
+
+    def verify_over_approximation(self):
+        return 0 in self.get_approximation_results(False)
+
+    def get_approximation_results(self, perfect_inf: bool):
+        if perfect_inf:
+            atl_model = self._model.to_atl_perfect()
+        else:
+            atl_model = self._model.to_atl_imperfect()
+
+        winning_global = self.get_formula_winning_states()
+        result = atl_model.minimum_formula_many_agents([self.get_agent()], winning_global)
+        return result
+
     def verify_approximation(self, perfect_inf: bool):
         if perfect_inf:
             atl_model = self._model.to_atl_perfect()
@@ -834,31 +953,66 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    # voter = 3
-    # cand = 2
-    # reduction = False
-    model = GlobalModelParser().parse(f"trains_lm.txt")
-    start = time.process_time()
-    model.generate(reduction=False)
-    end = time.process_time()
-    print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-    print(model.verify_approximation(True))
-    # model.model.simulate(2)
-    # print(model.model.dump())
-    # print("Voters:", voter, ", Candidates:", cand)
-    # print("Reduction:", reduction)
-    # print("States count:", model.states_count)
-    # formula_parser = FormulaParser()
-    # print("Formula:", model._formula)
-    # formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
-    # # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
-    # # print(model.get_formula_winning_states())
-    # # print(model.get_agent())
-    #
-    # model.save_to_file(f"Selene_{voter}_{cand}_{reduction}_dump.txt")
-    #
-    # # print("Winning:", model.get_winning_states())
-    #
-    # # print("DominoDFS", model.verify_domino())
-    # print("Approx low", model.verify_approximation(False))
-    # print("Approx up", model.verify_approximation(True))
+    if False:
+        # voter = 3
+        # cand = 2
+        # reduction = False
+        model = GlobalModelParser().parse_from_file(f"")
+        # model = GlobalModelParser().parse(f"trains_lm.txt")
+        start = time.process_time()
+        model.generate(reduction=False)
+        end = time.process_time()
+        print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
+        print(model.verify_approximation(True))
+        # model.model.simulate(2)
+        # print(model.model.dump())
+        # print("Voters:", voter, ", Candidates:", cand)
+        # print("Reduction:", reduction)
+        # print("States count:", model.states_count)
+        # formula_parser = FormulaParser()
+        # print("Formula:", model._formula)
+        # formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
+        # # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
+        # # print(model.get_formula_winning_states())
+        # # print(model.get_agent())
+        #
+        # model.save_to_file(f"Selene_{voter}_{cand}_{reduction}_dump.txt")
+        #
+        # # print("Winning:", model.get_winning_states())
+        #
+        # # print("DominoDFS", model.verify_domino())
+        # print("Approx low", model.verify_approximation(False))
+        # print("Approx up", model.verify_approximation(True))
+
+    model_str = '''Agent A[1]:
+init: q0
+shared A: q0 -> q1
+shared B: q0 -> q1
+shared C: q1 -> q2
+shared D: q1 -> q2
+
+Agent B[1]:
+init: q0
+shared A: q0 -> q1
+shared B: q0 -> q2
+shared C: q1 -> win [A1_win=True]
+shared C: q2 -> win [A1_win=False]
+shared D: q1 -> win [A1_win=False]
+shared D: q2 -> win [A1_win=True]
+PROTOCOL: [[A,B],[C,D]]
+
+PERSISTENT: [A1_win]
+COALITION: [A1]
+LOGIC: ATL
+FORMULA: <<A1>>F(A1_win=True)'''
+
+    model = GlobalModelParser().parse_from_string(model_str)
+    model.generate()
+    model.generate_local_models()
+
+    print(model.verify_under_approximation(False))
+    print(model.verify_under_approximation(True))
+
+
+
+

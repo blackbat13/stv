@@ -37,12 +37,16 @@ UPPAAL:
 
 ## Requirements
 + Python 3.7 minimum
-+ All libraries from requirements.txt
++ All libraries from requirements.txt 
 
 ## Graphical Interface
 There is also a graphical interface for the tool available.
 As the tool itself, it's also a work in progress, so right now it supports only part of the models and algorithms.
 It is available here: https://github.com/blackbat13/stv-ui
+
+Note: for the GUI to run correctly virtual environment target directory must be named `venv` (not commonly used `.venv`). 
+Otherwise, update `pyshell.defaultOptions.pythonPath` variable in *index.html*.
+
 
 ## Credits
 

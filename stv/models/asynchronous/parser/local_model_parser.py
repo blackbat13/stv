@@ -1,7 +1,7 @@
 from stv.models.asynchronous import LocalTransition, LocalModel
 from stv.models.asynchronous.parser.local_transition_parser import LocalTransitionParser
 from typing import List, Dict, Set
-
+import re
 
 class LocalModelParser:
     """
@@ -41,6 +41,8 @@ class LocalModelParser:
             local_transition.agent_id = agent_id
             transition_id += 1
             if not local_transition.shared:
+                # ? YK: is it syntactic sugar or needed for technical reasons?
+                # ? YK: could we extract these lines to the LocalTransition constructor?
                 local_transition.action += f"_{agent_name}"
                 local_transition.prot_name = local_transition.action
 

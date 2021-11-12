@@ -1,0 +1,21 @@
+Agent A[1]:
+init: q0
+shared A: q0 -> q1
+shared B: q0 -> q1
+shared C: q1 -> q2
+shared D: q1 -> q2
+
+Agent B[1]:
+init: q0
+shared A: q0 -> q1
+shared B: q0 -> q2
+shared C: q1 -> win [A1_win=True]
+shared C: q2 -> win [A1_win=False]
+shared D: q1 -> win [A1_win=False]
+shared D: q2 -> win [A1_win=True]
+PROTOCOL: [[A,B],[C,D]]
+
+PERSISTENT: [A1_win]
+COALITION: [A1]
+LOGIC: ATL
+FORMULA: <<A1>>F(A1_win=True)

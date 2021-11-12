@@ -7,7 +7,7 @@ mode = sys.argv[3]  # "global" | "reduced"
 filePath = sys.argv[4]
 heuristic = int(sys.argv[5])
 
-global_model = GlobalModelParser().parse(filePath)
+global_model = GlobalModelParser().parse_from_file(filePath)
 global_model.generate(reduction=False)
 global_model.generate_local_models()
 winning_global = global_model.get_formula_winning_states()
@@ -33,7 +33,7 @@ elif heuristic == 3:
 
 reduced_model = None
 if mode == "reduced":
-    reduced_model = GlobalModelParser().parse(filePath)
+    reduced_model = GlobalModelParser().parse_from_file(filePath)
     reduced_model.generate(reduction=True)
     winning_reduced = reduced_model.get_formula_winning_states()
 

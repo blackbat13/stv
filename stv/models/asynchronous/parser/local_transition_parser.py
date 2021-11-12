@@ -66,7 +66,7 @@ class LocalTransitionParser:
                     try:
                         val = int(val)
                     except ValueError:
-                        print(f"ERR: Attempt to assign a non-integer value to a variable in '{prop}={val}'")
+                        print(f"WARN: Attempting to assign a non-integer value to a variable in '{prop}={val}' ({val} is {type(val)})")
                         pass
                 props[prop] = val
         else:
