@@ -20,6 +20,10 @@ class LocalModel:
         self._agent_id = agent_id
         self._agent_name: str = agent_name
         self._states: Dict[str, int] = states
+        self._reverse_states: Dict[int, str] = dict()
+        for key in self._states:
+            self._reverse_states[self._states[key]] = key
+
         self._transitions: List[List[LocalTransition]] = transitions
         self._actions: Set[str] = actions
         self._protocol: List[List[str]] = protocol
@@ -89,6 +93,9 @@ class LocalModel:
 
     def get_state_id(self, state_name: str) -> int:
         return self._states[state_name]
+
+    def get_state_name(self, state_id: int) -> str:
+        return self._reverse_states[state_id]
 
     def get_transitions(self) -> List[LocalTransition]:
         result = []

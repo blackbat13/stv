@@ -655,6 +655,7 @@ class GlobalModel:
             return self._new_state_after_shared_transitions_list(state, transition.transition_list)
 
     def _add_state(self, state: GlobalState) -> int:
+        state.add_local_state_props(self._local_models)
         state_id = self._state_find(state)
         if state_id == -1:
             state_id = len(self._states)
@@ -826,7 +827,7 @@ class GlobalModel:
             actions[-1].add("")
         return actions
 
-    def get_formula_winning_states(self, revote: int, cand: int):
+    def get_fake_formula_winning_states(self, revote: int, cand: int):
         expr = self._formula_obj.expression
         result = []
         for state in self._states:
@@ -845,6 +846,15 @@ class GlobalModel:
                         result.append(state.id)
 
         # print(result)
+        return result
+
+    def get_formula_winning_states(self) -> List[int]:
+        expr = self._formula_obj.expression
+        result = []
+        for state in self._states:
+            if expr.evaluate(state.props):
+                result.append(state.id)
+
         return result
 
     def get_real_formula_winning_states(self) -> List[int]:
@@ -904,7 +914,12 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    trains = 2
+    filename = "provafor.txt"
+
+    model = GlobalModelParser().parse(filename)
+    model.generate()
+
+    # trains = 2
 
     # cand = 3
     # revote = 10

@@ -39,6 +39,10 @@ class GlobalState:
     def id(self, value: int):
         self._id = value
 
+    def add_local_state_props(self, local_models):
+        for agent_num in range(len(local_models)):
+            self._props[f"{local_models[agent_num].agent_name}.{local_models[agent_num].get_state_name(self._local_states[agent_num])}"] = True
+
     def set_local_state(self, index: int, value: int):
         self._local_states[index] = value
 
