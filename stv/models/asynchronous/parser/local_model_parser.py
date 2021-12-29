@@ -20,7 +20,7 @@ class LocalModelParser:
         :return: None.
         """
         lines: List[str] = model_str.splitlines()
-        agent_name: str = lines[0].split(" ")[1].split("[")[0] + str(agent_no)
+        agent_name: str = self._parse_agent_name(lines[0], str(agent_no))
         init_state: str = lines[1].split(" ")[1]
         states: Dict[str, int] = {init_state: 0}
         protocol: List[List[str]] = []
@@ -71,6 +71,17 @@ class LocalModelParser:
         #     for tr in tran:
         #         print(tr.prot_name)
         return LocalModel(agent_id, agent_name, states, transitions, protocol, actions)
+
+    @staticmethod
+    def _parse_agent_name(line: str, agent_no: str) -> str:
+        if line.find(" ") != -1:
+            line = line.split(" ")[1]
+        if line.find("[") != -1:
+            line = line.split("[")[0] + agent_no
+        if line.find(":") != -1:
+            line = line.split(":")[0]
+
+        return line
 
     @staticmethod
     def _is_protocol_line(line: str) -> bool:

@@ -655,6 +655,7 @@ class GlobalModel:
             return self._new_state_after_shared_transitions_list(state, transition.transition_list)
 
     def _add_state(self, state: GlobalState) -> int:
+        state.add_local_state_props(self._local_models)
         state_id = self._state_find(state)
         if state_id == -1:
             state_id = len(self._states)
@@ -802,10 +803,8 @@ class GlobalModel:
             atl_model = self._model.to_atl_imperfect()
 
         start = time.process_time()
-        # result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-        #                                                set(self.get_real_formula_winning_states()))
-        result = atl_model.maximum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       set(self.get_real_formula_winning_states()))
+        result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+                                                       set(self.get_formula_winning_states()))
         # print(result)
         end = time.process_time()
 
@@ -828,7 +827,7 @@ class GlobalModel:
             actions[-1].add("")
         return actions
 
-    def get_formula_winning_states(self, revote: int, cand: int):
+    def get_fake_formula_winning_states(self, revote: int, cand: int):
         expr = self._formula_obj.expression
         result = []
         for state in self._states:
@@ -847,6 +846,15 @@ class GlobalModel:
                         result.append(state.id)
 
         # print(result)
+        return result
+
+    def get_formula_winning_states(self) -> List[int]:
+        expr = self._formula_obj.expression
+        result = []
+        for state in self._states:
+            if expr.evaluate(state.props):
+                result.append(state.id)
+
         return result
 
     def get_real_formula_winning_states(self) -> List[int]:
