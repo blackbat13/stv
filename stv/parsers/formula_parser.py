@@ -5,6 +5,7 @@ from .parser import Parser
 class TemporalOperator(Enum):
     F = "F"
     G = "G"
+    FG = "FG"
 
 
 class PathQuantifier(Enum):
@@ -129,11 +130,13 @@ class FormulaParser(Parser):
         return agents
 
     def __parseFormulaTemporalOperator(self):
-        c = self.read(1)
+        c, _ = self.readUntil(["("])
         if c == "F":
             return TemporalOperator.F
         elif c == "G":
             return TemporalOperator.G
+        elif c == "FG":
+            return TemporalOperator.FG
         else:
             raise Exception("Unknown formula temporal operator")
 

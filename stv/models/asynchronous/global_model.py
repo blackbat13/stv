@@ -9,7 +9,7 @@ from stv.models.asynchronous.local_model import LocalModel
 from stv.models.asynchronous.local_transition import LocalTransition, SharedTransition
 from stv.models import SimpleModel
 from stv.comparing_strats import StrategyComparer
-from stv.parsers import FormulaParser
+from stv.parsers import FormulaParser, TemporalOperator
 
 
 class LogicType(Enum):
@@ -803,8 +803,18 @@ class GlobalModel:
             atl_model = self._model.to_atl_imperfect()
 
         start = time.process_time()
-        result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       set(self.get_formula_winning_states()))
+        if self._formula_obj.temporalOperator == TemporalOperator.F:
+            result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+                                                           set(self.get_formula_winning_states()))
+        elif self._formula_obj.temporalOperator == TemporalOperator.G:
+            result = atl_model.maximum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+                                                           set(self.get_formula_winning_states()))
+        elif self._formula_obj.temporalOperator == TemporalOperator.FG:
+            result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+                                                           atl_model.maximum_formula_many_agents(
+                                                               self.agent_name_coalition_to_ids(self._coalition),
+                                                               set(self.get_formula_winning_states()))
+                                                           )
         # print(result)
         end = time.process_time()
 
@@ -914,7 +924,7 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voters = 4
+    voters = 2
 
     # filename = f"simple_voting_synchronous_{voters}v_2c"
     filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
