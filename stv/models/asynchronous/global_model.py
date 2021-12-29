@@ -927,7 +927,8 @@ if __name__ == "__main__":
     voters = 2
 
     # filename = f"simple_voting_synchronous_{voters}v_2c"
-    filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
+    # filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
+    filename = "robots_2trains_2r_3f_1e"
 
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()

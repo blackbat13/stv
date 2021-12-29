@@ -99,6 +99,16 @@ def robots():
 
     return input_filename, output_filename, config
 
+def robots_2trains():
+    input_filename = "robots_2trains.mako"
+    config = {"N_Robots": 2,
+              "N_Fields": 3,
+              "Energy": 1,
+              "Positions": [1, 2]}
+    output_filename = f"robots_2trains_{config['N_Robots']}r_{config['N_Fields']}f_{config['Energy']}e.txt"
+
+    return input_filename, output_filename, config
+
 
 def robots_assumption():
     input_filename = "robots_assumption.mako"
@@ -114,7 +124,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = simple_voting_synchronous_assumption()
+    input_filename, output_filename, config = robots_2trains()
 
     template = Template(filename=input_path + input_filename)
 
