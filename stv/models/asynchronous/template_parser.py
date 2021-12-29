@@ -32,6 +32,21 @@ def simple_voting():
 
     return input_filename, output_filename, config
 
+def simple_voting_synchronous():
+    input_filename = "simple_voting_synchronous.mako"
+    config = {"N_Voters": 5,
+              "N_Candidates": 2}
+    output_filename = f"simple_voting_synchronous_{config['N_Voters']}v_{config['N_Candidates']}c.txt"
+
+    return input_filename, output_filename, config
+
+def simple_voting_synchronous_assumption():
+    input_filename = "simple_voting_synchronous_assumption.mako"
+    config = {"N_Voters": 5,
+              "N_Candidates": 2}
+    output_filename = f"simple_voting_synchronous_assumption_{config['N_Voters']}v_{config['N_Candidates']}c.txt"
+
+    return input_filename, output_filename, config
 
 def selene():
     input_filename = "selene.mako"
@@ -99,7 +114,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = robots()
+    input_filename, output_filename, config = simple_voting_synchronous_assumption()
 
     template = Template(filename=input_path + input_filename)
 

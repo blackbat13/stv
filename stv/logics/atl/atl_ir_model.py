@@ -330,6 +330,7 @@ class ATLIrModel:
         while True:
             current_states = self.basic_formula_many_agents(agent_ids, current_states, is_winning_state)
             to_remove = result_states.difference(current_states)
+            # print(result_states, current_states, to_remove)
             for state_id in to_remove:
                 is_winning_state[state_id] = False
             result_states.difference_update(to_remove)
@@ -346,10 +347,16 @@ class ATLIrModel:
         pre_image = self.prepare_pre_image(current_states)
         actions = self.get_agents_actions(agent_ids)
 
+        # print(actions)
+        # print("Pre image:", pre_image)
         for state_id in pre_image:
             if is_winning_state[state_id]:
+                result_states.add(state_id)
                 continue
+
+            # print("Hello")
             for action in itertools.product(*actions):
+
                 if self.is_reachable_by_agents(agent_ids, state_id, list(action), is_winning_state):
                     self.strategy[state_id] = list(action)
                     result_states.add(state_id)
@@ -906,6 +913,7 @@ class ATLirModel(ATLIrModel):
         for state_id in current_states:
             for pre_state in self.pre_states[state_id]:
                 if is_winning_state[pre_state]:
+                    result_states.add(pre_state)
                     continue
 
                 for action in itertools.product(*actions):

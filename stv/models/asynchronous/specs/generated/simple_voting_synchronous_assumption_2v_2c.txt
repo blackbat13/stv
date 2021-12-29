@@ -1,0 +1,22 @@
+SEMANTICS: synchronous
+Agent Voter[2]:
+init: q0
+vote1: q0 -> q1 [aID_vote=1]
+vote2: q0 -> q1 [aID_vote=2]
+give: q1 -> q2 [aID_reported=?aID_vote]
+ngive: q1 -> q2 [aID_reported=-1]
+pun: q2 -[Coercer1_pun_ID == 1]> q3 [aID_pun=1]
+npun: q2 -[Coercer1_pun_ID == -1]> q3 [aID_pun=0]
+loop: q3->q3
+
+Agent Coercer[1]:
+init: q0
+pun_Voter1: q0 -[Voter1_reported != 0 and aID_pun_1 == 0]> q0 [aID_pun_1=1]
+npun_Voter1: q0 -[Voter1_reported != 0 and aID_pun_1 == 0]> q0 [aID_pun_1=-1]
+
+REDUCTION: []
+COALITION: [Voter1]
+PERSISTENT: [Voter1_vote, Voter1_reported, Voter1_pun, Coercer1_pun_1, Voter2_vote, Voter2_reported, Voter2_pun, Coercer1_pun_2]
+INITIAL: [Voter1_vote=0, Voter1_reported=0, Voter1_pun=0, Coercer1_pun_1=0, Voter2_vote=0, Voter2_reported=0, Voter2_pun=0, Coercer1_pun_2=0]
+FORMULA: <<Voter1>>G(Voter1_vote=1 | Voter1_pun=0)
+SHOW_EPISTEMIC: False

@@ -802,8 +802,10 @@ class GlobalModel:
             atl_model = self._model.to_atl_imperfect()
 
         start = time.process_time()
-        result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       set(self.get_formula_winning_states()))
+        # result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+        #                                                set(self.get_real_formula_winning_states()))
+        result = atl_model.maximum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+                                                       set(self.get_real_formula_winning_states()))
         # print(result)
         end = time.process_time()
 
@@ -904,7 +906,20 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    trains = 2
+    voters = 4
+
+    # filename = f"simple_voting_synchronous_{voters}v_2c"
+    filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
+
+    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
+    start = time.process_time()
+    model.generate(reduction=False)
+    end = time.process_time()
+
+    print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
+
+    print("Approx low", model.verify_approximation(False))
+    print("Approx up", model.verify_approximation(True))
 
     # cand = 3
     # revote = 10
