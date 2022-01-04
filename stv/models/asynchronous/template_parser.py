@@ -134,7 +134,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = robots_2trains()
+    input_filename, output_filename, config = robots_2trains_assumption()
 
     template = Template(filename=input_path + input_filename)
 

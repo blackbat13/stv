@@ -2,7 +2,7 @@
     import itertools
 %>
 
-SEMANTICS: asynchronous
+SEMANTICS: synchronous
 % for r_id in range(0, N_Robots):
     Agent Robot${r_id}:
     init: idle
