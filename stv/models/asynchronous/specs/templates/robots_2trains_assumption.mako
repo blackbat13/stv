@@ -3,7 +3,7 @@
 %>
 
 SEMANTICS: asynchronous
-% for r_id in range(0, N_Robots):
+% for r_id in range(0, 2):
     Agent Robot${r_id}:
     init: idle
     INTERFACE: [${ (', ').join([f"f_{i}_a_1, f_{i}_a_2, f_{i}_s" for i in range(1,N_Fields+1)]) }]
@@ -45,7 +45,7 @@ REDUCTION: [${(', ').join([f"f_{N_Fields}_a_{i}" for i in range(1, N_Robots + 1)
 COALITION: [${(', ').join([f"Robot{i}" for i in range(N_Robots)])}]
 PERSISTENT: [${ (', ').join([f"Robot{i}_r_x, Robot{i}_r_e, Robot{i}_r_p, Robot{i}_r_t" for i in range(0,N_Robots)]) }, ${ (', ').join([f"f_{i}_s" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}" for i, j in itertools.product(range(1, N_Fields + 1), range(0, N_Robots))]) }]
 LOGIC: ATL
-FORMULA: <<${(', ').join([f"Robot{i}" for i in range(N_Robots)])}>>FG(${(' | ').join([f"f_{N_Fields}_a_{i}=1" for i in range(N_Robots)])})
+FORMULA: <<${(', ').join([f"Robot{i}" for i in range(2)])}>>FG(${(' | ').join([f"f_{N_Fields}_a_{i}=1" for i in range(2)])})
 SHOW_EPISTEMIC: False
 
 %% x - wspolrzedna,

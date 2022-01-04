@@ -1,0 +1,31 @@
+Agent_0:
+init: 0
+shared 0: 0 -> 1
+shared 1: 1 -> 2
+2: 2 -> 0
+
+Agent_1:
+init: 0
+shared 3: 0 -> 1
+shared 4: 1 -> 2
+5: 2 -> 0
+
+Agent_2:
+init: 0
+shared 6: 0 -> 1
+shared 7: 1 -> 2
+8: 2 -> 0
+
+Agent_3:
+init: 0
+shared 0: 0 -> 1
+shared 3: 0 -> 1
+shared 6: 0 -> 1
+shared 1: 1 -> 0
+shared 4: 1 -> 0
+shared 7: 1 -> 0
+
+REDUCTION: []
+COALITION: []
+FORMULA: <<Agent_3>>F(Agent_0.1=True | Agent_1.1=True | Agent_2.1=True)
+SHOW_EPISTEMIC: False
