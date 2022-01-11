@@ -20,6 +20,7 @@ SEMANTICS: asynchronous
         cont_drop${i}: s_drop${i} -[f_${i}_s==${r_id}]> cont_drop${i} [aID_r_p=0]
         fin_drop${i}: cont_drop${i} -[f_${i}_s!=${r_id}]> idle [aID_r_t=0]
     % endfor
+    wait: idle -[aID_r_e==0]> idle
 
 % endfor
 
