@@ -928,12 +928,14 @@ if __name__ == "__main__":
 
     # filename = f"simple_voting_synchronous_{voters}v_2c"
     # filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
-    filename = "robots_2trains_2r_3f_1e"
+    filename = "robots_2trains_assumption_4r_3f_1e"
 
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
     model.generate(reduction=False)
     end = time.process_time()
+
+    # model.model.simulate(0)
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
 
