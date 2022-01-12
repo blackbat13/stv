@@ -158,8 +158,9 @@ class GlobalModel:
         # self._model.states = self._states
         self._prepare_epistemic_relation()
 
-        coal_ids = self.agent_name_coalition_to_ids(self._coalition)
-        self._model.set_coalition(coal_ids)
+        self._coalition = self._formula_obj.agents
+        coal_ids = self.agent_name_coalition_to_ids(self._formula_obj.agents)
+        self._model.coalition = coal_ids
 
     def generate_local_models(self):
         for local_model in self._local_models:
@@ -928,7 +929,7 @@ if __name__ == "__main__":
 
     # filename = f"simple_voting_synchronous_{voters}v_2c"
     # filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
-    filename = "robots_2trains_assumption_4r_3f_1e"
+    filename = "robots_2trains_assumption_2r_3f_1e"
 
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()

@@ -112,9 +112,9 @@ def robots_2trains():
 def robots_2trains_assumption():
     input_filename = "robots_2trains_assumption.mako"
     config = {"N_Robots": 4,
-              "N_Fields": 3,
-              "Energy": 1,
-              "Positions": [1, 2, 1, 2]}
+              "N_Fields": 4,
+              "Energy": 2,
+              "Positions": [1, 3, 1, 3, 1, 3]}
     output_filename = f"robots_2trains_assumption_{config['N_Robots']}r_{config['N_Fields']}f_{config['Energy']}e.txt"
 
     return input_filename, output_filename, config
