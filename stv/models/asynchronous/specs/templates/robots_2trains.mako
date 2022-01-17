@@ -26,7 +26,7 @@ SEMANTICS: synchronous
 
 Agent Factory:
 init: idle
-INTERFACE: [${ (', ').join([f"Robot{i}_r_x, Robot{i}_r_t, Robot{i}_r_p, Robot{i}_r_d" for i in range(0,N_Robots)]) }]
+INTERFACE: [${ (', ').join([f"Robot{i}_r_x, Robot{i}_r_t, Robot{i}_r_p, Robot{i}_r_e" for i in range(0,N_Robots)]) }]
 LOCAL: [${(', ').join(f"f_{fID}_s, " + (', ').join([f"f_{fID}_a_{rID}" for rID in range(0,N_Robots)]) for fID in range(1, N_Fields + 1)) }]
 % for fID in range(1, N_Fields + 1):
     % for i in range(0, N_Robots):

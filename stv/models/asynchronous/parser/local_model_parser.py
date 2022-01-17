@@ -28,6 +28,9 @@ class LocalModelParser:
         transitions: List[List[LocalTransition]] = []
         state_num: int = 1
         transition_id: int = 0
+        local: List[str] = []
+        interface: List[str] = []
+
         for i in range(2, len(lines)):
             line = lines[i].strip()
             line = line.replace("aID", agent_name)
@@ -36,8 +39,10 @@ class LocalModelParser:
                 protocol = self._parse_protocol(line)
                 continue
             elif self._is_local_line(line):
+                local = self._parse_local_line(line)
                 continue
             elif self._is_interface_line(line):
+                interface = self._parse_interface_line(line)
                 continue
 
             local_transition = LocalTransitionParser().parse(line)
@@ -70,7 +75,7 @@ class LocalModelParser:
         # for tran in transitions:
         #     for tr in tran:
         #         print(tr.prot_name)
-        return LocalModel(agent_id, agent_name, states, transitions, protocol, actions)
+        return LocalModel(agent_id, agent_name, states, transitions, protocol, actions, interface, local)
 
     @staticmethod
     def _parse_agent_name(line: str, agent_no: str) -> str:
@@ -94,6 +99,16 @@ class LocalModelParser:
     @staticmethod
     def _is_interface_line(line: str) -> bool:
         return line[:9] == "INTERFACE"
+
+    def _parse_interface_line(self, line: str) -> List[str]:
+        line = line.split(":")[1]
+        line = line.strip().lstrip("[").rstrip("]")
+        return list(map(str.strip, line.split(",")))
+
+    def _parse_local_line(self, line: str) -> List[str]:
+        line = line.split(":")[1]
+        line = line.strip().lstrip("[").rstrip("]")
+        return list(map(str.strip, line.split(",")))
 
     def _parse_protocol(self, line: str) -> (str, List[List[str]]):
         line = line.split(":")
