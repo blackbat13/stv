@@ -36,19 +36,19 @@ LOCAL: [${(', ').join(f"f_{fID}_s, " + (', ').join([f"f_{fID}_a_{rID}" for rID i
         fin_drop${i}_f${fID}: s_drop${i}_f${fID} -[Robot${i}_r_t==2 and Robot${i}_r_p==0]> idle [f_${fID}_s=-1]
     % endfor
     % for i in range(2, N_Robots):
-        pick${i}_f${fID}: idle -[Robot${i}_r_x==${fID} and f_${fID}_a_${i}==1 and Robot${i}_r_p==0]> idle [f_${fID}_a_${i}=0, Robot${i}_r_p=1]
-        drop${i}_f${fID}: idle -[Robot${i}_r_x==${fID} and f_${fID}_a_${(i+1)%N_Robots}==0 and Robot${i}_r_p==1]> idle [f_${fID}_a_${(i+1)%N_Robots}=1, Robot${i}_r_p=0]
+        pick${i}_f${fID}: idle -[f_${fID}_a_${i}==1]> idle [f_${fID}_a_${i}=0]
+        drop${i}_f${fID}: idle -[f_${fID}_a_${(i+1)%N_Robots}==0]> idle [f_${fID}_a_${(i+1)%N_Robots}=1]
     % endfor
 % endfor
-% for j in range(2, N_Robots):
-    move_f: idle -[Robot${j}_r_x<${N_Fields} and Robot${j}_r_e>0]> idle [Robot${j}_r_x+=1, Robot${j}_r_e-=1]
-    move_b: idle -[Robot${j}_r_x>1 and Robot${j}_r_e>0]> idle [Robot${j}_r_x-=1, Robot${j}_r_e-=1]
-% endfor
+## % for j in range(2, N_Robots):
+##     move_f: idle -[Robot${j}_r_x<${N_Fields} and Robot${j}_r_e>0]> idle [Robot${j}_r_x+=1, Robot${j}_r_e-=1]
+##     move_b: idle -[Robot${j}_r_x>1 and Robot${j}_r_e>0]> idle [Robot${j}_r_x-=1, Robot${j}_r_e-=1]
+## % endfor
 wait: idle -[${(" and ").join(f"Robot{rID}_r_t==3" for rID in range(0, 2))}]> idle
 
 INITIAL: [${ (', ').join([f"Robot{i}_r_x={Positions[i]}, Robot{i}_r_e={Energy}, Robot{i}_r_p=0, Robot{i}_r_t=0" for i in range(0,N_Robots)]) }, ${ (', ').join([f"f_{i}_s=-1" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}=1" for i, j in itertools.product(range(1, 2), range(0, N_Robots))]) }, ${ (', ').join([f"f_{i}_a_{j}=0" for i, j in itertools.product(range(2, N_Fields + 1), range(0, N_Robots))]) }]
 REDUCTION: [${(', ').join([f"f_{N_Fields}_a_{i}" for i in range(1, N_Robots + 1)])}]
-COALITION: [${(', ').join([f"Robot{i}" for i in range(N_Robots)])}]
+COALITION: [${(', ').join([f"Robot{i}" for i in range(2)])}]
 PERSISTENT: [${ (', ').join([f"Robot{i}_r_x, Robot{i}_r_e, Robot{i}_r_p, Robot{i}_r_t" for i in range(0,N_Robots)]) }, ${ (', ').join([f"f_{i}_s" for i in range(1,N_Fields+1)]) }, ${ (', ').join([f"f_{i}_a_{j}" for i, j in itertools.product(range(1, N_Fields + 1), range(0, N_Robots))]) }]
 LOGIC: ATL
 FORMULA: <<${(', ').join([f"Robot{i}" for i in range(2)])}>>FG(${(' | ').join([f"f_{N_Fields}_a_{i}=1" for i in range(2)])})

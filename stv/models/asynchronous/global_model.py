@@ -146,8 +146,8 @@ class GlobalModel:
         self._add_index_to_transitions()
         # self._compute_dependent_transitions()
         self._compute_shared_transitions()
-        coal_ids = self.agent_name_coalition_to_ids(self._coalition)
-        self._model.set_coalition(coal_ids)
+        self._coalition = self._formula_obj.agents
+        self._model.coalition = self.agent_name_coalition_to_ids(self._coalition)
         if reduction:
             self._add_to_stack(GlobalState.initial_state(self._agents_count, self._initial))
             self._iter_por()
