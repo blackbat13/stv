@@ -42,7 +42,7 @@ class LocalTransitionParser:
                     if condition.find(op) != -1:
                         term1, term2 = condition.split(op)
                         # casting to int - in local_transition class
-                        cond.append((term1, term2, op))
+                        cond.append((term1.strip(" "), term2.strip(" "), op.strip(" ")))
                         recognized_op = True
                         break
 

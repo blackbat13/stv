@@ -44,7 +44,7 @@ class GlobalModel:
                  bounded_vars: List[str], persistent: List[str],
                  coalition: List[str], goal: List[str],
                  logicType: LogicType, formula: str,
-                 show_epistemic: bool, semantics: str, initial):
+                 show_epistemic: bool, semantics: str, initial, name: str = ""):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
@@ -57,6 +57,7 @@ class GlobalModel:
         self._formula = formula
         self._semantics = semantics
         self._initial = initial
+        self._name = name
         if self.isAtl():
             self._formula_obj = self._parseAtlFormula()
         elif self.isCtl():
@@ -133,6 +134,10 @@ class GlobalModel:
     @property
     def transitions_count(self):
         return self._transitions_count
+
+    @property
+    def name(self):
+        return self._name
 
     def generate(self, reduction: bool = False):
         """
@@ -906,6 +911,16 @@ class GlobalModel:
         model_file.write("0\n")
         model_file.close()
 
+    def __str__(self):
+        result = f"SEMANTICS: {self._semantics}\n\n"
+        for local_model in self._local_models:
+            result += f"{local_model}\n"
+
+        result += f"PERSISTENT: [{', '.join(self._persistent)}]\n"
+        result += f"INITIAL: [{', '.join(f'{key}={self._initial[key]}' for key in self._initial)}]\n"
+        result += f"FORMULA: {self._formula}\n"
+        return result
+
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
@@ -915,7 +930,7 @@ if __name__ == "__main__":
 
     # filename = f"simple_voting_synchronous_{voters}v_2c"
     # filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
-    filename = "robots_2trains_assumption_2r_3f_1e"
+    filename = "robots_assumption_0"
 
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
@@ -926,7 +941,7 @@ if __name__ == "__main__":
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
 
-    model.save_to_file(f"specs/dumps/{filename}_dump.txt")
+    # model.save_to_file(f"specs/dumps/{filename}_dump.txt")
 
     print("Approx low", model.verify_approximation(False))
     print("Approx up", model.verify_approximation(True))

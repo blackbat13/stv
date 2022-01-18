@@ -1,5 +1,6 @@
-from typing import List, Tuple
+from typing import List, Tuple, Set
 from stv.models.asynchronous.global_state import GlobalState
+import re
 
 
 class LocalTransition:
@@ -115,8 +116,33 @@ class LocalTransition:
         """Converts transition to tuple."""
         return self._agent_id, self.i, self.j
 
+    def remove_props(self, save: Set[str]):
+        for key in list(self._props.keys()):
+            if key not in save:
+                self._props.pop(key)
+
+        for cond in self._conditions[:]:
+            if cond[0] not in save:
+                self._conditions.remove(cond)
+
+    def _conditions_to_str(self):
+        result = ""
+        for cond in self._conditions:
+            result += f"{cond[0]}{cond[2]}{cond[1]} and "
+
+        result = result[0:-5]
+        return result
+
     def __str__(self):
-        return f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]; conditions: {self._conditions}"
+        conditions = f"[{self._conditions_to_str()}]"
+        if self._conditions_to_str() == "":
+            conditions = ""
+
+        values = f"[{', '.join([f'{key}={self._props[key][1]}' for key in self._props])}]"
+        if not self._props:
+            values = ""
+
+        return f"{self._action}: {self._state_from} -{conditions}> {self._state_to} {values}"
 
 
 class SharedTransition(LocalTransition):

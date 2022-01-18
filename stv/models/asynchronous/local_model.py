@@ -62,6 +62,23 @@ class LocalModel:
     def interface(self):
         return self._interface
 
+    def remove_props(self, save: Set[str]):
+        for prop in self._interface[:]:
+            if prop not in save:
+                self._interface.remove(prop)
+
+        for prop in self._local[:]:
+            if prop not in save:
+                self._local.remove(prop)
+
+        for prop in self._props[:]:
+            if prop not in save:
+                self._props.remove(prop)
+
+        for tran_list in self._transitions:
+            for tran in tran_list:
+                tran.remove_props(save)
+
     def generate(self):
         self._model = SimpleModel(no_agents=1)
         for state_name in self._states:
@@ -121,3 +138,14 @@ class LocalModel:
         for transition_list in self._transitions:
             for transition in transition_list:
                 transition.print()
+
+    def __str__(self):
+        result = f"Agent {self._agent_name}:\n"
+        result += f"init: {self._reverse_states[0]}\n"
+        result += f"LOCAL: [{', '.join(self._local)}]\n"
+        result += f"INTERFACE: [{', '.join(self._interface)}]\n"
+        for transition_list in self._transitions:
+            for transition in transition_list:
+                result += f"{transition}\n"
+
+        return result
