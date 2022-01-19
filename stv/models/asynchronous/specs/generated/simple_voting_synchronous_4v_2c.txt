@@ -1,3 +1,6 @@
+% Generation time: 793.59375, #states: 279841, #transitions: 6736784
+% Memory error
+
 SEMANTICS: synchronous
 Agent Voter[4]:
 init: q0

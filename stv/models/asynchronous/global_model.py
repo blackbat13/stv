@@ -926,11 +926,11 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voters = 2
+    voters = 5
 
     # filename = f"simple_voting_synchronous_{voters}v_2c"
-    # filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
-    filename = "robots_assumption_0"
+    filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
+    # filename = "robots_assumption_0"
 
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
@@ -941,8 +941,8 @@ if __name__ == "__main__":
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
 
-    # model.save_to_file(f"specs/dumps/{filename}_dump.txt")
+    model.save_to_file(f"specs/dumps/{filename}_dump.txt")
 
-    print("Approx low", model.verify_approximation(False))
-    print("Approx up", model.verify_approximation(True))
+    # print("Approx low", model.verify_approximation(False))
+    # print("Approx up", model.verify_approximation(True))
 

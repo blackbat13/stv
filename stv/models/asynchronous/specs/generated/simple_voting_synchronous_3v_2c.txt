@@ -1,6 +1,4 @@
-% Generation time: 11.59375, #states: 12167, #transitions: 127558
-% Approx low (True, 0.09375)
-% Approx up (True, 0.578125)
+% Generation time: 14.59375, #states: 12167, #transitions: 127558
 
 SEMANTICS: synchronous
 Agent Voter[3]:
