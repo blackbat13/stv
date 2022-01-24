@@ -1,0 +1,107 @@
+% Global: Generation time: 13.171875, #states: 56296, #transitions: 115683
+
+% Reduced: Generation time: 787.09375, #states: 55786, #transitions: 113529
+
+Agent EA[1]:
+init prepare
+shared is_ready: prepare -> start
+gen_trackers1: start -> generate [aID_tracker1=1, aID_tracker2=2]
+gen_trackers2: start -> generate [aID_tracker1=2, aID_tracker2=1]
+shared start_voting: generate -> voting
+shared send_vote_Voter1: voting -[aID_tracker1==1]> voting [aID_tracker1_vote=?Voter1_vote]
+shared send_vote_Voter1: voting -[aID_tracker2==1]> voting [aID_tracker2_vote=?Voter1_vote]
+shared send_vote_VoterC1: voting -[aID_tracker1==2]> voting [aID_tracker1_vote=?VoterC1_vote]
+shared send_fvote_VoterC1: voting -[aID_tracker1==2]> voting [aID_tracker1_vote=?VoterC1_vote]
+shared send_vote_VoterC1: voting -[aID_tracker2==2]> voting [aID_tracker2_vote=?VoterC1_vote]
+shared send_fvote_VoterC1: voting -[aID_tracker2==2]> voting [aID_tracker2_vote=?VoterC1_vote]
+shared finish_voting: voting -> finish
+shared send_tracker_Voter1: finish -[aID_tracker1==1]> finish [Voter1_tracker=1]
+shared send_tracker_Voter1: finish -[aID_tracker2==1]> finish [Voter1_tracker=2]
+shared send_tracker_VoterC1: finish -[aID_tracker1==2]> finish [VoterC1_tracker=1]
+shared send_tracker_VoterC1: finish -[aID_tracker2==2]> finish [VoterC1_tracker=2]
+shared finish_sending_trackers: finish -> check
+shared check_tracker1_Voter1: check -> check [Voter1_tracker1=?aID_tracker1_vote]
+shared check_tracker1_VoterC1: check -> check [VoterC1_tracker1=?aID_tracker1_vote]
+shared check_tracker1_Coercer1: check -> check [Coercer1_tracker1=?aID_tracker1_vote]
+shared check_tracker2_Voter1: check -> check [Voter1_tracker2=?aID_tracker2_vote]
+shared check_tracker2_VoterC1: check -> check [VoterC1_tracker2=?aID_tracker2_vote]
+shared check_tracker2_Coercer1: check -> check [Coercer1_tracker2=?aID_tracker2_vote]
+PROTOCOL: [[check_tracker1_Voter1, check_tracker2_Voter1], [check_tracker1_VoterC1, check_tracker2_VoterC1], [check_tracker1_Coercer1, check_tracker2_Coercer1]]
+
+Agent Voter[1]:
+init start
+shared start_voting: start -> voting
+vote1: voting -> vote [aID_vote=1]
+vote2: voting -> vote [aID_vote=2]
+vote3: voting -> vote [aID_vote=3]
+shared send_vote_aID: vote -> send
+shared finish_voting: send -> finish
+shared send_tracker_aID: finish -> tracker
+shared finish_sending_trackers: tracker -> check
+shared check_tracker1_aID: check -> end
+shared check_tracker2_aID: check -> end
+
+Agent VoterC[1]:
+init start
+shared coerce1_aID: start -> coerced [aID_required=1]
+shared coerce2_aID: start -> coerced [aID_required=2]
+shared coerce3_aID: start -> coerced [aID_required=3]
+select_vote1: coerced -> prepared [aID_vote=1, aID_prep_vote=1]
+select_vote2: coerced -> prepared [aID_vote=2, aID_prep_vote=2]
+select_vote3: coerced -> prepared [aID_vote=3, aID_prep_vote=3]
+shared is_ready: prepared -> ready
+shared start_voting: ready -> voting
+shared aID_vote: voting -> vote [Coercer1_aID_vote=?aID_vote, Coercer1_aID_revote=?aID_revote]
+shared send_vote_aID: vote -> send
+revote_vote_1: send -[aID_revote==1]> voting [aID_vote=?aID_required, aID_revote=2]
+skip_revote_1: send -[aID_revote==1]> votingf
+revote_vote_2: send -[aID_revote==2]> voting [aID_vote=?aID_required, aID_revote=3]
+skip_revote_2: send -[aID_revote==2]> votingf
+revote_vote_3: send -[aID_revote==3]> voting [aID_vote=?aID_required, aID_revote=4]
+skip_revote_3: send -[aID_revote==3]> votingf
+revote_vote_4: send -[aID_revote==4]> voting [aID_vote=?aID_required, aID_revote=5]
+skip_revote_4: send -[aID_revote==4]> votingf
+final_vote: send -[aID_revote==5]> votingf [aID_vote=?aID_prep_vote]
+skip_final: send -[aID_revote==5]> votingf
+shared send_fvote_aID: votingf -> sendf
+shared finish_voting: sendf -> finish
+shared send_tracker_aID: finish -> tracker
+shared finish_sending_trackers: tracker -> trackers_sent
+shared give1_aID: trackers_sent -> interact [Coercer1_aID_tracker=1]
+shared give2_aID: trackers_sent -> interact [Coercer1_aID_tracker=2]
+shared not_give_aID: trackers_sent -> interact [Coercer1_aID_tracker=0]
+shared punish_aID: interact -> ckeck [aID_punish=true]
+shared not_punish_aID: interact -> check [aID_punish=false]
+shared check_tracker1_aID: check -> end
+shared check_tracker2_aID: check -> end
+PROTOCOL: [[coerce1_aID, coerce2_aID, coerce3_aID], [punish, not_punish]]
+
+Agent Coercer[1]:
+init coerce
+shared coerce1_VoterC1: coerce -> coerce [aID_VoterC1_required=1]
+shared coerce2_VoterC1: coerce -> coerce [aID_VoterC1_required=2]
+shared coerce3_VoterC1: coerce -> coerce [aID_VoterC1_required=3]
+shared start_voting: coerce -> voting
+shared VoterC1_vote: voting -> voting
+shared finish_voting: voting -> finish
+shared finish_sending_trackers: finish -> trackers_sent
+shared give1_VoterC1: trackers_sent -> trackers_sent
+shared give2_VoterC1: trackers_sent -> trackers_sent
+shared not_give_VoterC1: trackers_sent -> trackers_sent
+to_check: trackers_sent -> check
+shared check_tracker1_Coercer1: check -> check
+shared check_tracker2_Coercer1: check -> check
+to_interact: check -> interact
+shared punish_VoterC1: interact -> interact
+shared not_punish_VoterC1: interact -> interact
+finish: interact -> end [aID_finish=1]
+PROTOCOL: [[give1_VoterC1, give2_VoterC1, not_give_VoterC1]]
+
+INITIAL: [VoterC1_revote=1]
+REDUCTION: [VoterC1_vote, VoterC1_revote, Coercer1_finish]
+COALITION: [Coercer1]
+PERSISTENT: [Coercer1_finish, Voter1_vote, Voter1_tracker, VoterC1_vote, Coercer1_VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, VoterC1_revote, Coercer1_VoterC1_revote, VoterC1_prep_vote, EA1_tracker1, EA1_tracker1_vote, EA1_tracker2, EA1_tracker2_vote]
+% FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
+% FORMULA: <<Coercer1>>F(VoterC1_revote=4 -> K_Coercer1 VoterC1_vote)
+FORMULA: <<Coercer1>>F(Coercer1_finish=1)
+SHOW_EPISTEMIC: False

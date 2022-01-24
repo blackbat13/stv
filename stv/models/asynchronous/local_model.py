@@ -16,13 +16,19 @@ class LocalModel:
     """
 
     def __init__(self, agent_id: int, agent_name: str, states: Dict[str, int], transitions: List[List[LocalTransition]],
-                 protocol: List[List[str]], actions: Set[str]):
+                 protocol: List[List[str]], actions: Set[str], interface: List[str], local: List[str]):
         self._agent_id = agent_id
         self._agent_name: str = agent_name
         self._states: Dict[str, int] = states
+        self._reverse_states: Dict[int, str] = dict()
+        for key in self._states:
+            self._reverse_states[self._states[key]] = key
+
         self._transitions: List[List[LocalTransition]] = transitions
         self._actions: Set[str] = actions
         self._protocol: List[List[str]] = protocol
+        self._local = local
+        self._interface = interface
         self._props: List[str] = []
         self._model: SimpleModel = None
         self._compute_props()
@@ -47,6 +53,31 @@ class LocalModel:
     def actions(self):
         """Set of action names"""
         return self._actions
+
+    @property
+    def local(self):
+        return self._local
+
+    @property
+    def interface(self):
+        return self._interface
+
+    def remove_props(self, save: Set[str]):
+        for prop in self._interface[:]:
+            if prop not in save:
+                self._interface.remove(prop)
+
+        for prop in self._local[:]:
+            if prop not in save:
+                self._local.remove(prop)
+
+        for prop in self._props[:]:
+            if prop not in save:
+                self._props.remove(prop)
+
+        for tran_list in self._transitions:
+            for tran in tran_list:
+                tran.remove_props(save)
 
     def generate(self):
         self._model = SimpleModel(no_agents=1)
@@ -90,6 +121,9 @@ class LocalModel:
     def get_state_id(self, state_name: str) -> int:
         return self._states[state_name]
 
+    def get_state_name(self, state_id: int) -> str:
+        return self._reverse_states[state_id]
+
     def get_transitions(self) -> List[LocalTransition]:
         result = []
         for transition_list in self._transitions:
@@ -104,3 +138,14 @@ class LocalModel:
         for transition_list in self._transitions:
             for transition in transition_list:
                 transition.print()
+
+    def __str__(self):
+        result = f"Agent {self._agent_name}:\n"
+        result += f"init: {self._reverse_states[0]}\n"
+        result += f"LOCAL: [{', '.join(self._local)}]\n"
+        result += f"INTERFACE: [{', '.join(self._interface)}]\n"
+        for transition_list in self._transitions:
+            for transition in transition_list:
+                result += f"{transition}\n"
+
+        return result

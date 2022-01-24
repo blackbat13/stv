@@ -1,5 +1,6 @@
-from typing import List, Tuple
+from typing import List, Tuple, Set
 from stv.models.asynchronous.global_state import GlobalState
+import re
 
 
 class LocalTransition:
@@ -18,7 +19,7 @@ class LocalTransition:
     :ivar j:
     """
 
-    def __init__(self, state_from: str, state_to: str, action: str, shared: bool, cond: List, props: dict):
+    def __init__(self, state_from: str, state_to: str, action: str, shared: bool, cond: List, props: dict, cond_str: str):
         self._id: int = -1
         self._agent_id = -1
         self._action: str = action
@@ -27,6 +28,7 @@ class LocalTransition:
         self._state_to: str = state_to
         self._props: dict = props
         self._conditions: List = cond
+        self._conditions_str: str = cond_str
         self.i: int = -1
         self.j: int = -1
         self._prot_name: str = action
@@ -101,35 +103,10 @@ class LocalTransition:
         :param state: Global state.
         :return: True if conditions are met, False otherwise.
         """
-        for cond in self.conditions:
-            def get_operand_value(var_or_val):
-                if var_or_val in state.props:
-                    return state.props[var_or_val]
-                else:
-                    try:
-                        return int(var_or_val)
-                    except ValueError:
-                        return var_or_val
-
-            # get the value from state.props vector or cast on int
-            x = get_operand_value(cond[0])
-            y = get_operand_value(cond[1])
-
-            if (
-                not isinstance(x, int) or
-                not isinstance(y, int) or
-                (cond[2] == "==" and not x == y) or
-                (cond[2] == "!=" and not x != y) or
-                (cond[2] == "<=" and not x <= y) or
-                (cond[2] == ">=" and not x >= y) or
-                (cond[2] == "<" and not x < y) or
-                (cond[2] == ">" and not x > y)
-            ):
-                return False
-            # if (cond[2] == "==" and ((cond[0] not in state.props) or (state.props[cond[0]] != cond[1]))) or (
-            #         cond[2] == "!=" and cond[0] in state.props and state.props[cond[0]] == cond[1]):
-            #     return False
-        return True
+        if self._conditions_str == "":
+            return True
+        # print(self._conditions_str, state.props, eval(self._conditions_str, {}, state.props))
+        return eval(self._conditions_str, {}, state.props)
 
     def print(self):
         """Print transition in readable form."""
@@ -139,8 +116,33 @@ class LocalTransition:
         """Converts transition to tuple."""
         return self._agent_id, self.i, self.j
 
+    def remove_props(self, save: Set[str]):
+        for key in list(self._props.keys()):
+            if key not in save:
+                self._props.pop(key)
+
+        for cond in self._conditions[:]:
+            if cond[0] not in save:
+                self._conditions.remove(cond)
+
+    def _conditions_to_str(self):
+        result = ""
+        for cond in self._conditions:
+            result += f"{cond[0]}{cond[2]}{cond[1]} and "
+
+        result = result[0:-5]
+        return result
+
     def __str__(self):
-        return f"{self._action}: {self._state_from} -> {self._state_to} [{self._props}]; conditions: {self._conditions}"
+        conditions = f"[{self._conditions_to_str()}]"
+        if self._conditions_to_str() == "":
+            conditions = ""
+
+        values = f"[{', '.join([f'{key}={self._props[key][1]}' for key in self._props])}]"
+        if not self._props:
+            values = ""
+
+        return f"{self._action}: {self._state_from} -{conditions}> {self._state_to} {values}"
 
 
 class SharedTransition(LocalTransition):
@@ -150,7 +152,7 @@ class SharedTransition(LocalTransition):
 
     def __init__(self, local_transition: LocalTransition):
         super().__init__(local_transition.state_from, local_transition.state_to, local_transition.action,
-                         True, local_transition.conditions, local_transition.props)
+                         True, local_transition.conditions, local_transition.props, local_transition._conditions_str)
         self._id: int = local_transition.id
         self._agent_id: int = local_transition.agent_id
         self._transition_list: List[local_transition] = [local_transition]

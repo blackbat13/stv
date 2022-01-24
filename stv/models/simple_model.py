@@ -99,7 +99,7 @@ class SimpleModel:
 
         return False
 
-    def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str]):
+    def add_transition(self, from_state_id: int, to_state_id: int, actions: List[str], time: int = 1):
         """
         Adds transition between two states in the model
         :param from_state_id: identifier of the first state
@@ -109,7 +109,7 @@ class SimpleModel:
         """
         self.resize_to_state(max(from_state_id, to_state_id))
         # if self.is_unique_transition(Transition(to_state_id, actions), from_state_id):
-        self._graph[from_state_id].append(Transition(to_state_id, actions))
+        self._graph[from_state_id].append(Transition(to_state_id, actions, time))
         self._pre_image[to_state_id].append(from_state_id)
         self._no_transitions += 1
         self._add_actions(actions)
@@ -307,7 +307,7 @@ class SimpleModel:
     def _add_transitions_to_model(self, model):
         for state_id in range(0, len(self._graph)):
             for transition in self._graph[state_id]:
-                model.add_transition(state_id, transition.next_state, transition.actions)
+                model.add_transition(state_id, transition.next_state, transition.actions, transition.time)
 
         return model
 
@@ -389,6 +389,15 @@ class SimpleModel:
         result += self.dump_epistemic_classes_for_agent(agent_id)
         return result
 
+    def dump_for_coalition(self, agents_id: List[int]) -> str:
+        result = ""
+        result += f"{self._no_states}\n"
+        result += "1\n"
+        # result += self.dump_states()
+        result += self.dump_transitions_for_coalition(agents_id)
+        result += self.dump_epistemic_classes_for_agent(agents_id[0])
+        return result
+
     def dump_states(self) -> str:
         result = ""
         for state in self._states:
@@ -416,6 +425,8 @@ class SimpleModel:
     def dump_transitions_for_agent(self, agent_id) -> str:
         actions_dict = dict()
         action_ind = 0
+        actions_dict[""] = 0
+        action_ind += 1
         result = f"{self._no_transitions}\n"
         for state_id in range(0, self._no_states):
             for transition in self._graph[state_id]:
@@ -426,6 +437,28 @@ class SimpleModel:
                     action_ind += 1
 
                 result += f" {actions_dict[action]}"
+                result += "\n"
+
+        return result
+
+    def dump_transitions_for_coalition(self, agents_id: List[int]) -> str:
+        actions_dict = dict()
+        action_ind = 0
+        actions_dict[tuple(["" for _ in agents_id])] = 0
+        action_ind += 1
+        result = f"{self._no_transitions}\n"
+        for state_id in range(0, self._no_states):
+            for transition in self._graph[state_id]:
+                result += f"{state_id} {transition.next_state}"
+                actions = []
+                for a_id in agents_id:
+                    actions.append(transition.actions[a_id])
+                actions = tuple(actions)
+                if actions not in actions_dict:
+                    actions_dict[actions] = action_ind
+                    action_ind += 1
+
+                result += f" {actions_dict[actions]}"
                 result += "\n"
 
         return result

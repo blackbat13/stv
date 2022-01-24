@@ -1,5 +1,5 @@
-
-
+% Global: Generation time: 0.5, #states: 2877, #transitions: 5904
+% Reduced: Generation time: 2.625, #states: 2859, #transitions: 5850
 Agent EA[1]:
 init start
 gen_trackers1: start -> generate [aID_tracker1=1, aID_tracker2=2]
@@ -21,7 +21,7 @@ shared check_tracker1_Coercer1: check -> check [Coercer1_tracker1=?aID_tracker1_
 shared check_tracker2_Voter1: check -> check [Voter1_tracker2=?aID_tracker2_vote]
 shared check_tracker2_VoterC1: check -> check [VoterC1_tracker2=?aID_tracker2_vote]
 shared check_tracker2_Coercer1: check -> check [Coercer1_tracker2=?aID_tracker2_vote]
-PROTOCOL: [[check_tracker1_Voter1,check_tracker2_Voter1],[check_tracker1_VoterC1,check_tracker2_VoterC1],[check_tracker1_Coercer1,check_tracker2_Coercer1]]
+PROTOCOL: [[check_tracker1_Voter1, check_tracker2_Voter1], [check_tracker1_VoterC1, check_tracker2_VoterC1], [check_tracker1_Coercer1, check_tracker2_Coercer1]]
 
 Agent Voter[1]:
 init start
@@ -53,7 +53,7 @@ shared punish_aID: interact -> ckeck [aID_punish=true]
 shared not_punish_aID: interact -> check [aID_punish=false]
 shared check_tracker1_aID: check -> end
 shared check_tracker2_aID: check -> end
-PROTOCOL: [[coerce1_aID,coerce2_aID], [punish, not_punish]]
+PROTOCOL: [[coerce1_aID, coerce2_aID], [punish, not_punish]]
 
 Agent Coercer[1]:
 init coerce
@@ -75,7 +75,7 @@ finish: interact -> end
 PROTOCOL: [[give1_VoterC1, give2_VoterC1, not_give_VoterC1]]
 
 REDUCTION: [Coercer1_VoterC1_tracker]
-COALITION: [VoterC1, EA1]
-PERSISTENT: [Voter1_vote, Voter1_tracker, VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, EA1_tracker1, EA1_tracker2, EA1_tracker1_vote, EA1_tracker2_vote]
-FORMULA: <<VoterC1, EA1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
-SHOW_EPISTEMIC: True
+COALITION: [VoterC1]
+PERSISTENT: [Voter1_vote, Voter1_tracker, VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, EA1_tracker1, EA1_tracker1_vote, EA1_tracker2, EA1_tracker2_vote]
+FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
+SHOW_EPISTEMIC: False

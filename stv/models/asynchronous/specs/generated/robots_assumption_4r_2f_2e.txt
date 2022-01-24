@@ -1,0 +1,64 @@
+% Generation time: 503.875, #states: 520112, #transitions:
+% DFS: 43870 usec, False
+% Imperfect verification time: 6729491 usec
+% Imperfect verification result: FALSE
+% Perfect verification time: 57777924 usec
+% Perfect verification result: TRUE
+
+SEMANTICS: synchronous
+Agent Robot0[1]:
+init: idle
+INTERFACE: [f_1_a_1, f_1_a_2, f_1_s, f_2_a_1, f_2_a_2, f_2_s]
+LOCAL: [aID_r_x, aID_r_e, aID_r_t, aID_r_p]
+move_f: idle -[aID_r_x<2 and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x+=1, aID_r_e-=1]
+move_b: idle -[aID_r_x>1 and aID_r_e>0 and aID_r_t==0]> idle [aID_r_x-=1, aID_r_e-=1]
+pick1: idle -[aID_r_x==1 and f_1_a_0==1 and aID_r_p==0 and aID_r_e>0]> s_pick1 [aID_r_t=1]
+cont_pick1: s_pick1 -[f_1_s==0]> cont_pick1 [aID_r_p=1]
+fin_pick1: cont_pick1 -[f_1_s!=0]> idle [aID_r_t=0]
+pick2: idle -[aID_r_x==2 and f_2_a_0==1 and aID_r_p==0 and aID_r_e>0]> s_pick2 [aID_r_t=1]
+cont_pick2: s_pick2 -[f_2_s==0]> cont_pick2 [aID_r_p=1]
+fin_pick2: cont_pick2 -[f_2_s!=0]> idle [aID_r_t=0]
+drop1: idle -[aID_r_x==1 and aID_r_p==1 and f_1_a_1==0]> s_drop1 [aID_r_t=2]
+cont_drop1: s_drop1 -[f_1_s==0]> cont_drop1 [aID_r_p=0]
+fin_drop1: cont_drop1 -[f_1_s!=0]> idle [aID_r_t=0]
+drop2: idle -[aID_r_x==2 and aID_r_p==1 and f_2_a_1==0]> s_drop2 [aID_r_t=2]
+cont_drop2: s_drop2 -[f_2_s==0]> cont_drop2 [aID_r_p=0]
+fin_drop2: cont_drop2 -[f_2_s!=0]> idle [aID_r_t=0]
+
+Agent Assumption[1]:
+init: idle
+pick_0_1: idle -[Robot01_r_x==1 and f_1_a_0==1 and Robot01_r_t==1]> s_pick_0_1 [f_1_a_0=0, f_1_s=0]
+fin_pick_0_1: s_pick_0_1 -[Robot01_r_t==1 and Robot01_r_p==1]> idle [f_1_s=-1]
+drop_0_1: idle -[Robot01_r_x==1 and f_1_a_1==0 and Robot01_r_t==2]> s_drop_0_1 [f_1_a_1=1, f_1_s=0]
+fin_drop_0_1: s_drop_0_1 -[Robot01_r_t==2 and Robot01_r_p==0]> idle [f_1_s=-1]
+pick_1_1: idle -[Robot11_r_x==1 and f_1_a_1==1 and Robot11_r_p==0]> idle [f_1_a_1=0, Robot11_r_p=1]
+drop_1_1: idle -[Robot11_r_x==1 and f_1_a_2==0 and Robot11_r_p==1]> idle [f_1_a_2=1, Robot11_r_p=0]
+pick_2_1: idle -[Robot21_r_x==1 and f_1_a_2==1 and Robot21_r_p==0]> idle [f_1_a_2=0, Robot21_r_p=1]
+drop_2_1: idle -[Robot21_r_x==1 and f_1_a_3==0 and Robot21_r_p==1]> idle [f_1_a_3=1, Robot21_r_p=0]
+pick_3_1: idle -[Robot31_r_x==1 and f_1_a_3==1 and Robot31_r_p==0]> idle [f_1_a_3=0, Robot31_r_p=1]
+drop_3_1: idle -[Robot31_r_x==1 and f_1_a_0==0 and Robot31_r_p==1]> idle [f_1_a_0=1, Robot31_r_p=0]
+pick_0_2: idle -[Robot01_r_x==2 and f_2_a_0==1 and Robot01_r_t==1]> s_pick_0_2 [f_2_a_0=0, f_2_s=0]
+fin_pick_0_2: s_pick_0_2 -[Robot01_r_t==1 and Robot01_r_p==1]> idle [f_2_s=-1]
+drop_0_2: idle -[Robot01_r_x==2 and f_2_a_1==0 and Robot01_r_t==2]> s_drop_0_2 [f_2_a_1=1, f_2_s=0]
+fin_drop_0_2: s_drop_0_2 -[Robot01_r_t==2 and Robot01_r_p==0]> idle [f_2_s=-1]
+pick_1_2: idle -[Robot11_r_x==2 and f_2_a_1==1 and Robot11_r_p==0]> idle [f_2_a_1=0, Robot11_r_p=1]
+drop_1_2: idle -[Robot11_r_x==2 and f_2_a_2==0 and Robot11_r_p==1]> idle [f_2_a_2=1, Robot11_r_p=0]
+pick_2_2: idle -[Robot21_r_x==2 and f_2_a_2==1 and Robot21_r_p==0]> idle [f_2_a_2=0, Robot21_r_p=1]
+drop_2_2: idle -[Robot21_r_x==2 and f_2_a_3==0 and Robot21_r_p==1]> idle [f_2_a_3=1, Robot21_r_p=0]
+pick_3_2: idle -[Robot31_r_x==2 and f_2_a_3==1 and Robot31_r_p==0]> idle [f_2_a_3=0, Robot31_r_p=1]
+drop_3_2: idle -[Robot31_r_x==2 and f_2_a_0==0 and Robot31_r_p==1]> idle [f_2_a_0=1, Robot31_r_p=0]
+move_f: idle -[Robot11_r_x<2 and Robot11_r_e>0]> idle [Robot11_r_x+=1, Robot11_r_e-=1]
+move_b: idle -[Robot11_r_x>1 and Robot11_r_e>0]> idle [Robot11_r_x-=1, Robot11_r_e-=1]
+move_f: idle -[Robot21_r_x<2 and Robot21_r_e>0]> idle [Robot21_r_x+=1, Robot21_r_e-=1]
+move_b: idle -[Robot21_r_x>1 and Robot21_r_e>0]> idle [Robot21_r_x-=1, Robot21_r_e-=1]
+move_f: idle -[Robot31_r_x<2 and Robot31_r_e>0]> idle [Robot31_r_x+=1, Robot31_r_e-=1]
+move_b: idle -[Robot31_r_x>1 and Robot31_r_e>0]> idle [Robot31_r_x-=1, Robot31_r_e-=1]
+
+INITIAL: [Robot01_r_x=1, Robot01_r_e=2, Robot01_r_p=0, Robot01_r_t=0, Robot11_r_x=1, Robot11_r_e=2, Robot11_r_p=0, Robot11_r_t=0, Robot21_r_x=1, Robot21_r_e=2, Robot21_r_p=0, Robot21_r_t=0, Robot31_r_x=1, Robot31_r_e=2, Robot31_r_p=0, Robot31_r_t=0, f_1_s=-1, f_2_s=-1, f_1_a_0=1, f_1_a_1=1, f_1_a_2=1, f_1_a_3=1, f_2_a_0=0, f_2_a_1=0, f_2_a_2=0, f_2_a_3=0]
+REDUCTION: [f_2_a_1, f_2_a_2, f_2_a_3, f_2_a_4]
+COALITION: [Robot01]
+PERSISTENT: [Robot01_r_x, Robot01_r_e, Robot01_r_p, Robot01_r_t, Robot11_r_x, Robot11_r_e, Robot11_r_p, Robot11_r_t, Robot21_r_x, Robot21_r_e, Robot21_r_p, Robot21_r_t, Robot31_r_x, Robot31_r_e, Robot31_r_p, Robot31_r_t, f_1_s, f_2_s, f_1_a_0, f_1_a_1, f_1_a_2, f_1_a_3, f_2_a_0, f_2_a_1, f_2_a_2, f_2_a_3]
+LOGIC: ATL
+FORMULA: <<Robot01>>F(f_2_a_0=1 | f_2_a_1=1 | f_2_a_2=1 | f_2_a_3=1)
+% FORMULA: <<Robot01>>(r1_e>0 && r2_e>0)U(p3_a1==1 || p3_a2==1)
+SHOW_EPISTEMIC: False

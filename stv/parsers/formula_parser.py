@@ -5,7 +5,10 @@ from .parser import Parser
 class TemporalOperator(Enum):
     F = "F"
     G = "G"
-    
+    FG = "FG"
+    GF = "GF"
+
+
 class PathQuantifier(Enum):
     A = "A"
     E = "E"
@@ -21,15 +24,17 @@ class Formula:
     def __str__(self):
         return str(self.temporalOperator.value) + str(self.expression)
 
+
 class AtlFormula(Formula):
     agents = []
-    
+
     def __str__(self):
         return "<<" + (", ".join(self.agents)) + ">>" + super().__str__()
 
+
 class CtlFormula(Formula):
     pathQuantifier = None
-    
+
     def __str__(self):
         return str(self.pathQuantifier.value) + super().__str__()
 
@@ -92,22 +97,22 @@ class FormulaParser(Parser):
 
     def parseAtlFormula(self, formulaStr):
         self.setStr(formulaStr)
-        
+
         formula = AtlFormula()
         formula.agents = self.__parseFormulaAgents()
         formula.temporalOperator = self.__parseFormulaTemporalOperator()
         formula.expression = self.__parseFormulaExpression()
-        
+
         return formula
 
     def parseCtlFormula(self, formulaStr):
         self.setStr(formulaStr)
-        
+
         formula = CtlFormula()
         formula.pathQuantifier = self.__parseFormulaPathQuantifier()
         formula.temporalOperator = self.__parseFormulaTemporalOperator()
         formula.expression = self.__parseFormulaExpression()
-        
+
         return formula
 
     def __parseFormulaAgents(self):
@@ -126,11 +131,15 @@ class FormulaParser(Parser):
         return agents
 
     def __parseFormulaTemporalOperator(self):
-        c = self.read(1)
+        c, _ = self.readUntil(["("])
         if c == "F":
             return TemporalOperator.F
         elif c == "G":
             return TemporalOperator.G
+        elif c == "FG":
+            return TemporalOperator.FG
+        elif c == "GF":
+            return TemporalOperator.GF
         else:
             raise Exception("Unknown formula temporal operator")
 

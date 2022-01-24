@@ -1,0 +1,60 @@
+SEMANTICS: synchronous
+Agent Robot1[1]:
+ITERFACE: [p1_a1, p1_a2, p2_a1, p2_a2, p3_a1, p3_a2, p1_s, p2_s, p3_s]
+LOCAL: [r1_x, r1_e, r1_t, r1_p]
+init idle
+move_f: idle -[r1_x<3 && r1_e>0 && r1_t==0]> idle [r1_x=r1_x+1, r1_e=r1_e-1]
+move_b: idle -[r1_x>1 && r1_e>0 && r1_t==0]> idle [r1_x=r1_x-1, r1_e=r1_e-1]
+pick1: idle -[r1_x==1 && p1_a1==1 && r1_p==0]> s_pick1 [r1_t=1]
+cont_pick1: s_pick1 -[p1_s==1]> cont_pick1 [r1_p=1]
+fin_pick1_s0: cont_pick1 -[p1_s==0]> idle [r1_t=0]
+fin_pick1_s2: cont_pick1 -[p1_s==2]> idle [r1_t=0]
+% x3
+drop1_a2: idle -[r1_x==1 && r1_p==1 && p1_a2==0]> s_drop1 [r1_t=2, r1_d=2]
+cont_drop1_a2: s_drop1 -[p1_s==1]> cont_drop1 [r1_p=0]
+fin_drop1_a2_s0: cont_drop1 -[p1_s==0]> idle [r1_t=0]
+fin_drop1_a2_s2: cont_drop1 -[p1_s==2]> idle [r1_t=0]
+% x3
+
+Agent Robot2[1]:
+
+
+Agent Pole1[1]:
+INTERFACE: [r1_x, r2_x, r1_t, r2_t, r1_p, r2_p, r1_d, r2_d]
+LOCAL: [p1_a1, p1_a2, p1_s]
+init idle
+pick1: idle -[r1_x==1 && p1_a1==1 && r1_t==1]> s_pick1 [p1_a1=0, p1_s=1]
+fin_pick1: s_pick1 -[r1_t==1 && r1_p==1]> idle [p1_s=0]
+pick2: idle -[r2_x==1 && p1_a2==1 && r2_t==1]> s_pick2 [p1_a2=0, p1_s=2]
+fin_pick2: s_pick2 -[r2_t==1 && r2_p==1]> idle [p1_s=0]
+drop1_a2: idle -[r1_x==1 && p1_a2==0 && r1_t==2 && r1_d==2]> s_drop1_a2 [p1_a2=1, p1_s=1]
+fin_drop1_a2: s_drop1_a2 -[r1_t==2 && r1_p==0]> idle [p1_s=0]
+drop2_a1: idle -[r2_x==1 && p1_a1==0 && r2_t==2 && r2_d==1]> s_drop2_a1 [p1_a1=1, p1_s=2]
+fin_drop2_a1: s_drop2_a1 -[r2_t==2 && r2_p==0]> idle [p1_s=0]
+
+Agent Pole2[1]:
+
+
+Agent Pole3[1]:
+
+
+
+INITIAL: [r1_x=1, r2_x=1, r1_e=5, r2_e=5, r1_p=0, r2_p=0, r1_t=0, r2_t=0, r1_d=0, r2_d=0, p1_s=0, p2_s=0, p3_s=0, p1_a1=1, p1_a2=1, p2_a1=0, p2_a2=0, p3_a1=0, p3_a2=0]
+
+% x - wspolrzedna,
+% e - energia
+% p - plecak
+% t - tryb: 0 - idle, 1 - pick, 2 - drop
+% d - destination (dla kogo drop)
+% s - semafor
+% a - adresat
+
+
+
+
+REDUCTION: []
+COALITION: [Train1, Train2]
+PERSISTENT: [s, x_1, x_2]
+LOGIC: ATL
+FORMULA: <<Robot11, Robot21>>(r1_e>0 && r2_e>0)U(p3_a1==1 || p3_a2==1)
+SHOW_EPISTEMIC: False

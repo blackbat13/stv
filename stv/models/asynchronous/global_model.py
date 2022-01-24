@@ -9,7 +9,7 @@ from stv.models.asynchronous.local_model import LocalModel
 from stv.models.asynchronous.local_transition import LocalTransition, SharedTransition
 from stv.models import SimpleModel
 from stv.comparing_strats import StrategyComparer
-from stv.parsers import FormulaParser
+from stv.parsers import FormulaParser, TemporalOperator
 
 
 class LogicType(Enum):
@@ -44,7 +44,7 @@ class GlobalModel:
                  bounded_vars: List[str], persistent: List[str],
                  coalition: List[str], goal: List[str],
                  logicType: LogicType, formula: str,
-                 show_epistemic: bool, semantics: str, initial):
+                 show_epistemic: bool, semantics: str, initial, name: str = ""):
         self._model: SimpleModel = None
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
@@ -57,6 +57,7 @@ class GlobalModel:
         self._formula = formula
         self._semantics = semantics
         self._initial = initial
+        self._name = name
         if self.isAtl():
             self._formula_obj = self._parseAtlFormula()
         elif self.isCtl():
@@ -73,6 +74,7 @@ class GlobalModel:
             self.coalition: List = self._getCtlCoalition()
         self._stack1_dict: Dict[str, int] = dict()
         self._transitions_count: int = 0
+        self._epistemic_states: list = []
         self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
         self._show_epistemic = show_epistemic
 
@@ -104,6 +106,13 @@ class GlobalModel:
     def get_agent(self):
         return self.agent_name_to_id(self.coalition[0])
 
+    def get_coalition(self):
+        result = []
+        for a_str in self.coalition:
+            result.append(self.agent_name_to_id(a_str))
+
+        return result
+
     @property
     def formula(self):
         """Formula string"""
@@ -126,6 +135,10 @@ class GlobalModel:
     def transitions_count(self):
         return self._transitions_count
 
+    @property
+    def name(self):
+        return self._name
+
     def generate(self, reduction: bool = False):
         """
         Generates model.
@@ -138,6 +151,8 @@ class GlobalModel:
         self._add_index_to_transitions()
         # self._compute_dependent_transitions()
         self._compute_shared_transitions()
+        self._coalition = self._formula_obj.agents
+        self._model.coalition = self.agent_name_coalition_to_ids(self._coalition)
         if reduction:
             self._add_to_stack(GlobalState.initial_state(self._agents_count, self._initial))
             self._iter_por()
@@ -150,8 +165,22 @@ class GlobalModel:
         # self._model.states = self._states
         self._prepare_epistemic_relation()
 
-        coal_ids = self.agent_name_coalition_to_ids(self._coalition)
-        self._model.set_coalition(coal_ids)
+    def generate_part(self, agents: List[int]):
+        agent_id = 0
+        for el in self._local_models[:]:
+            if agent_id in agents:
+                self._local_models.remove(el)
+
+            agent_id += 1
+
+        self._agents_count = len(self._local_models)
+        self._model = SimpleModel(self._agents_count)
+        self._add_index_to_transitions()
+        self._compute_shared_transitions()
+        if self._semantics == "asynchronous":
+            self._compute_asynchronous()
+        else:
+            self._compute_synchronous()
 
     def generate_local_models(self):
         for local_model in self._local_models:
@@ -163,9 +192,12 @@ class GlobalModel:
         Should be called after creating the model.
         :return: None
         """
-        # for i in range(self._agents_count):
-        #     for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
-        #         self.model.add_epistemic_class(i, epistemic_class)
+        for ep in self._epistemic_states:
+            epistemic_state, state_id, agent_id = ep
+            epistemic_state["actions"] = set()
+            for action in self._model.get_partial_strategies(state_id, agent_id):
+                epistemic_state["actions"].add(action)
+            self._add_to_epistemic_dictionary(epistemic_state, state_id, agent_id)
 
         i = self.get_agent()
         for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
@@ -228,13 +260,10 @@ class GlobalModel:
         :param state:
         :return:
         """
-        all_transitions = []
-        for agent_id in range(len(self._local_models)):
-            all_transitions.append(self._available_transitions_in_state_for_agent(state, agent_id))
-
-        result = []
-        for agent_id in range(self._agents_count):
-            result.append(self._enabled_transitions_for_agent(agent_id, all_transitions))
+        all_transitions = [self._available_transitions_in_state_for_agent(state, agent_id) for agent_id in
+                           range(self._agents_count)]
+        result = [self._enabled_transitions_for_agent(agent_id, all_transitions) for agent_id in
+                  range(self._agents_count)]
 
         return result
 
@@ -390,7 +419,7 @@ class GlobalModel:
             if transition.shared and transition.action not in visited:
                 visited.append(transition.action)
                 actual_transition = [(agent_id, transition)]
-                for n_a_id in range(agent_id + 1, len(self._local_models)):
+                for n_a_id in range(agent_id + 1, self._agents_count):
                     for n_tr in all_transitions[n_a_id]:
                         if n_tr.shared and n_tr.action == transition.action:
                             actual_transition.append((n_a_id, n_tr))
@@ -405,24 +434,31 @@ class GlobalModel:
 
     def _copy_props_to_state(self, state: GlobalState, transition: LocalTransition) -> GlobalState:
         for prop in transition.props:
-            # print(f"LOG: {prop} = {transition.props[prop]} ({type(transition.props[prop])})")
-            self._check_bounded_vars(prop, transition.props[prop])
+            op, val = transition.props[prop]
 
-            if type(transition.props[prop]) is str:
-                if transition.props[prop][0] == "?":
-                    prop_name = transition.props[prop][1:]
-                    # print(prop_name, state.props, prop)
+            self._check_bounded_vars(prop, val)
+
+            if type(val) is str:
+                if val[0] == "?":
+                    prop_name = val[1:]
                     if prop_name in transition.props:
-                        state.set_prop(prop, transition.props[prop_name])
+                        state.set_prop(prop, transition.props[prop_name][1])
                     elif prop_name in state.props:
                         state.set_prop(prop, state.props[prop_name])
-            elif type(transition.props[prop]) is bool:
-                if not transition.props[prop]:
+            elif type(val) is bool:
+                if not val:
                     state.remove_prop(prop)
                 else:
-                    state.set_prop(prop, transition.props[prop])
+                    state.set_prop(prop, val)
+            elif type(val) is int:
+                if op == "+":
+                    state.change_prop(prop, val)
+                elif op == "-":
+                    state.change_prop(prop, -val)
+                else:
+                    state.set_prop(prop, val)
             else:
-                state.set_prop(prop, transition.props[prop])
+                state.set_prop(prop, val)
         return state
 
     def _check_bounded_vars(self, prop_name, prop_val):
@@ -430,7 +466,7 @@ class GlobalModel:
             return
         if prop_name in self._bounded_vars:
             min_val, max_val = self._bounded_vars[prop_name].strip("{").strip("}").split('..')
-            if prop_val<int(min_val) or prop_val>int(max_val):
+            if prop_val < int(min_val) or prop_val > int(max_val):
                 print(f"WARN: Assigning an int out of bound values in '{prop_name}={prop_val}'")
 
     def _state_find(self, state: GlobalState) -> int:
@@ -631,6 +667,7 @@ class GlobalModel:
             return self._new_state_after_shared_transitions_list(state, transition.transition_list)
 
     def _add_state(self, state: GlobalState) -> int:
+        state.add_local_state_props(self._local_models)
         state_id = self._state_find(state)
         if state_id == -1:
             state_id = len(self._states)
@@ -638,12 +675,9 @@ class GlobalModel:
             self._states.append(state)
             self._states_dict[state.to_str()] = state_id
             self._model.states.append(state.to_obj())
-            # for i in range(len(self._local_models)):
-            #     epistemic_state = self._get_epistemic_state(state, i)
-            #     self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
-            i = self.get_agent()
-            epistemic_state = self._get_epistemic_state(state, i)
-            self._add_to_epistemic_dictionary(epistemic_state, state_id, i)
+            for agent_id in self._model.coalition:
+                epistemic_state = self._get_epistemic_state(state, agent_id)
+                self._epistemic_states.append((epistemic_state, state_id, agent_id))
 
         state.id = state_id
         return state_id
@@ -658,14 +692,16 @@ class GlobalModel:
 
         if state.id == 0:
             return {'local_state': -1}
+
         epistemic_state = {'local_state': state.local_states[agent_id]}
-        # epistemic_state = {'local_state': state.local_states[:]}
         props = {}
 
         agent_name: str = self._local_models[agent_id].agent_name
 
         for prop in state.props:
             if prop[0:len(agent_name)] == agent_name:
+                props[prop] = state.props[prop]
+            elif prop in self._local_models[agent_id].local or prop in self._local_models[agent_id].interface:
                 props[prop] = state.props[prop]
 
         epistemic_state['props'] = props
@@ -715,13 +751,13 @@ class GlobalModel:
         """
         state: GlobalState = GlobalState.initial_state(len(self._local_models), self._initial)
         self._add_state(state)
-        i: int = 0
-        while i < len(self._states):
-            state = self._states[i]
-            current_state_id = i
-            i += 1
+        current_state_id: int = 0
+        while current_state_id < len(self._states):
+            state = self._states[current_state_id]
 
             self._compute_next_for_state(state, current_state_id)
+
+            current_state_id += 1
 
     def _compute_synchronous(self):
         """
@@ -776,19 +812,37 @@ class GlobalModel:
         else:
             atl_model = self._model.to_atl_imperfect()
 
+        winning_states = set(self.get_formula_winning_states())
+        coalition = self.agent_name_coalition_to_ids(self._coalition)
+        result = []
         start = time.process_time()
-        result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                       self.get_winning_states())
-        print(result)
+        if self._formula_obj.temporalOperator == TemporalOperator.F:
+            result = atl_model.minimum_formula_many_agents(coalition,
+                                                           winning_states)
+        elif self._formula_obj.temporalOperator == TemporalOperator.G:
+            result = atl_model.maximum_formula_many_agents(coalition,
+                                                           winning_states)
+        elif self._formula_obj.temporalOperator == TemporalOperator.FG:
+            result = atl_model.minimum_formula_many_agents(coalition,
+                                                           atl_model.maximum_formula_many_agents(
+                                                               coalition,
+                                                               winning_states)
+                                                           )
+        elif self._formula_obj.temporalOperator == TemporalOperator.GF:
+            result = atl_model.maximum_formula_many_agents(coalition,
+                                                           atl_model.minimum_formula_many_agents(
+                                                               coalition,
+                                                               winning_states))
+        # print(result)
         end = time.process_time()
 
-        return 0 in result, end - start
+        return 0 in result, end - start, result, atl_model.strategy
 
     def verify_domino(self):
         agent_id = self.get_agent()
         strategy_comparer = StrategyComparer(self._model, self.get_actions()[agent_id])
         start = time.process_time()
-        result, strategy = strategy_comparer.domino_dfs(0, self.get_winning_states(), [agent_id],
+        result, strategy = strategy_comparer.domino_dfs(0, set(self.get_formula_winning_states()), [agent_id],
                                                         strategy_comparer.basic_h)
         end = time.process_time()
         # print(strategy)
@@ -801,7 +855,37 @@ class GlobalModel:
             actions[-1].add("")
         return actions
 
-    def get_formula_winning_states(self):
+    def get_fake_formula_winning_states(self, revote: int, cand: int):
+        expr = self._formula_obj.expression
+        result = []
+        for state in self._states:
+            if expr.evaluate(state.props):
+                if state.props["VoterC1_revote"] != revote:
+                    result.append(state.id)
+                elif state.props["VoterC1_vote"] == cand:
+                    ok = True
+                    for ep in self.model.epistemic_class_for_state(state.id, self.get_agent()):
+                        ep_state = self._states[ep]
+                        if ep_state.props["VoterC1_vote"] != state.props["VoterC1_vote"]:
+                            ok = False
+                            break
+
+                    if ok:
+                        result.append(state.id)
+
+        # print(result)
+        return result
+
+    def get_formula_winning_states(self) -> List[int]:
+        expr = self._formula_obj.expression
+        result = []
+        for state in self._states:
+            if expr.evaluate(state.props):
+                result.append(state.id)
+
+        return result
+
+    def get_real_formula_winning_states(self) -> List[int]:
         expr = self._formula_obj.expression
         result = []
         for state in self._states:
@@ -818,10 +902,11 @@ class GlobalModel:
 
     def save_to_file(self, filename: str):
         model_file = open(filename, "w")
-        model_dump = self.model.dump_for_agent(self.get_agent())
+        # model_dump = self.model.dump_for_agent(self.get_agent())
+        model_dump = self.model.dump_for_coalition(self.get_coalition())
         model_file.write(model_dump)
-        # winning_states = self.get_formula_winning_states()
-        winning_states = self.get_winning_states()
+        winning_states = self.get_formula_winning_states()
+        # winning_states = self.get_winning_states()
         model_file.write(f"{len(winning_states)}\n")
         for state_id in winning_states:
             model_file.write(f"{state_id}\n")
@@ -829,36 +914,61 @@ class GlobalModel:
         model_file.write("0\n")
         model_file.close()
 
+    def classic_save_to_file(self, filename: str):
+        model_file = open(filename, "w")
+        model_dump = self.model.dump_for_agent(self.get_agent())
+        model_file.write(model_dump)
+        winning_states = self.get_real_formula_winning_states()
+        model_file.write(f"{len(winning_states)}\n")
+        for state_id in winning_states:
+            model_file.write(f"{state_id}\n")
+
+        model_file.write("0\n")
+        model_file.close()
+
+    def classic_save_to_file_coal(self, filename: str):
+        model_file = open(filename, "w")
+        model_dump = self.model.dump_for_coalition(self.get_coalition())
+        model_file.write(model_dump)
+        winning_states = self.get_real_formula_winning_states()
+        model_file.write(f"{len(winning_states)}\n")
+        for state_id in winning_states:
+            model_file.write(f"{state_id}\n")
+
+        model_file.write("0\n")
+        model_file.close()
+
+    def __str__(self):
+        result = f"SEMANTICS: {self._semantics}\n\n"
+        for local_model in self._local_models:
+            result += f"{local_model}\n"
+
+        result += f"PERSISTENT: [{', '.join(self._persistent)}]\n"
+        result += f"INITIAL: [{', '.join(f'{key}={self._initial[key]}' for key in self._initial)}]\n"
+        result += f"FORMULA: {self._formula}\n"
+        return result
+
 
 if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    # voter = 3
-    # cand = 2
-    # reduction = False
-    model = GlobalModelParser().parse(f"trains_lm.txt")
+    voters = 2
+
+    # filename = f"simple_voting_synchronous_{voters}v_2c"
+    filename = f"simple_voting_synchronous_{voters}v_2c"
+    # filename = "robots_assumption_0"
+
+    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
     start = time.process_time()
     model.generate(reduction=False)
     end = time.process_time()
+
+    # model.model.simulate(0)
+
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-    print(model.verify_approximation(True))
-    # model.model.simulate(2)
-    # print(model.model.dump())
-    # print("Voters:", voter, ", Candidates:", cand)
-    # print("Reduction:", reduction)
-    # print("States count:", model.states_count)
-    # formula_parser = FormulaParser()
-    # print("Formula:", model._formula)
-    # formula_obj = formula_parser.parseAtlFormula(formulaStr=model._formula)
-    # # print(formula_obj.agents, formula_obj.modalOperator, formula_obj.expression)
-    # # print(model.get_formula_winning_states())
-    # # print(model.get_agent())
-    #
-    # model.save_to_file(f"Selene_{voter}_{cand}_{reduction}_dump.txt")
-    #
-    # # print("Winning:", model.get_winning_states())
-    #
-    # # print("DominoDFS", model.verify_domino())
-    # print("Approx low", model.verify_approximation(False))
-    # print("Approx up", model.verify_approximation(True))
+
+    # model.save_to_file(f"specs/dumps/{filename}_dump.txt")
+
+    print("Approx low", model.verify_approximation(False))
+    print("Approx up", model.verify_approximation(True))

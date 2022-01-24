@@ -1,0 +1,27 @@
+Agent Train[5]:
+init: wait
+shared in_aID: wait -> tunnel [aID_in=True]
+shared out_aID: tunnel -> away [aID_out=True]
+return: away -> wait [aID_return=True]
+
+Agent Controller[1]:
+init: green
+shared in_Train1: green -> red
+shared back_Train1: red -> green
+shared in_Train2: green -> red
+shared back_Train2: red -> green
+shared in_Train3: green -> red
+shared back_Train3: red -> green
+shared in_Train4: green -> red
+shared back_Train4: red -> green
+shared in_Train5: green -> red
+shared back_Train5: red -> green
+
+% REDUCTION: [in_Train1, in_Train2, in_Train3, in_Train4, in_Train5]
+% COALITION: [Controller1]
+% LOGIC: CTL
+% FORMULA: AF(Train1_in=True | Train2_in=True | Train3_in=True | Train4_in=True | Train5_in=True)
+REDUCTION: [Train1_return]
+COALITION: [Train1]
+LOGIC: ATL
+FORMULA: <<Train1>>F(Train1_return=True)

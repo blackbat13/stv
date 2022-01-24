@@ -39,7 +39,7 @@ shared finish_sending_trackers: finish -> check
     % endfor
     shared check_tracker${ti}_Coercer1: check -> check [Coercer1_tracker${ti}=?aID_tracker${ti}_vote]
 % endfor
-PROTOCOL: [[check_tracker1_Voter1,check_tracker2_Voter1],[check_tracker1_VoterC1,check_tracker2_VoterC1],[check_tracker1_Coercer1,check_tracker2_Coercer1]]
+PROTOCOL: [${', '.join(['['+(', '.join([f"check_tracker{t_i}_Voter{v_i}" for t_i in range(1, N_Voters + N_CVoters + 1) ]))+']' for v_i in range(1,N_Voters+1)])}, ${', '.join(['['+(', '.join([f"check_tracker{t_i}_VoterC{v_i}" for t_i in range(1, N_Voters + N_CVoters + 1) ]))+']' for v_i in range(1,N_CVoters+1)])}, [${', '.join([f"check_tracker{t_i}_Coercer1" for t_i in range(1, N_Voters + N_CVoters + 1) ])}]]
 
 Agent Voter[${N_Voters}]:
 init start
@@ -77,7 +77,7 @@ shared not_punish_aID: interact -> check [aID_punish=false]
 % for ti in range(1, N_Voters + N_CVoters + 1):
     shared check_tracker${ti}_aID: check -> end
 % endfor
-PROTOCOL: [[${','.join([f"coerce{c_i}_aID" for c_i in range(1,N_Candidates+1)])}], [punish, not_punish]]
+PROTOCOL: [[${', '.join([f"coerce{c_i}_aID" for c_i in range(1,N_Candidates+1)])}], [punish, not_punish]]
 
 Agent Coercer[1]:
 init coerce
@@ -105,10 +105,10 @@ to_interact: check -> interact
     shared not_punish_VoterC${vi}: interact -> interact
 % endfor
 finish: interact -> end
-PROTOCOL: [[give1_VoterC1, give2_VoterC1, not_give_VoterC1]]
+PROTOCOL: [${','.join(['['+(', '.join([f"give{t_i}_VoterC{v_i}" for t_i in range(1, N_Voters + N_CVoters + 1) ]))+f', not_give_VoterC{v_i}]' for v_i in range(1,N_CVoters+1)])}]
 
 REDUCTION: [Coercer1_VoterC1_tracker]
-COALITION: [VoterC1, EA1]
-PERSISTENT: [Voter1_vote, Voter1_tracker, VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, EA1_tracker1, EA1_tracker2, EA1_tracker1_vote, EA1_tracker2_vote]
-FORMULA: <<VoterC1, EA1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
-SHOW_EPISTEMIC: True
+COALITION: [VoterC1]
+PERSISTENT: [${', '.join([f"Voter{v_i}_vote, Voter{v_i}_tracker" for v_i in range(1,N_Voters+1)])}, ${', '.join([f"VoterC{v_i}_vote, VoterC{v_i}_tracker, VoterC{v_i}_required, Coercer1_VoterC{v_i}_tracker, Coercer1_VoterC{v_i}_required" for v_i in range(1,N_CVoters+1)])}, ${', '.join([f"EA1_tracker{t_i}, EA1_tracker{t_i}_vote" for t_i in range(1,N_Voters+N_CVoters+1)])}]
+FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
+SHOW_EPISTEMIC: False

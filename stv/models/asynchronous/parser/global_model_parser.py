@@ -140,6 +140,8 @@ class GlobalModelParser:
         for variable in variables:
             variable = variable.strip(" ")
             prop, val = variable.split("=")
+            prop = prop.strip(" ")
+            val = val.strip(" ")
             if val.casefold() == "true":
                 val = True
             elif val.casefold() == "false":
@@ -194,3 +196,8 @@ class GlobalModelParser:
                 lines[line_index]) and not self._is_agent_header(lines[line_index]):
             line_index += 1
         return line_index
+
+
+if __name__ == "__main__":
+    global_model_parser = GlobalModelParser()
+    global_model_parser.parse("provafor.txt")

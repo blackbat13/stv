@@ -29,6 +29,7 @@ class UppaalTransition:
         result += f"Comments: {self.comments}\n"
         return result
 
+
 class UppaalLocalModel:
     def __init__(self, agent_name: str):
         self._name = agent_name
@@ -171,6 +172,7 @@ class NaturalStrategy:
             result += str(strat) + "\n"
 
         return result
+
 
 if __name__ == "__main__":
     parser = UppaalModelParser("test.xml")
