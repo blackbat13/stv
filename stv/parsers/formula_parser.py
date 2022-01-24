@@ -6,6 +6,7 @@ class TemporalOperator(Enum):
     F = "F"
     G = "G"
     FG = "FG"
+    GF = "GF"
 
 
 class PathQuantifier(Enum):
@@ -137,6 +138,8 @@ class FormulaParser(Parser):
             return TemporalOperator.G
         elif c == "FG":
             return TemporalOperator.FG
+        elif c == "GF":
+            return TemporalOperator.GF
         else:
             raise Exception("Unknown formula temporal operator")
 

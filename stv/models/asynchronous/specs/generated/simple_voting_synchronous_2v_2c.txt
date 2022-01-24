@@ -22,5 +22,5 @@ REDUCTION: []
 COALITION: [Voter1]
 PERSISTENT: [Voter1_vote, Voter1_reported, Voter1_pun, Coercer1_pun_1, Voter2_vote, Voter2_reported, Voter2_pun, Coercer1_pun_2]
 INITIAL: [Voter1_vote=0, Voter1_reported=0, Voter1_pun=0, Coercer1_pun_1=0, Voter2_vote=0, Voter2_reported=0, Voter2_pun=0, Coercer1_pun_2=0]
-FORMULA: <<Voter1>>G(Voter1_vote=1 | Voter1_pun=0)
+FORMULA: <<Voter1>>FG(Voter1_vote=1 | Voter1_pun=0)
 SHOW_EPISTEMIC: False

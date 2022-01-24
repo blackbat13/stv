@@ -354,7 +354,6 @@ class ATLIrModel:
                 result_states.add(state_id)
                 continue
 
-            # print("Hello")
             for action in itertools.product(*actions):
 
                 if self.is_reachable_by_agents(agent_ids, state_id, list(action), is_winning_state):
@@ -912,9 +911,9 @@ class ATLirModel(ATLIrModel):
 
         for state_id in current_states:
             for pre_state in self.pre_states[state_id]:
-                if is_winning_state[pre_state]:
-                    result_states.add(pre_state)
-                    continue
+                # if is_winning_state[pre_state]:
+                #     result_states.add(pre_state)
+                #     continue
 
                 for action in itertools.product(*actions):
                     res, new_epi = self.is_reachable_by_agents(agents_ids, pre_state, action, is_winning_state)

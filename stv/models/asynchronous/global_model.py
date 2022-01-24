@@ -165,6 +165,23 @@ class GlobalModel:
         # self._model.states = self._states
         self._prepare_epistemic_relation()
 
+    def generate_part(self, agents: List[int]):
+        agent_id = 0
+        for el in self._local_models[:]:
+            if agent_id in agents:
+                self._local_models.remove(el)
+
+            agent_id += 1
+
+        self._agents_count = len(self._local_models)
+        self._model = SimpleModel(self._agents_count)
+        self._add_index_to_transitions()
+        self._compute_shared_transitions()
+        if self._semantics == "asynchronous":
+            self._compute_asynchronous()
+        else:
+            self._compute_synchronous()
+
     def generate_local_models(self):
         for local_model in self._local_models:
             local_model.generate()
@@ -243,8 +260,10 @@ class GlobalModel:
         :param state:
         :return:
         """
-        all_transitions = [self._available_transitions_in_state_for_agent(state, agent_id) for agent_id in range(self._agents_count)]
-        result = [self._enabled_transitions_for_agent(agent_id, all_transitions) for agent_id in range(self._agents_count)]
+        all_transitions = [self._available_transitions_in_state_for_agent(state, agent_id) for agent_id in
+                           range(self._agents_count)]
+        result = [self._enabled_transitions_for_agent(agent_id, all_transitions) for agent_id in
+                  range(self._agents_count)]
 
         return result
 
@@ -793,23 +812,31 @@ class GlobalModel:
         else:
             atl_model = self._model.to_atl_imperfect()
 
+        winning_states = set(self.get_formula_winning_states())
+        coalition = self.agent_name_coalition_to_ids(self._coalition)
+        result = []
         start = time.process_time()
         if self._formula_obj.temporalOperator == TemporalOperator.F:
-            result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                           set(self.get_formula_winning_states()))
+            result = atl_model.minimum_formula_many_agents(coalition,
+                                                           winning_states)
         elif self._formula_obj.temporalOperator == TemporalOperator.G:
-            result = atl_model.maximum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
-                                                           set(self.get_formula_winning_states()))
+            result = atl_model.maximum_formula_many_agents(coalition,
+                                                           winning_states)
         elif self._formula_obj.temporalOperator == TemporalOperator.FG:
-            result = atl_model.minimum_formula_many_agents(self.agent_name_coalition_to_ids(self._coalition),
+            result = atl_model.minimum_formula_many_agents(coalition,
                                                            atl_model.maximum_formula_many_agents(
-                                                               self.agent_name_coalition_to_ids(self._coalition),
-                                                               set(self.get_formula_winning_states()))
+                                                               coalition,
+                                                               winning_states)
                                                            )
+        elif self._formula_obj.temporalOperator == TemporalOperator.GF:
+            result = atl_model.maximum_formula_many_agents(coalition,
+                                                           atl_model.minimum_formula_many_agents(
+                                                               coalition,
+                                                               winning_states))
         # print(result)
         end = time.process_time()
 
-        return 0 in result, end - start
+        return 0 in result, end - start, result, atl_model.strategy
 
     def verify_domino(self):
         agent_id = self.get_agent()
@@ -926,10 +953,10 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    voters = 5
+    voters = 2
 
     # filename = f"simple_voting_synchronous_{voters}v_2c"
-    filename = f"simple_voting_synchronous_assumption_{voters}v_2c"
+    filename = f"simple_voting_synchronous_{voters}v_2c"
     # filename = "robots_assumption_0"
 
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
@@ -941,8 +968,7 @@ if __name__ == "__main__":
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
 
-    model.save_to_file(f"specs/dumps/{filename}_dump.txt")
+    # model.save_to_file(f"specs/dumps/{filename}_dump.txt")
 
-    # print("Approx low", model.verify_approximation(False))
-    # print("Approx up", model.verify_approximation(True))
-
+    print("Approx low", model.verify_approximation(False))
+    print("Approx up", model.verify_approximation(True))
