@@ -1,5 +1,5 @@
-% Generation time: 793.59375, #states: 279841, #transitions: 6736784
-% Memory error
+% Generation time: 288.039242796, #states: 279841, #transitions: 6736784
+
 
 SEMANTICS: synchronous
 Agent Voter[4]:
