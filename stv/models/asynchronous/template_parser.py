@@ -34,7 +34,7 @@ def simple_voting():
 
 def simple_voting_synchronous():
     input_filename = "simple_voting_synchronous.mako"
-    config = {"N_Voters": 5,
+    config = {"N_Voters": 6,
               "N_Candidates": 2}
     output_filename = f"simple_voting_synchronous_{config['N_Voters']}v_{config['N_Candidates']}c.txt"
 
@@ -42,7 +42,7 @@ def simple_voting_synchronous():
 
 def simple_voting_synchronous_assumption():
     input_filename = "simple_voting_synchronous_assumption.mako"
-    config = {"N_Voters": 5,
+    config = {"N_Voters": 6,
               "N_Candidates": 2}
     output_filename = f"simple_voting_synchronous_assumption_{config['N_Voters']}v_{config['N_Candidates']}c.txt"
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = robots_2trains_assumption()
+    input_filename, output_filename, config = simple_voting_synchronous()
 
     template = Template(filename=input_path + input_filename)
 
