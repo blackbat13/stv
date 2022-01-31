@@ -785,20 +785,20 @@ class SimpleModel:
                 if simple_model.evaluate_on_state(expression, state):
                     winning_states.add(state_id)
 
-            sl_perfect = simple_model.to_sl_perfect(simple_model._actions)
+            sl_perfect = simple_model.to_sl_perfect()
             result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
 
-        # elif formula['op'] == 'G':
-        #     formula = formula['operand1']
-        #     expression = formula
-        #     winning_states = set()
-        #     for state_id in range(len(simple_model.states)):
-        #         state = simple_model.states[state_id]
-        #         if simple_model.evaluate_on_state(expression, state):
-        #             winning_states.add(state_id)
-        #
-        #     sl_perfect = simple_model.to_sl_perfect(simple_model._actions)
-        #     result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
+        elif formula['op'] == 'G':
+            formula = formula['operand1']
+            expression = formula
+            winning_states = set()
+            for state_id in range(len(simple_model.states)):
+                state = simple_model.states[state_id]
+                if simple_model.evaluate_on_state(expression, state):
+                    winning_states.add(state_id)
+
+            sl_perfect = simple_model.to_sl_perfect()
+            result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
 
         return result
 
