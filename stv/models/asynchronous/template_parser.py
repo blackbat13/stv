@@ -42,7 +42,7 @@ def simple_voting_synchronous():
 
 def simple_voting_synchronous_assumption():
     input_filename = "simple_voting_synchronous_assumption.mako"
-    config = {"N_Voters": 6,
+    config = {"N_Voters": 10,
               "N_Candidates": 2}
     output_filename = f"simple_voting_synchronous_assumption_{config['N_Voters']}v_{config['N_Candidates']}c.txt"
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = simple_voting_synchronous()
+    input_filename, output_filename, config = simple_voting_synchronous_assumption()
 
     template = Template(filename=input_path + input_filename)
 

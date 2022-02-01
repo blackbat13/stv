@@ -1,3 +1,5 @@
+% timeout > 12h
+
 SEMANTICS: synchronous
 Agent Voter[6]:
 init: q0
