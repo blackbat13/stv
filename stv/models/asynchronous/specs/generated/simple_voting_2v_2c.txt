@@ -1,3 +1,5 @@
+SEMANTICS: asynchronous
+
 Agent Voter[2]:
 init: q0
 vote1: q0 -> q1 [aID_vote=1]

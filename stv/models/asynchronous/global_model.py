@@ -49,7 +49,6 @@ class GlobalModel:
         self._local_models: List[LocalModel] = local_models
         self._reduction: List[str] = reduction
         self._bounded_vars: Dict[str, str] = dict([(x.split(' ')[0], x.split(' ')[1]) for x in bounded_vars])
-        # print(f"LOG: bounded_vars = {self._bounded_vars}")
         self._persistent: List[str] = persistent
         self._coalition: List[str] = coalition
         self._goal: List[str] = goal
@@ -349,31 +348,61 @@ class GlobalModel:
 
         return new_state
 
-    def _new_state_after_shared_transition(self, state: GlobalState, actual_transition) -> Tuple[
-        GlobalState, List[int]]:
+    def _new_state_after_shared_transition(self, state: GlobalState, transition: SharedTransition) -> GlobalState:
         new_state = GlobalState.copy_state(state, self._persistent)
-        agents = []
-        for act_tran in actual_transition:
-            new_state.set_local_state(act_tran[0], self._local_models[act_tran[0]].get_state_id(
-                act_tran[1].state_to))
-            new_state = self._copy_props_to_state(new_state, act_tran[1])
-            agents.append(act_tran[0])
-        return new_state, agents
-
-    def _new_state_after_shared_transitions_list(self, state: GlobalState,
-                                                 transitions: List[LocalTransition]) -> GlobalState:
-        new_state = GlobalState.copy_state(state, self._persistent)
-        for transition in transitions:
-            new_state.set_local_state(transition.agent_id,
-                                      self._local_models[transition.agent_id].get_state_id(transition.state_to))
-            new_state = self._copy_props_to_state(new_state, transition)
+        for local_tran in transition.transition_list:
+            new_state.set_local_state(local_tran.agent_id, self._local_models[local_tran.agent_id].get_state_id(
+                local_tran.state_to))
+            new_state = self._copy_props_to_state(new_state, local_tran)
         return new_state
 
     def _compute_next_for_state(self, state: GlobalState, current_state_id: int):
         all_transitions = self._enabled_transitions_in_state(state)
         visited = []
-        for agent_id in range(len(self._local_models)):
-            self._compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions)
+        shared_transitions: List[List[SharedTransition]] = [[None] for _ in range(self._agents_count)]
+        for agent_id in range(self._agents_count):
+            self._compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions,
+                                                   shared_transitions)
+
+        self._compute_non_reactive(current_state_id, shared_transitions)
+
+    def _compute_non_reactive(self, current_state_id: int, shared_transitions: List[List[SharedTransition]]):
+        for agent_id in range(self._agents_count):
+            for tr in shared_transitions[agent_id]:
+                if tr is None:
+                    continue
+                tr_comb = []
+                ok = True
+                for next_agent_id in tr.agents_list:
+                    if next_agent_id < agent_id:
+                        ok = False
+                        break
+                    if next_agent_id == agent_id:
+                        tr_comb.append([tr])
+                    else:
+                        tr_comb.append(shared_transitions[next_agent_id])
+
+                if not ok:
+                    continue
+
+                for pr in itertools.product(*tr_comb):
+                    ok = False
+                    actions = ['' for _ in range(self._agents_count)]
+                    for i in range(len(tr.agents_list)):
+                        if pr[i] is None:
+                            ok = False
+                            break
+
+                        if pr[0].action != pr[i].action:
+                            ok = True
+
+                        actions[tr.agents_list[i]] = pr[i].action
+
+                    if not ok:
+                        continue
+
+                    self._transitions_count += 1
+                    self._model.add_transition(current_state_id, current_state_id, actions)
 
     def _compute_synchronous_next_for_state(self, state: GlobalState, current_state_id: int):
         all_transitions = self._enabled_transitions_in_state(state)
@@ -414,20 +443,18 @@ class GlobalModel:
 
     def _compute_next_for_state_for_agent(self, state: GlobalState, current_state_id: int, agent_id: int,
                                           visited: List[str],
-                                          all_transitions: List[List[LocalTransition]]):
+                                          all_transitions: List[List[LocalTransition]],
+                                          shared_transitions: List[List[SharedTransition]]):
         for transition in all_transitions[agent_id]:
-            if transition.shared and transition.action not in visited:
+            if isinstance(transition, SharedTransition):
+                shared_transitions[agent_id].append(transition)
+                if transition.action in visited:
+                    continue
                 visited.append(transition.action)
-                actual_transition = [(agent_id, transition)]
-                for n_a_id in range(agent_id + 1, self._agents_count):
-                    for n_tr in all_transitions[n_a_id]:
-                        if n_tr.shared and n_tr.action == transition.action:
-                            actual_transition.append((n_a_id, n_tr))
-                            break
-                new_state, agents = self._new_state_after_shared_transition(state, actual_transition)
+                new_state = self._new_state_after_shared_transition(state, transition)
                 new_state_id = self._add_state(new_state)
                 self._add_transition(current_state_id, new_state_id, transition)
-            elif not transition.shared:
+            elif not isinstance(transition, SharedTransition):
                 new_state = self._new_state_after_private_transition(state, transition)
                 new_state_id = self._add_state(new_state)
                 self._add_transition(current_state_id, new_state_id, transition)
@@ -513,7 +540,6 @@ class GlobalModel:
             dfs: int = dfs_stack.pop()
             if dfs == 1:
                 g: GlobalState = self._stack1[-1]
-                # print("State:", g)
                 reexplore: bool = False
                 i: int = self._find_state_on_stack1(g)
                 if i != -1 and i != len(self._stack1) - 1:
@@ -536,13 +562,6 @@ class GlobalModel:
                 E_g: Set[Tuple[int, int, int]] = set()
                 en_g: Set[Tuple[int, int, int]] = self._enabled_transitions_in_state_single_item_set(g)
 
-                # print("State:", g)
-                # print("en_g:")
-                # for tup in en_g:
-                #     a: LocalTransition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
-                #     print(a)
-                # print()
-
                 dfs_stack.append(-1)
                 if len(en_g) > 0:
                     if not reexplore:
@@ -559,12 +578,8 @@ class GlobalModel:
                         g_p: GlobalState = self._successor(g, a)
                         g_p_state_id: int = self._add_state(g_p)
 
-                        # print("State g_p:", g_p)
-
                         self._add_transition(g_state_id, g_p_state_id, a)
                         if self._add_to_stack(g_p):
-                            # print("State g_p:", g_p)
-                            # print("State added")
                             dfs_stack.append(1)
             elif dfs == -1:
                 if len(self._stack2) == 0:
@@ -610,7 +625,6 @@ class GlobalModel:
         for tup in X:
             transition = self._local_models[tup[0]].transitions[tup[1]][tup[2]]
             successor_state = self._successor(state, transition)
-            # print(self._reduction)
             for agent_id in self.agent_name_coalition_to_ids(self._coalition):
                 if state.local_states[agent_id] != successor_state.local_states[agent_id]:
                     return True
@@ -664,7 +678,7 @@ class GlobalModel:
         if not isinstance(transition, SharedTransition):
             return self._new_state_after_private_transition(state, transition)
         else:
-            return self._new_state_after_shared_transitions_list(state, transition.transition_list)
+            return self._new_state_after_shared_transition(state, transition)
 
     def _add_state(self, state: GlobalState) -> int:
         state.add_local_state_props(self._local_models)
@@ -954,17 +968,22 @@ if __name__ == "__main__":
     from stv.parsers import FormulaParser
 
     filename = input("Filename: ")
+    reduction = input("Reduction (y/n): ")
 
-    model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
+    # model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
+    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
 
     start = time.process_time()
-    model.generate(reduction=False)
+    model.generate(reduction=(reduction == "y"))
     end = time.process_time()
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
 
-    model.save_to_file(f"stv/models/asynchronous/specs/dumps/{filename}_dump.txt")
+    # model.model.simulate(0)
 
+    # model.save_to_file(f"stv/models/asynchronous/specs/dumps/{filename}_dump.txt")
+    # model.save_to_file(f"specs/dumps/{filename}_dump.txt")
+    #
     approx_low_result, approx_low_time, _, _ = model.verify_approximation(False)
     print(f"Approx low: result: {approx_low_result}, time: {approx_low_time}")
 
