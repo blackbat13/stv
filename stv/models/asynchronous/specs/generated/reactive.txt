@@ -1,0 +1,21 @@
+SEMANTICS: asynchronous
+
+Agent A1:
+init: q0
+shared left: q0 -> q1 [A1_syncL=True]
+shared right: q0 -> q2
+idle1: q1 -> q1
+idle2: q2 -> q2
+
+Agent A2:
+init: q0
+shared left: q0 -> q1
+shared right: q0 -> q2
+idle1: q1 -> q1
+idle2: q2 -> q2
+
+
+REDUCTION: [A1_syncL]
+PERSISTENT: [A1_syncL]
+FORMULA: <<A1>>F(A1_syncL=True)
+SHOW_EPISTEMIC: False
