@@ -1,32 +1,4 @@
-% Global Generation time: 347.041507336, #states: 1556212, #transitions: 5912517
-% Formula index: 0
-% standard DFS: 157738 usec, False
-% parallel DFS: 4076 usec, False
-% Imperfect verification time: 14785887 usec
-% Imperfect verification result: FALSE
-% Perfect verification time: 83803564 usec
-% Perfect verification result: FALSE
-% Formula index: 1
-% standard DFS: 160004 usec, False
-% parallel DFS: 55480 usec, False
-% Imperfect verification time: 14034146 usec
-% Imperfect verification result: FALSE
-% Perfect verification time: 36918254 usec
-% Perfect verification result: FALSE
-% Formula index: 2
-% standard DFS: 160275 usec, False
-% parallel DFS: 56895 usec, False
-% Imperfect verification time: 15234112 usec
-% Imperfect verification result: FALSE
-% Perfect verification time: 82981609 usec
-% Perfect verification result: FALSE
-% Formula index: 3
-% standard DFS: 160124 usec, False
-% parallel DFS: 57933 usec, False
-% Imperfect verification time: 14040989 usec
-% Imperfect verification result: FALSE
-% Perfect verification time: 36951764 usec
-% Perfect verification result: FALSE
+
 
 Agent EA[1]:
 init prepare
@@ -81,6 +53,8 @@ shared start_voting: start -> voting
 vote1: voting -> vote [aID_vote=1]
 vote2: voting -> vote [aID_vote=2]
 vote3: voting -> vote [aID_vote=3]
+vote4: voting -> vote [aID_vote=4]
+vote5: voting -> vote [aID_vote=5]
 shared send_vote_aID: vote -> send
 shared finish_voting: send -> finish
 shared send_tracker_aID: finish -> tracker
@@ -94,9 +68,13 @@ init start
 shared coerce1_aID: start -> coerced [aID_required=1]
 shared coerce2_aID: start -> coerced [aID_required=2]
 shared coerce3_aID: start -> coerced [aID_required=3]
+shared coerce4_aID: start -> coerced [aID_required=4]
+shared coerce5_aID: start -> coerced [aID_required=5]
 select_vote1: coerced -> prepared [aID_vote=1, aID_prep_vote=1]
 select_vote2: coerced -> prepared [aID_vote=2, aID_prep_vote=2]
 select_vote3: coerced -> prepared [aID_vote=3, aID_prep_vote=3]
+select_vote4: coerced -> prepared [aID_vote=4, aID_prep_vote=4]
+select_vote5: coerced -> prepared [aID_vote=5, aID_prep_vote=5]
 shared is_ready: prepared -> ready
 shared start_voting: ready -> voting
 shared aID_vote: voting -> vote [Coercer1_aID_vote=?aID_vote, Coercer1_aID_revote=?aID_revote]
@@ -105,8 +83,12 @@ revote_vote_1: send -[aID_revote==1]> voting [aID_vote=?aID_required, aID_revote
 skip_revote_1: send -[aID_revote==1]> votingf
 revote_vote_2: send -[aID_revote==2]> voting [aID_vote=?aID_required, aID_revote=3]
 skip_revote_2: send -[aID_revote==2]> votingf
-final_vote: send -[aID_revote==3]> votingf [aID_vote=?aID_prep_vote]
-skip_final: send -[aID_revote==3]> votingf
+revote_vote_3: send -[aID_revote==3]> voting [aID_vote=?aID_required, aID_revote=4]
+skip_revote_3: send -[aID_revote==3]> votingf
+revote_vote_4: send -[aID_revote==4]> voting [aID_vote=?aID_required, aID_revote=5]
+skip_revote_4: send -[aID_revote==4]> votingf
+final_vote: send -[aID_revote==5]> votingf [aID_vote=?aID_prep_vote]
+skip_final: send -[aID_revote==5]> votingf
 shared send_fvote_aID: votingf -> sendf
 shared finish_voting: sendf -> finish
 shared send_tracker_aID: finish -> tracker
@@ -120,13 +102,15 @@ shared not_punish_aID: interact -> check [aID_punish=false]
 shared check_tracker1_aID: check -> end
 shared check_tracker2_aID: check -> end
 shared check_tracker3_aID: check -> end
-PROTOCOL: [[coerce1_aID, coerce2_aID, coerce3_aID], [punish, not_punish]]
+PROTOCOL: [[coerce1_aID, coerce2_aID, coerce3_aID, coerce4_aID, coerce5_aID], [punish, not_punish]]
 
 Agent Coercer[1]:
 init coerce
 shared coerce1_VoterC1: coerce -> coerce [aID_VoterC1_required=1]
 shared coerce2_VoterC1: coerce -> coerce [aID_VoterC1_required=2]
 shared coerce3_VoterC1: coerce -> coerce [aID_VoterC1_required=3]
+shared coerce4_VoterC1: coerce -> coerce [aID_VoterC1_required=4]
+shared coerce5_VoterC1: coerce -> coerce [aID_VoterC1_required=5]
 shared start_voting: coerce -> voting
 shared VoterC1_vote: voting -> voting
 shared finish_voting: voting -> finish
@@ -150,6 +134,6 @@ REDUCTION: [VoterC1_vote, VoterC1_revote, Coercer1_finish]
 COALITION: [Coercer1]
 PERSISTENT: [Coercer1_finish, Voter1_vote, Voter1_tracker, Voter2_vote, Voter2_tracker, VoterC1_vote, Coercer1_VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, VoterC1_revote, Coercer1_VoterC1_revote, VoterC1_prep_vote, EA1_tracker1, EA1_tracker1_vote, EA1_tracker2, EA1_tracker2_vote, EA1_tracker3, EA1_tracker3_vote]
 % FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
-% FORMULA: <<Coercer1>>F(VoterC1_revote=2 -> K_Coercer1 VoterC1_vote)
+% FORMULA: <<Coercer1>>F(VoterC1_revote=4 -> K_Coercer1 VoterC1_vote)
 FORMULA: <<Coercer1>>F(Coercer1_finish=1)
 SHOW_EPISTEMIC: False

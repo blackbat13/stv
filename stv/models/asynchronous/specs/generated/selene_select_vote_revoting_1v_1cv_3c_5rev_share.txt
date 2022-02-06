@@ -1,4 +1,4 @@
-% Global Generation time: 331.192118194, #states: 56296, #transitions: 194025
+% Global Generation time: 6.563438847, #states: 56296, #transitions: 115683
 
 % Global: Generation time: 13.171875, #states: 56296, #transitions: 115683
 
