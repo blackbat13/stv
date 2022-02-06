@@ -1015,14 +1015,13 @@ if __name__ == "__main__":
     c = int(input("Candidates: "))
     rev = int(input("Revotes: "))
 
-    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share_non_reactive"
-    reduction = "n"
+    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share"
 
     model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
     # model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
 
     start = time.process_time()
-    model.generate(reduction=(reduction == "y"))
+    model.generate(reduction=False)
     end = time.process_time()
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
