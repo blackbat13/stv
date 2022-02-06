@@ -377,10 +377,9 @@ class GlobalModel:
     def _compute_next_for_state(self, state: GlobalState, current_state_id: int):
         all_transitions = self._enabled_transitions_in_state(state)
         visited = []
-        shared_transitions: List[List[SharedTransition]] = [[None] for _ in range(self._agents_count)]
+        # shared_transitions: List[List[SharedTransition]] = [[None] for _ in range(self._agents_count)]
         for agent_id in range(self._agents_count):
-            self._compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions,
-                                                   shared_transitions)
+            self._compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions)
 
         # self._compute_non_reactive(current_state_id, shared_transitions)
 
@@ -463,11 +462,10 @@ class GlobalModel:
 
     def _compute_next_for_state_for_agent(self, state: GlobalState, current_state_id: int, agent_id: int,
                                           visited: List[str],
-                                          all_transitions: List[List[LocalTransition]],
-                                          shared_transitions: List[List[SharedTransition]]):
+                                          all_transitions: List[List[LocalTransition]]):
         for transition in all_transitions[agent_id]:
             if isinstance(transition, SharedTransition):
-                shared_transitions[agent_id].append(transition)
+                # shared_transitions[agent_id].append(transition)
                 if transition.action in visited:
                     continue
                 visited.append(transition.action)

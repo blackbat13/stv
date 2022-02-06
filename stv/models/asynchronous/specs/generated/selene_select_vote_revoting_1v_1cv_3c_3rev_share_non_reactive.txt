@@ -1,4 +1,4 @@
-
+SEMANTICS: asynchronous
 
 Agent EA[1]:
 init prepare
