@@ -89,6 +89,16 @@ def selene_select_vote_revoting_share():
 
     return input_filename, output_filename, config
 
+def selene_select_vote_revoting_share_non_reactive():
+    input_filename = "selene_select_vote_revoting_share_non_reactive.mako"
+    config = {"N_Voters": 1,
+              "N_CVoters": 1,
+              "N_Revote": 3,
+              "N_Candidates": 3}
+    output_filename = f"selene_select_vote_revoting_{config['N_Voters']}v_{config['N_CVoters']}cv_{config['N_Candidates']}c_{config['N_Revote']}rev_share_non_reactive.txt"
+
+    return input_filename, output_filename, config
+
 
 def robots():
     input_filename = "robots.mako"
@@ -134,7 +144,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = simple_voting_synchronous_assumption()
+    input_filename, output_filename, config = selene_select_vote_revoting_share_non_reactive()
 
     template = Template(filename=input_path + input_filename)
 

@@ -382,7 +382,7 @@ class GlobalModel:
             self._compute_next_for_state_for_agent(state, current_state_id, agent_id, visited, all_transitions,
                                                    shared_transitions)
 
-        self._compute_non_reactive(current_state_id, shared_transitions)
+        # self._compute_non_reactive(current_state_id, shared_transitions)
 
     def _compute_non_reactive(self, current_state_id: int, shared_transitions: List[List[SharedTransition]]):
         for agent_id in range(self._agents_count):
@@ -418,6 +418,7 @@ class GlobalModel:
 
                     if not ok:
                         continue
+
 
                     self._transitions_count += 1
                     actions.append("epsilon")
@@ -1016,7 +1017,7 @@ if __name__ == "__main__":
     c = int(input("Candidates: "))
     rev = int(input("Revotes: "))
 
-    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share"
+    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share_non_reactive"
     reduction = "n"
 
     model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
