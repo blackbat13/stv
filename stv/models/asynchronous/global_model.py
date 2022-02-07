@@ -976,7 +976,7 @@ if __name__ == "__main__":
     c = int(input("Candidates: "))
     rev = int(input("Revotes: "))
 
-    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share"
+    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share_reduced"
 
     model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
     # model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")

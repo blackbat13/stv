@@ -32,6 +32,7 @@ def simple_voting():
 
     return input_filename, output_filename, config
 
+
 def simple_voting_synchronous():
     input_filename = "simple_voting_synchronous.mako"
     config = {"N_Voters": 6,
@@ -40,6 +41,7 @@ def simple_voting_synchronous():
 
     return input_filename, output_filename, config
 
+
 def simple_voting_synchronous_assumption():
     input_filename = "simple_voting_synchronous_assumption.mako"
     config = {"N_Voters": 10,
@@ -47,6 +49,7 @@ def simple_voting_synchronous_assumption():
     output_filename = f"simple_voting_synchronous_assumption_{config['N_Voters']}v_{config['N_Candidates']}c.txt"
 
     return input_filename, output_filename, config
+
 
 def selene():
     input_filename = "selene.mako"
@@ -89,6 +92,18 @@ def selene_select_vote_revoting_share():
 
     return input_filename, output_filename, config
 
+
+def selene_select_vote_revoting_share_reduced():
+    input_filename = "selene_select_vote_revoting_share_reduced.mako"
+    config = {"N_Voters": 1,
+              "N_CVoters": 1,
+              "N_Revote": 3,
+              "N_Candidates": 3}
+    output_filename = f"selene_select_vote_revoting_{config['N_Voters']}v_{config['N_CVoters']}cv_{config['N_Candidates']}c_{config['N_Revote']}rev_share_reduced.txt"
+
+    return input_filename, output_filename, config
+
+
 def robots():
     input_filename = "robots.mako"
     config = {"N_Robots": 2,
@@ -97,6 +112,7 @@ def robots():
     output_filename = f"robots_{config['N_Robots']}r_{config['N_Fields']}f_{config['Energy']}e.txt"
 
     return input_filename, output_filename, config
+
 
 def robots_2trains():
     input_filename = "robots_2trains.mako"
@@ -107,6 +123,7 @@ def robots_2trains():
     output_filename = f"robots_2trains_{config['N_Robots']}r_{config['N_Fields']}f_{config['Energy']}e.txt"
 
     return input_filename, output_filename, config
+
 
 def robots_2trains_assumption():
     input_filename = "robots_2trains_assumption.mako"
@@ -133,7 +150,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = selene_select_vote_revoting_share()
+    input_filename, output_filename, config = selene_select_vote_revoting_share_reduced()
 
     template = Template(filename=input_path + input_filename)
 
