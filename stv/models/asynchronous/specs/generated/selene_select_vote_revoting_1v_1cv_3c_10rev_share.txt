@@ -1,5 +1,38 @@
 % Global: Generation time: 12.508909849999998, #states: 106156, #transitions: 218193
+
+% Formula index: 0
+% standard DFS: 0.009278 sec, False
+% parallel DFS: 0.004611 sec, False
+% Imperfect verification time: 0.691479 sec
+% Imperfect verification result: FALSE
+% Perfect verification time: 5.883953 sec
+% Perfect verification result: FALSE
+% Formula index: 1
+% standard DFS: 0.008383 sec, False
+% parallel DFS: 0.008872 sec, False
+% Imperfect verification time: 0.700757 sec
+% Imperfect verification result: FALSE
+% Perfect verification time: 4.903390 sec
+% Perfect verification result: FALSE
+% Formula index: 2
+% standard DFS: 7689 usec, False
+% parallel DFS: 8624 usec, False
+% Imperfect verification time: 696666 usec
+% Imperfect verification result: FALSE
+% Perfect verification time: 5777255 usec
+% Perfect verification result: FALSE
+% Formula index: 3
+% standard DFS: 7682 usec, False
+% parallel DFS: 7814 usec, False
+% Imperfect verification time: 700386 usec
+% Imperfect verification result: FALSE
+% Perfect verification time: 4899026 usec
+% Perfect verification result: FALSE
+
+
 % Reduced: Generation time: 2648.5, #states: 105196, #transitions: 213969
+
+
 
 Agent EA[1]:
 init prepare

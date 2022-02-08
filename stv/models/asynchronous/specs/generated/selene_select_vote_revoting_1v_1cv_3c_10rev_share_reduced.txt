@@ -1,31 +1,31 @@
 % Generation time: 9.306351102999999, #states: 75532, #transitions: 174153
 % Formula index: 0
-% standard DFS: 4157 usec, False
-% parallel DFS: 2759 usec, False
-% Imperfect verification time: 562960 usec
+% standard DFS: 0.004157 sec, False
+% parallel DFS: 0.002759 sec, False
+% Imperfect verification time: 0.562960 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 4070005 usec
+% Perfect verification time: 4.070005 sec
 % Perfect verification result: FALSE
 % Formula index: 1
-% standard DFS: 5435 usec, False
-% parallel DFS: 4716 usec, False
-% Imperfect verification time: 567142 usec
+% standard DFS: 0.005435 sec, False
+% parallel DFS: 0.004716 sec, False
+% Imperfect verification time: 0.567142 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 3462566 usec
+% Perfect verification time: 3.462566 sec
 % Perfect verification result: FALSE
 % Formula index: 2
-% standard DFS: 5325 usec, False
-% parallel DFS: 5364 usec, False
-% Imperfect verification time: 564487 usec
+% standard DFS: 0.005325 sec, False
+% parallel DFS: 0.005364 sec, False
+% Imperfect verification time: 0.564487 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 4063575 usec
+% Perfect verification time: 4.063575 sec
 % Perfect verification result: FALSE
 % Formula index: 3
-% standard DFS: 5387 usec, False
-% parallel DFS: 5535 usec, False
-% Imperfect verification time: 570182 usec
+% standard DFS: 0.005387 sec, False
+% parallel DFS: 0.005535 sec, False
+% Imperfect verification time: 0.570182 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 3461731 usec
+% Perfect verification time: 3.461731 sec
 % Perfect verification result: FALSE
 
 Agent EA[1]:

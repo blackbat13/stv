@@ -1,4 +1,4 @@
-
+% Generation time: 24264.432805446002 (~6h), #states: 53491126, #transitions: 382943397
 
 Agent EA[1]:
 init prepare

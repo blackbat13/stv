@@ -2,33 +2,33 @@
 % Formula index: 0
 % standard DFS: 0.001195 sec, False
 % parallel DFS: 0.001551 sec, False
-% Imperfect verification time: 184083 usec
+% Imperfect verification time: 0.184083 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 838613 usec
+% Perfect verification time: 0.838613 sec
 % Perfect verification result: FALSE
 % 1.022696 s
 % Formula index: 1
 % standard DFS: 0.001590 sec, False
 % parallel DFS: 0.002503 sec, False
-% Imperfect verification time: 166445 usec
+% Imperfect verification time: 0.166445 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 328156 usec
+% Perfect verification time: 0.328156 sec
 % Perfect verification result: FALSE
 % 0.494601 s
 % Formula index: 2
 % standard DFS: 0.001586 sec, False
 % parallel DFS: 0.001772 sec, False
-% Imperfect verification time: 179291 usec
+% Imperfect verification time: 0.179291 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 836172 usec
+% Perfect verification time: 0.836172 sec
 % Perfect verification result: FALSE
 % 1.015463 s
 % Formula index: 3
 % standard DFS: 0.001613 sec, False
 % parallel DFS: 0.002526 sec, False
-% Imperfect verification time: 165997 usec
+% Imperfect verification time: 0.165997 sec
 % Imperfect verification result: FALSE
-% Perfect verification time: 327138 usec
+% Perfect verification time: 0.327138 sec
 % Perfect verification result: FALSE
 % 0.493135 s
 
