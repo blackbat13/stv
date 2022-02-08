@@ -95,7 +95,7 @@ def selene_select_vote_revoting_share():
 
 def selene_select_vote_revoting_share_reduced():
     input_filename = "selene_select_vote_revoting_share_reduced.mako"
-    config = {"N_Voters": 1,
+    config = {"N_Voters": 4,
               "N_CVoters": 1,
               "N_Revote": 3,
               "N_Candidates": 3}
