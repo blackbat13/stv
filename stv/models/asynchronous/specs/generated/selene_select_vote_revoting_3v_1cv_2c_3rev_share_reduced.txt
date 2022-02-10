@@ -1,5 +1,4 @@
-% Generation time: 24264.432805446002 (~6h), #states: 53491126, #transitions: 382943397
-%  281.2 GB
+
 
 Agent EA[1]:
 init prepare
@@ -94,7 +93,6 @@ init start
 shared start_voting: start -> voting
 vote1: voting -> vote [aID_vote=1]
 vote2: voting -> vote [aID_vote=2]
-vote3: voting -> vote [aID_vote=3]
 shared send_vote_aID: vote -> send
 shared finish_voting: send -> finish
 shared send_tracker_aID: finish -> tracker
@@ -108,10 +106,8 @@ Agent VoterC[1]:
 init start
 shared coerce1_aID: start -> coerced [aID_required=1]
 shared coerce2_aID: start -> coerced [aID_required=2]
-shared coerce3_aID: start -> coerced [aID_required=3]
 select_vote1: coerced -> prepared [aID_vote=1, aID_prep_vote=1]
 select_vote2: coerced -> prepared [aID_vote=2, aID_prep_vote=2]
-select_vote3: coerced -> prepared [aID_vote=3, aID_prep_vote=3]
 shared is_ready: prepared -> ready
 shared start_voting: ready -> voting
 shared aID_vote: voting -> vote [Coercer1_aID_vote=?aID_vote, Coercer1_aID_revote=?aID_revote]
@@ -137,13 +133,12 @@ shared check_tracker1_aID: check -> end
 shared check_tracker2_aID: check -> end
 shared check_tracker3_aID: check -> end
 shared check_tracker4_aID: check -> end
-PROTOCOL: [[coerce1_aID, coerce2_aID, coerce3_aID], [punish, not_punish]]
+PROTOCOL: [[coerce1_aID, coerce2_aID], [punish, not_punish]]
 
 Agent Coercer[1]:
 init coerce1
 shared coerce1_VoterC1: coerce1 -> coerce2 [aID_VoterC1_required=1]
 shared coerce2_VoterC1: coerce1 -> coerce2 [aID_VoterC1_required=2]
-shared coerce3_VoterC1: coerce1 -> coerce2 [aID_VoterC1_required=3]
 shared start_voting: coerce2 -> voting
 shared VoterC1_vote: voting -> voting
 shared finish_voting: voting -> finish

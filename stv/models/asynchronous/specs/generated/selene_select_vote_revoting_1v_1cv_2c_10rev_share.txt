@@ -52,8 +52,22 @@ revote_vote_1: send -[aID_revote==1]> voting [aID_vote=?aID_required, aID_revote
 skip_revote_1: send -[aID_revote==1]> votingf
 revote_vote_2: send -[aID_revote==2]> voting [aID_vote=?aID_required, aID_revote=3]
 skip_revote_2: send -[aID_revote==2]> votingf
-final_vote: send -[aID_revote==3]> votingf [aID_vote=?aID_prep_vote]
-skip_final: send -[aID_revote==3]> votingf
+revote_vote_3: send -[aID_revote==3]> voting [aID_vote=?aID_required, aID_revote=4]
+skip_revote_3: send -[aID_revote==3]> votingf
+revote_vote_4: send -[aID_revote==4]> voting [aID_vote=?aID_required, aID_revote=5]
+skip_revote_4: send -[aID_revote==4]> votingf
+revote_vote_5: send -[aID_revote==5]> voting [aID_vote=?aID_required, aID_revote=6]
+skip_revote_5: send -[aID_revote==5]> votingf
+revote_vote_6: send -[aID_revote==6]> voting [aID_vote=?aID_required, aID_revote=7]
+skip_revote_6: send -[aID_revote==6]> votingf
+revote_vote_7: send -[aID_revote==7]> voting [aID_vote=?aID_required, aID_revote=8]
+skip_revote_7: send -[aID_revote==7]> votingf
+revote_vote_8: send -[aID_revote==8]> voting [aID_vote=?aID_required, aID_revote=9]
+skip_revote_8: send -[aID_revote==8]> votingf
+revote_vote_9: send -[aID_revote==9]> voting [aID_vote=?aID_required, aID_revote=10]
+skip_revote_9: send -[aID_revote==9]> votingf
+final_vote: send -[aID_revote==10]> votingf [aID_vote=?aID_prep_vote]
+skip_final: send -[aID_revote==10]> votingf
 shared send_fvote_aID: votingf -> sendf
 shared finish_voting: sendf -> finish
 shared send_tracker_aID: finish -> tracker
@@ -92,6 +106,6 @@ REDUCTION: [VoterC1_vote, VoterC1_revote, Coercer1_finish]
 COALITION: [Coercer1]
 PERSISTENT: [Coercer1_finish, Voter1_vote, Voter1_tracker, VoterC1_vote, Coercer1_VoterC1_vote, VoterC1_tracker, VoterC1_required, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, VoterC1_revote, Coercer1_VoterC1_revote, VoterC1_prep_vote, EA1_tracker1, EA1_tracker1_vote, EA1_tracker2, EA1_tracker2_vote]
 % FORMULA: <<VoterC1>>F(Coercer1_VoterC1_tracker=1 || Coercer1_VoterC1_tracker=2)
-% FORMULA: <<Coercer1>>F(VoterC1_revote=2 -> K_Coercer1 VoterC1_vote)
+% FORMULA: <<Coercer1>>F(VoterC1_revote=9 -> K_Coercer1 VoterC1_vote)
 FORMULA: <<Coercer1>>F(Coercer1_finish=1)
 SHOW_EPISTEMIC: False

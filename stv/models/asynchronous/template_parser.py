@@ -84,10 +84,10 @@ def selene_select_vote_revoting():
 
 def selene_select_vote_revoting_share():
     input_filename = "selene_select_vote_revoting_share.mako"
-    config = {"N_Voters": 2,
-              "N_CVoters": 2,
-              "N_Revote": 3,
-              "N_Candidates": 3}
+    config = {"N_Voters": 1,
+              "N_CVoters": 1,
+              "N_Revote": 10,
+              "N_Candidates": 2}
     output_filename = f"selene_select_vote_revoting_{config['N_Voters']}v_{config['N_CVoters']}cv_{config['N_Candidates']}c_{config['N_Revote']}rev_share.txt"
 
     return input_filename, output_filename, config
@@ -95,10 +95,10 @@ def selene_select_vote_revoting_share():
 
 def selene_select_vote_revoting_share_reduced():
     input_filename = "selene_select_vote_revoting_share_reduced.mako"
-    config = {"N_Voters": 4,
+    config = {"N_Voters": 1,
               "N_CVoters": 1,
               "N_Revote": 3,
-              "N_Candidates": 3}
+              "N_Candidates": 2}
     output_filename = f"selene_select_vote_revoting_{config['N_Voters']}v_{config['N_CVoters']}cv_{config['N_Candidates']}c_{config['N_Revote']}rev_share_reduced.txt"
 
     return input_filename, output_filename, config
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = selene_select_vote_revoting_share_reduced()
+    input_filename, output_filename, config = selene_select_vote_revoting_share()
 
     template = Template(filename=input_path + input_filename)
 
