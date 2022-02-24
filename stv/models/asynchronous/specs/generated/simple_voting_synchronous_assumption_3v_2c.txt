@@ -1,4 +1,9 @@
 % Generation time: 1.453125, #states: 1127, #transitions: 7830
+% DFS: 0.000623 sec, True
+% Imperfect verification time: 0.028306 sec
+% Imperfect verification result: TRUE
+% Perfect verification time: 0.032519 sec
+% Perfect verification result: TRUE
 
 SEMANTICS: synchronous
 Agent Voter[3]:
