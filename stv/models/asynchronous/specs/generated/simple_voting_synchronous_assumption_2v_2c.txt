@@ -1,8 +1,8 @@
-% Generation time: 0.09375, #states: 161, #transitions:
-% DFS: 0.000531 sec, True
-% Imperfect verification time: 0.002600 sec
+% Generation time: 0.040045893000000006, #states: 161, #transitions: 528
+% DFS: 951 usec, True
+% Imperfect verification time: 3250 usec
 % Imperfect verification result: TRUE
-% Perfect verification time: 0.002780 sec
+% Perfect verification time: 3198 usec
 % Perfect verification result: TRUE
 
 SEMANTICS: synchronous

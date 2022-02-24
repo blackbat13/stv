@@ -85,7 +85,7 @@ shared finish_sending_trackers: tracker -> trackers_sent
     shared give${ti}_aID: trackers_sent -> interact [Coercer1_aID_tracker=${ti}]
 % endfor
 shared not_give_aID: trackers_sent -> interact [Coercer1_aID_tracker=0]
-shared punish_aID: interact -> ckeck [aID_punish=true]
+shared punish_aID: interact -> check [aID_punish=true]
 shared not_punish_aID: interact -> check [aID_punish=false]
 % for ti in range(1, N_Voters + N_CVoters + 1):
     shared check_tracker${ti}_aID: check -> end

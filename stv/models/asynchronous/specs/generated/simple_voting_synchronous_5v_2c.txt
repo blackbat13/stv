@@ -1,3 +1,7 @@
+% Generation time: 15879.842718341 (~ 4h), #states: 6436343, #transitions: 342116782
+% 312 GB
+% timeout > 32h
+
 SEMANTICS: synchronous
 Agent Voter[5]:
 init: q0

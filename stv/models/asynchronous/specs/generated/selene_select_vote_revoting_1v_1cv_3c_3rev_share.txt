@@ -1,3 +1,37 @@
+% Global: Generation time: 4.257122096, #states: 36352, #transitions: 74679
+% standard DFS: 0.002643 sec, False
+% parallel DFS: 0.009793 sec, False
+% Imperfect verification time: 1.121316 sec
+% Imperfect verification result: FALSE
+% Perfect verification time: 1.705213 sec
+% Perfect verification result: FALSE
+% 2.826529 s
+% Formula index: 1
+% standard DFS: 0.002594 sec, False
+% parallel DFS: 0.010794 sec, False
+% Imperfect verification time: 1.103639 sec
+% Imperfect verification result: FALSE
+% Perfect verification time: 1.518727 sec
+% Perfect verification result: FALSE
+% 2.622366 s
+% Formula index: 2
+% standard DFS: 0.003368 sec, False
+% parallel DFS: 0.017966 sec, False
+% Imperfect verification time: 1.128233 sec
+% Imperfect verification result: FALSE
+% Perfect verification time: 1.682159 sec
+% Perfect verification result: FALSE
+% 2.810392 s
+% Formula index: 3
+% standard DFS: 0.002630 sec, False
+% parallel DFS: 0.011312 sec, False
+% Imperfect verification time: 1.080054 sec
+% Imperfect verification result: FALSE
+% Perfect verification time: 1.521862 sec
+% Perfect verification result: FALSE
+% 2.601916 s
+
+
 % Global: Generation time: 7.640625, #states: 36352, #transitions: 74679
 % Cand1, Rev2
 % standard DFS: 300 usec

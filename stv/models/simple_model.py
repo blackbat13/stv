@@ -120,8 +120,8 @@ class SimpleModel:
         :param actions: list of actions to add, one per agent
         :return: None
         """
-        for agent_id, action in enumerate(actions):
-            self._actions[agent_id].add(action)
+        for agent_id in range(self._no_agents):
+            self._actions[agent_id].add(actions[agent_id])
 
     @deprecated
     def is_unique_transition(self, transition: Transition, state_id: int) -> bool:
@@ -392,7 +392,7 @@ class SimpleModel:
     def dump_for_coalition(self, agents_id: List[int]) -> str:
         result = ""
         result += f"{self._no_states}\n"
-        result += "1\n"
+        result += f"{len(agents_id)}\n"
         # result += self.dump_states()
         result += self.dump_transitions_for_coalition(agents_id)
         result += self.dump_epistemic_classes_for_agent(agents_id[0])
@@ -444,8 +444,9 @@ class SimpleModel:
     def dump_transitions_for_coalition(self, agents_id: List[int]) -> str:
         actions_dict = dict()
         action_ind = 0
-        actions_dict[tuple(["" for _ in agents_id])] = 0
-        action_ind += 1
+        # actions_dict[tuple(["" for _ in agents_id])] = 0
+        actions_dict[tuple(["*" for _ in agents_id])] = -1
+        # action_ind += 1
         result = f"{self._no_transitions}\n"
         for state_id in range(0, self._no_states):
             for transition in self._graph[state_id]:
@@ -785,20 +786,20 @@ class SimpleModel:
                 if simple_model.evaluate_on_state(expression, state):
                     winning_states.add(state_id)
 
-            sl_perfect = simple_model.to_sl_perfect(simple_model._actions)
+            sl_perfect = simple_model.to_sl_perfect()
             result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
 
-        # elif formula['op'] == 'G':
-        #     formula = formula['operand1']
-        #     expression = formula
-        #     winning_states = set()
-        #     for state_id in range(len(simple_model.states)):
-        #         state = simple_model.states[state_id]
-        #         if simple_model.evaluate_on_state(expression, state):
-        #             winning_states.add(state_id)
-        #
-        #     sl_perfect = simple_model.to_sl_perfect(simple_model._actions)
-        #     result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
+        elif formula['op'] == 'G':
+            formula = formula['operand1']
+            expression = formula
+            winning_states = set()
+            for state_id in range(len(simple_model.states)):
+                state = simple_model.states[state_id]
+                if simple_model.evaluate_on_state(expression, state):
+                    winning_states.add(state_id)
+
+            sl_perfect = simple_model.to_sl_perfect()
+            result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
 
         return result
 

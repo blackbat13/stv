@@ -76,8 +76,9 @@ class ATLIrModel:
     def strategy(self, value: List):
         self._strategy = value
 
-    def __init__(self, number_of_agents: int):
+    def __init__(self, number_of_agents: int, opponent_reactiveness: bool = True):
         self.number_of_agents = number_of_agents
+        self._opponent_reactiveness = opponent_reactiveness
         self.number_of_states = 0
         self.init_transitions()
         self.init_agent_actions()
@@ -288,6 +289,8 @@ class ATLIrModel:
 
         for state_id in pre_image:
             for action in self.agents_actions[agent_id]:
+                if action == "*":
+                    continue
                 if self.is_reachable_by_agent(agent_id, state_id, action, is_winning_state):
                     result_states.add(state_id)
                     is_winning_state[state_id] = True
@@ -298,7 +301,7 @@ class ATLIrModel:
     def is_reachable_by_agent(self, agent_id: int, state_id: int, action: str, is_winning_state: List[bool]):
         result = False
         for transition in self.transitions[state_id]:
-            if transition.actions[agent_id] == action:
+            if transition.actions[agent_id] == action or action == "*":
                 result = True
                 if not is_winning_state[transition.next_state]:
                     return False
@@ -347,15 +350,14 @@ class ATLIrModel:
         pre_image = self.prepare_pre_image(current_states)
         actions = self.get_agents_actions(agent_ids)
 
-        # print(actions)
-        # print("Pre image:", pre_image)
         for state_id in pre_image:
             if is_winning_state[state_id]:
                 result_states.add(state_id)
                 continue
 
-            # print("Hello")
             for action in itertools.product(*actions):
+                if action == "*":
+                    continue
 
                 if self.is_reachable_by_agents(agent_ids, state_id, list(action), is_winning_state):
                     self.strategy[state_id] = list(action)
@@ -384,8 +386,10 @@ class ATLIrModel:
         result = False
         for transition in self.transitions[state_id]:
             is_good_transition = True
+            if self._opponent_reactiveness and transition.actions[-1] == "epsilon":
+                continue
             for agent_id, action in zip(agent_ids, actions):
-                if transition.actions[agent_id] != action:
+                if transition.actions[agent_id] != action and action != "*":
                     is_good_transition = False
                     break
             if is_good_transition:
@@ -513,6 +517,8 @@ class ATLirModel(ATLIrModel):
                     continue
 
                 for action in self.agents_actions[agent_id]:
+                    if action == "*":
+                        continue
                     if self.is_reachable_by_agent(agent_id, pre_state, action, is_winning_state):
                         epistemic_class = self.epistemic_class_for_state_one_agent(pre_state, agent_id)
                         result_states.update(epistemic_class)
@@ -528,7 +534,7 @@ class ATLirModel(ATLIrModel):
         epistemic_class = self.epistemic_class_for_state_one_agent(state_id, agent_id)
         for state_id in epistemic_class:
             for transition in self.transitions[state_id]:
-                if transition.actions[agent_id] == action:
+                if transition.actions[agent_id] == action or action == "*":
                     result = True
                     if not is_winning_state[transition.next_state]:
                         return False
@@ -912,14 +918,13 @@ class ATLirModel(ATLIrModel):
 
         for state_id in current_states:
             for pre_state in self.pre_states[state_id]:
-                if is_winning_state[pre_state]:
-                    result_states.add(pre_state)
-                    continue
 
                 for action in itertools.product(*actions):
-                    res, new_epi = self.is_reachable_by_agents(agents_ids, pre_state, action, is_winning_state)
+                    if action == "*":
+                        continue
+                    res = self.is_reachable_by_agents(agents_ids, pre_state, action, is_winning_state)
                     if res:
-                        epistemic_class = new_epi  # self.epistemic_class_for_state_multiple_agents(pre_state, agents_ids)
+                        epistemic_class = self.epistemic_class_for_state_multiple_agents(pre_state, agents_ids)
                         result_states.update(epistemic_class)
                         for epistemic_state_id in epistemic_class:
                             is_winning_state[epistemic_state_id] = True
@@ -927,55 +932,6 @@ class ATLirModel(ATLIrModel):
                         break
 
         return result_states
-
-    def is_reachable_by_agents(self, agent_ids: List[int], state_id: int, actions: List[str],
-                               is_winning_state: List[bool]):
-        result = False
-        epistemic_class = self.epistemic_class_for_state_multiple_agents(state_id, agent_ids)
-        new_epistemic_class = []
-        for state_id in epistemic_class:
-            is_ok = False
-            for transition in self.transitions[state_id]:
-                is_good_transition = True
-                for agent_id, action in zip(agent_ids, actions):
-                    if transition.actions[agent_id] != action:
-                        is_good_transition = False
-                        break
-                if is_good_transition:
-                    result = True
-                    is_ok = True
-            if is_ok:
-                new_epistemic_class.append(state_id)
-
-        is_good = [0 for i in range(len(new_epistemic_class))]
-        old_sum = sum(is_good)
-        while old_sum != len(new_epistemic_class):
-            for i in range(len(new_epistemic_class)):
-                if is_good[i] == 1:
-                    continue
-                state_id = new_epistemic_class[i]
-                for transition in self.transitions[state_id]:
-                    is_good_transition = True
-                    for agent_id, action in zip(agent_ids, actions):
-                        if transition.actions[agent_id] != action:
-                            is_good_transition = False
-                            break
-                    if is_good_transition:
-                        result = True
-                        if is_winning_state[transition.next_state]:
-                            is_good[i] = 1
-                        elif transition.next_state in new_epistemic_class:
-                            next_i = new_epistemic_class.index(transition.next_state)
-                            is_good[i] = is_good[next_i]
-                        else:
-                            return False, []
-            new_sum = sum(is_good)
-            if new_sum == old_sum:
-                return False, []
-
-            old_sum = new_sum
-
-        return result, new_epistemic_class
 
     def epistemic_class_for_state_multiple_agents(self, state_id: int, agents_ids: List[int]) -> Set[int]:
         """Common Knowledge"""
@@ -1176,7 +1132,7 @@ class ATLirModelDisjoint(ATLIrModel):
         result = False
 
         for transition in self.transitions[state_id]:
-            if transition.actions[agent_id] == action:
+            if transition.actions[agent_id] == action or action == "*":
                 result = True
                 if not winning_states.is_in_union(first_winning_state_id, transition.next_state):
                     return False
