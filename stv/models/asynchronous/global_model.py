@@ -666,7 +666,7 @@ class GlobalModel:
             return self._new_state_after_shared_transitions_list(state, transition.transition_list)
 
     def _add_state(self, state: GlobalState) -> int:
-        state.add_local_state_props(self._local_models)
+        # state.add_local_state_props(self._local_models)
         state_id = self._state_find(state)
         if state_id == -1:
             state_id = len(self._states)
