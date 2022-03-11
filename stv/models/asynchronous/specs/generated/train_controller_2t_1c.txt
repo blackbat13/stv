@@ -1,21 +1,29 @@
-Agent Train[2]:
+Agent Train1:
+LOCAL: [Train1_in, Train1_out, Train1_return]
+PERSISTENT: []
+INITIAL: []
 init: wait
-shared in_aID: wait -> tunnel [aID_in=True]
-shared out_aID: tunnel -> away [aID_out=True]
-return: away -> wait [aID_return=True]
+shared[2] in_Train1: wait -> tunnel [Train1_in:=1]
+shared[2] out_Train1: tunnel -> away [Train1_out:=1]
+return: away -> wait [Train1_return:=1]
 
-Agent Controller[1]:
+Agent Train2:
+LOCAL: [Train2_in, Train2_out, Train2_return]
+PERSISTENT: []
+INITIAL: []
+init: wait
+shared[2] in_Train2: wait -> tunnel [Train2_in:=1]
+shared[2] out_Train2: tunnel -> away [Train2_out:=1]
+return: away -> wait [Train2_return:=1]
+
+Agent Controller:
+LOCAL: []
+PERSISTENT: []
+INITIAL: []
 init: green
-shared in_Train1: green -> red
-shared back_Train1: red -> green
-shared in_Train2: green -> red
-shared back_Train2: red -> green
+shared[2] in_Train1: green -> red
+shared[2] out_Train1: red -> green
+shared[2] in_Train2: green -> red
+shared[2] out_Train2: red -> green
 
-% REDUCTION: [in_Train1, in_Train2]
-% COALITION: [Controller1]
-% LOGIC: CTL
-% FORMULA: AF(Train1_in=True | Train2_in=True)
-REDUCTION: [Train1_return]
-COALITION: [Train1]
-LOGIC: ATL
-FORMULA: <<Train1>>F(Train1_return=True)
+FORMULA: <<Train1>>F(Train1_return=1)
