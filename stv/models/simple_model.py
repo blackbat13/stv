@@ -799,7 +799,7 @@ class SimpleModel:
                     winning_states.add(state_id)
 
             sl_perfect = simple_model.to_sl_perfect()
-            result = sl_perfect.verify(winning_states, quant_pref, bind_pref)
+            result = sl_perfect.verifyG(winning_states, quant_pref, bind_pref)
 
         return result
 
