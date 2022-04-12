@@ -156,6 +156,7 @@ class SharedTransition(LocalTransition):
         self._id: int = local_transition.id
         self._agent_id: int = local_transition.agent_id
         self._transition_list: List[local_transition] = [local_transition]
+        self._agents_list: List[int] = [self._agent_id]
         self.i: int = local_transition.i
         self.j: int = local_transition.j
         self._prot_name: str = local_transition.prot_name
@@ -170,6 +171,11 @@ class SharedTransition(LocalTransition):
         """List of local transitions."""
         return self._transition_list
 
+    @property
+    def agents_list(self) -> List[int]:
+        """List of agents ids"""
+        return self._agents_list
+
     def add_transition(self, local_transition: LocalTransition):
         """
         Adds new local transition to the list.
@@ -177,6 +183,8 @@ class SharedTransition(LocalTransition):
         :return: None
         """
         self._transition_list.append(local_transition)
+        self._agents_list.append(local_transition.agent_id)
+        self._agents_list.sort()
 
     def to_tuple(self) -> Tuple[int, int, int]:
         """

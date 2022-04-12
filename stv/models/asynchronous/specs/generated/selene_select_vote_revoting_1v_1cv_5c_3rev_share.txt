@@ -1,3 +1,5 @@
+% Generation time: 20.360084989, #states: 173586, #transitions: 357245
+
 % Global: Generation time: 37.90625, #states: 173586, #transitions: 357245
 % Cand 1, Rev 2
 % standard DFS: 888 usec

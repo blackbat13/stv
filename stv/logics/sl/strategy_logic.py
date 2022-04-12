@@ -36,6 +36,28 @@ class SLIr(ATLIrModel):
 
         return current_states
 
+    def verifyG(self, winning_states, quant_pref, bind_pref):
+        current_states = set(winning_states)
+        current_states_len = len(current_states)
+        next_states = set(winning_states)
+        next_current_len = -1
+        all_quant_ids = set()
+        self._strat_bind = dict()
+        for el in bind_pref:
+            all_quant_ids.add(el[1])
+            self._strat_bind[el[0]] = el[1]
+
+        while current_states_len != next_current_len:
+            next_current_len = len(current_states)
+            pre_states = self.get_pre_states(next_states)
+            next_states = set(self.pre(quant_pref, 0, bind_pref, pre_states, next_states,
+                                       ['' for _ in range(self.number_of_agents)], all_quant_ids))
+            to_remove = current_states.difference(next_states)
+            current_states.difference_update(to_remove)
+            current_states_len = len(current_states)
+
+        return current_states
+
     def get_pre_states(self, states):
         pre_states = set()
         for state_id in states:
@@ -76,8 +98,8 @@ class SLIr(ATLIrModel):
             result = set()
             first = True
 
-            print(self._strat_bind[quant_pref[quant_pref_no][1]])
-            print(len(self.agents_actions))
+            # print(self._strat_bind[quant_pref[quant_pref_no][1]])
+            # print(len(self.agents_actions))
             for action in self.agents_actions[self._strat_bind[quant_pref[quant_pref_no][1]]]:
                 new_result = self.pre(quant_pref, quant_pref_no + 1, bind_pref, pre_states, states,
                                       self.update(actions, quant_pref[quant_pref_no][1], action),

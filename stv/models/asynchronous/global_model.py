@@ -74,7 +74,6 @@ class GlobalModel:
             self.coalition: List = self._getCtlCoalition()
         self._stack1_dict: Dict[str, int] = dict()
         self._transitions_count: int = 0
-        self._epistemic_states: list = []
         self._epistemic_states_dictionaries: List[Dict[str, Set[int]]] = []
         self._show_epistemic = show_epistemic
 
@@ -192,12 +191,12 @@ class GlobalModel:
         Should be called after creating the model.
         :return: None
         """
-        for ep in self._epistemic_states:
-            epistemic_state, state_id, agent_id = ep
-            epistemic_state["actions"] = set()
-            for action in self._model.get_partial_strategies(state_id, agent_id):
-                epistemic_state["actions"].add(action)
-            self._add_to_epistemic_dictionary(epistemic_state, state_id, agent_id)
+        # for ep in self._epistemic_states:
+        #     epistemic_state, state_id, agent_id = ep
+        #     epistemic_state["actions"] = set()
+        #     for action in self._model.get_partial_strategies(state_id, agent_id):
+        #         epistemic_state["actions"].add(action)
+        #     self._add_to_epistemic_dictionary(epistemic_state, state_id, agent_id)
 
         i = self.get_agent()
         for _, epistemic_class in self._epistemic_states_dictionaries[i].items():
@@ -667,7 +666,7 @@ class GlobalModel:
             return self._new_state_after_shared_transitions_list(state, transition.transition_list)
 
     def _add_state(self, state: GlobalState) -> int:
-        state.add_local_state_props(self._local_models)
+        # state.add_local_state_props(self._local_models)
         state_id = self._state_find(state)
         if state_id == -1:
             state_id = len(self._states)
@@ -677,7 +676,8 @@ class GlobalModel:
             self._model.states.append(state.to_obj())
             for agent_id in self._model.coalition:
                 epistemic_state = self._get_epistemic_state(state, agent_id)
-                self._epistemic_states.append((epistemic_state, state_id, agent_id))
+                # self._epistemic_states.append((epistemic_state, state_id, agent_id))
+                self._add_to_epistemic_dictionary(epistemic_state, state_id, agent_id)
 
         state.id = state_id
         return state_id
@@ -727,14 +727,14 @@ class GlobalModel:
 
     def _add_synchronous_transitions(self, state_from: int, state_to: int, transitions: List[LocalTransition]):
         self._transitions_count += 1
-        actions = ['' for _ in range(self._agents_count)]
+        actions = ['*' for _ in range(self._agents_count)]
         for tran in transitions:
             actions[tran.agent_id] = tran.action
 
         self._model.add_transition(state_from, state_to, actions)
 
     def _create_list_of_actions(self, transition: LocalTransition) -> List[str]:
-        actions = ['' for _ in range(self._agents_count)]
+        actions = ['*' for _ in range(self._agents_count)]
 
         if isinstance(transition, SharedTransition):
             for tr in transition.transition_list:
@@ -938,6 +938,21 @@ class GlobalModel:
         model_file.write("0\n")
         model_file.close()
 
+    def selene_save_to_file(self, filename: str, params: []):
+        model_file = open(filename, "w")
+        # model_dump = self.model.dump_for_agent(self.get_agent())
+        model_dump = self.model.dump_for_coalition(self.get_coalition())
+        model_file.write(model_dump)
+        model_file.write(f"{len(params)}\n")
+        for p in params:
+            winning_states = self.get_fake_formula_winning_states(p[0], p[1])
+            model_file.write(f"{len(winning_states)}\n")
+            for state_id in winning_states:
+                model_file.write(f"{state_id}\n")
+
+        model_file.write("0\n")
+        model_file.close()
+
     def __str__(self):
         result = f"SEMANTICS: {self._semantics}\n\n"
         for local_model in self._local_models:
@@ -953,9 +968,18 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    filename = input("Filename: ")
+    # filename = input("Filename: ")
+    # reduction = input("Reduction (y/n): ")
+
+    v = int(input("Voters: "))
+    cv = int(input("Coerced voters: "))
+    c = int(input("Candidates: "))
+    rev = int(input("Revotes: "))
+
+    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share"
 
     model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
+    # model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
 
     start = time.process_time()
     model.generate(reduction=False)
@@ -963,10 +987,15 @@ if __name__ == "__main__":
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
 
-    model.save_to_file(f"stv/models/asynchronous/specs/dumps/{filename}_dump.txt")
+    # model.model.simulate(0)
 
-    approx_low_result, approx_low_time, _, _ = model.verify_approximation(False)
-    print(f"Approx low: result: {approx_low_result}, time: {approx_low_time}")
-
-    approx_up_result, approx_up_time, _, _ = model.verify_approximation(True)
-    print(f"Approx up: result: {approx_up_result}, time: {approx_up_time}")
+    # model.save_to_file(f"stv/models/asynchronous/specs/dumps/{filename}_dump.txt")
+    # model.save_to_file(f"specs/dumps/{filename}_dump.txt")
+    model.selene_save_to_file(f"stv/models/asynchronous/specs/dumps/{filename}_dump.txt", [(1, rev), (c, rev), (1, rev - 1), (c, rev - 1)])
+    # model.selene_save_to_file(f"specs/dumps/{filename}_dump.txt", [(1, rev), (c, rev), (1, rev - 1), (c, rev - 1)])
+    #
+    # approx_low_result, approx_low_time, _, _ = model.verify_approximation(False)
+    # print(f"Approx low: result: {approx_low_result}, time: {approx_low_time}")
+    #
+    # approx_up_result, approx_up_time, _, _ = model.verify_approximation(True)
+    # print(f"Approx up: result: {approx_up_result}, time: {approx_up_time}")
