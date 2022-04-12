@@ -6,76 +6,124 @@ PERSISTENT: [EA1_tracker1, EA1_tracker1_vote, EA1_tracker2, EA1_tracker2_vote]
 INITIAL: []
 init prepare
 shared[2] is_ready[is_ready]: prepare -> start
-gen_trackers1: start -> generate [EA1_tracker1:=1, EA1_tracker2:=2]
-gen_trackers2: start -> generate [EA1_tracker1:=2, EA1_tracker2:=1]
-shared[3] start_voting[start_voting]: generate -> voting
-shared[2] send_vote_Voter1[send_vote_Voter1]: voting [EA1_tracker1==1] -> voting [EA1_tracker1_vote:=Voter1_vote]
-shared[2] send_vote_Voter1[send_vote_Voter1]: voting [EA1_tracker2==1] -> voting [EA1_tracker2_vote:=Voter1_vote]
-shared[2] send_vote_VoterC1[send_vote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=VoterC1_vote]
-shared[2] send_fvote_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=VoterC1_vote]
-shared[2] send_vote_VoterC1[send_vote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=VoterC1_vote]
-shared[2] send_fvote_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=VoterC1_vote]
-shared[3] finish_voting[finish_voting]: voting -> finish
-shared[2] send_tracker_Voter1[send_tracker_Voter1]: finish [EA1_tracker1==1] -> finish [Voter1_tracker:=1]
-shared[2] send_tracker_Voter1[send_tracker_Voter1]: finish [EA1_tracker2==1] -> finish [Voter1_tracker:=2]
-shared[2] send_tracker_VoterC1[send_tracker_VoterC1]: finish [EA1_tracker1==2] -> finish [VoterC1_tracker:=1]
-shared[2] send_tracker_VoterC1[send_tracker_VoterC1]: finish [EA1_tracker2==2] -> finish [VoterC1_tracker:=2]
-shared[3] finish_sending_trackers[finish_sending_trackers]: finish -> check
-shared[2] check_tracker1_Voter1[check_tracker_Voter1]: check -> check
-shared[2] check_tracker1_VoterC1[check_tracker_VoterC1]: check -> check
-shared[2] check_tracker1_Coercer1[check_tracker_Coercer1]: check -> check
-shared[2] check_tracker2_Voter1[check_tracker_Voter1]: check -> check
-shared[2] check_tracker2_VoterC1[check_tracker_VoterC1]: check -> check
-shared[2] check_tracker2_Coercer1[check_tracker_Coercer1]: check -> check
+gen_trackers1_EA1: start -> generate [EA1_tracker1:=1, EA1_tracker2:=2]
+gen_trackers2_EA1: start -> generate [EA1_tracker1:=2, EA1_tracker2:=1]
+shared[4] start_voting[start_voting]: generate -> voting
+shared[2] send_vote1_Voter1[send_vote_Voter1]: voting [EA1_tracker1==1] -> voting [EA1_tracker1_vote:=1]
+shared[2] send_vote2_Voter1[send_vote_Voter1]: voting [EA1_tracker1==1] -> voting [EA1_tracker1_vote:=2]
+shared[2] send_vote3_Voter1[send_vote_Voter1]: voting [EA1_tracker1==1] -> voting [EA1_tracker1_vote:=3]
+shared[2] send_vote1_Voter1[send_vote_Voter1]: voting [EA1_tracker2==1] -> voting [EA1_tracker2_vote:=1]
+shared[2] send_vote2_Voter1[send_vote_Voter1]: voting [EA1_tracker2==1] -> voting [EA1_tracker2_vote:=2]
+shared[2] send_vote3_Voter1[send_vote_Voter1]: voting [EA1_tracker2==1] -> voting [EA1_tracker2_vote:=3]
+shared[2] send_vote1_VoterC1[send_vote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=1]
+shared[2] send_fvote1_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=1]
+shared[2] send_vote2_VoterC1[send_vote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=2]
+shared[2] send_fvote2_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=2]
+shared[2] send_vote3_VoterC1[send_vote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=3]
+shared[2] send_fvote3_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker1==2] -> voting [EA1_tracker1_vote:=3]
+shared[2] send_vote1_VoterC1[send_vote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=1]
+shared[2] send_fvote1_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=1]
+shared[2] send_vote2_VoterC1[send_vote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=2]
+shared[2] send_fvote2_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=2]
+shared[2] send_vote3_VoterC1[send_vote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=3]
+shared[2] send_fvote3_VoterC1[send_fvote_VoterC1]: voting [EA1_tracker2==2] -> voting [EA1_tracker2_vote:=3]
+shared[4] finish_voting[finish_voting]: voting -> finish
+shared[2] send_tracker1_Voter1[send_tracker1_Voter1]: finish [EA1_tracker1==1] -> finish
+shared[2] send_tracker2_Voter1[send_tracker2_Voter1]: finish [EA1_tracker2==1] -> finish
+shared[2] send_tracker1_VoterC1[send_tracker1_VoterC1]: finish [EA1_tracker1==2] -> finish
+shared[2] send_tracker2_VoterC1[send_tracker2_VoterC1]: finish [EA1_tracker2==2] -> finish
+shared[4] finish_sending_trackers[finish_sending_trackers]: finish -> check
+shared[2] check1_tracker1_Voter1[check1_tracker_Voter1]: check [EA1_tracker1_vote==1] -> check
+shared[2] check1_tracker1_VoterC1[check1_tracker_VoterC1]: check [EA1_tracker1_vote==1] -> check
+shared[2] check1_tracker1_Coercer1[check1_tracker_Coercer1]: check [EA1_tracker1_vote==1] -> check
+shared[2] check2_tracker1_Voter1[check2_tracker_Voter1]: check [EA1_tracker1_vote==2] -> check
+shared[2] check2_tracker1_VoterC1[check2_tracker_VoterC1]: check [EA1_tracker1_vote==2] -> check
+shared[2] check2_tracker1_Coercer1[check2_tracker_Coercer1]: check [EA1_tracker1_vote==2] -> check
+shared[2] check3_tracker1_Voter1[check3_tracker_Voter1]: check [EA1_tracker1_vote==3] -> check
+shared[2] check3_tracker1_VoterC1[check3_tracker_VoterC1]: check [EA1_tracker1_vote==3] -> check
+shared[2] check3_tracker1_Coercer1[check3_tracker_Coercer1]: check [EA1_tracker1_vote==3] -> check
+shared[2] check1_tracker2_Voter1[check1_tracker_Voter1]: check [EA1_tracker2_vote==1] -> check
+shared[2] check1_tracker2_VoterC1[check1_tracker_VoterC1]: check [EA1_tracker2_vote==1] -> check
+shared[2] check1_tracker2_Coercer1[check1_tracker_Coercer1]: check [EA1_tracker2_vote==1] -> check
+shared[2] check2_tracker2_Voter1[check2_tracker_Voter1]: check [EA1_tracker2_vote==2] -> check
+shared[2] check2_tracker2_VoterC1[check2_tracker_VoterC1]: check [EA1_tracker2_vote==2] -> check
+shared[2] check2_tracker2_Coercer1[check2_tracker_Coercer1]: check [EA1_tracker2_vote==2] -> check
+shared[2] check3_tracker2_Voter1[check3_tracker_Voter1]: check [EA1_tracker2_vote==3] -> check
+shared[2] check3_tracker2_VoterC1[check3_tracker_VoterC1]: check [EA1_tracker2_vote==3] -> check
+shared[2] check3_tracker2_Coercer1[check3_tracker_Coercer1]: check [EA1_tracker2_vote==3] -> check
 
 Agent Voter1:
 LOCAL: [Voter1_vote, Voter1_tracker1, Voter1_tracker2]
 PERSISTENT: [Voter1_vote]
 INITIAL: []
 init start
-shared[3] start_voting[start_voting]: start -> voting
-vote1: voting -> vote [Voter1_vote:=1]
-vote2: voting -> vote [Voter1_vote:=2]
-vote3: voting -> vote [Voter1_vote:=3]
-shared[2] send_vote_Voter1[send_vote_Voter1]: vote -> send
-shared[3] finish_voting[finish_voting]: send -> finish
-shared[2] send_tracker_Voter1[send_tracker_Voter1]: finish -> tracker
-shared[3] finish_sending_trackers[finish_sending_trackers]: tracker -> check
-shared[2] check_tracker1_Voter1[check_tracker1_Voter1]: check -> end [Voter1_tracker1:=EA1_tracker1_vote]
-shared[2] check_tracker2_Voter1[check_tracker2_Voter1]: check -> end [Voter1_tracker2:=EA1_tracker2_vote]
+shared[4] start_voting[start_voting]: start -> voting
+vote1_Voter1: voting -> vote [Voter1_vote:=1]
+shared[2] send_vote1_Voter1[send_vote1_Voter1]: vote [Voter1_vote==1] -> send
+vote2_Voter1: voting -> vote [Voter1_vote:=2]
+shared[2] send_vote2_Voter1[send_vote2_Voter1]: vote [Voter1_vote==2] -> send
+vote3_Voter1: voting -> vote [Voter1_vote:=3]
+shared[2] send_vote3_Voter1[send_vote3_Voter1]: vote [Voter1_vote==3] -> send
+shared[4] finish_voting[finish_voting]: send -> finish
+shared[2] send_tracker1_Voter1[send_tracker_Voter1]: finish -> tracker [Voter1_tracker:=1]
+shared[2] send_tracker2_Voter1[send_tracker_Voter1]: finish -> tracker [Voter1_tracker:=2]
+shared[4] finish_sending_trackers[finish_sending_trackers]: tracker -> check
+shared[2] check1_tracker1_Voter1[check_tracker1_Voter1]: check -> end [Voter1_tracker1:=1]
+shared[2] check2_tracker1_Voter1[check_tracker1_Voter1]: check -> end [Voter1_tracker1:=2]
+shared[2] check3_tracker1_Voter1[check_tracker1_Voter1]: check -> end [Voter1_tracker1:=3]
+shared[2] check1_tracker2_Voter1[check_tracker2_Voter1]: check -> end [Voter1_tracker2:=1]
+shared[2] check2_tracker2_Voter1[check_tracker2_Voter1]: check -> end [Voter1_tracker2:=2]
+shared[2] check3_tracker2_Voter1[check_tracker2_Voter1]: check -> end [Voter1_tracker2:=3]
 
 Agent VoterC1:
 LOCAL: [VoterC1_vote, VoterC1_tracker, VoterC1_required, VoterC1_revote, VoterC1_prep_vote, VoterC1_punish, VoterC1_tracker1, VoterC1_tracker2]
-PERSISTENT: [VoterC1_vote, VoterC1_required, VoterC1_revote, VoterC1_prep_vote]
+PERSISTENT: [VoterC1_vote, VoterC1_required, VoterC1_revote, VoterC1_prep_vote, VoterC1_punish]
 INITIAL: [VoterC1_revote:=1]
 init start
 shared[2] coerce1_VoterC1[coerce_VoterC1]: start -> coerced [VoterC1_required:=1]
 shared[2] coerce2_VoterC1[coerce_VoterC1]: start -> coerced [VoterC1_required:=2]
 shared[2] coerce3_VoterC1[coerce_VoterC1]: start -> coerced [VoterC1_required:=3]
-select_vote1: coerced -> prepared [VoterC1_vote:=1, VoterC1_prep_vote:=1]
-select_vote2: coerced -> prepared [VoterC1_vote:=2, VoterC1_prep_vote:=2]
-select_vote3: coerced -> prepared [VoterC1_vote:=3, VoterC1_prep_vote:=3]
+select_vote1_VoterC1: coerced -> prepared [VoterC1_vote:=1, VoterC1_prep_vote:=1]
+select_vote2_VoterC1: coerced -> prepared [VoterC1_vote:=2, VoterC1_prep_vote:=2]
+select_vote3_VoterC1: coerced -> prepared [VoterC1_vote:=3, VoterC1_prep_vote:=3]
 shared[2] is_ready[is_ready]: prepared -> ready
-shared[3] start_voting[start_voting]: ready -> voting
-shared[2] VoterC1_vote[VoterC1_vote]: voting -> vote
-shared[2] send_vote_VoterC1[send_vote_VoterC1]: vote -> send
-revote_vote_1: send [VoterC1_revote==1] -> voting [VoterC1_vote:=VoterC1_required, VoterC1_revote:=2]
-skip_revote_1: send [VoterC1_revote==1] -> votingf
-revote_vote_2: send [VoterC1_revote==2] -> voting [VoterC1_vote:=VoterC1_required, VoterC1_revote:=3]
-skip_revote_2: send [VoterC1_revote==2] -> votingf
-final_vote: send [VoterC1_revote==3] -> votingf [VoterC1_vote:=VoterC1_prep_vote]
-skip_final: send [VoterC1_revote==3] -> votingf
-shared[2] send_fvote_VoterC1[send_fvote_VoterC1]: votingf -> sendf
-shared[3] finish_voting[finish_voting]: sendf -> finish
-shared[2] send_tracker_VoterC1[send_tracker_VoterC1]: finish -> tracker
-shared[3] finish_sending_trackers[finish_sending_trackers]: tracker -> trackers_sent
+shared[4] start_voting[start_voting]: ready -> voting
+shared[2] send_vote1_VoterC1[send_vote1_VoterC1]: vote [VoterC1_vote==1] -> send
+shared[2] send_vote2_VoterC1[send_vote2_VoterC1]: vote [VoterC1_vote==2] -> send
+shared[2] send_vote3_VoterC1[send_vote3_VoterC1]: vote [VoterC1_vote==3] -> send
+shared[2] VoterC1_vote1_rev1[VoterC1_vote1_rev1]: voting [VoterC1_vote==1 && VoterC1_revote==1] -> vote
+shared[2] VoterC1_vote2_rev1[VoterC1_vote2_rev1]: voting [VoterC1_vote==2 && VoterC1_revote==1] -> vote
+shared[2] VoterC1_vote3_rev1[VoterC1_vote3_rev1]: voting [VoterC1_vote==3 && VoterC1_revote==1] -> vote
+shared[2] VoterC1_vote1_rev2[VoterC1_vote1_rev2]: voting [VoterC1_vote==1 && VoterC1_revote==2] -> vote
+shared[2] VoterC1_vote2_rev2[VoterC1_vote2_rev2]: voting [VoterC1_vote==2 && VoterC1_revote==2] -> vote
+shared[2] VoterC1_vote3_rev2[VoterC1_vote3_rev2]: voting [VoterC1_vote==3 && VoterC1_revote==2] -> vote
+shared[2] VoterC1_vote1_rev3[VoterC1_vote1_rev3]: voting [VoterC1_vote==1 && VoterC1_revote==3] -> vote
+shared[2] VoterC1_vote2_rev3[VoterC1_vote2_rev3]: voting [VoterC1_vote==2 && VoterC1_revote==3] -> vote
+shared[2] VoterC1_vote3_rev3[VoterC1_vote3_rev3]: voting [VoterC1_vote==3 && VoterC1_revote==3] -> vote
+revote_vote_1_VoterC1: send [VoterC1_revote==1] -> voting [VoterC1_vote:=VoterC1_required, VoterC1_revote:=2]
+skip_revote_1_VoterC1: send [VoterC1_revote==1] -> votingf
+revote_vote_2_VoterC1: send [VoterC1_revote==2] -> voting [VoterC1_vote:=VoterC1_required, VoterC1_revote:=3]
+skip_revote_2_VoterC1: send [VoterC1_revote==2] -> votingf
+final_vote_VoterC1: send [VoterC1_revote==3] -> votingf [VoterC1_vote:=VoterC1_prep_vote]
+skip_final_VoterC1: send [VoterC1_revote==3] -> votingf
+shared[2] send_fvote1_VoterC1[send_fvote1_VoterC1]: votingf [VoterC1_vote==1] -> sendf
+shared[2] send_fvote2_VoterC1[send_fvote2_VoterC1]: votingf [VoterC1_vote==2] -> sendf
+shared[2] send_fvote3_VoterC1[send_fvote3_VoterC1]: votingf [VoterC1_vote==3] -> sendf
+shared[4] finish_voting[finish_voting]: sendf -> finish
+shared[2] send_tracker1_VoterC1[send_tracker_VoterC1]: finish -> tracker [VoterC1_tracker:=1]
+shared[2] send_tracker2_VoterC1[send_tracker_VoterC1]: finish -> tracker [VoterC1_tracker:=2]
+shared[4] finish_sending_trackers[finish_sending_trackers]: tracker -> trackers_sent
 shared[2] give1_VoterC1[give1_VoterC1]: trackers_sent -> interact
 shared[2] give2_VoterC1[give2_VoterC1]: trackers_sent -> interact
 shared[2] not_give_VoterC1[not_give_VoterC1]: trackers_sent -> interact
 shared[2] punish_VoterC1[interact_VoterC1]: interact -> check [VoterC1_punish:=1]
 shared[2] not_punish_VoterC1[interact_VoterC1]: interact -> check [VoterC1_punish:=0]
-shared[2] check_tracker1_VoterC1[check_tracker1_VoterC1]: check -> end [VoterC1_tracker1:=EA1_tracker1_vote]
-shared[2] check_tracker2_VoterC1[check_tracker2_VoterC1]: check -> end [VoterC1_tracker2:=EA1_tracker2_vote]
+shared[2] check1_tracker1_VoterC1[check_tracker1_VoterC1]: check -> end [VoterC1_tracker1:=1]
+shared[2] check2_tracker1_VoterC1[check_tracker1_VoterC1]: check -> end [VoterC1_tracker1:=2]
+shared[2] check3_tracker1_VoterC1[check_tracker1_VoterC1]: check -> end [VoterC1_tracker1:=3]
+shared[2] check1_tracker2_VoterC1[check_tracker2_VoterC1]: check -> end [VoterC1_tracker2:=1]
+shared[2] check2_tracker2_VoterC1[check_tracker2_VoterC1]: check -> end [VoterC1_tracker2:=2]
+shared[2] check3_tracker2_VoterC1[check_tracker2_VoterC1]: check -> end [VoterC1_tracker2:=3]
 
 Agent Coercer1:
 LOCAL: [Coercer1_finish, Coercer1_VoterC1_vote, Coercer1_VoterC1_tracker, Coercer1_VoterC1_required, Coercer1_VoterC1_revote, Coercer1_tracker1, Coercer1_tracker2]
@@ -85,17 +133,29 @@ init coerce
 shared[2] coerce1_VoterC1[coerce1_VoterC1]: coerce -> coerce [Coercer1_VoterC1_required:=1]
 shared[2] coerce2_VoterC1[coerce2_VoterC1]: coerce -> coerce [Coercer1_VoterC1_required:=2]
 shared[2] coerce3_VoterC1[coerce3_VoterC1]: coerce -> coerce [Coercer1_VoterC1_required:=3]
-shared[3] start_voting[start_voting]: coerce -> voting
-shared[2] VoterC1_vote[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=VoterC1_vote, Coercer1_VoterC1_revote:=VoterC1_revote]
-shared[3] finish_voting[finish_voting]: voting -> finish
-shared[3] finish_sending_trackers[finish_sending_trackers]: finish -> trackers_sent
+shared[4] start_voting[start_voting]: coerce -> voting
+shared[2] VoterC1_vote1_rev1[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=1, Coercer1_VoterC1_revote:=1]
+shared[2] VoterC1_vote1_rev2[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=1, Coercer1_VoterC1_revote:=2]
+shared[2] VoterC1_vote1_rev3[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=1, Coercer1_VoterC1_revote:=3]
+shared[2] VoterC1_vote2_rev1[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=2, Coercer1_VoterC1_revote:=1]
+shared[2] VoterC1_vote2_rev2[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=2, Coercer1_VoterC1_revote:=2]
+shared[2] VoterC1_vote2_rev3[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=2, Coercer1_VoterC1_revote:=3]
+shared[2] VoterC1_vote3_rev1[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=3, Coercer1_VoterC1_revote:=1]
+shared[2] VoterC1_vote3_rev2[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=3, Coercer1_VoterC1_revote:=2]
+shared[2] VoterC1_vote3_rev3[VoterC1_vote]: voting -> voting [Coercer1_VoterC1_vote:=3, Coercer1_VoterC1_revote:=3]
+shared[4] finish_voting[finish_voting]: voting -> finish
+shared[4] finish_sending_trackers[finish_sending_trackers]: finish -> trackers_sent
 shared[2] give1_VoterC1[interact_VoterC1]: trackers_sent -> trackers_sent [Coercer1_VoterC1_tracker:=1]
 shared[2] give2_VoterC1[interact_VoterC1]: trackers_sent -> trackers_sent [Coercer1_VoterC1_tracker:=2]
 shared[2] not_give_VoterC1[interact_VoterC1]: trackers_sent -> trackers_sent [Coercer1_VoterC1_tracker:=0]
-to_check: trackers_sent -> check
-shared[2] check_tracker1_Coercer1[check_tracker1_Coercer1]: check -> check [Coercer1_tracker1:=EA1_tracker1_vote]
-shared[2] check_tracker2_Coercer1[check_tracker2_Coercer1]: check -> check [Coercer1_tracker2:=EA1_tracker2_vote]
-to_interact: check -> interact
+to_check_Coercer1: trackers_sent -> check
+shared[2] check1_tracker1_Coercer1[check_tracker1_Coercer1]: check -> check [Coercer1_tracker1:=1]
+shared[2] check2_tracker1_Coercer1[check_tracker1_Coercer1]: check -> check [Coercer1_tracker1:=2]
+shared[2] check3_tracker1_Coercer1[check_tracker1_Coercer1]: check -> check [Coercer1_tracker1:=3]
+shared[2] check1_tracker2_Coercer1[check_tracker2_Coercer1]: check -> check [Coercer1_tracker2:=1]
+shared[2] check2_tracker2_Coercer1[check_tracker2_Coercer1]: check -> check [Coercer1_tracker2:=2]
+shared[2] check3_tracker2_Coercer1[check_tracker2_Coercer1]: check -> check [Coercer1_tracker2:=3]
+to_interact_Coercer1: check -> interact
 shared[2] punish_VoterC1[punish_VoterC1]: interact -> interact
 shared[2] not_punish_VoterC1[not_punish_VoterC1]: interact -> interact
-finish: interact -> end [Coercer1_finish:=1]
+finish_Coercer1: interact -> end [Coercer1_finish:=1]
