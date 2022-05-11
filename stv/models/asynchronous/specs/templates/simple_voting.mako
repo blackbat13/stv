@@ -1,26 +1,28 @@
-Agent Voter[${N_Voters}]:
-init: q0
-% for i in range(1, N_Candidates + 1):
-    vote${i}: q0 -> q1 [aID_vote=${i}]
+% for vi in range(1, N_Voters + 1):
+    Agent Voter${vi}:
+    LOCAL: [${', '.join([f"Voter{vi}_vote" for vi in range(1, N_Voters + 1)])}]
+    PERSISTENT: [${', '.join([f"Voter{vi}_vote" for vi in range(1, N_Voters + 1)])}]
+    INITIAL: []
+    init q0
+    % for i in range(1, N_Candidates + 1):
+        vote${i}: q0 -> q1 [Voter${vi}_vote:=${i}]
+        shared[2] gv_${i}_Voter${vi}[gv_${i}_Voter${vi}]: q1 [Voter${vi}_vote==${i}] -> q2
+    % endfor
+    shared[2] ng_Voter${vi}[ng_Voter${vi}]: q1 -> q2
+    shared[2] pun_Voter${vi}[pn_Voter${vi}]: q2 -> q3
+    shared[2] npun_Voter${vi}[pn_Voter${vi}]: q2 -> q3
 % endfor
-shared gv_aID: q1 -> q2 [Coercer1_aID_vote=?aID_vote]
-shared ng_aID: q1 -> q2
-shared pun_aID: q2 -> q3
-shared npun_aID: q2 -> q3
-PROTOCOL: [[pun_aID, npun_aID]]
 
-Agent Coercer[1]:
-init: q0
-% for i in range(1, N_Voters + 1):
-shared gv_Voter${i}: q0 -> q0 [aID_Voter${i}_gv=true]
-shared ng_Voter${i}: q0 -> q0 [aID_Voter${i}_ngv=true]
-shared pun_Voter${i}: q0 -> q0 [aID_pun${i}=true]
-shared npun_Voter${i}: q0 -> q0 [aID_npun${i}=true]
+Agent Coercer1:
+LOCAL: [${', '.join([f"Coercer1_Voter{vi}_vote, Coercer1_Voter{vi}_gv, Coercer1_pun{vi}, Coercer1_npun{vi}" for vi in range(1, N_Voters + 1)])}]
+PERSISTENT: [${', '.join([f"Coercer1_Voter{vi}_vote, Coercer1_Voter{vi}_gv, Coercer1_pun{vi}, Coercer1_npun{vi}" for vi in range(1, N_Voters + 1)])}]
+INITIAL: []
+init q0
+% for vi in range(1, N_Voters + 1):
+    % for i in range(1, N_Candidates + 1):
+        shared[2] gv_${i}_Voter${vi}[g_Voter${vi}]: q0 -> q0 [Coercer1_Voter${vi}_vote:=${i}, Coercer1_Voter${i}_gv:=1]
+    % endfor
+shared[2] ng_Voter${vi}[g_Voter${vi}]: q0 -> q0 [Coercer1_Voter${vi}_gv:=2]
+shared[2] pun_Voter${vi}[pun_Voter${vi}]: q0 -> q0 [Coercer1_pun${vi}:=1]
+shared[2] npun_Voter${vi}[npun_Voter${vi}]: q0 -> q0 [Coercer1_npun${vi}:=1]
 % endfor
-PROTOCOL: [${ (', ').join([f"[gv_Voter{i}, ng_Voter{i}]" for i in range(1,N_Voters+1)])}]
-
-REDUCTION: [Coercer1_pun1]
-COALITION: [Coercer1]
-PERSISTENT: [${ (', ').join([f"Voter{i}_vote, Coercer1_Voter{i}_vote, Coercer1_pun{i}, Coercer1_npun{i}" for i in range(1,N_Voters+1)])}]
-FORMULA: <<Coercer1>>F(Coercer1_pun1=True)
-SHOW_EPISTEMIC: False

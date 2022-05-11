@@ -150,7 +150,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = selene_select_vote_revoting_share()
+    input_filename, output_filename, config = simple_voting()
 
     template = Template(filename=input_path + input_filename)
 
