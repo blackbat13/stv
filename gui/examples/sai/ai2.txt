@@ -9,6 +9,7 @@ stop_gathering_data: gather -[aID_data<5]> data_ready [aID_data=0,aID_data_compl
 stop_gathering_data: gather -[5<=aID_data<8]> data_ready [aID_data=0,aID_data_completion=2]
 % 3: Too much data
 stop_gathering_data: gather -[8<=aID_data]> data_ready [aID_data=0,aID_data_completion=3]
+% Skip phase
 skip_gathering_data: start -> data_ready
 % ---Phase2: Learning (building local model)---
 start_learning: data_ready -> learn
