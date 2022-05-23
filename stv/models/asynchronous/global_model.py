@@ -444,6 +444,9 @@ class GlobalModel:
                         state.set_prop(prop, transition.props[prop_name][1])
                     elif prop_name in state.props:
                         state.set_prop(prop, state.props[prop_name])
+                if op == "+":
+                    prop_val = state.props[val]
+                    state.change_prop(prop, prop_val)
             elif type(val) is bool:
                 if not val:
                     state.remove_prop(prop)

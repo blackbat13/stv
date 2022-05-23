@@ -70,7 +70,7 @@ class LocalTransitionParser:
                     try:
                         val = int(val)
                     except ValueError:
-                        print(f"ERR: Attempt to assign a non-integer value to a variable in '{prop}={val}'")
+                        # print(f"ERR: Attempt to assign a non-integer value to a variable in '{prop}={val}'")
                         pass
                 if prop[-1] == "+":
                     prop = prop.rstrip("+")

@@ -1,0 +1,17 @@
+Agent AI[2]:
+init: start
+start_gathering_data: start -> gather
+gather_data: gather -[aID_data<1]> gather [aID_data+=1]
+stop_gathering_data: gather -> data_ready
+skip_gathering_data: start -> data_ready
+start_learning: data_ready -> learn
+keep_learning: learn -[aID_information<1]> learn [aID_information+=aID_data]
+stop_learning: learn -> educated
+skip_learning: data_ready -> educated
+shared share: educated -> end
+wait: end -> end
+
+PERSISTENT: [AI1_information,AI2_information,AI1_data,AI2_data]
+INITIAL: [AI1_information=0,AI2_information=0,AI1_data=0,AI2_data=0]
+FORMULA: <<AI1>>F(AI1_information>0)
+SHOW_EPISTEMIC: False

@@ -33,6 +33,10 @@ class LocalModelParser:
 
         for i in range(2, len(lines)):
             line = lines[i].strip()
+
+            if self._is_comment_line(line):
+                continue
+
             line = line.replace("aID", agent_name)
             line = line.replace("ID", str(agent_no))
             if self._is_protocol_line(line):
@@ -76,6 +80,10 @@ class LocalModelParser:
         #     for tr in tran:
         #         print(tr.prot_name)
         return LocalModel(agent_id, agent_name, states, transitions, protocol, actions, interface, local)
+
+    @staticmethod
+    def _is_comment_line(line: str):
+        return line[0] == "%"
 
     @staticmethod
     def _parse_agent_name(line: str, agent_no: str) -> str:
