@@ -1,0 +1,31 @@
+Agent AI[2]:
+init: start
+% ---Phase1: Gathering data---
+start_gathering_data: start -> gather
+gather_data: gather -[aID_data<10]> gather [aID_data+=1]
+% 1: Incomplete data
+stop_gathering_data: gather -[aID_data<5]> data_ready [aID_data=0,aID_data_completion=1]
+% 2: Complete data
+stop_gathering_data: gather -[5<=aID_data<8]> data_ready [aID_data=0,aID_data_completion=2]
+% 3: Too much data
+stop_gathering_data: gather -[8<=aID_data]> data_ready [aID_data=0,aID_data_completion=3]
+skip_gathering_data: start -> data_ready
+% ---Phase2: Learning (building local model)---
+start_learning: data_ready -> learn
+keep_learning: learn -[aID_information<10]> learn [aID_information+=aID_data_completion]
+% 1: Incomplete model
+stop_learning: learn -[aID_information<7]> educated [aID_information=0,aID_model_status=1]
+% 2: Complete model
+stop_learning: learn -[7<=aID_information<8]> educated [aID_information=0,aID_model_status=2]
+% 3: Overtrained model
+stop_learning: learn -[8<=aID_information]> educated [aID_information=0,aID_model_status=3]
+skip_learning: data_ready -> educated
+% ---Phase3: Sharing local models---
+shared share: educated -> end
+% ---Phase4: End---
+wait: end -> end
+
+PERSISTENT: [AI0_information, AI0_data, AI0_data_completion, AI0_model_status, AI0_model_quality, AI1_information, AI1_data, AI1_data_completion, AI1_model_status, AI1_model_quality]
+INITIAL: [AI0_information=0, AI0_data=0, AI0_data_completion=0, AI0_model_status=0, AI1_information=0, AI1_data=0, AI1_data_completion=0, AI1_model_status=0]
+FORMULA: <<AI1>>F(AI1_model_status=1)
+SHOW_EPISTEMIC: False

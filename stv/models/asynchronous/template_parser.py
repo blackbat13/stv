@@ -146,11 +146,19 @@ def robots_assumption():
     return input_filename, output_filename, config
 
 
+def sai():
+    input_filename = "sai.mako"
+    config = {"N_AI": 2}
+    output_filename = f"sai_{config['N_AI']}ai.txt"
+
+    return input_filename, output_filename, config
+
+
 if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = simple_voting()
+    input_filename, output_filename, config = sai()
 
     template = Template(filename=input_path + input_filename)
 
