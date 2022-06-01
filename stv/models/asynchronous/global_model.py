@@ -971,34 +971,13 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    # filename = input("Filename: ")
-    # reduction = input("Reduction (y/n): ")
+    filename = f"sai_2ai"
 
-    v = int(input("Voters: "))
-    cv = int(input("Coerced voters: "))
-    c = int(input("Candidates: "))
-    rev = int(input("Revotes: "))
-
-    filename = f"selene_select_vote_revoting_{v}v_{cv}cv_{c}c_{rev}rev_share"
-
-    model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
-    # model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
+    # model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
+    model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")
 
     start = time.process_time()
     model.generate(reduction=False)
     end = time.process_time()
 
     print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
-
-    # model.model.simulate(0)
-
-    # model.save_to_file(f"stv/models/asynchronous/specs/dumps/{filename}_dump.txt")
-    # model.save_to_file(f"specs/dumps/{filename}_dump.txt")
-    model.selene_save_to_file(f"stv/models/asynchronous/specs/dumps/{filename}_dump.txt", [(1, rev), (c, rev), (1, rev - 1), (c, rev - 1)])
-    # model.selene_save_to_file(f"specs/dumps/{filename}_dump.txt", [(1, rev), (c, rev), (1, rev - 1), (c, rev - 1)])
-    #
-    # approx_low_result, approx_low_time, _, _ = model.verify_approximation(False)
-    # print(f"Approx low: result: {approx_low_result}, time: {approx_low_time}")
-    #
-    # approx_up_result, approx_up_time, _, _ = model.verify_approximation(True)
-    # print(f"Approx up: result: {approx_up_result}, time: {approx_up_time}")

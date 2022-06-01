@@ -148,7 +148,10 @@ def robots_assumption():
 
 def sai():
     input_filename = "sai.mako"
-    config = {"N_AI": 2}
+    config = {
+        "N_AI": 2,
+        "MAX_MODEL_QUALITY": 3
+    }
     output_filename = f"sai_{config['N_AI']}ai.txt"
 
     return input_filename, output_filename, config
