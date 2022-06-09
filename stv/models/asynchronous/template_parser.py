@@ -149,10 +149,21 @@ def robots_assumption():
 def sai():
     input_filename = "sai.mako"
     config = {
-        "N_AI": 2,
+        "N_AI": 1,
         "MAX_MODEL_QUALITY": 3
     }
     output_filename = f"sai_{config['N_AI']}ai.txt"
+
+    return input_filename, output_filename, config
+
+def sai2():
+    input_filename = "sai2.mako"
+    config = {
+        "N_AI": 1,
+        "N_DB": 1,
+        "MAX_MODEL_QUALITY": 3
+    }
+    output_filename = f"sai2_{config['N_AI']}ai_{config['N_DB']}db.txt"
 
     return input_filename, output_filename, config
 
@@ -161,7 +172,7 @@ if __name__ == "__main__":
     input_path = "specs/templates/"
     output_path = "specs/generated/"
 
-    input_filename, output_filename, config = sai()
+    input_filename, output_filename, config = sai2()
 
     template = Template(filename=input_path + input_filename)
 

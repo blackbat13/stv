@@ -444,6 +444,12 @@ class GlobalModel:
                         state.set_prop(prop, transition.props[prop_name][1])
                     elif prop_name in state.props:
                         state.set_prop(prop, state.props[prop_name])
+                elif val[0] == "%":
+                    prop_name = val[1:]
+                    if prop_name in transition.props:
+                        state.average_prop(prop, transition.props[prop_name][1])
+                    elif prop_name in state.props:
+                        state.average_prop(prop, state.props[prop_name])
                 if op == "+":
                     prop_val = state.props[val]
                     state.change_prop(prop, prop_val)
@@ -971,7 +977,7 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    filename = f"sai_2ai"
+    filename = f"sai_3ai"
 
     # model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")

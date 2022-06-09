@@ -49,6 +49,9 @@ class GlobalState:
     def set_prop(self, key: str, value):
         self._props[key] = value
 
+    def average_prop(self, key: str, value):
+        self._props[key] = (self._props[key] + value) // 2
+
     def change_prop(self, key: str, value: int):
         self._props[key] += value
 
