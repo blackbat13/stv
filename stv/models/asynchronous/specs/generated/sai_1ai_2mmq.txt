@@ -1,0 +1,44 @@
+
+
+Agent AI1:
+init: start
+%% ---Phase1: Gathering data---
+start_gathering_data: start -> gather
+gather_data: gather -[AI1_data<2]> gather [AI1_data+=1]
+%% 1: Incomplete data
+stop_gathering_data: gather -[AI1_data < 1]> data_ready [AI1_data=0, AI1_data_completion=1]
+%% 2: Complete data
+stop_gathering_data: gather -[1 <= AI1_data < 2]> data_ready [AI1_data=0, AI1_data_completion=2]
+%% 3: Too much data
+stop_gathering_data: gather -[2 <= AI1_data]> data_ready [AI1_data=0, AI1_data_completion=3]
+skip_gathering_data: start -> data_ready
+%% ---Phase2: Learning (building local model)---
+start_learning: data_ready -> learn
+keep_learning: learn -[AI1_information < 2]> learn [AI1_information+=AI1_data_completion]
+%% 1: Incomplete model
+stop_learning: learn -[AI1_information < 1 and AI1_model_quality > 0]> educated [AI1_information=0, AI1_model_status=1, AI1_model_quality-=1]
+stop_learning: learn -[AI1_information < 1 and AI1_model_quality <= 0]> educated [AI1_information=0, AI1_model_status=1]
+%% 2: Complete model
+stop_learning: learn -[1 <= AI1_information < 2 and AI1_model_quality < 2]> educated [AI1_information=0, AI1_model_status=2, AI1_model_quality+=1]
+stop_learning: learn -[1 <= AI1_information < 2 and AI1_model_quality >= 2]> educated [AI1_information=0, AI1_model_status=2]
+%% 3: Overtrained model
+stop_learning: learn -[2 <= AI1_information and AI1_model_quality > 0]> educated [AI1_information=0, AI1_model_status=3, AI1_model_quality-=1]
+stop_learning: learn -[2 <= AI1_information and AI1_model_quality <= 0]> educated [AI1_information=0, AI1_model_status=3]
+skip_learning: data_ready -> sharing
+%% ---Phase3: Sharing local models---
+start_sharing: educated -> sharing
+%% Share local model and get average quality of both models
+%% receive left
+shared share_1_with_1: sharing -> sharing2 [AI1_model_quality=%AI1_model_quality]
+%% send right
+shared share_1_with_1: sharing2 -> sharing3 [AI1_model_quality=%AI1_model_quality]
+end_sharing: sharing3 -> end
+%% ---Phase4: End---
+wait: end -> end
+repeat: end -> learn
+
+
+PERSISTENT: [AI1_information, AI1_data, AI1_data_completion, AI1_model_status, AI1_model_quality]
+INITIAL: [AI1_information=0, AI1_data=0, AI1_data_completion=0, AI1_model_status=0, AI1_model_quality=0]
+FORMULA: <<AI1>>F(AI1_model_quality>1)
+SHOW_EPISTEMIC: False

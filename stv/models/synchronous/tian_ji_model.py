@@ -75,7 +75,13 @@ class TianJiModel(ModelGenerator):
         pass
 
     def get_winning_states(self, prop: str) -> Set[int]:
-        pass
+        winning = set()
+
+        for state_id, state in enumerate(self.states):
+            if state['tian_ji_score'] > state['king_score'] and not state['tian_ji_horses']:
+                winning.add(state_id)
+
+        return winning
 
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ shared AI1_get_from_DB1: sharing -> sharing [AI1_model_quality=%DB1_model_qualit
 end_sharing: sharing -> end
 %% ---Phase4: End---
 wait: end -> end
-%% repeat: end->learn
+repeat: end->learn
 
 
 Agent DB1:

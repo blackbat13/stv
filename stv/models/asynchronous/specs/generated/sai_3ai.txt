@@ -25,17 +25,14 @@ stop_learning: learn -[8 <= AI1_information and AI1_model_quality <= 0]> educate
 skip_learning: data_ready -> sharing
 %% ---Phase3: Sharing local models---
 %% Share local model and get maximum quality of both models
-shared share_1_with_2: sharing -[AI1_model_quality > AI2_model_quality]> sharing [AI2_model_quality=AI1_model_quality]
-shared share_1_with_2: sharing -[AI1_model_quality <= AI2_model_quality]> sharing
-shared share_2_with_1: sharing -[AI2_model_quality > AI1_model_quality]> sharing [AI1_model_quality=AI2_model_quality]
-shared share_2_with_1: sharing -[AI2_model_quality <= AI1_model_quality]> sharing
-shared share_1_with_3: sharing -[AI1_model_quality > AI3_model_quality]> sharing [AI3_model_quality=AI1_model_quality]
-shared share_1_with_3: sharing -[AI1_model_quality <= AI3_model_quality]> sharing
-shared share_3_with_1: sharing -[AI3_model_quality > AI1_model_quality]> sharing [AI1_model_quality=AI3_model_quality]
-shared share_3_with_1: sharing -[AI3_model_quality <= AI1_model_quality]> sharing
+shared share_1_with_2: sharing -> sharing [AI2_model_quality=%AI1_model_quality]
+shared share_2_with_1: sharing -> sharing [AI1_model_quality=%AI2_model_quality]
+shared share_1_with_3: sharing -> sharing [AI3_model_quality=%AI1_model_quality]
+shared share_3_with_1: sharing -> sharing [AI1_model_quality=%AI3_model_quality]
 end_sharing: sharing -> end
 %% ---Phase4: End---
 wait: end -> end
+repeat: end -> learn
 
 Agent AI2:
 init: start
@@ -63,18 +60,15 @@ stop_learning: learn -[8 <= AI2_information and AI2_model_quality > 0]> educated
 stop_learning: learn -[8 <= AI2_information and AI2_model_quality <= 0]> educated [AI2_information=0, AI2_model_status=3]
 skip_learning: data_ready -> sharing
 %% ---Phase3: Sharing local models---
-%% Share local model and get maximum quality of both models
-shared share_2_with_1: sharing -[AI2_model_quality > AI1_model_quality]> sharing [AI1_model_quality=AI2_model_quality]
-shared share_2_with_1: sharing -[AI2_model_quality <= AI1_model_quality]> sharing
-shared share_1_with_2: sharing -[AI1_model_quality > AI2_model_quality]> sharing [AI2_model_quality=AI1_model_quality]
-shared share_1_with_2: sharing -[AI1_model_quality <= AI2_model_quality]> sharing
-shared share_2_with_3: sharing -[AI2_model_quality > AI3_model_quality]> sharing [AI3_model_quality=AI2_model_quality]
-shared share_2_with_3: sharing -[AI2_model_quality <= AI3_model_quality]> sharing
-shared share_3_with_2: sharing -[AI3_model_quality > AI2_model_quality]> sharing [AI2_model_quality=AI3_model_quality]
-shared share_3_with_2: sharing -[AI3_model_quality <= AI2_model_quality]> sharing
+%% Share local model and get average quality of both models
+shared share_2_with_1: sharing -> sharing [AI1_model_quality=%AI2_model_quality]
+shared share_1_with_2: sharing -> sharing [AI2_model_quality=%AI1_model_quality]
+shared share_2_with_3: sharing -> sharing [AI3_model_quality=%AI2_model_quality]
+shared share_3_with_2: sharing -> sharing [AI2_model_quality=%AI3_model_quality]
 end_sharing: sharing -> end
 %% ---Phase4: End---
 wait: end -> end
+repeat: end -> learn
 
 Agent AI3:
 init: start
@@ -103,17 +97,14 @@ stop_learning: learn -[8 <= AI3_information and AI3_model_quality <= 0]> educate
 skip_learning: data_ready -> sharing
 %% ---Phase3: Sharing local models---
 %% Share local model and get maximum quality of both models
-shared share_3_with_1: sharing -[AI3_model_quality > AI1_model_quality]> sharing [AI1_model_quality=AI3_model_quality]
-shared share_3_with_1: sharing -[AI3_model_quality <= AI1_model_quality]> sharing
-shared share_1_with_3: sharing -[AI1_model_quality > AI3_model_quality]> sharing [AI3_model_quality=AI1_model_quality]
-shared share_1_with_3: sharing -[AI1_model_quality <= AI3_model_quality]> sharing
-shared share_3_with_2: sharing -[AI3_model_quality > AI2_model_quality]> sharing [AI2_model_quality=AI3_model_quality]
-shared share_3_with_2: sharing -[AI3_model_quality <= AI2_model_quality]> sharing
-shared share_2_with_3: sharing -[AI2_model_quality > AI3_model_quality]> sharing [AI3_model_quality=AI2_model_quality]
-shared share_2_with_3: sharing -[AI2_model_quality <= AI3_model_quality]> sharing
+shared share_3_with_1: sharing -> sharing [AI1_model_quality=%AI3_model_quality]
+shared share_1_with_3: sharing -> sharing [AI3_model_quality=%AI1_model_quality]
+shared share_3_with_2: sharing -> sharing [AI2_model_quality=%AI3_model_quality]
+shared share_2_with_3: sharing -> sharing [AI3_model_quality=%AI2_model_quality]
 end_sharing: sharing -> end
 %% ---Phase4: End---
 wait: end -> end
+repeat: end -> learn
 
 
 PERSISTENT: [AI1_information, AI1_data, AI1_data_completion, AI1_model_status, AI1_model_quality, AI2_information, AI2_data, AI2_data_completion, AI2_model_status, AI2_model_quality, AI3_information, AI3_data, AI3_data_completion, AI3_model_status, AI3_model_quality]

@@ -60,13 +60,13 @@ stop_learning: learn -[8 <= AI2_information and AI2_model_quality <= 0]> educate
 skip_learning: data_ready -> sharing
 %% ---Phase3: Sharing local models---
 start_sharing: educated -> sharing
-%% Share local model and get maximum quality of both models
+%% Share local model and get average quality of both models
 shared AI2_send_to_DB1: sharing -> sharing
 shared AI2_get_from_DB1: sharing -> sharing [AI2_model_quality=%DB1_model_quality]
 end_sharing: sharing -> end
 %% ---Phase4: End---
 wait: end -> end
-%% repeat: end->learn
+repeat: end->learn
 
 
 Agent DB1:

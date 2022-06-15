@@ -26,7 +26,7 @@
     skip_learning: data_ready -> sharing
     %% ---Phase3: Sharing local models---
     start_sharing: educated -> sharing
-    %% Share local model and get maximum quality of both models
+    %% Share local model and get average quality of both models
     %for db_id in range(1, N_DB + 1):
         shared AI${agent_id}_send_to_DB${db_id}: sharing -> sharing
         shared AI${agent_id}_get_from_DB${db_id}: sharing -> sharing [AI${agent_id}_model_quality=%DB${db_id}_model_quality]
@@ -34,7 +34,7 @@
     end_sharing: sharing -> end
     %% ---Phase4: End---
     wait: end -> end
-    repeat: end->learn
+    repeat: end -> learn
 
 %endfor
 

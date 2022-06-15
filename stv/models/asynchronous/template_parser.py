@@ -146,15 +146,16 @@ def robots_assumption():
     return input_filename, output_filename, config
 
 
-def sai():
+def sai(n_ai, max_model_quality):
     input_filename = "sai.mako"
     config = {
-        "N_AI": 1,
-        "MAX_MODEL_QUALITY": 3
+        "N_AI": n_ai,
+        "MAX_MODEL_QUALITY": max_model_quality
     }
-    output_filename = f"sai_{config['N_AI']}ai.txt"
+    output_filename = f"sai_{config['N_AI']}ai_{config['MAX_MODEL_QUALITY']}mmq.txt"
 
     return input_filename, output_filename, config
+
 
 def sai2():
     input_filename = "sai2.mako"
@@ -168,11 +169,9 @@ def sai2():
     return input_filename, output_filename, config
 
 
-if __name__ == "__main__":
-    input_path = "specs/templates/"
-    output_path = "specs/generated/"
-
-    input_filename, output_filename, config = sai2()
+def save_to_file(input_filename, output_filename, config):
+    input_path = "stv/models/asynchronous/specs/templates/"
+    output_path = "stv/models/asynchronous/specs/generated/"
 
     template = Template(filename=input_path + input_filename)
 
@@ -180,3 +179,10 @@ if __name__ == "__main__":
 
     with open(output_path + output_filename, 'w') as file:
         file.write(out)
+
+    return output_path + output_filename
+
+
+if __name__ == "__main__":
+    input_filename, output_filename, config = sai()
+    save_to_file(input_filename, output_filename, config)
