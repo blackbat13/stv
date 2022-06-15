@@ -321,6 +321,15 @@ class BridgeModel(ModelGenerator):
 
         return readable_board
 
+    def get_model_winning_states(self) -> Set[int]:
+        winning = set()
+
+        for state_id, state in enumerate(self.states):
+            if state['lefts'][0] > state['lefts'][1] and state['lefts'][0] + state['lefts'][1] == self._no_end_cards:
+                winning.add(state_id)
+
+        return winning
+
 
 if __name__ == "__main__":
     n = 2

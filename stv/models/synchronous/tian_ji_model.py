@@ -74,7 +74,7 @@ class TianJiModel(ModelGenerator):
     def get_props_list(self) -> List[str]:
         pass
 
-    def get_winning_states(self, prop: str) -> Set[int]:
+    def get_model_winning_states(self) -> Set[int]:
         winning = set()
 
         for state_id, state in enumerate(self.states):

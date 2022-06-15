@@ -39,14 +39,37 @@ UPPAAL:
 + Python 3.7 minimum
 + All libraries from requirements.txt
 
+## Usage
+
+```
+pip install -r requirements.txt
+```
+
+```
+python main.py generate-spec sai
+python main.py verify synchronous tianji
+python main.py verify synchronous castles
+python main.py verify synchronous bridge
+```
+
 ## Graphical Interface
+
 There is also a graphical interface for the tool available.
 As the tool itself, it's also a work in progress, so right now it supports only part of the models and algorithms.
-It is available here: https://github.com/blackbat13/stv-ui
+
+### Desktop version
+
+https://github.com/blackbat13/stv-ui
+
+### Web version
+
+http://stv.cs-htiew.com
 
 ## Credits
 
 Lead Developer - Damian Kurpiewski (@blackbat13)
+
+Additional features - Witold Pazderski, Yan Kim
 
 ## License
 

@@ -1,6 +1,6 @@
 from stv.models.model_generator import ModelGenerator
 from stv.tools.list_tools import ListTools
-from typing import List
+from typing import List, Set
 import itertools
 
 
@@ -136,14 +136,14 @@ class CastleModel(ModelGenerator):
                     actions[-1].append(f'attack {enemy_castle_id}')
         return actions
 
-    def get_winning_states(self, prop: str) -> List[int]:
-        result = []
-        for state_id in range(0, len(self.states)):
-            state = self.states[state_id]
-            if prop in state['props']:
-                result.append(state_id)
+    def get_model_winning_states(self) -> Set[int]:
+        winning = set()
 
-        return result
+        for state_id, state in enumerate(self.states):
+            if state['lifes'][2] == 0:
+                winning.add(state_id)
+
+        return winning
 
 
 if __name__ == "__main__":

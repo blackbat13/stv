@@ -161,3 +161,10 @@ class ModelGenerator(ABC):
             if prop in state['props']:
                 result.add(state_id)
         return result
+
+    def get_model_winning_states(self) -> Set[int]:
+        """
+        Compute set of winning states for the model.
+        :return: Set of states identifiers.
+        """
+        pass
