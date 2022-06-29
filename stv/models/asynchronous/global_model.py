@@ -977,7 +977,7 @@ if __name__ == "__main__":
     from stv.models.asynchronous.parser import GlobalModelParser
     from stv.parsers import FormulaParser
 
-    filename = f"sai_3ai"
+    filename = f"sai_2ai_2mmq_1imp"
 
     # model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
     model = GlobalModelParser().parse(f"specs/generated/{filename}.txt")

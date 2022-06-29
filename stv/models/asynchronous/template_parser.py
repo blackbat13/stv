@@ -156,6 +156,17 @@ def sai(n_ai, max_model_quality):
 
     return input_filename, output_filename, config
 
+def sai_imp(n_ai, max_model_quality, imp):
+    input_filename = "sai_imp.mako"
+    config = {
+        "N_AI": n_ai,
+        "MAX_MODEL_QUALITY": max_model_quality,
+        "IMP": imp
+    }
+    output_filename = f"sai_{config['N_AI']}ai_{config['MAX_MODEL_QUALITY']}mmq_{config['IMP']}imp.txt"
+
+    return input_filename, output_filename, config
+
 
 def sai2():
     input_filename = "sai2.mako"
