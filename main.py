@@ -112,6 +112,14 @@ def sai_imp(n_ai, max_model_quality, imp):
     path = template_parser.save_to_file(input_filename, output_filename, config)
     click.echo(f"Model spec saved to {path}")
 
+@generate_spec.command()
+@click.option('--n_ai', default=2, prompt='Number of AI agents', help='number of AI agents')
+@click.option('--max_model_quality', default=2, prompt='Maximum model quality', help='maximum model quality')
+def sai_mim(n_ai, max_model_quality):
+    input_filename, output_filename, config = template_parser.sai_mim(n_ai, max_model_quality)
+    path = template_parser.save_to_file(input_filename, output_filename, config)
+    click.echo(f"Model spec saved to {path}")
+
 
 if __name__ == "__main__":
     run()

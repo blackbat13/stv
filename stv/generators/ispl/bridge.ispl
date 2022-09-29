@@ -1,0 +1,1968 @@
+Semantics=SingleAssignment;
+
+Agent Environment
+	Obsvars:
+		firstTeamScore: 0..1;
+		secondTeamScore: 0..1;
+		beginningPlayer: 0..3;
+		currentPlayer: 0..4;
+		clock: 0..4;
+		SPlayerCard: {AceSpade, AceHeart, AceDiamond, AceClub, None};
+		WPlayerCard: {AceSpade, AceHeart, AceDiamond, AceClub, None};
+		NPlayerCard: {AceSpade, AceHeart, AceDiamond, AceClub, None};
+		EPlayerCard: {AceSpade, AceHeart, AceDiamond, AceClub, None};
+		cardN1: {NAceSpade, NAceHeart, NAceDiamond, NAceClub, None};
+		AceSpadeH: boolean;
+		AceHeartH: boolean;
+		AceDiamondH: boolean;
+		AceClubH: boolean;
+		suit: {Spade, Heart, Diamond, Club, None};
+		hasSpade: 0..1;
+		hasHeart: 0..1;
+		hasDiamond: 0..1;
+		hasClub: 0..1;
+	end Obsvars
+	Vars:
+		smc: 0..1;
+	end Vars
+	Actions = {none};
+	Protocol:
+		Other:{none};
+	end Protocol
+	Evolution:
+		firstTeamScore=firstTeamScore+1 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2);
+		secondTeamScore=secondTeamScore+1 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3);
+		beginningPlayer=0 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0);
+		beginningPlayer=1 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1);
+		beginningPlayer=2 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2);
+		beginningPlayer=3 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3);
+		currentPlayer=0 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=0) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=0) or
+			(currentPlayer=3 and clock<4);
+		currentPlayer=1 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=1) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=1) or
+			(currentPlayer=0 and clock<4);
+		currentPlayer=2 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=2) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=2) or
+			(currentPlayer=1 and clock<4);
+		currentPlayer=3 if
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceSpade and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceHeart and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceClub and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceClub and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceDiamond and
+				WPlayerCard=AceClub and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceSpade and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceDiamond and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceHeart and
+				NPlayerCard=AceDiamond and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceSpade and
+				EPlayerCard=AceHeart and
+				beginningPlayer=3) or
+			(
+				SPlayerCard=AceClub and
+				WPlayerCard=AceDiamond and
+				NPlayerCard=AceHeart and
+				EPlayerCard=AceSpade and
+				beginningPlayer=3) or
+			(currentPlayer=2 and clock<4);
+		suit=None if clock=4;
+		clock=0 if clock=4;
+		clock=1 if clock=0;
+		clock=2 if clock=1;
+		clock=3 if clock=2;
+		clock=4 if clock=3;
+		SPlayerCard=None if clock=4;
+		WPlayerCard=None if clock=4;
+		NPlayerCard=None if clock=4;
+		EPlayerCard=None if clock=4;
+		SPlayerCard=AceSpade if SPlayer.Action=PlayAceSpade and currentPlayer=0;
+		WPlayerCard=AceSpade if WPlayer.Action=PlayAceSpade and currentPlayer=1;
+		NPlayerCard=AceSpade if SPlayer.Action=PlayAceSpade and currentPlayer=2;
+		EPlayerCard=AceSpade if EPlayer.Action=PlayAceSpade and currentPlayer=3;
+		SPlayerCard=AceHeart if SPlayer.Action=PlayAceHeart and currentPlayer=0;
+		WPlayerCard=AceHeart if WPlayer.Action=PlayAceHeart and currentPlayer=1;
+		NPlayerCard=AceHeart if SPlayer.Action=PlayAceHeart and currentPlayer=2;
+		EPlayerCard=AceHeart if EPlayer.Action=PlayAceHeart and currentPlayer=3;
+		SPlayerCard=AceDiamond if SPlayer.Action=PlayAceDiamond and currentPlayer=0;
+		WPlayerCard=AceDiamond if WPlayer.Action=PlayAceDiamond and currentPlayer=1;
+		NPlayerCard=AceDiamond if SPlayer.Action=PlayAceDiamond and currentPlayer=2;
+		EPlayerCard=AceDiamond if EPlayer.Action=PlayAceDiamond and currentPlayer=3;
+		SPlayerCard=AceClub if SPlayer.Action=PlayAceClub and currentPlayer=0;
+		WPlayerCard=AceClub if WPlayer.Action=PlayAceClub and currentPlayer=1;
+		NPlayerCard=AceClub if SPlayer.Action=PlayAceClub and currentPlayer=2;
+		EPlayerCard=AceClub if EPlayer.Action=PlayAceClub and currentPlayer=3;
+		suit=Spade if clock=0 and (
+			SPlayer.Action=PlayAceSpade or
+			WPlayer.Action=PlayAceSpade or
+			EPlayer.Action=PlayAceSpade);
+		suit=Heart if clock=0 and (
+			SPlayer.Action=PlayAceHeart or
+			WPlayer.Action=PlayAceHeart or
+			EPlayer.Action=PlayAceHeart);
+		suit=Diamond if clock=0 and (
+			SPlayer.Action=PlayAceDiamond or
+			WPlayer.Action=PlayAceDiamond or
+			EPlayer.Action=PlayAceDiamond);
+		suit=Club if clock=0 and (
+			SPlayer.Action=PlayAceClub or
+			WPlayer.Action=PlayAceClub or
+			EPlayer.Action=PlayAceClub);
+		AceSpadeH=true if
+			SPlayer.Action=PlayAceSpade or
+			WPlayer.Action=PlayAceSpade or
+			EPlayer.Action=PlayAceSpade;
+		AceHeartH=true if
+			SPlayer.Action=PlayAceHeart or
+			WPlayer.Action=PlayAceHeart or
+			EPlayer.Action=PlayAceHeart;
+		AceDiamondH=true if
+			SPlayer.Action=PlayAceDiamond or
+			WPlayer.Action=PlayAceDiamond or
+			EPlayer.Action=PlayAceDiamond;
+		AceClubH=true if
+			SPlayer.Action=PlayAceClub or
+			WPlayer.Action=PlayAceClub or
+			EPlayer.Action=PlayAceClub;
+		cardN1=None if SPlayer.Action=PlayAceSpade and cardN1=NAceSpade;
+		cardN1=None if SPlayer.Action=PlayAceHeart and cardN1=NAceHeart;
+		cardN1=None if SPlayer.Action=PlayAceDiamond and cardN1=NAceDiamond;
+		cardN1=None if SPlayer.Action=PlayAceClub and cardN1=NAceClub;
+		hasSpade=hasSpade+-1 if (
+			(SPlayer.Action=PlayAceSpade and (cardN1=NAceSpade)));
+		hasHeart=hasHeart+-1 if (
+			(SPlayer.Action=PlayAceHeart and (cardN1=NAceHeart)));
+		hasDiamond=hasDiamond+-1 if (
+			(SPlayer.Action=PlayAceDiamond and (cardN1=NAceDiamond)));
+		hasClub=hasClub+-1 if (
+			(SPlayer.Action=PlayAceClub and (cardN1=NAceClub)));
+	end Evolution
+end Agent
+
+Agent SPlayer
+	Vars:
+		Scard1: {SAceSpade, SAceHeart, SAceDiamond, SAceClub, None};
+		hasSpade: 0..1;
+		hasHeart: 0..1;
+		hasDiamond: 0..1;
+		hasClub: 0..1;
+	end Vars
+	Actions = {PlayAceSpade, PlayAceHeart, PlayAceDiamond, PlayAceClub, Wait};
+	Protocol:
+		Scard1=SAceSpade and Environment.currentPlayer=0 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Spade or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceSpade};
+		Scard1=SAceHeart and Environment.currentPlayer=0 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Heart or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceHeart};
+		Scard1=SAceDiamond and Environment.currentPlayer=0 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Diamond or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceDiamond};
+		Scard1=SAceClub and Environment.currentPlayer=0 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Club or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceClub};
+		Environment.cardN1=NAceSpade and Environment.currentPlayer=2 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Spade or ((Environment.hasSpade<=0 and Environment.suit=Spade) or (Environment.hasClub<=0 and Environment.suit=Club) or (Environment.hasDiamond<=0 and Environment.suit=Diamond) or (Environment.hasHeart<=0 and Environment.suit=Heart))): {PlayAceSpade};
+		Environment.cardN1=NAceHeart and Environment.currentPlayer=2 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Heart or ((Environment.hasSpade<=0 and Environment.suit=Spade) or (Environment.hasClub<=0 and Environment.suit=Club) or (Environment.hasDiamond<=0 and Environment.suit=Diamond) or (Environment.hasHeart<=0 and Environment.suit=Heart))): {PlayAceHeart};
+		Environment.cardN1=NAceDiamond and Environment.currentPlayer=2 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Diamond or ((Environment.hasSpade<=0 and Environment.suit=Spade) or (Environment.hasClub<=0 and Environment.suit=Club) or (Environment.hasDiamond<=0 and Environment.suit=Diamond) or (Environment.hasHeart<=0 and Environment.suit=Heart))): {PlayAceDiamond};
+		Environment.cardN1=NAceClub and Environment.currentPlayer=2 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Club or ((Environment.hasSpade<=0 and Environment.suit=Spade) or (Environment.hasClub<=0 and Environment.suit=Club) or (Environment.hasDiamond<=0 and Environment.suit=Diamond) or (Environment.hasHeart<=0 and Environment.suit=Heart))): {PlayAceClub};
+		(!(Environment.currentPlayer=0) and !(Environment.currentPlayer=2)) or Environment.clock=4: {Wait};
+	end Protocol
+	Evolution:
+		Scard1=None if
+			(Scard1=SAceSpade and Action=PlayAceSpade) or
+			(Scard1=SAceHeart and Action=PlayAceHeart) or
+			(Scard1=SAceDiamond and Action=PlayAceDiamond) or
+			(Scard1=SAceClub and Action=PlayAceClub);
+		hasSpade=hasSpade+-1 if
+			(Scard1=SAceSpade and Action=PlayAceSpade);
+		hasHeart=hasHeart+-1 if
+			(Scard1=SAceHeart and Action=PlayAceHeart);
+		hasDiamond=hasDiamond+-1 if
+			(Scard1=SAceDiamond and Action=PlayAceDiamond);
+		hasClub=hasClub+-1 if
+			(Scard1=SAceClub and Action=PlayAceClub);
+	end Evolution
+end Agent
+
+Agent WPlayer
+	Vars:
+		Wcard1: {WAceSpade, WAceHeart, WAceDiamond, WAceClub, None};
+		hasSpade: 0..1;
+		hasHeart: 0..1;
+		hasDiamond: 0..1;
+		hasClub: 0..1;
+	end Vars
+	Actions = {PlayAceSpade, PlayAceHeart, PlayAceDiamond, PlayAceClub, Wait};
+	Protocol:
+		Wcard1=WAceSpade and Environment.currentPlayer=1 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Spade or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceSpade};
+		Wcard1=WAceHeart and Environment.currentPlayer=1 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Heart or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceHeart};
+		Wcard1=WAceDiamond and Environment.currentPlayer=1 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Diamond or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceDiamond};
+		Wcard1=WAceClub and Environment.currentPlayer=1 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Club or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceClub};
+		!(Environment.currentPlayer=1) or Environment.clock=4: {Wait};
+	end Protocol
+	Evolution:
+		Wcard1=None if
+			(Wcard1=WAceSpade and Action=PlayAceSpade) or
+			(Wcard1=WAceHeart and Action=PlayAceHeart) or
+			(Wcard1=WAceDiamond and Action=PlayAceDiamond) or
+			(Wcard1=WAceClub and Action=PlayAceClub);
+		hasSpade=hasSpade+-1 if
+			(Wcard1=WAceSpade and Action=PlayAceSpade);
+		hasHeart=hasHeart+-1 if
+			(Wcard1=WAceHeart and Action=PlayAceHeart);
+		hasDiamond=hasDiamond+-1 if
+			(Wcard1=WAceDiamond and Action=PlayAceDiamond);
+		hasClub=hasClub+-1 if
+			(Wcard1=WAceClub and Action=PlayAceClub);
+	end Evolution
+end Agent
+
+Agent EPlayer
+	Vars:
+		Ecard1: {EAceSpade, EAceHeart, EAceDiamond, EAceClub, None};
+		hasSpade: 0..1;
+		hasHeart: 0..1;
+		hasDiamond: 0..1;
+		hasClub: 0..1;
+	end Vars
+	Actions = {PlayAceSpade, PlayAceHeart, PlayAceDiamond, PlayAceClub, Wait};
+	Protocol:
+		Ecard1=EAceSpade and Environment.currentPlayer=3 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Spade or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceSpade};
+		Ecard1=EAceHeart and Environment.currentPlayer=3 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Heart or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceHeart};
+		Ecard1=EAceDiamond and Environment.currentPlayer=3 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Diamond or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceDiamond};
+		Ecard1=EAceClub and Environment.currentPlayer=3 and Environment.clock<4 and (Environment.suit=None or Environment.suit=Club or ((hasSpade<=0 and Environment.suit=Spade) or (hasClub<=0 and Environment.suit=Club) or (hasDiamond<=0 and Environment.suit=Diamond) or (hasHeart<=0 and Environment.suit=Heart))): {PlayAceClub};
+		!(Environment.currentPlayer=3) or Environment.clock=4: {Wait};
+	end Protocol
+	Evolution:
+		Ecard1=None if
+			(Ecard1=EAceSpade and Action=PlayAceSpade) or
+			(Ecard1=EAceHeart and Action=PlayAceHeart) or
+			(Ecard1=EAceDiamond and Action=PlayAceDiamond) or
+			(Ecard1=EAceClub and Action=PlayAceClub);
+		hasSpade=hasSpade+-1 if
+			(Ecard1=EAceSpade and Action=PlayAceSpade);
+		hasHeart=hasHeart+-1 if
+			(Ecard1=EAceHeart and Action=PlayAceHeart);
+		hasDiamond=hasDiamond+-1 if
+			(Ecard1=EAceDiamond and Action=PlayAceDiamond);
+		hasClub=hasClub+-1 if
+			(Ecard1=EAceClub and Action=PlayAceClub);
+	end Evolution
+end Agent
+
+Evaluation
+	FirstTeamWin if Environment.firstTeamScore>Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore=1;
+	SecondTeamWin if Environment.firstTeamScore<Environment.secondTeamScore and Environment.firstTeamScore+Environment.secondTeamScore={self.__number_of_cards_in_hand};
+end Evaluation
+
+InitStates
+	(Environment.smc=0 and Environment.firstTeamScore=0 and Environment.secondTeamScore=0 and Environment.beginningPlayer=0 and Environment.currentPlayer=0 and Environment.clock=0 and Environment.SPlayerCard=None and Environment.WPlayerCard=None and Environment.NPlayerCard=None and Environment.EPlayerCard=None and Environment.suit=None and SPlayer.hasSpade=1 and SPlayer.hasHeart=0 and SPlayer.hasDiamond=0 and SPlayer.hasClub=0 and WPlayer.hasSpade=0 and WPlayer.hasHeart=0 and WPlayer.hasDiamond=1 and WPlayer.hasClub=0 and Environment.hasSpade=0 and Environment.hasHeart=1 and Environment.hasDiamond=0 and Environment.hasClub=0 and EPlayer.hasSpade=0 and EPlayer.hasHeart=0 and EPlayer.hasDiamond=0 and EPlayer.hasClub=1 and SPlayer.Scard1=SAceSpade and WPlayer.Wcard1=WAceDiamond and Environment.cardN1=NAceHeart and EPlayer.Ecard1=EAceClub and Environment.AceSpadeH=false and Environment.AceHeartH=false and Environment.AceDiamondH=false and Environment.AceClubH=false) or
+	(Environment.smc=0 and Environment.firstTeamScore=0 and Environment.secondTeamScore=0 and Environment.beginningPlayer=0 and Environment.currentPlayer=0 and Environment.clock=0 and Environment.SPlayerCard=None and Environment.WPlayerCard=None and Environment.NPlayerCard=None and Environment.EPlayerCard=None and Environment.suit=None and SPlayer.hasSpade=1 and SPlayer.hasHeart=0 and SPlayer.hasDiamond=0 and SPlayer.hasClub=0 and WPlayer.hasSpade=0 and WPlayer.hasHeart=0 and WPlayer.hasDiamond=0 and WPlayer.hasClub=1 and Environment.hasSpade=0 and Environment.hasHeart=1 and Environment.hasDiamond=0 and Environment.hasClub=0 and EPlayer.hasSpade=0 and EPlayer.hasHeart=0 and EPlayer.hasDiamond=1 and EPlayer.hasClub=0 and SPlayer.Scard1=SAceSpade and WPlayer.Wcard1=WAceClub and Environment.cardN1=NAceHeart and EPlayer.Ecard1=EAceDiamond and Environment.AceSpadeH=false and Environment.AceHeartH=false and Environment.AceDiamondH=false and Environment.AceClubH=false);
+end InitStates
+
+Groups
+	g1={SPlayer};
+end Groups
+
+Formulae
+	<g1>F FirstTeamWin;
+end Formulae
+

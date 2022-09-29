@@ -167,6 +167,16 @@ def sai_imp(n_ai, max_model_quality, imp):
 
     return input_filename, output_filename, config
 
+def sai_mim(n_ai, max_model_quality):
+    input_filename = "sai_mim.mako"
+    config = {
+        "N_AI": n_ai,
+        "MAX_MODEL_QUALITY": max_model_quality
+    }
+    output_filename = f"sai_{config['N_AI']}ai_{config['MAX_MODEL_QUALITY']}mmq_mim.txt"
+
+    return input_filename, output_filename, config
+
 
 def sai2():
     input_filename = "sai2.mako"
@@ -195,5 +205,6 @@ def save_to_file(input_filename, output_filename, config):
 
 
 if __name__ == "__main__":
-    input_filename, output_filename, config = sai()
-    save_to_file(input_filename, output_filename, config)
+    input_filename, output_filename, config = sai_imp(2, 3, 1)
+    result = save_to_file(input_filename, output_filename, config)
+    print(f"Model saved to {result}")

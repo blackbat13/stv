@@ -1013,7 +1013,7 @@ class AbsentMindedBridgeModelIsplGenerator(BridgeModelIsplGenerator):
 
 
 if __name__ == "__main__":
-    n = 2
+    n = 1
     ispl_generator = BridgeModelIsplGenerator(n, n)
     model_txt = ispl_generator.create_model()
     file = open("bridge.ispl", "w")

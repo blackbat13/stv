@@ -55,10 +55,25 @@
     %endif
 
 %endfor
-Agent IMP:
-init: start
-shared share_${imp_left}_with_${IMP}: start -> start
-shared share_${IMP}_with_${imp_right}: start -> start
+%if IMP != 0:
+    %% Impersonator
+    Agent AI${IMP}:
+    init: start
+    %for quality in range(0, MAX_MODEL_QUALITY + 1):
+        set_quality_${quality}: start -> set_quality [AI${IMP}_model_quality=${quality}]
+    %endfor
+    %if IMP % 2 == 0:
+        %% send right
+        shared share_${IMP}_with_${imp_right}: set_quality -> sharing
+        %% receive left
+        shared share_${imp_left}_with_${IMP}: sharing -> start
+    %else:
+        %% receive left
+        shared share_${imp_left}_with_${IMP}: set_quality -> sharing
+        %% send right
+        shared share_${IMP}_with_${imp_right}: sharing -> start
+    %endif
+%endif
 
 
 PERSISTENT: [${ (', ').join([f"AI{i}_information, AI{i}_data, AI{i}_data_completion, AI{i}_model_status, AI{i}_model_quality" for i in range(1, N_AI + 1)]) }]

@@ -2,6 +2,7 @@
     agents_ids = [i for i in range(1, N_AI + 1)]
 %>
 %for index, agent_id in enumerate(agents_ids):
+
     <%
         agent_right_id = agents_ids[(index + 1) % N_AI]
         agent_left_id = agents_ids[index - 1]
@@ -53,12 +54,17 @@
     %% ---Phase4: End---
     wait: end -> end
     repeat: end -> learn
+%if agent_id % 2 == 0:
+    PROTOCOL: [[share_${agent_id}_with_${agent_right_id}, share_${agent_id}_with_mim], [share_${agent_left_id}_with_${agent_id}, share_mim_with_${agent_id}]]
+%else:
+    PROTOCOL: [[share_${agent_left_id}_with_${agent_id}, share_mim_with_${agent_id}], [share_${agent_id}_with_${agent_right_id}, share_${agent_id}_with_mim]]
+%endif
 
 %endfor
 Agent Mim:
 init: start
 %for agent_id in agents_ids:
-    shared share_${agent_id}_with_mim: start -> start
+    shared share_${agent_id}_with_mim: start -> start [Mim_model_quality=AI${agent_id}_model_quality]
     shared share_mim_with_${agent_id}: start -> start
 %endfor
 

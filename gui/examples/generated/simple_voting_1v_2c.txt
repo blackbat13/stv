@@ -20,4 +20,4 @@ REDUCTION: [Coercer1_pun1]
 COALITION: [Coercer1]
 PERSISTENT: [Voter1_vote, Coercer1_Voter1_vote, Coercer1_pun1, Coercer1_npun1]
 FORMULA: <<Coercer1>>F(Coercer1_pun1=True)
-SHOW_EPISTEMIC: False
+SHOW_EPISTEMIC: True
