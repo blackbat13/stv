@@ -2,6 +2,9 @@
     agents_ids = [i for i in range(1, N_AI + 1)]
     imp_right = agents_ids[IMP % N_AI]
     imp_left = agents_ids[IMP - 2]
+    honest = agents_ids[:]
+    if IMP != 0:
+        honest.pop(IMP - 1)
 %>
 %for index, agent_id in enumerate(agents_ids):
     %if agent_id != IMP:
@@ -41,10 +44,10 @@
             %% send right
             shared share_${agent_id}_with_${agent_right_id}: sharing -> sharing2
             %% receive left
-            shared share_${agent_left_id}_with_${agent_id}: sharing2 -> sharing3 [AI${agent_id}_model_quality=%AI${agent_left_id}_model_quality]
+            shared share_${agent_left_id}_with_${agent_id}: sharing2 -> sharing3 [AI${agent_id}_model_quality=^AI${agent_left_id}_model_quality]
         %else:
             %% receive left
-            shared share_${agent_left_id}_with_${agent_id}: sharing -> sharing2 [AI${agent_id}_model_quality=%AI${agent_left_id}_model_quality]
+            shared share_${agent_left_id}_with_${agent_id}: sharing -> sharing2 [AI${agent_id}_model_quality=^AI${agent_left_id}_model_quality]
             %% send right
             shared share_${agent_id}_with_${agent_right_id}: sharing2 -> sharing3
         %endif
@@ -78,5 +81,5 @@
 
 PERSISTENT: [${ (', ').join([f"AI{i}_information, AI{i}_data, AI{i}_data_completion, AI{i}_model_status, AI{i}_model_quality" for i in range(1, N_AI + 1)]) }]
 INITIAL: [${ (', ').join([f"AI{i}_information=0, AI{i}_data=0, AI{i}_data_completion=0, AI{i}_model_status=0, AI{i}_model_quality=0" for i in range(1, N_AI + 1)]) }]
-FORMULA: <<AI1>>F(${(' & ').join([f"AI{i}_model_quality>1" for i in range(1, N_AI + 1)])})
+FORMULA: <<${(',').join([f"AI{i}" for i in honest])}>>F(${(' & ').join([f"AI{i}_model_quality>1" for i in honest])})
 SHOW_EPISTEMIC: False

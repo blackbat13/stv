@@ -30,8 +30,8 @@ skip_learning: data_ready -> sharing
 start_sharing: educated -> sharing
 %% Share local model and get average quality of both models
 %% receive left
-shared share_2_with_1: sharing -> sharing2 [AI1_model_quality=%AI2_model_quality]
-shared share_mim_with_1: sharing -> sharing2 [AI1_model_quality=%Mim_model_quality]
+shared share_2_with_1: sharing -> sharing2 [AI1_model_quality=^AI2_model_quality]
+shared share_mim_with_1: sharing -> sharing2 [AI1_model_quality=Mim_model_quality]
 %% send right
 shared share_1_with_2: sharing2 -> sharing3
 shared share_1_with_mim: sharing2 -> sharing3
@@ -75,8 +75,8 @@ start_sharing: educated -> sharing
 shared share_2_with_1: sharing -> sharing2
 shared share_2_with_mim: sharing -> sharing2
 %% receive left
-shared share_1_with_2: sharing2 -> sharing3 [AI2_model_quality=%AI1_model_quality]
-shared share_mim_with_2: sharing2 -> sharing3 [AI2_model_quality=%Mim_model_quality]
+shared share_1_with_2: sharing2 -> sharing3 [AI2_model_quality=^AI1_model_quality]
+shared share_mim_with_2: sharing2 -> sharing3 [AI2_model_quality=Mim_model_quality]
 end_sharing: sharing3 -> end
 %% ---Phase4: End---
 wait: end -> end
@@ -92,5 +92,5 @@ shared share_mim_with_2: start -> start
 
 PERSISTENT: [AI1_information, AI1_data, AI1_data_completion, AI1_model_status, AI1_model_quality, AI2_information, AI2_data, AI2_data_completion, AI2_model_status, AI2_model_quality, Mim_model_quality]
 INITIAL: [AI1_information=0, AI1_data=0, AI1_data_completion=0, AI1_model_status=0, AI1_model_quality=0, AI2_information=0, AI2_data=0, AI2_data_completion=0, AI2_model_status=0, AI2_model_quality=0, Mim_model_quality=0]
-FORMULA: <<AI1>>F(AI1_model_quality>1 & AI2_model_quality>1)
+FORMULA: <<AI1,AI2>>F(AI1_model_quality>1 & AI2_model_quality>1)
 SHOW_EPISTEMIC: False

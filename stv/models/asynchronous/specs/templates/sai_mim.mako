@@ -40,12 +40,12 @@
         shared share_${agent_id}_with_${agent_right_id}: sharing -> sharing2
         shared share_${agent_id}_with_mim: sharing -> sharing2
         %% receive left
-        shared share_${agent_left_id}_with_${agent_id}: sharing2 -> sharing3 [AI${agent_id}_model_quality=%AI${agent_left_id}_model_quality]
-        shared share_mim_with_${agent_id}: sharing2 -> sharing3 [AI${agent_id}_model_quality=%Mim_model_quality]
+        shared share_${agent_left_id}_with_${agent_id}: sharing2 -> sharing3 [AI${agent_id}_model_quality=^AI${agent_left_id}_model_quality]
+        shared share_mim_with_${agent_id}: sharing2 -> sharing3 [AI${agent_id}_model_quality=Mim_model_quality]
     %else:
         %% receive left
-        shared share_${agent_left_id}_with_${agent_id}: sharing -> sharing2 [AI${agent_id}_model_quality=%AI${agent_left_id}_model_quality]
-        shared share_mim_with_${agent_id}: sharing -> sharing2 [AI${agent_id}_model_quality=%Mim_model_quality]
+        shared share_${agent_left_id}_with_${agent_id}: sharing -> sharing2 [AI${agent_id}_model_quality=^AI${agent_left_id}_model_quality]
+        shared share_mim_with_${agent_id}: sharing -> sharing2 [AI${agent_id}_model_quality=Mim_model_quality]
         %% send right
         shared share_${agent_id}_with_${agent_right_id}: sharing2 -> sharing3
         shared share_${agent_id}_with_mim: sharing2 -> sharing3
@@ -70,5 +70,5 @@ init: start
 
 PERSISTENT: [${ (', ').join([f"AI{i}_information, AI{i}_data, AI{i}_data_completion, AI{i}_model_status, AI{i}_model_quality" for i in range(1, N_AI + 1)]) }, Mim_model_quality]
 INITIAL: [${ (', ').join([f"AI{i}_information=0, AI{i}_data=0, AI{i}_data_completion=0, AI{i}_model_status=0, AI{i}_model_quality=0" for i in range(1, N_AI + 1)]) }, Mim_model_quality=0]
-FORMULA: <<AI1>>F(${(' & ').join([f"AI{i}_model_quality>1" for i in range(1, N_AI + 1)])})
+FORMULA: <<${(',').join([f"AI{i}" for i in range(1, N_AI + 1)])}>>F(${(' & ').join([f"AI{i}_model_quality>1" for i in range(1, N_AI + 1)])})
 SHOW_EPISTEMIC: False

@@ -450,6 +450,12 @@ class GlobalModel:
                         state.average_prop(prop, transition.props[prop_name][1])
                     elif prop_name in state.props:
                         state.average_prop(prop, state.props[prop_name])
+                elif val[0] == "^":
+                    prop_name = val[1:]
+                    if prop_name in transition.props:
+                        state.max_prop(prop, transition.props[prop_name][1])
+                    elif prop_name in state.props:
+                        state.max_prop(prop, state.props[prop_name])
                 if op == "+":
                     prop_val = state.props[val]
                     state.change_prop(prop, prop_val)
@@ -702,7 +708,11 @@ class GlobalModel:
         if state.id == 0:
             return {'local_state': -1}
 
-        epistemic_state = {'local_state': state.local_states[agent_id]}
+        epistemic_state = {'local_states': [state.local_states[agent_id]]}
+        if agent_id in self.get_coalition():
+            epistemic_state['local_states'] = [state.local_states[ag_id] for ag_id in self.get_coalition()]
+        # if agent_id in self.coalition:
+        #
         props = {}
 
         agent_name: str = self._local_models[agent_id].agent_name
@@ -712,6 +722,11 @@ class GlobalModel:
                 props[prop] = state.props[prop]
             elif prop in self._local_models[agent_id].local or prop in self._local_models[agent_id].interface:
                 props[prop] = state.props[prop]
+            elif agent_id in self.get_coalition():
+                for ag_id in self.get_coalition():
+                    if prop in self._local_models[ag_id].local:
+                        props[prop] = state.props[prop]
+                        break
 
         epistemic_state['props'] = props
         return epistemic_state

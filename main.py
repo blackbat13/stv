@@ -1,6 +1,8 @@
 import click
 import time
 import stv.models.asynchronous.template_parser as template_parser
+from stv.models.asynchronous.global_model import GlobalModel
+from stv.models.asynchronous.parser import GlobalModelParser
 from stv.models import TianJiModel, CastleModel, BridgeModel
 
 
@@ -86,8 +88,23 @@ def castles(w1: int, w2: int, w3: int, life: int, imperfect: bool):
 
 
 @verify.command()
-def asynchronous():
-    click.echo("Verify asynchronous - not implemented yet")
+@click.option('--filename', default="simple_voting_1v_2c", prompt="Model file name", help="Model file name")
+def asynchronous(filename):
+    model = GlobalModelParser().parse(f"stv/models/asynchronous/specs/generated/{filename}.txt")
+
+    start = time.process_time()
+    model.generate(reduction=False)
+    end = time.process_time()
+
+    print(f"Generation time: {end - start}, #states: {model.states_count}, #transitions: {model.transitions_count}")
+
+    result = model.verify_approximation(True)
+
+    print(f"Upper approximation\nTime: {result[1]}, result: {result[0]}")
+
+    result = model.verify_approximation(False)
+
+    print(f"Lower approximation\nTime: {result[1]}, result: {result[0]}")
 
 
 @run.group()

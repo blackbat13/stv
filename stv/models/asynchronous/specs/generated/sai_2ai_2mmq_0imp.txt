@@ -79,5 +79,5 @@ repeat: end -> learn
 
 PERSISTENT: [AI1_information, AI1_data, AI1_data_completion, AI1_model_status, AI1_model_quality, AI2_information, AI2_data, AI2_data_completion, AI2_model_status, AI2_model_quality]
 INITIAL: [AI1_information=0, AI1_data=0, AI1_data_completion=0, AI1_model_status=0, AI1_model_quality=0, AI2_information=0, AI2_data=0, AI2_data_completion=0, AI2_model_status=0, AI2_model_quality=0]
-FORMULA: <<AI1>>F(AI1_model_quality>1 & AI2_model_quality>1)
+FORMULA: <<AI1,AI2>>F(AI1_model_quality>1 & AI2_model_quality>1)
 SHOW_EPISTEMIC: False
