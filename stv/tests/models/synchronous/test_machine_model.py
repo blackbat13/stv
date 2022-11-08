@@ -1,4 +1,4 @@
-from stv.models import MachineModel
+from stv.models.synchronous import MachineModel
 import unittest
 
 

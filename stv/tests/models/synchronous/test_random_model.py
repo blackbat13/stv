@@ -1,4 +1,4 @@
-from stv.models import RandomModel
+from stv.models.synchronous import RandomModel
 import unittest
 
 

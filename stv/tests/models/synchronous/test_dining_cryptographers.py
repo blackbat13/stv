@@ -1,4 +1,4 @@
-from stv.models import DiningCryptographers
+from stv.models.synchronous import DiningCryptographers
 import unittest
 
 

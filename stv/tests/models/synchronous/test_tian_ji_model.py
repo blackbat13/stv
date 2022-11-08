@@ -1,4 +1,4 @@
-from stv.models import TianJiModel
+from stv.models.synchronous import TianJiModel
 import unittest
 
 

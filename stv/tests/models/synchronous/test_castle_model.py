@@ -1,4 +1,4 @@
-from stv.models import CastleModel
+from stv.models.synchronous import CastleModel
 import unittest
 
 

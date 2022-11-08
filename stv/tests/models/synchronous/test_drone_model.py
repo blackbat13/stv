@@ -1,4 +1,4 @@
-from stv.models import DroneModel, CracowMap
+from stv.models.synchronous import DroneModel, CracowMap
 import unittest
 
 

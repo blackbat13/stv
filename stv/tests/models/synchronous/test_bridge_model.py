@@ -1,4 +1,4 @@
-from stv.models import BridgeModel
+from stv.models.synchronous import BridgeModel
 import unittest
 
 

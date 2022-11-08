@@ -5,3 +5,4 @@ from .drone_model import DroneModel, CracowMap
 from .machine_model import MachineModel, MachineModelWaiting, MachineModelWithCharging, MachineModelWithStorage
 from .tian_ji_model import TianJiModel
 from .random_model import RandomModel
+from .simple_voting_model import SimpleVotingModel, SimpleVoting2Model
