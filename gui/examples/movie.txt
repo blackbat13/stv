@@ -1,0 +1,10 @@
+Agent Player[2]:
+init: init
+movie: init -> movie [m_ID=true]
+football: init -> football [f_ID=true]
+
+
+PERSISTENT: [m_1,f_1,m_2,f_2]
+COALITION: [Player1]
+FORMULA: <<Player1>>F( ( m_1=True & m_2=True) | ( f_1=True & f_2=True)   )
+SHOW_EPISTEMIC: False
