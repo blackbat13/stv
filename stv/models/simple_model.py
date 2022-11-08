@@ -1026,3 +1026,29 @@ class SimpleModel:
             result.append([states_left[:], states_right[:]])
 
         return result, coalition
+
+
+if __name__ == "__main__":
+    model = SimpleModel(2)
+    model.add_transition(0, 1, ['Push', 'Wait'])
+    model.add_transition(0, 2, ['Wait', 'Push'])
+    model.add_transition(1, 2, ['Push', 'Wait'])
+    model.add_transition(1, 0, ['Wait', 'Push'])
+    model.add_transition(2, 0, ['Push', 'Wait'])
+    model.add_transition(2, 1, ['Wait', 'Push'])
+    model.add_transition(0, 0, ['Wait', 'Wait'])
+    model.add_transition(1, 1, ['Wait', 'Wait'])
+    model.add_transition(2, 2, ['Wait', 'Wait'])
+    model.add_transition(0, 0, ['Push', 'Push'])
+    model.add_transition(1, 1, ['Push', 'Push'])
+    model.add_transition(2, 2, ['Push', 'Push'])
+
+    model.states = [
+        {"name": "state0"},
+        {"name": "state1"},
+        {"name": "state2"}
+                    ]
+
+    # print(model.js_dump_model())
+    # print(model.dump())
+    model.simulate(0)
