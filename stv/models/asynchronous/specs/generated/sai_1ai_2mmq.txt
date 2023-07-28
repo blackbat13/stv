@@ -29,9 +29,9 @@ skip_learning: data_ready -> sharing
 start_sharing: educated -> sharing
 %% Share local model and get average quality of both models
 %% receive left
-shared share_1_with_1: sharing -> sharing2 [AI1_model_quality=%AI1_model_quality]
+shared share_1_with_1: sharing -> sharing2 [AI1_model_quality=AI1_model_quality]
 %% send right
-shared share_1_with_1: sharing2 -> sharing3 [AI1_model_quality=%AI1_model_quality]
+shared share_1_with_1: sharing2 -> sharing3 [AI1_model_quality=AI1_model_quality]
 end_sharing: sharing3 -> end
 %% ---Phase4: End---
 wait: end -> end
