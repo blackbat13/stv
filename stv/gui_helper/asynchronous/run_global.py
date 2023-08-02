@@ -2,16 +2,22 @@ import sys
 import json
 from stv.models.asynchronous.parser import GlobalModelParser
 
-mode = sys.argv[3]  # "global" | "reduced"
-filePath = sys.argv[4]
+params = json.loads(sys.argv[3])
 
-global_model = GlobalModelParser().parse(filePath)
+if(params["fileContent"]):
+    global_model = GlobalModelParser().parseFromString(params["fileContent"])
+else:
+    global_model = GlobalModelParser().parse(params["filePath"])
+
 global_model.generate(reduction=False)
 global_model.generate_local_models()
 
 reduced_model = None
-if mode == "reduced":
-    reduced_model = GlobalModelParser().parse(filePath)
+if params["mode"] == "reduced":
+    if(params["filePath"]=="raw"):
+        reduced_model = GlobalModelParser().parseFromString(params["fileContent"])
+    else:
+        reduced_model = GlobalModelParser().parse(params["filePath"])
     reduced_model.generate(reduction=True)
     winning_reduced = reduced_model.get_real_formula_winning_states()
 

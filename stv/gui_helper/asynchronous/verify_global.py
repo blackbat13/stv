@@ -2,15 +2,16 @@ import sys
 import json
 from stv.models.asynchronous.parser import GlobalModelParser
 
-mode = sys.argv[3]  # "global" | "reduced"
-filePath = sys.argv[4]
-v = int(sys.argv[5])
+params = json.loads(sys.argv[3])
 
-global_model = GlobalModelParser().parse(filePath)
+if(params["fileContent"]):
+    global_model = GlobalModelParser().parseFromString(params["fileContent"])
+else:
+    global_model = GlobalModelParser().parse(params["filePath"])
 global_model.generate(reduction=False)
 global_model.generate_local_models()
 
-if v == 1:
+if params["v"] == 1:
     atl_model_global = global_model.model.to_atl_imperfect()
 else:
     atl_model_global = global_model.model.to_atl_perfect()
@@ -19,11 +20,14 @@ winning_global = global_model.get_formula_winning_states()
 result_global = atl_model_global.minimum_formula_many_agents([global_model.get_agent()], winning_global)
 # print(result_global)
 reduced_model = None
-if mode == "reduced":
-    reduced_model = GlobalModelParser().parse(filePath)
+if params["mode"] == "reduced":
+    if(params["filePath"]=="raw"):
+        reduced_model = GlobalModelParser().parseFromString(params["fileContent"])
+    else:
+        reduced_model = GlobalModelParser().parse(params["filePath"])
     reduced_model.generate(reduction=True)
     winning_reduced = reduced_model.get_formula_winning_states()
-    if v == 1:
+    if params["v"] == 1:
         atl_model_reduced = reduced_model.model.to_atl_imperfect(reduced_model.get_actions())
     else:
         atl_model_reduced = reduced_model.model.to_atl_perfect(reduced_model.get_actions())

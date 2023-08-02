@@ -22,7 +22,7 @@ function createWindow() {
     win.loadFile('index.html');
 
     // Otwórz Narzędzia Deweloperskie.
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 
 
     // Emitowane, gdy okno jest zamknięte.
