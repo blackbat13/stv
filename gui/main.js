@@ -13,6 +13,7 @@ function createWindow() {
         y: rect.y,
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false
         },
     });
     win.setSize(rect.width, rect.height);
@@ -21,7 +22,7 @@ function createWindow() {
     win.loadFile('index.html');
 
     // Otwórz Narzędzia Deweloperskie.
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 
 
     // Emitowane, gdy okno jest zamknięte.
