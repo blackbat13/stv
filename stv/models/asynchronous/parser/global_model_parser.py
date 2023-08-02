@@ -22,6 +22,14 @@ class GlobalModelParser:
         input_file = open(file_name, "r")
         lines = input_file.readlines()
         input_file.close()
+        return self.parseLines(lines)
+
+    def parseFromString(self, file_string: str) -> GlobalModel:
+        lines = file_string.split('\n')
+        lines = [line+'\n' for line in lines]
+        return self.parseLines(lines)
+
+    def parseLines(self, lines: list) -> GlobalModel:
         local_models = []
         reduction = []
         bounded_vars = []
