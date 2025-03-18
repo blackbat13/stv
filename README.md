@@ -1,3 +1,7 @@
+> [!WARNING]
+> This project is no longer maintained.
+> Please check the new version of the tool at [https://github.com/blackbat13/stv_v2](https://github.com/blackbat13/stv_v2)
+
 # STV - StraTegic Verifier
 
 #### Collection of algorithms for verification of ATLir (and ATLIr) models
